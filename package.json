@@ -1,0 +1,32 @@
+{
+  "name": "shiori",
+  "version": "1.0.0",
+  "description": "AI-Assisted Productivity Desktop App",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "npm run dev --workspace=client",
+    "dev:server": "npm run dev --workspace=server",
+    "build": "npm run build --workspace=client",
+    "start": "npm run start --workspace=server"
+  },
+  "keywords": [
+    "productivity",
+    "google-classroom",
+    "study-planner",
+    "electron"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "appwrite": "^16.1.0",
+    "dotenv": "^17.3.1"
+  }
+}

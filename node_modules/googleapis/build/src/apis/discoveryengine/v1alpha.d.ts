@@ -1,0 +1,14816 @@
+/// <reference types="node" />
+import { OAuth2Client, JWT, Compute, UserRefreshClient, BaseExternalAccountClient, GaxiosPromise, GoogleConfigurable, MethodOptions, StreamMethodOptions, GlobalOptions, GoogleAuth, BodyResponseCallback, APIRequestContext } from 'googleapis-common';
+import { Readable } from 'stream';
+export declare namespace discoveryengine_v1alpha {
+    export interface Options extends GlobalOptions {
+        version: 'v1alpha';
+    }
+    interface StandardParameters {
+        /**
+         * Auth client or API Key for the request
+         */
+        auth?: string | OAuth2Client | JWT | Compute | UserRefreshClient | BaseExternalAccountClient | GoogleAuth;
+        /**
+         * V1 error format.
+         */
+        '$.xgafv'?: string;
+        /**
+         * OAuth access token.
+         */
+        access_token?: string;
+        /**
+         * Data format for response.
+         */
+        alt?: string;
+        /**
+         * JSONP
+         */
+        callback?: string;
+        /**
+         * Selector specifying which fields to include in a partial response.
+         */
+        fields?: string;
+        /**
+         * API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.
+         */
+        key?: string;
+        /**
+         * OAuth 2.0 token for the current user.
+         */
+        oauth_token?: string;
+        /**
+         * Returns response with indentations and line breaks.
+         */
+        prettyPrint?: boolean;
+        /**
+         * Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.
+         */
+        quotaUser?: string;
+        /**
+         * Legacy upload protocol for media (e.g. "media", "multipart").
+         */
+        uploadType?: string;
+        /**
+         * Upload protocol for media (e.g. "raw", "multipart").
+         */
+        upload_protocol?: string;
+    }
+    /**
+     * Discovery Engine API
+     *
+     * Discovery Engine API.
+     *
+     * @example
+     * ```js
+     * const {google} = require('googleapis');
+     * const discoveryengine = google.discoveryengine('v1alpha');
+     * ```
+     */
+    export class Discoveryengine {
+        context: APIRequestContext;
+        projects: Resource$Projects;
+        constructor(options: GlobalOptions, google?: GoogleConfigurable);
+    }
+    /**
+     * `Distribution` contains summary statistics for a population of values. It optionally contains a histogram representing the distribution of those values across a set of buckets. The summary statistics are the count, mean, sum of the squared deviation from the mean, the minimum, and the maximum of the set of population of values. The histogram is based on a sequence of buckets and gives a count of values that fall into each bucket. The boundaries of the buckets are given either explicitly or by formulas for buckets of fixed or exponentially increasing widths. Although it is not forbidden, it is generally a bad idea to include non-finite values (infinities or NaNs) in the population of values, as this will render the `mean` and `sum_of_squared_deviation` fields meaningless.
+     */
+    export interface Schema$GoogleApiDistribution {
+        /**
+         * The number of values in each bucket of the histogram, as described in `bucket_options`. If the distribution does not have a histogram, then omit this field. If there is a histogram, then the sum of the values in `bucket_counts` must equal the value in the `count` field of the distribution. If present, `bucket_counts` should contain N values, where N is the number of buckets specified in `bucket_options`. If you supply fewer than N values, the remaining values are assumed to be 0. The order of the values in `bucket_counts` follows the bucket numbering schemes described for the three bucket types. The first value must be the count for the underflow bucket (number 0). The next N-2 values are the counts for the finite buckets (number 1 through N-2). The N'th value in `bucket_counts` is the count for the overflow bucket (number N-1).
+         */
+        bucketCounts?: string[] | null;
+        /**
+         * Defines the histogram bucket boundaries. If the distribution does not contain a histogram, then omit this field.
+         */
+        bucketOptions?: Schema$GoogleApiDistributionBucketOptions;
+        /**
+         * The number of values in the population. Must be non-negative. This value must equal the sum of the values in `bucket_counts` if a histogram is provided.
+         */
+        count?: string | null;
+        /**
+         * Must be in increasing order of `value` field.
+         */
+        exemplars?: Schema$GoogleApiDistributionExemplar[];
+        /**
+         * The arithmetic mean of the values in the population. If `count` is zero then this field must be zero.
+         */
+        mean?: number | null;
+        /**
+         * If specified, contains the range of the population values. The field must not be present if the `count` is zero.
+         */
+        range?: Schema$GoogleApiDistributionRange;
+        /**
+         * The sum of squared deviations from the mean of the values in the population. For values x_i this is: Sum[i=1..n]((x_i - mean)^2) Knuth, "The Art of Computer Programming", Vol. 2, page 232, 3rd edition describes Welford's method for accumulating this sum in one pass. If `count` is zero then this field must be zero.
+         */
+        sumOfSquaredDeviation?: number | null;
+    }
+    /**
+     * `BucketOptions` describes the bucket boundaries used to create a histogram for the distribution. The buckets can be in a linear sequence, an exponential sequence, or each bucket can be specified explicitly. `BucketOptions` does not include the number of values in each bucket. A bucket has an inclusive lower bound and exclusive upper bound for the values that are counted for that bucket. The upper bound of a bucket must be strictly greater than the lower bound. The sequence of N buckets for a distribution consists of an underflow bucket (number 0), zero or more finite buckets (number 1 through N - 2) and an overflow bucket (number N - 1). The buckets are contiguous: the lower bound of bucket i (i \> 0) is the same as the upper bound of bucket i - 1. The buckets span the whole range of finite values: lower bound of the underflow bucket is -infinity and the upper bound of the overflow bucket is +infinity. The finite buckets are so-called because both bounds are finite.
+     */
+    export interface Schema$GoogleApiDistributionBucketOptions {
+        /**
+         * The explicit buckets.
+         */
+        explicitBuckets?: Schema$GoogleApiDistributionBucketOptionsExplicit;
+        /**
+         * The exponential buckets.
+         */
+        exponentialBuckets?: Schema$GoogleApiDistributionBucketOptionsExponential;
+        /**
+         * The linear bucket.
+         */
+        linearBuckets?: Schema$GoogleApiDistributionBucketOptionsLinear;
+    }
+    /**
+     * Specifies a set of buckets with arbitrary widths. There are `size(bounds) + 1` (= N) buckets. Bucket `i` has the following boundaries: Upper bound (0 <= i < N-1): bounds[i] Lower bound (1 <= i < N); bounds[i - 1] The `bounds` field must contain at least one element. If `bounds` has only one element, then there are no finite buckets, and that single element is the common boundary of the overflow and underflow buckets.
+     */
+    export interface Schema$GoogleApiDistributionBucketOptionsExplicit {
+        /**
+         * The values must be monotonically increasing.
+         */
+        bounds?: number[] | null;
+    }
+    /**
+     * Specifies an exponential sequence of buckets that have a width that is proportional to the value of the lower bound. Each bucket represents a constant relative uncertainty on a specific value in the bucket. There are `num_finite_buckets + 2` (= N) buckets. Bucket `i` has the following boundaries: Upper bound (0 <= i < N-1): scale * (growth_factor ^ i). Lower bound (1 <= i < N): scale * (growth_factor ^ (i - 1)).
+     */
+    export interface Schema$GoogleApiDistributionBucketOptionsExponential {
+        /**
+         * Must be greater than 1.
+         */
+        growthFactor?: number | null;
+        /**
+         * Must be greater than 0.
+         */
+        numFiniteBuckets?: number | null;
+        /**
+         * Must be greater than 0.
+         */
+        scale?: number | null;
+    }
+    /**
+     * Specifies a linear sequence of buckets that all have the same width (except overflow and underflow). Each bucket represents a constant absolute uncertainty on the specific value in the bucket. There are `num_finite_buckets + 2` (= N) buckets. Bucket `i` has the following boundaries: Upper bound (0 <= i < N-1): offset + (width * i). Lower bound (1 <= i < N): offset + (width * (i - 1)).
+     */
+    export interface Schema$GoogleApiDistributionBucketOptionsLinear {
+        /**
+         * Must be greater than 0.
+         */
+        numFiniteBuckets?: number | null;
+        /**
+         * Lower bound of the first bucket.
+         */
+        offset?: number | null;
+        /**
+         * Must be greater than 0.
+         */
+        width?: number | null;
+    }
+    /**
+     * Exemplars are example points that may be used to annotate aggregated distribution values. They are metadata that gives information about a particular value added to a Distribution bucket, such as a trace ID that was active when a value was added. They may contain further information, such as a example values and timestamps, origin, etc.
+     */
+    export interface Schema$GoogleApiDistributionExemplar {
+        /**
+         * Contextual information about the example value. Examples are: Trace: type.googleapis.com/google.monitoring.v3.SpanContext Literal string: type.googleapis.com/google.protobuf.StringValue Labels dropped during aggregation: type.googleapis.com/google.monitoring.v3.DroppedLabels There may be only a single attachment of any given message type in a single exemplar, and this is enforced by the system.
+         */
+        attachments?: Array<{
+            [key: string]: any;
+        }> | null;
+        /**
+         * The observation (sampling) time of the above value.
+         */
+        timestamp?: string | null;
+        /**
+         * Value of the exemplar point. This value determines to which bucket the exemplar belongs.
+         */
+        value?: number | null;
+    }
+    /**
+     * The range of the population values.
+     */
+    export interface Schema$GoogleApiDistributionRange {
+        /**
+         * The maximum of the population values.
+         */
+        max?: number | null;
+        /**
+         * The minimum of the population values.
+         */
+        min?: number | null;
+    }
+    /**
+     * Message that represents an arbitrary HTTP body. It should only be used for payload formats that can't be represented as JSON, such as raw binary or an HTML page. This message can be used both in streaming and non-streaming API methods in the request as well as the response. It can be used as a top-level request field, which is convenient if one wants to extract parameters from either the URL or HTTP template into the request fields and also want access to the raw HTTP body. Example: message GetResourceRequest { // A unique request id. string request_id = 1; // The raw HTTP body is bound to this field. google.api.HttpBody http_body = 2; \} service ResourceService { rpc GetResource(GetResourceRequest) returns (google.api.HttpBody); rpc UpdateResource(google.api.HttpBody) returns (google.protobuf.Empty); \} Example with streaming methods: service CaldavService { rpc GetCalendar(stream google.api.HttpBody) returns (stream google.api.HttpBody); rpc UpdateCalendar(stream google.api.HttpBody) returns (stream google.api.HttpBody); \} Use of this type only changes how the request and response bodies are handled, all other features will continue to work unchanged.
+     */
+    export interface Schema$GoogleApiHttpBody {
+        /**
+         * The HTTP Content-Type header value specifying the content type of the body.
+         */
+        contentType?: string | null;
+        /**
+         * The HTTP request/response body as raw binary.
+         */
+        data?: string | null;
+        /**
+         * Application specific response metadata. Must be set in the first response for streaming APIs.
+         */
+        extensions?: Array<{
+            [key: string]: any;
+        }> | null;
+    }
+    /**
+     * An object representing a resource that can be used for monitoring, logging, billing, or other purposes. Examples include virtual machine instances, databases, and storage devices such as disks. The `type` field identifies a MonitoredResourceDescriptor object that describes the resource's schema. Information in the `labels` field identifies the actual resource and its attributes according to the schema. For example, a particular Compute Engine VM instance could be represented by the following object, because the MonitoredResourceDescriptor for `"gce_instance"` has labels `"project_id"`, `"instance_id"` and `"zone"`: { "type": "gce_instance", "labels": { "project_id": "my-project", "instance_id": "12345678901234", "zone": "us-central1-a" \}\}
+     */
+    export interface Schema$GoogleApiMonitoredResource {
+        /**
+         * Required. Values for all of the labels listed in the associated monitored resource descriptor. For example, Compute Engine VM instances use the labels `"project_id"`, `"instance_id"`, and `"zone"`.
+         */
+        labels?: {
+            [key: string]: string;
+        } | null;
+        /**
+         * Required. The monitored resource type. This field must match the `type` field of a MonitoredResourceDescriptor object. For example, the type of a Compute Engine VM instance is `gce_instance`. Some descriptors include the service name in the type; for example, the type of a Datastream stream is `datastream.googleapis.com/Stream`.
+         */
+        type?: string | null;
+    }
+    /**
+     * A description of the context in which an error occurred.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineLoggingErrorContext {
+        /**
+         * The HTTP request which was processed when the error was triggered.
+         */
+        httpRequest?: Schema$GoogleCloudDiscoveryengineLoggingHttpRequestContext;
+        /**
+         * The location in the source code where the decision was made to report the error, usually the place where it was logged.
+         */
+        reportLocation?: Schema$GoogleCloudDiscoveryengineLoggingSourceLocation;
+    }
+    /**
+     * An error log which is reported to the Error Reporting system.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineLoggingErrorLog {
+        /**
+         * A description of the context in which the error occurred.
+         */
+        context?: Schema$GoogleCloudDiscoveryengineLoggingErrorContext;
+        /**
+         * The error payload that is populated on LRO import APIs.
+         */
+        importPayload?: Schema$GoogleCloudDiscoveryengineLoggingImportErrorContext;
+        /**
+         * A message describing the error.
+         */
+        message?: string | null;
+        /**
+         * The API request payload, represented as a protocol buffer. Most API request types are supported—for example: * `type.googleapis.com/google.cloud.discoveryengine.v1alpha.DocumentService.CreateDocumentRequest` * `type.googleapis.com/google.cloud.discoveryengine.v1alpha.UserEventService.WriteUserEventRequest`
+         */
+        requestPayload?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * The API response payload, represented as a protocol buffer. This is used to log some "soft errors", where the response is valid but we consider there are some quality issues like unjoined events. The following API responses are supported, and no PII is included: * `google.cloud.discoveryengine.v1alpha.RecommendationService.Recommend` * `google.cloud.discoveryengine.v1alpha.UserEventService.WriteUserEvent` * `google.cloud.discoveryengine.v1alpha.UserEventService.CollectUserEvent`
+         */
+        responsePayload?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * The service context in which this error has occurred.
+         */
+        serviceContext?: Schema$GoogleCloudDiscoveryengineLoggingServiceContext;
+        /**
+         * The RPC status associated with the error log.
+         */
+        status?: Schema$GoogleRpcStatus;
+    }
+    /**
+     * HTTP request data that is related to a reported error.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineLoggingHttpRequestContext {
+        /**
+         * The HTTP response status code for the request.
+         */
+        responseStatusCode?: number | null;
+    }
+    /**
+     * The error payload that is populated on LRO import APIs, including the following: * `google.cloud.discoveryengine.v1alpha.DocumentService.ImportDocuments` * `google.cloud.discoveryengine.v1alpha.UserEventService.ImportUserEvents`
+     */
+    export interface Schema$GoogleCloudDiscoveryengineLoggingImportErrorContext {
+        /**
+         * The detailed content which caused the error on importing a document.
+         */
+        document?: string | null;
+        /**
+         * Google Cloud Storage file path of the import source. Can be set for batch operation error.
+         */
+        gcsPath?: string | null;
+        /**
+         * Line number of the content in file. Should be empty for permission or batch operation error.
+         */
+        lineNumber?: string | null;
+        /**
+         * The operation resource name of the LRO.
+         */
+        operation?: string | null;
+        /**
+         * The detailed content which caused the error on importing a user event.
+         */
+        userEvent?: string | null;
+    }
+    /**
+     * Describes a running service that sends errors.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineLoggingServiceContext {
+        /**
+         * An identifier of the service—for example, `discoveryengine.googleapis.com`.
+         */
+        service?: string | null;
+    }
+    /**
+     * Indicates a location in the source code of the service for which errors are reported.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineLoggingSourceLocation {
+        /**
+         * Human-readable name of a function or method—for example, `google.cloud.discoveryengine.v1alpha.RecommendationService.Recommend`.
+         */
+        functionName?: string | null;
+    }
+    /**
+     * Access Control Configuration.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAclConfig {
+        /**
+         * Identity provider config.
+         */
+        idpConfig?: Schema$GoogleCloudDiscoveryengineV1alphaIdpConfig;
+        /**
+         * Immutable. The full resource name of the acl configuration. Format: `projects/{project\}/locations/{location\}/aclConfig`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+    }
+    /**
+     * AlloyDB source import data from.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAlloyDbSource {
+        /**
+         * Required. The AlloyDB cluster to copy the data from with a length limit of 256 characters.
+         */
+        clusterId?: string | null;
+        /**
+         * Required. The AlloyDB database to copy the data from with a length limit of 256 characters.
+         */
+        databaseId?: string | null;
+        /**
+         * Intermediate Cloud Storage directory used for the import with a length limit of 2,000 characters. Can be specified if one wants to have the AlloyDB export to a specific Cloud Storage directory. Ensure that the AlloyDB service account has the necessary Cloud Storage Admin permissions to access the specified Cloud Storage directory.
+         */
+        gcsStagingDir?: string | null;
+        /**
+         * Required. The AlloyDB location to copy the data from with a length limit of 256 characters.
+         */
+        locationId?: string | null;
+        /**
+         * The project ID that contains the AlloyDB source. Has a length limit of 128 characters. If not specified, inherits the project ID from the parent request.
+         */
+        projectId?: string | null;
+        /**
+         * Required. The AlloyDB table to copy the data from with a length limit of 256 characters.
+         */
+        tableId?: string | null;
+    }
+    /**
+     * Defines an answer.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswer {
+        /**
+         * Additional answer-skipped reasons. This provides the reason for ignored cases. If nothing is skipped, this field is not set.
+         */
+        answerSkippedReasons?: string[] | null;
+        /**
+         * The textual answer.
+         */
+        answerText?: string | null;
+        /**
+         * Citations.
+         */
+        citations?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerCitation[];
+        /**
+         * Output only. Answer completed timestamp.
+         */
+        completeTime?: string | null;
+        /**
+         * Output only. Answer creation timestamp.
+         */
+        createTime?: string | null;
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/engines/{engine\}/sessions/x/answers/x`
+         */
+        name?: string | null;
+        /**
+         * Query understanding information.
+         */
+        queryUnderstandingInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryUnderstandingInfo;
+        /**
+         * References.
+         */
+        references?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerReference[];
+        /**
+         * Suggested related questions.
+         */
+        relatedQuestions?: string[] | null;
+        /**
+         * The state of the answer generation.
+         */
+        state?: string | null;
+        /**
+         * Answer generation steps.
+         */
+        steps?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerStep[];
+    }
+    /**
+     * Citation info for a segment.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerCitation {
+        /**
+         * End of the attributed segment, exclusive.
+         */
+        endIndex?: string | null;
+        /**
+         * Citation sources for the attributed segment.
+         */
+        sources?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerCitationSource[];
+        /**
+         * Index indicates the start of the segment, measured in bytes (UTF-8 unicode).
+         */
+        startIndex?: string | null;
+    }
+    /**
+     * Citation source.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerCitationSource {
+        /**
+         * ID of the citation source.
+         */
+        referenceId?: string | null;
+    }
+    /**
+     * Request message for ConversationalSearchService.AnswerQuery method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequest {
+        /**
+         * Answer generation specification.
+         */
+        answerGenerationSpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestAnswerGenerationSpec;
+        /**
+         * Asynchronous mode control. If enabled, the response will be returned with answer/session resource name without final answer. The API users need to do the polling to get the latest status of answer/session by calling ConversationalSearchService.GetAnswer or ConversationalSearchService.GetSession method.
+         */
+        asynchronousMode?: boolean | null;
+        /**
+         * Required. Current user query.
+         */
+        query?: Schema$GoogleCloudDiscoveryengineV1alphaQuery;
+        /**
+         * Query understanding specification.
+         */
+        queryUnderstandingSpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestQueryUnderstandingSpec;
+        /**
+         * Related questions specification.
+         */
+        relatedQuestionsSpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestRelatedQuestionsSpec;
+        /**
+         * Model specification.
+         */
+        safetySpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSafetySpec;
+        /**
+         * Search specification.
+         */
+        searchSpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpec;
+        /**
+         * The session resource name. Not required. When session field is not set, the API is in sessionless mode. We support auto session mode: users can use the wildcard symbol `-` as session ID. A new ID will be automatically generated and assigned.
+         */
+        session?: string | null;
+        /**
+         * The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Google Cloud Document](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
+         */
+        userLabels?: {
+            [key: string]: string;
+        } | null;
+        /**
+         * A unique identifier for tracking visitors. For example, this could be implemented with an HTTP cookie, which should be able to uniquely identify a visitor on a single device. This unique identifier should not change if the visitor logs in or out of the website. This field should NOT have a fixed value such as `unknown_visitor`. The field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        userPseudoId?: string | null;
+    }
+    /**
+     * Answer generation specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestAnswerGenerationSpec {
+        /**
+         * Language code for Answer. Use language tags defined by [BCP47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt). Note: This is an experimental feature.
+         */
+        answerLanguageCode?: string | null;
+        /**
+         * Specifies whether to filter out adversarial queries. The default value is `false`. Google employs search-query classification to detect adversarial queries. No answer is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output. If this field is set to `true`, we skip generating answers for adversarial queries and return fallback messages instead.
+         */
+        ignoreAdversarialQuery?: boolean | null;
+        /**
+         * Specifies whether to filter out queries that have low relevance. If this field is set to `false`, all search results are used regardless of relevance to generate answers. If set to `true` or unset, the behavior will be determined automatically by the service.
+         */
+        ignoreLowRelevantContent?: boolean | null;
+        /**
+         * Specifies whether to filter out queries that are not answer-seeking. The default value is `false`. Google employs search-query classification to detect answer-seeking queries. No answer is returned if the search query is classified as a non-answer seeking query. If this field is set to `true`, we skip generating answers for non-answer seeking queries and return fallback messages instead.
+         */
+        ignoreNonAnswerSeekingQuery?: boolean | null;
+        /**
+         * Specifies whether to include citation metadata in the answer. The default value is `false`.
+         */
+        includeCitations?: boolean | null;
+        /**
+         * Answer generation model specification.
+         */
+        modelSpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestAnswerGenerationSpecModelSpec;
+        /**
+         * Answer generation prompt specification.
+         */
+        promptSpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestAnswerGenerationSpecPromptSpec;
+    }
+    /**
+     * Answer Generation Model specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestAnswerGenerationSpecModelSpec {
+        /**
+         * Model version. If not set, it will use the default stable model. Allowed values are: stable, preview.
+         */
+        modelVersion?: string | null;
+    }
+    /**
+     * Answer generation prompt specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestAnswerGenerationSpecPromptSpec {
+        /**
+         * Customized preamble.
+         */
+        preamble?: string | null;
+    }
+    /**
+     * Query understanding specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestQueryUnderstandingSpec {
+        /**
+         * Query classification specification.
+         */
+        queryClassificationSpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestQueryUnderstandingSpecQueryClassificationSpec;
+        /**
+         * Query rephraser specification.
+         */
+        queryRephraserSpec?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestQueryUnderstandingSpecQueryRephraserSpec;
+    }
+    /**
+     * Query classification specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestQueryUnderstandingSpecQueryClassificationSpec {
+        /**
+         * Enabled query classification types.
+         */
+        types?: string[] | null;
+    }
+    /**
+     * Query rephraser specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestQueryUnderstandingSpecQueryRephraserSpec {
+        /**
+         * Disable query rephraser.
+         */
+        disable?: boolean | null;
+        /**
+         * Max rephrase steps. The max number is 5 steps. If not set or set to < 1, it will be set to 1 by default.
+         */
+        maxRephraseSteps?: number | null;
+    }
+    /**
+     * Related questions specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestRelatedQuestionsSpec {
+        /**
+         * Enable related questions feature if true.
+         */
+        enable?: boolean | null;
+    }
+    /**
+     * Safety specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSafetySpec {
+        /**
+         * Enable the safety filtering on the answer response. It is false by default.
+         */
+        enable?: boolean | null;
+    }
+    /**
+     * Search specification.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpec {
+        /**
+         * Search parameters.
+         */
+        searchParams?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchParams;
+        /**
+         * Search result list.
+         */
+        searchResultList?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultList;
+    }
+    /**
+     * Search parameters.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchParams {
+        /**
+         * Boost specification to boost certain documents in search results which may affect the answer query response. For more information on boosting, see [Boosting](https://cloud.google.com/retail/docs/boosting#boost)
+         */
+        boostSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpec;
+        /**
+         * Custom fine tuning configs.
+         */
+        customFineTuningSpec?: Schema$GoogleCloudDiscoveryengineV1alphaCustomFineTuningSpec;
+        /**
+         * Specs defining dataStores to filter on in a search call and configurations for those dataStores. This is only considered for engines with multiple dataStores use case. For single dataStore within an engine, they should use the specs at the top level.
+         */
+        dataStoreSpecs?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestDataStoreSpec[];
+        /**
+         * The filter syntax consists of an expression language for constructing a predicate from one or more fields of the documents being filtered. Filter expression is case-sensitive. This will be used to filter search results which may affect the Answer response. If this field is unrecognizable, an `INVALID_ARGUMENT` is returned. Filtering in Vertex AI Search is done by mapping the LHS filter key to a key property defined in the Vertex AI Search backend -- this mapping is defined by the customer in their schema. For example a media customers might have a field 'name' in their schema. In this case the filter would look like this: filter --\> name:'ANY("king kong")' For more information about filtering including syntax and filter operators, see [Filter](https://cloud.google.com/generative-ai-app-builder/docs/filter-search-metadata)
+         */
+        filter?: string | null;
+        /**
+         * Number of search results to return. The default value is 10.
+         */
+        maxReturnResults?: number | null;
+        /**
+         * The order in which documents are returned. Documents can be ordered by a field in an Document object. Leave it unset if ordered by relevance. `order_by` expression is case-sensitive. For more information on ordering, see [Ordering](https://cloud.google.com/retail/docs/filter-and-order#order) If this field is unrecognizable, an `INVALID_ARGUMENT` is returned.
+         */
+        orderBy?: string | null;
+        /**
+         * Specifies the search result mode. If unspecified, the search result mode defaults to `DOCUMENTS`. See [parse and chunk documents](https://cloud.google.com/generative-ai-app-builder/docs/parse-chunk-documents)
+         */
+        searchResultMode?: string | null;
+    }
+    /**
+     * Search result list.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultList {
+        /**
+         * Search results.
+         */
+        searchResults?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResult[];
+    }
+    /**
+     * Search result.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResult {
+        /**
+         * Chunk information.
+         */
+        chunkInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultChunkInfo;
+        /**
+         * Unstructured document information.
+         */
+        unstructuredDocumentInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfo;
+    }
+    /**
+     * Chunk information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultChunkInfo {
+        /**
+         * Chunk resource name.
+         */
+        chunk?: string | null;
+        /**
+         * Chunk textual content.
+         */
+        content?: string | null;
+    }
+    /**
+     * Unstructured document information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfo {
+        /**
+         * Document resource name.
+         */
+        document?: string | null;
+        /**
+         * List of document contexts.
+         */
+        documentContexts?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfoDocumentContext[];
+        /**
+         * List of extractive answers.
+         */
+        extractiveAnswers?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfoExtractiveAnswer[];
+        /**
+         * List of extractive segments.
+         */
+        extractiveSegments?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfoExtractiveSegment[];
+        /**
+         * Title.
+         */
+        title?: string | null;
+        /**
+         * URI for the document.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Document context.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfoDocumentContext {
+        /**
+         * Document content.
+         */
+        content?: string | null;
+        /**
+         * Page identifier.
+         */
+        pageIdentifier?: string | null;
+    }
+    /**
+     * Extractive answer. [Guide](https://cloud.google.com/generative-ai-app-builder/docs/snippets#get-answers)
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfoExtractiveAnswer {
+        /**
+         * Extractive answer content.
+         */
+        content?: string | null;
+        /**
+         * Page identifier.
+         */
+        pageIdentifier?: string | null;
+    }
+    /**
+     * Extractive segment. [Guide](https://cloud.google.com/generative-ai-app-builder/docs/snippets#extractive-segments)
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfoExtractiveSegment {
+        /**
+         * Extractive segment content.
+         */
+        content?: string | null;
+        /**
+         * Page identifier.
+         */
+        pageIdentifier?: string | null;
+    }
+    /**
+     * Response message for ConversationalSearchService.AnswerQuery method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse {
+        /**
+         * Answer resource object. If AnswerQueryRequest.QueryUnderstandingSpec.QueryRephraserSpec.max_rephrase_steps is greater than 1, use Answer.name to fetch answer information using ConversationalSearchService.GetAnswer API.
+         */
+        answer?: Schema$GoogleCloudDiscoveryengineV1alphaAnswer;
+        /**
+         * A global unique ID used for logging.
+         */
+        answerQueryToken?: string | null;
+        /**
+         * Session resource object. It will be only available when session field is set and valid in the AnswerQueryRequest request.
+         */
+        session?: Schema$GoogleCloudDiscoveryengineV1alphaSession;
+    }
+    /**
+     * Query understanding information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryUnderstandingInfo {
+        /**
+         * Query classification information.
+         */
+        queryClassificationInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryUnderstandingInfoQueryClassificationInfo[];
+    }
+    /**
+     * Query classification information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryUnderstandingInfoQueryClassificationInfo {
+        /**
+         * Classification output.
+         */
+        positive?: boolean | null;
+        /**
+         * Query classification type.
+         */
+        type?: string | null;
+    }
+    /**
+     * Reference.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerReference {
+        /**
+         * Chunk information.
+         */
+        chunkInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceChunkInfo;
+        /**
+         * Structured document information.
+         */
+        structuredDocumentInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceStructuredDocumentInfo;
+        /**
+         * Unstructured document information.
+         */
+        unstructuredDocumentInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceUnstructuredDocumentInfo;
+    }
+    /**
+     * Chunk information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceChunkInfo {
+        /**
+         * Chunk resource name.
+         */
+        chunk?: string | null;
+        /**
+         * Chunk textual content.
+         */
+        content?: string | null;
+        /**
+         * Document metadata.
+         */
+        documentMetadata?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceChunkInfoDocumentMetadata;
+        /**
+         * The relevance of the chunk for a given query. Values range from 0.0 (completely irrelevant) to 1.0 (completely relevant). This value is for informational purpose only. It may change for the same query and chunk at any time due to a model retraining or change in implementation.
+         */
+        relevanceScore?: number | null;
+    }
+    /**
+     * Document metadata.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceChunkInfoDocumentMetadata {
+        /**
+         * Document resource name.
+         */
+        document?: string | null;
+        /**
+         * Page identifier.
+         */
+        pageIdentifier?: string | null;
+        /**
+         * The structured JSON metadata for the document. It is populated from the struct data from the Chunk in search result.
+         */
+        structData?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Title.
+         */
+        title?: string | null;
+        /**
+         * URI for the document.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Structured search information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceStructuredDocumentInfo {
+        /**
+         * Document resource name.
+         */
+        document?: string | null;
+        /**
+         * Structured search data.
+         */
+        structData?: {
+            [key: string]: any;
+        } | null;
+    }
+    /**
+     * Unstructured document information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceUnstructuredDocumentInfo {
+        /**
+         * List of cited chunk contents derived from document content.
+         */
+        chunkContents?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceUnstructuredDocumentInfoChunkContent[];
+        /**
+         * Document resource name.
+         */
+        document?: string | null;
+        /**
+         * The structured JSON metadata for the document. It is populated from the struct data from the Chunk in search result.
+         */
+        structData?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Title.
+         */
+        title?: string | null;
+        /**
+         * URI for the document.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Chunk content.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerReferenceUnstructuredDocumentInfoChunkContent {
+        /**
+         * Chunk textual content.
+         */
+        content?: string | null;
+        /**
+         * Page identifier.
+         */
+        pageIdentifier?: string | null;
+        /**
+         * The relevance of the chunk for a given query. Values range from 0.0 (completely irrelevant) to 1.0 (completely relevant). This value is for informational purpose only. It may change for the same query and chunk at any time due to a model retraining or change in implementation.
+         */
+        relevanceScore?: number | null;
+    }
+    /**
+     * Step information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerStep {
+        /**
+         * Actions.
+         */
+        actions?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepAction[];
+        /**
+         * The description of the step.
+         */
+        description?: string | null;
+        /**
+         * The state of the step.
+         */
+        state?: string | null;
+        /**
+         * The thought of the step.
+         */
+        thought?: string | null;
+    }
+    /**
+     * Action.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepAction {
+        /**
+         * Observation.
+         */
+        observation?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionObservation;
+        /**
+         * Search action.
+         */
+        searchAction?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionSearchAction;
+    }
+    /**
+     * Observation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionObservation {
+        /**
+         * Search results observed by the search action, it can be snippets info or chunk info, depending on the citation type set by the user.
+         */
+        searchResults?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionObservationSearchResult[];
+    }
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionObservationSearchResult {
+        /**
+         * If citation_type is CHUNK_LEVEL_CITATION and chunk mode is on, populate chunk info.
+         */
+        chunkInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionObservationSearchResultChunkInfo[];
+        /**
+         * Document resource name.
+         */
+        document?: string | null;
+        /**
+         * If citation_type is DOCUMENT_LEVEL_CITATION, populate document level snippets.
+         */
+        snippetInfo?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionObservationSearchResultSnippetInfo[];
+        /**
+         * Data representation. The structured JSON data for the document. It's populated from the struct data from the Document , or the Chunk in search result .
+         */
+        structData?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Title.
+         */
+        title?: string | null;
+        /**
+         * URI for the document.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Chunk information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionObservationSearchResultChunkInfo {
+        /**
+         * Chunk resource name.
+         */
+        chunk?: string | null;
+        /**
+         * Chunk textual content.
+         */
+        content?: string | null;
+        /**
+         * The relevance of the chunk for a given query. Values range from 0.0 (completely irrelevant) to 1.0 (completely relevant). This value is for informational purpose only. It may change for the same query and chunk at any time due to a model retraining or change in implementation.
+         */
+        relevanceScore?: number | null;
+    }
+    /**
+     * Snippet information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionObservationSearchResultSnippetInfo {
+        /**
+         * Snippet content.
+         */
+        snippet?: string | null;
+        /**
+         * Status of the snippet defined by the search team.
+         */
+        snippetStatus?: string | null;
+    }
+    /**
+     * Search action.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaAnswerStepActionSearchAction {
+        /**
+         * The query to search.
+         */
+        query?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.BatchCreateTargetSites operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBatchCreateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for SiteSearchEngineService.BatchCreateTargetSites method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBatchCreateTargetSitesRequest {
+        /**
+         * Required. The request message specifying the resources to create. A maximum of 20 TargetSites can be created in a batch.
+         */
+        requests?: Schema$GoogleCloudDiscoveryengineV1alphaCreateTargetSiteRequest[];
+    }
+    /**
+     * Response message for SiteSearchEngineService.BatchCreateTargetSites method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBatchCreateTargetSitesResponse {
+        /**
+         * TargetSites created.
+         */
+        targetSites?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSite[];
+    }
+    /**
+     * Response message for DocumentService.BatchGetDocumentsMetadata method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse {
+        /**
+         * The metadata of the Documents.
+         */
+        documentsMetadata?: Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponseDocumentMetadata[];
+    }
+    /**
+     * The metadata of a Document.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponseDocumentMetadata {
+        /**
+         * The data ingestion source of the Document. Allowed values are: * `batch`: Data ingested via Batch API, e.g., ImportDocuments. * `streaming` Data ingested via Streaming API, e.g., FHIR streaming.
+         */
+        dataIngestionSource?: string | null;
+        /**
+         * The timestamp of the last time the Document was last indexed.
+         */
+        lastRefreshedTime?: string | null;
+        /**
+         * The value of the matcher that was used to match the Document.
+         */
+        matcherValue?: Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponseDocumentMetadataMatcherValue;
+        /**
+         * The status of the document.
+         */
+        status?: string | null;
+    }
+    /**
+     * The value of the matcher that was used to match the Document.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponseDocumentMetadataMatcherValue {
+        /**
+         * Required. Format: projects/{project\}/locations/{location\}/datasets/{dataset\}/fhirStores/{fhir_store\}/fhir/{resource_type\}/{fhir_resource_id\}
+         */
+        fhirResource?: string | null;
+        /**
+         * If match by URI, the URI of the Document.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Request message for SiteSearchEngineService.BatchVerifyTargetSites method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBatchVerifyTargetSitesRequest {
+    }
+    /**
+     * BigQuery source import data from.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBigQuerySource {
+        /**
+         * The schema to use when parsing the data from the source. Supported values for user event imports: * `user_event` (default): One UserEvent per row. Supported values for document imports: * `document` (default): One Document format per row. Each document must have a valid Document.id and one of Document.json_data or Document.struct_data. * `custom`: One custom data per row in arbitrary format that conforms to the defined Schema of the data store. This can only be used by the GENERIC Data Store vertical.
+         */
+        dataSchema?: string | null;
+        /**
+         * Required. The BigQuery data set to copy the data from with a length limit of 1,024 characters.
+         */
+        datasetId?: string | null;
+        /**
+         * Intermediate Cloud Storage directory used for the import with a length limit of 2,000 characters. Can be specified if one wants to have the BigQuery export to a specific Cloud Storage directory.
+         */
+        gcsStagingDir?: string | null;
+        /**
+         * BigQuery time partitioned table's _PARTITIONDATE in YYYY-MM-DD format.
+         */
+        partitionDate?: Schema$GoogleTypeDate;
+        /**
+         * The project ID or the project number that contains the BigQuery source. Has a length limit of 128 characters. If not specified, inherits the project ID from the parent request.
+         */
+        projectId?: string | null;
+        /**
+         * Required. The BigQuery table to copy the data from with a length limit of 1,024 characters.
+         */
+        tableId?: string | null;
+    }
+    /**
+     * The Bigtable Options object that contains information to support the import.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBigtableOptions {
+        /**
+         * The mapping from family names to an object that contains column families level information for the given column family. If a family is not present in this map it will be ignored.
+         */
+        families?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1alphaBigtableOptionsBigtableColumnFamily;
+        } | null;
+        /**
+         * The field name used for saving row key value in the document. The name has to match the pattern `a-zA-Z0-9*`.
+         */
+        keyFieldName?: string | null;
+    }
+    /**
+     * The column of the Bigtable.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBigtableOptionsBigtableColumn {
+        /**
+         * The encoding mode of the values when the type is not `STRING`. Acceptable encoding values are: * `TEXT`: indicates values are alphanumeric text strings. * `BINARY`: indicates values are encoded using `HBase Bytes.toBytes` family of functions. This can be overridden for a specific column by listing that column in `columns` and specifying an encoding for it.
+         */
+        encoding?: string | null;
+        /**
+         * The field name to use for this column in the document. The name has to match the pattern `a-zA-Z0-9*`. If not set, it is parsed from the qualifier bytes with best effort. However, due to different naming patterns, field name collisions could happen, where parsing behavior is undefined.
+         */
+        fieldName?: string | null;
+        /**
+         * Required. Qualifier of the column. If it cannot be decoded with utf-8, use a base-64 encoded string instead.
+         */
+        qualifier?: string | null;
+        /**
+         * The type of values in this column family. The values are expected to be encoded using `HBase Bytes.toBytes` function when the encoding value is set to `BINARY`.
+         */
+        type?: string | null;
+    }
+    /**
+     * The column family of the Bigtable.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBigtableOptionsBigtableColumnFamily {
+        /**
+         * The list of objects that contains column level information for each column. If a column is not present in this list it will be ignored.
+         */
+        columns?: Schema$GoogleCloudDiscoveryengineV1alphaBigtableOptionsBigtableColumn[];
+        /**
+         * The encoding mode of the values when the type is not STRING. Acceptable encoding values are: * `TEXT`: indicates values are alphanumeric text strings. * `BINARY`: indicates values are encoded using `HBase Bytes.toBytes` family of functions. This can be overridden for a specific column by listing that column in `columns` and specifying an encoding for it.
+         */
+        encoding?: string | null;
+        /**
+         * The field name to use for this column family in the document. The name has to match the pattern `a-zA-Z0-9*`. If not set, it is parsed from the family name with best effort. However, due to different naming patterns, field name collisions could happen, where parsing behavior is undefined.
+         */
+        fieldName?: string | null;
+        /**
+         * The type of values in this column family. The values are expected to be encoded using `HBase Bytes.toBytes` function when the encoding value is set to `BINARY`.
+         */
+        type?: string | null;
+    }
+    /**
+     * The Cloud Bigtable source for importing data.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaBigtableSource {
+        /**
+         * Required. Bigtable options that contains information needed when parsing data into typed structures. For example, column type annotations.
+         */
+        bigtableOptions?: Schema$GoogleCloudDiscoveryengineV1alphaBigtableOptions;
+        /**
+         * Required. The instance ID of the Cloud Bigtable that needs to be imported.
+         */
+        instanceId?: string | null;
+        /**
+         * The project ID that contains the Bigtable source. Has a length limit of 128 characters. If not specified, inherits the project ID from the parent request.
+         */
+        projectId?: string | null;
+        /**
+         * Required. The table ID of the Cloud Bigtable that needs to be imported.
+         */
+        tableId?: string | null;
+    }
+    /**
+     * Request message for GroundedGenerationService.CheckGrounding method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingRequest {
+        /**
+         * Answer candidate to check. Can have a maximum length of 1024 characters.
+         */
+        answerCandidate?: string | null;
+        /**
+         * List of facts for the grounding check. We support up to 200 facts.
+         */
+        facts?: Schema$GoogleCloudDiscoveryengineV1alphaGroundingFact[];
+        /**
+         * Configuration of the grounding check.
+         */
+        groundingSpec?: Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingSpec;
+        /**
+         * The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Google Cloud Document](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
+         */
+        userLabels?: {
+            [key: string]: string;
+        } | null;
+    }
+    /**
+     * Response message for the GroundedGenerationService.CheckGrounding method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingResponse {
+        /**
+         * List of facts cited across all claims in the answer candidate. These are derived from the facts supplied in the request.
+         */
+        citedChunks?: Schema$GoogleCloudDiscoveryengineV1alphaFactChunk[];
+        /**
+         * Claim texts and citation info across all claims in the answer candidate.
+         */
+        claims?: Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingResponseClaim[];
+        /**
+         * The support score for the input answer candidate. Higher the score, higher is the fraction of claims that are supported by the provided facts. This is always set when a response is returned.
+         */
+        supportScore?: number | null;
+    }
+    /**
+     * Text and citation info for a claim in the answer candidate.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingResponseClaim {
+        /**
+         * A list of indices (into 'cited_chunks') specifying the citations associated with the claim. For instance [1,3,4] means that cited_chunks[1], cited_chunks[3], cited_chunks[4] are the facts cited supporting for the claim. A citation to a fact indicates that the claim is supported by the fact.
+         */
+        citationIndices?: number[] | null;
+        /**
+         * Text for the claim in the answer candidate. Always provided regardless of whether citations or anti-citations are found.
+         */
+        claimText?: string | null;
+        /**
+         * Position indicating the end of the claim in the answer candidate, exclusive.
+         */
+        endPos?: number | null;
+        /**
+         * Indicates that this claim required grounding check. When the system decided this claim doesn't require attribution/grounding check, this field will be set to false. In that case, no grounding check was done for the claim and therefore citation_indices, anti_citation_indices, and score should not be returned.
+         */
+        groundingCheckRequired?: boolean | null;
+        /**
+         * Position indicating the start of the claim in the answer candidate, measured in bytes.
+         */
+        startPos?: number | null;
+    }
+    /**
+     * Specification for the grounding check.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingSpec {
+        /**
+         * The threshold (in [0,1]) used for determining whether a fact must be cited for a claim in the answer candidate. Choosing a higher threshold will lead to fewer but very strong citations, while choosing a lower threshold may lead to more but somewhat weaker citations. If unset, the threshold will default to 0.6.
+         */
+        citationThreshold?: number | null;
+    }
+    /**
+     * Request for CheckRequirement method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementRequest {
+        /**
+         * The type specifying the requirement to check. The supported types are: * `discoveryengine.googleapis.com/media_recs/general/all/warning` * `discoveryengine.googleapis.com/media_recs/oyml/cvr/warning` * `discoveryengine.googleapis.com/media_recs/rfy/cvr/warning` * `discoveryengine.googleapis.com/media_recs/mlt/cvr/warning` * `discoveryengine.googleapis.com/media_recs/mp/cvr/warning` * `discoveryengine.googleapis.com/media_recs/oyml/wdps/warning` * `discoveryengine.googleapis.com/media_recs/rfy/wdps/warning` * `discoveryengine.googleapis.com/media_recs/mlt/wdps/warning`
+         */
+        requirementType?: string | null;
+        /**
+         * The type needed for the monitored resources: * `discoveryengine.googleapis.com/Branch`. * The labels needed for this resource: * `project`_`number` * `location`_`id` * `collection`_`id` * `datastore`_`id` * `branch`_`id` * `discoveryengine.googleapis.com/DataStore` * The labels needed for this resource: * `project`_`number` * `location`_`id` * `collection`_`id` * `datastore`_`id`
+         */
+        resources?: Schema$GoogleApiMonitoredResource[];
+    }
+    /**
+     * Response for the CheckRequirement method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementResponse {
+        /**
+         * Metric results.
+         */
+        metricResults?: Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementResponseMetricQueryResult[];
+        /**
+         * Timestamp of the oldest calculated metric (i.e. the most stale metric). Indicates that the `requirement_result` may not accurately reflect any Event and Product Catalog updates performed after this time.
+         */
+        oldestMetricTimestamp?: string | null;
+        /**
+         * Requirement definition.
+         */
+        requirement?: Schema$GoogleCloudDiscoveryengineV1alphaRequirement;
+        /**
+         * The condition for evaluating the requirement result.
+         */
+        requirementCondition?: Schema$GoogleTypeExpr;
+        /**
+         * Requirement result, e.g. pass or fail.
+         */
+        requirementResult?: string | null;
+    }
+    /**
+     * Metric result. The metric are in the requirement_condition.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementResponseMetricQueryResult {
+        /**
+         * Type identifier of the metric corresponding to this query result.
+         */
+        metricType?: string | null;
+        /**
+         * This metric query name is mapping to variables in the requirement_condition.
+         */
+        name?: string | null;
+        /**
+         * Time corresponding to when this metric value was calculated.
+         */
+        timestamp?: string | null;
+        /**
+         * The unit in which this metric is reported. Follows [The Unified Code for Units of Measure](https://unitsofmeasure.org/ucum.html) standard.
+         */
+        unit?: string | null;
+        /**
+         * Value of the metric query.
+         */
+        value?: Schema$GoogleMonitoringV3TypedValue;
+    }
+    /**
+     * Chunk captures all raw metadata information of items to be recommended or searched in the chunk mode.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaChunk {
+        /**
+         * Output only. Metadata of the current chunk.
+         */
+        chunkMetadata?: Schema$GoogleCloudDiscoveryengineV1alphaChunkChunkMetadata;
+        /**
+         * Content is a string from a document (parsed content).
+         */
+        content?: string | null;
+        /**
+         * Output only. This field is OUTPUT_ONLY. It contains derived data that are not in the original input document.
+         */
+        derivedStructData?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Metadata of the document from the current chunk.
+         */
+        documentMetadata?: Schema$GoogleCloudDiscoveryengineV1alphaChunkDocumentMetadata;
+        /**
+         * Unique chunk ID of the current chunk.
+         */
+        id?: string | null;
+        /**
+         * The full resource name of the chunk. Format: `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document_id\}/chunks/{chunk_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * Page span of the chunk.
+         */
+        pageSpan?: Schema$GoogleCloudDiscoveryengineV1alphaChunkPageSpan;
+        /**
+         * Output only. Represents the relevance score based on similarity. Higher score indicates higher chunk relevance. The score is in range [-1.0, 1.0]. Only populated on SearchService.SearchResponse.
+         */
+        relevanceScore?: number | null;
+    }
+    /**
+     * Metadata of the current chunk. This field is only populated on SearchService.Search API.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaChunkChunkMetadata {
+        /**
+         * The next chunks of the current chunk. The number is controlled by SearchRequest.ContentSearchSpec.ChunkSpec.num_next_chunks. This field is only populated on SearchService.Search API.
+         */
+        nextChunks?: Schema$GoogleCloudDiscoveryengineV1alphaChunk[];
+        /**
+         * The previous chunks of the current chunk. The number is controlled by SearchRequest.ContentSearchSpec.ChunkSpec.num_previous_chunks. This field is only populated on SearchService.Search API.
+         */
+        previousChunks?: Schema$GoogleCloudDiscoveryengineV1alphaChunk[];
+    }
+    /**
+     * Document metadata contains the information of the document of the current chunk.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaChunkDocumentMetadata {
+        /**
+         * Data representation. The structured JSON data for the document. It should conform to the registered Schema or an `INVALID_ARGUMENT` error is thrown.
+         */
+        structData?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Title of the document.
+         */
+        title?: string | null;
+        /**
+         * Uri of the document.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Page span of the chunk.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaChunkPageSpan {
+        /**
+         * The end page of the chunk.
+         */
+        pageEnd?: number | null;
+        /**
+         * The start page of the chunk.
+         */
+        pageStart?: number | null;
+    }
+    /**
+     * Cloud SQL source import data from.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCloudSqlSource {
+        /**
+         * Required. The Cloud SQL database to copy the data from with a length limit of 256 characters.
+         */
+        databaseId?: string | null;
+        /**
+         * Intermediate Cloud Storage directory used for the import with a length limit of 2,000 characters. Can be specified if one wants to have the Cloud SQL export to a specific Cloud Storage directory. Ensure that the Cloud SQL service account has the necessary Cloud Storage Admin permissions to access the specified Cloud Storage directory.
+         */
+        gcsStagingDir?: string | null;
+        /**
+         * Required. The Cloud SQL instance to copy the data from with a length limit of 256 characters.
+         */
+        instanceId?: string | null;
+        /**
+         * Option for serverless export. Enabling this option will incur additional cost. More info can be found [here](https://cloud.google.com/sql/pricing#serverless).
+         */
+        offload?: boolean | null;
+        /**
+         * The project ID that contains the Cloud SQL source. Has a length limit of 128 characters. If not specified, inherits the project ID from the parent request.
+         */
+        projectId?: string | null;
+        /**
+         * Required. The Cloud SQL table to copy the data from with a length limit of 256 characters.
+         */
+        tableId?: string | null;
+    }
+    /**
+     * Response message for CompletionService.CompleteQuery method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse {
+        /**
+         * Results of the matched query suggestions. The result list is ordered and the first result is a top suggestion.
+         */
+        querySuggestions?: Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponseQuerySuggestion[];
+        /**
+         * True if the returned suggestions are all tail suggestions. For tail matching to be triggered, include_tail_suggestions in the request must be true and there must be no suggestions that match the full query.
+         */
+        tailMatchTriggered?: boolean | null;
+    }
+    /**
+     * Suggestions as search queries.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponseQuerySuggestion {
+        /**
+         * The unique document field paths that serve as the source of this suggestion if it was generated from completable fields. This field is only populated for the document-completable model.
+         */
+        completableFieldPaths?: string[] | null;
+        /**
+         * The suggestion for the query.
+         */
+        suggestion?: string | null;
+    }
+    /**
+     * Detailed completion information including completion attribution token and clicked completion info.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCompletionInfo {
+        /**
+         * End user selected CompleteQueryResponse.QuerySuggestion.suggestion position, starting from 0.
+         */
+        selectedPosition?: number | null;
+        /**
+         * End user selected CompleteQueryResponse.QuerySuggestion.suggestion.
+         */
+        selectedSuggestion?: string | null;
+    }
+    /**
+     * Autocomplete suggestions that are imported from Customer.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCompletionSuggestion {
+        /**
+         * Alternative matching phrases for this suggestion.
+         */
+        alternativePhrases?: string[] | null;
+        /**
+         * Frequency of this suggestion. Will be used to rank suggestions when score is not available.
+         */
+        frequency?: string | null;
+        /**
+         * Global score of this suggestion. Control how this suggestion would be scored / ranked.
+         */
+        globalScore?: number | null;
+        /**
+         * If two suggestions have the same groupId, they will not be returned together. Instead the one ranked higher will be returned. This can be used to deduplicate semantically identical suggestions.
+         */
+        groupId?: string | null;
+        /**
+         * The score of this suggestion within its group.
+         */
+        groupScore?: number | null;
+        /**
+         * BCP-47 language code of this suggestion.
+         */
+        languageCode?: string | null;
+        /**
+         * Required. The suggestion text.
+         */
+        suggestion?: string | null;
+    }
+    /**
+     * Defines circumstances to be checked before allowing a behavior
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCondition {
+        /**
+         * Range of time(s) specifying when condition is active. Maximum of 10 time ranges.
+         */
+        activeTimeRange?: Schema$GoogleCloudDiscoveryengineV1alphaConditionTimeRange[];
+        /**
+         * Search only A list of terms to match the query on. Maximum of 10 query terms.
+         */
+        queryTerms?: Schema$GoogleCloudDiscoveryengineV1alphaConditionQueryTerm[];
+    }
+    /**
+     * Matcher for search request query
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaConditionQueryTerm {
+        /**
+         * Whether the search query needs to exactly match the query term.
+         */
+        fullMatch?: boolean | null;
+        /**
+         * The specific query value to match against Must be lowercase, must be UTF-8. Can have at most 3 space separated terms if full_match is true. Cannot be an empty string. Maximum length of 5000 characters.
+         */
+        value?: string | null;
+    }
+    /**
+     * Used for time-dependent conditions.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaConditionTimeRange {
+        /**
+         * End of time range. Range is inclusive. Must be in the future.
+         */
+        endTime?: string | null;
+        /**
+         * Start of time range. Range is inclusive.
+         */
+        startTime?: string | null;
+    }
+    /**
+     * Defines a conditioned behavior to employ during serving. Must be attached to a ServingConfig to be considered at serving time. Permitted actions dependent on `SolutionType`.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaControl {
+        /**
+         * Output only. List of all ServingConfig IDs this control is attached to. May take up to 10 minutes to update after changes.
+         */
+        associatedServingConfigIds?: string[] | null;
+        /**
+         * Defines a boost-type control
+         */
+        boostAction?: Schema$GoogleCloudDiscoveryengineV1alphaControlBoostAction;
+        /**
+         * Determines when the associated action will trigger. Omit to always apply the action. Currently only a single condition may be specified. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        conditions?: Schema$GoogleCloudDiscoveryengineV1alphaCondition[];
+        /**
+         * Required. Human readable name. The identifier used in UI views. Must be UTF-8 encoded string. Length limit is 128 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        displayName?: string | null;
+        /**
+         * Defines a filter-type control Currently not supported by Recommendation
+         */
+        filterAction?: Schema$GoogleCloudDiscoveryengineV1alphaControlFilterAction;
+        /**
+         * Immutable. Fully qualified name `projects/x/locations/global/dataStore/x/controls/x`
+         */
+        name?: string | null;
+        /**
+         * Defines a redirect-type control.
+         */
+        redirectAction?: Schema$GoogleCloudDiscoveryengineV1alphaControlRedirectAction;
+        /**
+         * Required. Immutable. What solution the control belongs to. Must be compatible with vertical of resource. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        solutionType?: string | null;
+        /**
+         * Treats a group of terms as synonyms of one another.
+         */
+        synonymsAction?: Schema$GoogleCloudDiscoveryengineV1alphaControlSynonymsAction;
+        /**
+         * Specifies the use case for the control. Affects what condition fields can be set. Only applies to SOLUTION_TYPE_SEARCH. Currently only allow one use case per control. Must be set when solution_type is SolutionType.SOLUTION_TYPE_SEARCH.
+         */
+        useCases?: string[] | null;
+    }
+    /**
+     * Adjusts order of products in returned list.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaControlBoostAction {
+        /**
+         * Required. Strength of the boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0 (No-op).
+         */
+        boost?: number | null;
+        /**
+         * Required. Specifies which data store's documents can be boosted by this control. Full data store name e.g. projects/123/locations/global/collections/default_collection/dataStores/default_data_store
+         */
+        dataStore?: string | null;
+        /**
+         * Required. Specifies which products to apply the boost to. If no filter is provided all products will be boosted (No-op). Syntax documentation: https://cloud.google.com/retail/docs/filter-and-order Maximum length is 5000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        filter?: string | null;
+    }
+    /**
+     * Specified which products may be included in results. Uses same filter as boost.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaControlFilterAction {
+        /**
+         * Required. Specifies which data store's documents can be filtered by this control. Full data store name e.g. projects/123/locations/global/collections/default_collection/dataStores/default_data_store
+         */
+        dataStore?: string | null;
+        /**
+         * Required. A filter to apply on the matching condition results. Required Syntax documentation: https://cloud.google.com/retail/docs/filter-and-order Maximum length is 5000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        filter?: string | null;
+    }
+    /**
+     * Redirects a shopper to the provided URI.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaControlRedirectAction {
+        /**
+         * Required. The URI to which the shopper will be redirected. Required. URI must have length equal or less than 2000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        redirectUri?: string | null;
+    }
+    /**
+     * Creates a set of terms that will act as synonyms of one another. Example: "happy" will also be considered as "glad", "glad" will also be considered as "happy".
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaControlSynonymsAction {
+        /**
+         * Defines a set of synonyms. Can specify up to 100 synonyms. Must specify at least 2 synonyms. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        synonyms?: string[] | null;
+    }
+    /**
+     * External conversation proto definition.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaConversation {
+        /**
+         * Output only. The time the conversation finished.
+         */
+        endTime?: string | null;
+        /**
+         * Conversation messages.
+         */
+        messages?: Schema$GoogleCloudDiscoveryengineV1alphaConversationMessage[];
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/dataStore/x/conversations/x` or `projects/{project\}/locations/global/collections/{collection\}/engines/x/conversations/x`.
+         */
+        name?: string | null;
+        /**
+         * Output only. The time the conversation started.
+         */
+        startTime?: string | null;
+        /**
+         * The state of the Conversation.
+         */
+        state?: string | null;
+        /**
+         * A unique identifier for tracking users.
+         */
+        userPseudoId?: string | null;
+    }
+    /**
+     * Defines context of the conversation
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaConversationContext {
+        /**
+         * The current active document the user opened. It contains the document resource reference.
+         */
+        activeDocument?: string | null;
+        /**
+         * The current list of documents the user is seeing. It contains the document resource references.
+         */
+        contextDocuments?: string[] | null;
+    }
+    /**
+     * Defines a conversation message.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaConversationMessage {
+        /**
+         * Output only. Message creation timestamp.
+         */
+        createTime?: string | null;
+        /**
+         * Search reply.
+         */
+        reply?: Schema$GoogleCloudDiscoveryengineV1alphaReply;
+        /**
+         * User text input.
+         */
+        userInput?: Schema$GoogleCloudDiscoveryengineV1alphaTextInput;
+    }
+    /**
+     * Request message for ConversationalSearchService.ConverseConversation method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationRequest {
+        /**
+         * Boost specification to boost certain documents in search results which may affect the converse response. For more information on boosting, see [Boosting](https://cloud.google.com/retail/docs/boosting#boost)
+         */
+        boostSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpec;
+        /**
+         * The conversation to be used by auto session only. The name field will be ignored as we automatically assign new name for the conversation in auto session.
+         */
+        conversation?: Schema$GoogleCloudDiscoveryengineV1alphaConversation;
+        /**
+         * The filter syntax consists of an expression language for constructing a predicate from one or more fields of the documents being filtered. Filter expression is case-sensitive. This will be used to filter search results which may affect the summary response. If this field is unrecognizable, an `INVALID_ARGUMENT` is returned. Filtering in Vertex AI Search is done by mapping the LHS filter key to a key property defined in the Vertex AI Search backend -- this mapping is defined by the customer in their schema. For example a media customer might have a field 'name' in their schema. In this case the filter would look like this: filter --\> name:'ANY("king kong")' For more information about filtering including syntax and filter operators, see [Filter](https://cloud.google.com/generative-ai-app-builder/docs/filter-search-metadata)
+         */
+        filter?: string | null;
+        /**
+         * Required. Current user input.
+         */
+        query?: Schema$GoogleCloudDiscoveryengineV1alphaTextInput;
+        /**
+         * Whether to turn on safe search.
+         */
+        safeSearch?: boolean | null;
+        /**
+         * The resource name of the Serving Config to use. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/servingConfigs/{serving_config_id\}` If this is not set, the default serving config will be used.
+         */
+        servingConfig?: string | null;
+        /**
+         * A specification for configuring the summary returned in the response.
+         */
+        summarySpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSummarySpec;
+        /**
+         * The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Google Cloud Document](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
+         */
+        userLabels?: {
+            [key: string]: string;
+        } | null;
+    }
+    /**
+     * Response message for ConversationalSearchService.ConverseConversation method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse {
+        /**
+         * Updated conversation including the answer.
+         */
+        conversation?: Schema$GoogleCloudDiscoveryengineV1alphaConversation;
+        /**
+         * Suggested related questions.
+         */
+        relatedQuestions?: string[] | null;
+        /**
+         * Answer to the current query.
+         */
+        reply?: Schema$GoogleCloudDiscoveryengineV1alphaReply;
+        /**
+         * Search Results.
+         */
+        searchResults?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSearchResult[];
+    }
+    /**
+     * Metadata related to the progress of the DataStoreService.CreateDataStore operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCreateDataStoreMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the EngineService.CreateEngine operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCreateEngineMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata for EvaluationService.CreateEvaluation method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCreateEvaluationMetadata {
+    }
+    /**
+     * Metadata for Create Schema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCreateSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.CreateTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCreateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for SiteSearchEngineService.CreateTargetSite method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCreateTargetSiteRequest {
+        /**
+         * Required. Parent resource name of TargetSite, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`.
+         */
+        parent?: string | null;
+        /**
+         * Required. The TargetSite to create.
+         */
+        targetSite?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSite;
+    }
+    /**
+     * A custom attribute that is not explicitly modeled in a resource, e.g. UserEvent.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCustomAttribute {
+        /**
+         * The numerical values of this custom attribute. For example, `[2.3, 15.4]` when the key is "lengths_cm". Exactly one of CustomAttribute.text or CustomAttribute.numbers should be set. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        numbers?: number[] | null;
+        /**
+         * The textual values of this custom attribute. For example, `["yellow", "green"]` when the key is "color". Empty string is not allowed. Otherwise, an `INVALID_ARGUMENT` error is returned. Exactly one of CustomAttribute.text or CustomAttribute.numbers should be set. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        text?: string[] | null;
+    }
+    /**
+     * Defines custom fine tuning spec.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCustomFineTuningSpec {
+        /**
+         * Whether or not to enable and include custom fine tuned search adaptor model.
+         */
+        enableSearchAdaptor?: boolean | null;
+    }
+    /**
+     * Metadata that describes a custom tuned model.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaCustomTuningModel {
+        /**
+         * Timestamp the Model was created at.
+         */
+        createTime?: string | null;
+        /**
+         * The display name of the model.
+         */
+        displayName?: string | null;
+        /**
+         * The metrics of the trained model.
+         */
+        metrics?: {
+            [key: string]: number;
+        } | null;
+        /**
+         * The state that the model is in (e.g.`TRAINING` or `TRAINING_FAILED`).
+         */
+        modelState?: string | null;
+        /**
+         * The version of the model.
+         */
+        modelVersion?: string | null;
+        /**
+         * Required. The fully qualified resource name of the model. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/customTuningModels/{custom_tuning_model\}` model must be an alpha-numerical string with limit of 40 characters.
+         */
+        name?: string | null;
+        /**
+         * Timestamp the model training was initiated.
+         */
+        trainingStartTime?: string | null;
+    }
+    /**
+     * DataStore captures global settings and configs at the DataStore level.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDataStore {
+        /**
+         * Immutable. Whether data in the DataStore has ACL information. If set to `true`, the source data must have ACL. ACL will be ingested when data is ingested by DocumentService.ImportDocuments methods. When ACL is enabled for the DataStore, Document can't be accessed by calling DocumentService.GetDocument or DocumentService.ListDocuments. Currently ACL is only supported in `GENERIC` industry vertical with non-`PUBLIC_WEBSITE` content config.
+         */
+        aclEnabled?: boolean | null;
+        /**
+         * Immutable. The content config of the data store. If this field is unset, the server behavior defaults to ContentConfig.NO_CONTENT.
+         */
+        contentConfig?: string | null;
+        /**
+         * Output only. Timestamp the DataStore was created at.
+         */
+        createTime?: string | null;
+        /**
+         * Output only. The id of the default Schema asscociated to this data store.
+         */
+        defaultSchemaId?: string | null;
+        /**
+         * Required. The data store display name. This field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        displayName?: string | null;
+        /**
+         * Configuration for Document understanding and enrichment.
+         */
+        documentProcessingConfig?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig;
+        /**
+         * Output only. Data store level identity provider config.
+         */
+        idpConfig?: Schema$GoogleCloudDiscoveryengineV1alphaIdpConfig;
+        /**
+         * Immutable. The industry vertical that the data store registers.
+         */
+        industryVertical?: string | null;
+        /**
+         * Language info for DataStore.
+         */
+        languageInfo?: Schema$GoogleCloudDiscoveryengineV1alphaLanguageInfo;
+        /**
+         * Immutable. The full resource name of the data store. Format: `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * The solutions that the data store enrolls. Available solutions for each industry_vertical: * `MEDIA`: `SOLUTION_TYPE_RECOMMENDATION` and `SOLUTION_TYPE_SEARCH`. * `SITE_SEARCH`: `SOLUTION_TYPE_SEARCH` is automatically enrolled. Other solutions cannot be enrolled.
+         */
+        solutionTypes?: string[] | null;
+        /**
+         * The start schema to use for this DataStore when provisioning it. If unset, a default vertical specialized schema will be used. This field is only used by CreateDataStore API, and will be ignored if used in other APIs. This field will be omitted from all API responses including CreateDataStore API. To retrieve a schema of a DataStore, use SchemaService.GetSchema API instead. The provided schema will be validated against certain rules on schema. Learn more from [this doc](https://cloud.google.com/generative-ai-app-builder/docs/provide-schema).
+         */
+        startingSchema?: Schema$GoogleCloudDiscoveryengineV1alphaSchema;
+        /**
+         * Config to store data store type configuration for workspace data. This must be set when DataStore.content_config is set as DataStore.ContentConfig.GOOGLE_WORKSPACE.
+         */
+        workspaceConfig?: Schema$GoogleCloudDiscoveryengineV1alphaWorkspaceConfig;
+    }
+    /**
+     * Metadata related to the progress of the DataStoreService.DeleteDataStore operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDeleteDataStoreMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the EngineService.DeleteEngine operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDeleteEngineMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata for DeleteSchema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDeleteSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.DeleteTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDeleteTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.DisableAdvancedSiteSearch operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDisableAdvancedSiteSearchMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for SiteSearchEngineService.DisableAdvancedSiteSearch method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDisableAdvancedSiteSearchRequest {
+    }
+    /**
+     * Response message for SiteSearchEngineService.DisableAdvancedSiteSearch method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDisableAdvancedSiteSearchResponse {
+    }
+    /**
+     * Document captures all raw metadata information of items to be recommended or searched.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocument {
+        /**
+         * Access control information for the document.
+         */
+        aclInfo?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentAclInfo;
+        /**
+         * The unstructured data linked to this document. Content must be set if this document is under a `CONTENT_REQUIRED` data store.
+         */
+        content?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentContent;
+        /**
+         * Output only. This field is OUTPUT_ONLY. It contains derived data that are not in the original input document.
+         */
+        derivedStructData?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Immutable. The identifier of the document. Id should conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters.
+         */
+        id?: string | null;
+        /**
+         * Output only. The last time the document was indexed. If this field is set, the document could be returned in search results. This field is OUTPUT_ONLY. If this field is not populated, it means the document has never been indexed.
+         */
+        indexTime?: string | null;
+        /**
+         * The JSON string representation of the document. It should conform to the registered Schema or an `INVALID_ARGUMENT` error is thrown.
+         */
+        jsonData?: string | null;
+        /**
+         * Immutable. The full resource name of the document. Format: `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * The identifier of the parent document. Currently supports at most two level document hierarchy. Id should conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters.
+         */
+        parentDocumentId?: string | null;
+        /**
+         * The identifier of the schema located in the same data store.
+         */
+        schemaId?: string | null;
+        /**
+         * The structured JSON data for the document. It should conform to the registered Schema or an `INVALID_ARGUMENT` error is thrown.
+         */
+        structData?: {
+            [key: string]: any;
+        } | null;
+    }
+    /**
+     * ACL Information of the Document.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentAclInfo {
+        /**
+         * Readers of the document.
+         */
+        readers?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentAclInfoAccessRestriction[];
+    }
+    /**
+     * AclRestriction to model complex inheritance restrictions. Example: Modeling a "Both Permit" inheritance, where to access a child document, user needs to have access to parent document. Document Hierarchy - Space_S --\> Page_P. Readers: Space_S: group_1, user_1 Page_P: group_2, group_3, user_2 Space_S ACL Restriction - { "acl_info": { "readers": [ { "principals": [ { "group_id": "group_1" \}, { "user_id": "user_1" \} ] \} ] \} \} Page_P ACL Restriction. { "acl_info": { "readers": [ { "principals": [ { "group_id": "group_2" \}, { "group_id": "group_3" \}, { "user_id": "user_2" \} ], \}, { "principals": [ { "group_id": "group_1" \}, { "user_id": "user_1" \} ], \} ] \} \}
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentAclInfoAccessRestriction {
+        /**
+         * All users within the Identity Provider.
+         */
+        idpWide?: boolean | null;
+        /**
+         * List of principals.
+         */
+        principals?: Schema$GoogleCloudDiscoveryengineV1alphaPrincipal[];
+    }
+    /**
+     * Unstructured data linked to this document.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentContent {
+        /**
+         * The MIME type of the content. Supported types: * `application/pdf` (PDF, only native PDFs are supported for now) * `text/html` (HTML) * `application/vnd.openxmlformats-officedocument.wordprocessingml.document` (DOCX) * `application/vnd.openxmlformats-officedocument.presentationml.presentation` (PPTX) * `text/plain` (TXT) See https://www.iana.org/assignments/media-types/media-types.xhtml.
+         */
+        mimeType?: string | null;
+        /**
+         * The content represented as a stream of bytes. The maximum length is 1,000,000 bytes (1 MB / ~0.95 MiB). Note: As with all `bytes` fields, this field is represented as pure binary in Protocol Buffers and base64-encoded string in JSON. For example, `abc123!?$*&()'-=@~` should be represented as `YWJjMTIzIT8kKiYoKSctPUB+` in JSON. See https://developers.google.com/protocol-buffers/docs/proto3#json.
+         */
+        rawBytes?: string | null;
+        /**
+         * The URI of the content. Only Cloud Storage URIs (e.g. `gs://bucket-name/path/to/file`) are supported. The maximum file size is 2.5 MB for text-based formats, 200 MB for other formats.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Detailed document information associated with a user event.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentInfo {
+        /**
+         * The Document resource ID.
+         */
+        id?: string | null;
+        /**
+         * Output only. Whether the referenced Document can be found in the data store.
+         */
+        joined?: boolean | null;
+        /**
+         * The Document resource full name, of the form: `projects/{project_id\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}/branches/{branch_id\}/documents/{document_id\}`
+         */
+        name?: string | null;
+        /**
+         * The promotion IDs associated with this Document. Currently, this field is restricted to at most one ID.
+         */
+        promotionIds?: string[] | null;
+        /**
+         * Quantity of the Document associated with the user event. Defaults to 1. For example, this field is 2 if two quantities of the same Document are involved in a `add-to-cart` event. Required for events of the following event types: * `add-to-cart` * `purchase`
+         */
+        quantity?: number | null;
+        /**
+         * The Document URI - only allowed for website data stores.
+         */
+        uri?: string | null;
+    }
+    /**
+     * A singleton resource of DataStore. It's empty when DataStore is created, which defaults to digital parser. The first call to DataStoreService.UpdateDocumentProcessingConfig method will initialize the config.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig {
+        /**
+         * Whether chunking mode is enabled.
+         */
+        chunkingConfig?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigChunkingConfig;
+        /**
+         * Configurations for default Document parser. If not specified, we will configure it as default DigitalParsingConfig, and the default parsing config will be applied to all file types for Document parsing.
+         */
+        defaultParsingConfig?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfig;
+        /**
+         * The full resource name of the Document Processing Config. Format: `projects/x/locations/x/collections/x/dataStores/x/documentProcessingConfig`.
+         */
+        name?: string | null;
+        /**
+         * Map from file type to override the default parsing configuration based on the file type. Supported keys: * `pdf`: Override parsing config for PDF files, either digital parsing, ocr parsing or layout parsing is supported. * `html`: Override parsing config for HTML files, only digital parsing and layout parsing are supported. * `docx`: Override parsing config for DOCX files, only digital parsing and layout parsing are supported. * `pptx`: Override parsing config for PPTX files, only digital parsing and layout parsing are supported. * `xlsx`: Override parsing config for XLSX files, only digital parsing and layout parsing are supported.
+         */
+        parsingConfigOverrides?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfig;
+        } | null;
+    }
+    /**
+     * Configuration for chunking config.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigChunkingConfig {
+        /**
+         * Configuration for the layout based chunking.
+         */
+        layoutBasedChunkingConfig?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig;
+    }
+    /**
+     * Configuration for the layout based chunking.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig {
+        /**
+         * The token size limit for each chunk. Supported values: 100-500 (inclusive). Default value: 500.
+         */
+        chunkSize?: number | null;
+        /**
+         * Whether to include appending different levels of headings to chunks from the middle of the document to prevent context loss. Default value: False.
+         */
+        includeAncestorHeadings?: boolean | null;
+    }
+    /**
+     * Related configurations applied to a specific type of document parser.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfig {
+        /**
+         * Configurations applied to digital parser.
+         */
+        digitalParsingConfig?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfigDigitalParsingConfig;
+        /**
+         * Configurations applied to layout parser.
+         */
+        layoutParsingConfig?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfigLayoutParsingConfig;
+        /**
+         * Configurations applied to OCR parser. Currently it only applies to PDFs.
+         */
+        ocrParsingConfig?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfigOcrParsingConfig;
+    }
+    /**
+     * The digital parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfigDigitalParsingConfig {
+    }
+    /**
+     * The layout parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfigLayoutParsingConfig {
+    }
+    /**
+     * The OCR parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfigParsingConfigOcrParsingConfig {
+        /**
+         * [DEPRECATED] This field is deprecated. To use the additional enhanced document elements processing, please switch to `layout_parsing_config`.
+         */
+        enhancedDocumentElements?: string[] | null;
+        /**
+         * If true, will use native text instead of OCR text on pages containing native text.
+         */
+        useNativeText?: boolean | null;
+    }
+    /**
+     * Double list.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaDoubleList {
+        /**
+         * Double values.
+         */
+        values?: number[] | null;
+    }
+    /**
+     * Defines embedding config, used for bring your own embeddings feature.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEmbeddingConfig {
+        /**
+         * Full field path in the schema mapped as embedding field.
+         */
+        fieldPath?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.EnableAdvancedSiteSearch operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEnableAdvancedSiteSearchMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for SiteSearchEngineService.EnableAdvancedSiteSearch method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEnableAdvancedSiteSearchRequest {
+    }
+    /**
+     * Response message for SiteSearchEngineService.EnableAdvancedSiteSearch method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEnableAdvancedSiteSearchResponse {
+    }
+    /**
+     * Metadata that describes the training and serving parameters of an Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngine {
+        /**
+         * Configurations for the Chat Engine. Only applicable if solution_type is SOLUTION_TYPE_CHAT.
+         */
+        chatEngineConfig?: Schema$GoogleCloudDiscoveryengineV1alphaEngineChatEngineConfig;
+        /**
+         * Output only. Additional information of the Chat Engine. Only applicable if solution_type is SOLUTION_TYPE_CHAT.
+         */
+        chatEngineMetadata?: Schema$GoogleCloudDiscoveryengineV1alphaEngineChatEngineMetadata;
+        /**
+         * Common config spec that specifies the metadata of the engine.
+         */
+        commonConfig?: Schema$GoogleCloudDiscoveryengineV1alphaEngineCommonConfig;
+        /**
+         * Output only. Timestamp the Recommendation Engine was created at.
+         */
+        createTime?: string | null;
+        /**
+         * The data stores associated with this engine. For SOLUTION_TYPE_SEARCH and SOLUTION_TYPE_RECOMMENDATION type of engines, they can only associate with at most one data store. If solution_type is SOLUTION_TYPE_CHAT, multiple DataStores in the same Collection can be associated here. Note that when used in CreateEngineRequest, one DataStore id must be provided as the system will use it for necessary initializations.
+         */
+        dataStoreIds?: string[] | null;
+        /**
+         * Required. The display name of the engine. Should be human readable. UTF-8 encoded string with limit of 1024 characters.
+         */
+        displayName?: string | null;
+        /**
+         * The industry vertical that the engine registers. The restriction of the Engine industry vertical is based on DataStore: If unspecified, default to `GENERIC`. Vertical on Engine has to match vertical of the DataStore linked to the engine.
+         */
+        industryVertical?: string | null;
+        /**
+         * Configurations for the Media Engine. Only applicable on the data stores with solution_type SOLUTION_TYPE_RECOMMENDATION and IndustryVertical.MEDIA vertical.
+         */
+        mediaRecommendationEngineConfig?: Schema$GoogleCloudDiscoveryengineV1alphaEngineMediaRecommendationEngineConfig;
+        /**
+         * Immutable. The fully qualified resource name of the engine. This field must be a UTF-8 encoded string with a length limit of 1024 characters. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}` engine should be 1-63 characters, and valid characters are /a-z0-9x/. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        name?: string | null;
+        /**
+         * Output only. Additional information of a recommendation engine. Only applicable if solution_type is SOLUTION_TYPE_RECOMMENDATION.
+         */
+        recommendationMetadata?: Schema$GoogleCloudDiscoveryengineV1alphaEngineRecommendationMetadata;
+        /**
+         * Configurations for the Search Engine. Only applicable if solution_type is SOLUTION_TYPE_SEARCH.
+         */
+        searchEngineConfig?: Schema$GoogleCloudDiscoveryengineV1alphaEngineSearchEngineConfig;
+        /**
+         * Additional config specs for a `similar-items` engine.
+         */
+        similarDocumentsConfig?: Schema$GoogleCloudDiscoveryengineV1alphaEngineSimilarDocumentsEngineConfig;
+        /**
+         * Required. The solutions of the engine.
+         */
+        solutionType?: string | null;
+        /**
+         * Output only. Timestamp the Recommendation Engine was last updated.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Configurations for a Chat Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineChatEngineConfig {
+        /**
+         * The configurationt generate the Dialogflow agent that is associated to this Engine. Note that these configurations are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation.
+         */
+        agentCreationConfig?: Schema$GoogleCloudDiscoveryengineV1alphaEngineChatEngineConfigAgentCreationConfig;
+        /**
+         * The resource name of an exist Dialogflow agent to link to this Chat Engine. Customers can either provide `agent_creation_config` to create agent or provide an agent name that links the agent with the Chat engine. Format: `projects//locations//agents/`. Note that the `dialogflow_agent_to_link` are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation. Use ChatEngineMetadata.dialogflow_agent for actual agent association after Engine is created.
+         */
+        dialogflowAgentToLink?: string | null;
+    }
+    /**
+     * Configurations for generating a Dialogflow agent. Note that these configurations are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineChatEngineConfigAgentCreationConfig {
+        /**
+         * Name of the company, organization or other entity that the agent represents. Used for knowledge connector LLM prompt and for knowledge search.
+         */
+        business?: string | null;
+        /**
+         * Required. The default language of the agent as a language tag. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes.
+         */
+        defaultLanguageCode?: string | null;
+        /**
+         * Agent location for Agent creation, supported values: global/us/eu. If not provided, us Engine will create Agent using us-central-1 by default; eu Engine will create Agent using eu-west-1 by default.
+         */
+        location?: string | null;
+        /**
+         * Required. The time zone of the agent from the [time zone database](https://www.iana.org/time-zones), e.g., America/New_York, Europe/Paris.
+         */
+        timeZone?: string | null;
+    }
+    /**
+     * Additional information of a Chat Engine. Fields in this message are output only.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineChatEngineMetadata {
+        /**
+         * The resource name of a Dialogflow agent, that this Chat Engine refers to. Format: `projects//locations//agents/`.
+         */
+        dialogflowAgent?: string | null;
+    }
+    /**
+     * Common configurations for an Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineCommonConfig {
+        /**
+         * The name of the company, business or entity that is associated with the engine. Setting this may help improve LLM related features.
+         */
+        companyName?: string | null;
+    }
+    /**
+     * Additional config specs for a Media Recommendation engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineMediaRecommendationEngineConfig {
+        /**
+         * The optimization objective. e.g., `cvr`. This field together with optimization_objective describe engine metadata to use to control engine training and serving. Currently supported values: `ctr`, `cvr`. If not specified, we choose default based on engine type. Default depends on type of recommendation: `recommended-for-you` =\> `ctr` `others-you-may-like` =\> `ctr`
+         */
+        optimizationObjective?: string | null;
+        /**
+         * Name and value of the custom threshold for cvr optimization_objective. For target_field `watch-time`, target_field_value must be an integer value indicating the media progress time in seconds between (0, 86400] (excludes 0, includes 86400) (e.g., 90). For target_field `watch-percentage`, the target_field_value must be a valid float value between (0, 1.0] (excludes 0, includes 1.0) (e.g., 0.5).
+         */
+        optimizationObjectiveConfig?: Schema$GoogleCloudDiscoveryengineV1alphaEngineMediaRecommendationEngineConfigOptimizationObjectiveConfig;
+        /**
+         * The training state that the engine is in (e.g. `TRAINING` or `PAUSED`). Since part of the cost of running the service is frequency of training - this can be used to determine when to train engine in order to control cost. If not specified: the default value for `CreateEngine` method is `TRAINING`. The default value for `UpdateEngine` method is to keep the state the same as before.
+         */
+        trainingState?: string | null;
+        /**
+         * Required. The type of engine. e.g., `recommended-for-you`. This field together with optimization_objective describe engine metadata to use to control engine training and serving. Currently supported values: `recommended-for-you`, `others-you-may-like`, `more-like-this`, `most-popular-items`.
+         */
+        type?: string | null;
+    }
+    /**
+     * Custom threshold for `cvr` optimization_objective.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineMediaRecommendationEngineConfigOptimizationObjectiveConfig {
+        /**
+         * Required. The name of the field to target. Currently supported values: `watch-percentage`, `watch-time`.
+         */
+        targetField?: string | null;
+        /**
+         * Required. The threshold to be applied to the target (e.g., 0.5).
+         */
+        targetFieldValueFloat?: number | null;
+    }
+    /**
+     * Additional information of a recommendation engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineRecommendationMetadata {
+        /**
+         * Output only. The state of data requirements for this engine: `DATA_OK` and `DATA_ERROR`. Engine cannot be trained if the data is in `DATA_ERROR` state. Engine can have `DATA_ERROR` state even if serving state is `ACTIVE`: engines were trained successfully before, but cannot be refreshed because the underlying engine no longer has sufficient data for training.
+         */
+        dataState?: string | null;
+        /**
+         * Output only. The timestamp when the latest successful tune finished. Only applicable on Media Recommendation engines.
+         */
+        lastTuneTime?: string | null;
+        /**
+         * Output only. The serving state of the engine: `ACTIVE`, `NOT_ACTIVE`.
+         */
+        servingState?: string | null;
+        /**
+         * Output only. The latest tune operation id associated with the engine. Only applicable on Media Recommendation engines. If present, this operation id can be used to determine if there is an ongoing tune for this engine. To check the operation status, send the GetOperation request with this operation id in the engine resource format. If no tuning has happened for this engine, the string is empty.
+         */
+        tuningOperation?: string | null;
+    }
+    /**
+     * Configurations for a Search Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineSearchEngineConfig {
+        /**
+         * The add-on that this search engine enables.
+         */
+        searchAddOns?: string[] | null;
+        /**
+         * The search feature tier of this engine. Different tiers might have different pricing. To learn more, check the pricing documentation. Defaults to SearchTier.SEARCH_TIER_STANDARD if not specified.
+         */
+        searchTier?: string | null;
+    }
+    /**
+     * Additional config specs for a `similar-items` engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEngineSimilarDocumentsEngineConfig {
+    }
+    /**
+     * Metadata related to the progress of the EstimateDataSize operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+    }
+    /**
+     * Request message for EstimateBillingService.EstimateDataSize method
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeRequest {
+        /**
+         * Structured or unstructured data.
+         */
+        fileDataSource?: Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeRequestFileDataSource;
+        /**
+         * Website data.
+         */
+        websiteDataSource?: Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeRequestWebsiteDataSource;
+    }
+    /**
+     * Data source contains files either in Cloud Storage or BigQuery.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeRequestFileDataSource {
+        /**
+         * BigQuery input source.
+         */
+        bigquerySource?: Schema$GoogleCloudDiscoveryengineV1alphaBigQuerySource;
+        /**
+         * Cloud Storage location for the input content.
+         */
+        gcsSource?: Schema$GoogleCloudDiscoveryengineV1alphaGcsSource;
+    }
+    /**
+     * Data source is a set of website patterns that we crawl to get the total number of websites.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeRequestWebsiteDataSource {
+        /**
+         * Required. The URI patterns to estimate the data sizes. At most 10 patterns are allowed, otherwise an INVALID_ARGUMENT error is thrown.
+         */
+        estimatorUriPatterns?: Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeRequestWebsiteDataSourceEstimatorUriPattern[];
+    }
+    /**
+     * URI patterns that we use to crawl.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeRequestWebsiteDataSourceEstimatorUriPattern {
+        /**
+         * Whether we infer the generated URI or use the exact provided one.
+         */
+        exactMatch?: boolean | null;
+        /**
+         * Whether the pattern is exclusive or not. If set to true, the pattern is considered exclusive. If unset or set to false, the pattern is considered inclusive by default.
+         */
+        exclusive?: boolean | null;
+        /**
+         * User provided URI pattern. For example, `foo.com/bar/x`.
+         */
+        providedUriPattern?: string | null;
+    }
+    /**
+     * Response of the EstimateDataSize request. If the long running operation was successful, then this message is returned by the google.longrunning.Operations.response field if the operation was successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeResponse {
+        /**
+         * Data size in terms of bytes.
+         */
+        dataSizeBytes?: string | null;
+        /**
+         * Total number of documents.
+         */
+        documentCount?: string | null;
+    }
+    /**
+     * An evaluation is a single execution (or run) of an evaluation process. It encapsulates the state of the evaluation and the resulting data.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEvaluation {
+        /**
+         * Output only. Timestamp the Evaluation was created at.
+         */
+        createTime?: string | null;
+        /**
+         * Output only. Timestamp the Evaluation was completed at.
+         */
+        endTime?: string | null;
+        /**
+         * Output only. The error that occurred during evaluation. Only populated when the evaluation's state is FAILED.
+         */
+        error?: Schema$GoogleRpcStatus;
+        /**
+         * Output only. A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Required. The specification of the evaluation.
+         */
+        evaluationSpec?: Schema$GoogleCloudDiscoveryengineV1alphaEvaluationEvaluationSpec;
+        /**
+         * Identifier. The full resource name of the Evaluation, in the format of `projects/{project\}/locations/{location\}/evaluations/{evaluation\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * Output only. The metrics produced by the evaluation, averaged across all SampleQuerys in the SampleQuerySet. Only populated when the evaluation's state is SUCCEEDED.
+         */
+        qualityMetrics?: Schema$GoogleCloudDiscoveryengineV1alphaQualityMetrics;
+        /**
+         * Output only. The state of the evaluation.
+         */
+        state?: string | null;
+    }
+    /**
+     * Describes the specification of the evaluation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEvaluationEvaluationSpec {
+        /**
+         * Required. The specification of the query set.
+         */
+        querySetSpec?: Schema$GoogleCloudDiscoveryengineV1alphaEvaluationEvaluationSpecQuerySetSpec;
+        /**
+         * Required. The search request that is used to perform the evaluation. Only the following fields within SearchRequest are supported; if any other fields are provided, an UNSUPPORTED error will be returned: * SearchRequest.serving_config * SearchRequest.branch * SearchRequest.canonical_filter * SearchRequest.query_expansion_spec * SearchRequest.spell_correction_spec * SearchRequest.content_search_spec * SearchRequest.user_pseudo_id
+         */
+        searchRequest?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequest;
+    }
+    /**
+     * Describes the specification of the query set.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaEvaluationEvaluationSpecQuerySetSpec {
+        /**
+         * Required. The full resource name of the SampleQuerySet used for the evaluation, in the format of `projects/{project\}/locations/{location\}/sampleQuerySets/{sampleQuerySet\}`.
+         */
+        sampleQuerySet?: string | null;
+    }
+    /**
+     * Fact Chunk.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaFactChunk {
+        /**
+         * Text content of the fact chunk. Can be at most 10K characters long.
+         */
+        chunkText?: string | null;
+        /**
+         * The index of this chunk. Currently, only used for the streaming mode.
+         */
+        index?: number | null;
+        /**
+         * Source from which this fact chunk was retrieved. If it was retrieved from the GroundingFacts provided in the request then this field will contain the index of the specific fact from which this chunk was retrieved.
+         */
+        source?: string | null;
+        /**
+         * More fine-grained information for the source reference.
+         */
+        sourceMetadata?: {
+            [key: string]: string;
+        } | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.FetchDomainVerificationStatus method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaFetchDomainVerificationStatusResponse {
+        /**
+         * A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+        /**
+         * List of TargetSites containing the site verification status.
+         */
+        targetSites?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSite[];
+        /**
+         * The total number of items matching the request. This will always be populated in the response.
+         */
+        totalSize?: number | null;
+    }
+    /**
+     * Cloud FhirStore source import data from.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaFhirStoreSource {
+        /**
+         * Required. The full resource name of the FHIR store to import data from, in the format of `projects/{project\}/locations/{location\}/datasets/{dataset\}/fhirStores/{fhir_store\}`.
+         */
+        fhirStore?: string | null;
+        /**
+         * Intermediate Cloud Storage directory used for the import with a length limit of 2,000 characters. Can be specified if one wants to have the FhirStore export to a specific Cloud Storage directory.
+         */
+        gcsStagingDir?: string | null;
+        /**
+         * The FHIR resource types to import. The resource types should be a subset of all [supported FHIR resource types](https://cloud.google.com/generative-ai-app-builder/docs/fhir-schema-reference#resource-level-specification). Default to all supported FHIR resource types if empty.
+         */
+        resourceTypes?: string[] | null;
+    }
+    /**
+     * Configurations for fields of a schema. For example, configuring a field is indexable, or searchable.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaFieldConfig {
+        /**
+         * If this field is set, only the corresponding source will be indexed for this field. Otherwise, the values from different sources are merged. Assuming a page with `` in meta tag, and `` in page map: if this enum is set to METATAGS, we will only index ``; if this enum is not set, we will merge them and index ``.
+         */
+        advancedSiteSearchDataSources?: string[] | null;
+        /**
+         * If completable_option is COMPLETABLE_ENABLED, field values are directly used and returned as suggestions for Autocomplete in CompletionService.CompleteQuery. If completable_option is unset, the server behavior defaults to COMPLETABLE_DISABLED for fields that support setting completable options, which are just `string` fields. For those fields that do not support setting completable options, the server will skip completable option setting, and setting completable_option for those fields will throw `INVALID_ARGUMENT` error.
+         */
+        completableOption?: string | null;
+        /**
+         * If dynamic_facetable_option is DYNAMIC_FACETABLE_ENABLED, field values are available for dynamic facet. Could only be DYNAMIC_FACETABLE_DISABLED if FieldConfig.indexable_option is INDEXABLE_DISABLED. Otherwise, an `INVALID_ARGUMENT` error will be returned. If dynamic_facetable_option is unset, the server behavior defaults to DYNAMIC_FACETABLE_DISABLED for fields that support setting dynamic facetable options. For those fields that do not support setting dynamic facetable options, such as `object` and `boolean`, the server will skip dynamic facetable option setting, and setting dynamic_facetable_option for those fields will throw `INVALID_ARGUMENT` error.
+         */
+        dynamicFacetableOption?: string | null;
+        /**
+         * Required. Field path of the schema field. For example: `title`, `description`, `release_info.release_year`.
+         */
+        fieldPath?: string | null;
+        /**
+         * Output only. Raw type of the field.
+         */
+        fieldType?: string | null;
+        /**
+         * If indexable_option is INDEXABLE_ENABLED, field values are indexed so that it can be filtered or faceted in SearchService.Search. If indexable_option is unset, the server behavior defaults to INDEXABLE_DISABLED for fields that support setting indexable options. For those fields that do not support setting indexable options, such as `object` and `boolean` and key properties, the server will skip indexable_option setting, and setting indexable_option for those fields will throw `INVALID_ARGUMENT` error.
+         */
+        indexableOption?: string | null;
+        /**
+         * Output only. Type of the key property that this field is mapped to. Empty string if this is not annotated as mapped to a key property. Example types are `title`, `description`. Full list is defined by `keyPropertyMapping` in the schema field annotation. If the schema field has a `KeyPropertyMapping` annotation, `indexable_option` and `searchable_option` of this field cannot be modified.
+         */
+        keyPropertyType?: string | null;
+        /**
+         * If recs_filterable_option is FILTERABLE_ENABLED, field values are filterable by filter expression in RecommendationService.Recommend. If FILTERABLE_ENABLED but the field type is numerical, field values are not filterable by text queries in RecommendationService.Recommend. Only textual fields are supported. If recs_filterable_option is unset, the default setting is FILTERABLE_DISABLED for fields that support setting filterable options. When a field set to [FILTERABLE_DISABLED] is filtered, a warning is generated and an empty result is returned.
+         */
+        recsFilterableOption?: string | null;
+        /**
+         * If retrievable_option is RETRIEVABLE_ENABLED, field values are included in the search results. If retrievable_option is unset, the server behavior defaults to RETRIEVABLE_DISABLED for fields that support setting retrievable options. For those fields that do not support setting retrievable options, such as `object` and `boolean`, the server will skip retrievable option setting, and setting retrievable_option for those fields will throw `INVALID_ARGUMENT` error.
+         */
+        retrievableOption?: string | null;
+        /**
+         * Field paths for indexing custom attribute from schema.org data. More details of schema.org and its defined types can be found at [schema.org](https://schema.org). It is only used on advanced site search schema. Currently only support full path from root. The full path to a field is constructed by concatenating field names, starting from `_root`, with a period `.` as the delimiter. Examples: * Publish date of the root: _root.datePublished * Publish date of the reviews: _root.review.datePublished
+         */
+        schemaOrgPaths?: string[] | null;
+        /**
+         * If searchable_option is SEARCHABLE_ENABLED, field values are searchable by text queries in SearchService.Search. If SEARCHABLE_ENABLED but field type is numerical, field values will not be searchable by text queries in SearchService.Search, as there are no text values associated to numerical fields. If searchable_option is unset, the server behavior defaults to SEARCHABLE_DISABLED for fields that support setting searchable options. Only `string` fields that have no key property mapping support setting searchable_option. For those fields that do not support setting searchable options, the server will skip searchable option setting, and setting searchable_option for those fields will throw `INVALID_ARGUMENT` error.
+         */
+        searchableOption?: string | null;
+    }
+    /**
+     * Firestore source import data from.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaFirestoreSource {
+        /**
+         * Required. The Firestore collection (or entity) to copy the data from with a length limit of 1,500 characters.
+         */
+        collectionId?: string | null;
+        /**
+         * Required. The Firestore database to copy the data from with a length limit of 256 characters.
+         */
+        databaseId?: string | null;
+        /**
+         * Intermediate Cloud Storage directory used for the import with a length limit of 2,000 characters. Can be specified if one wants to have the Firestore export to a specific Cloud Storage directory. Ensure that the Firestore service account has the necessary Cloud Storage Admin permissions to access the specified Cloud Storage directory.
+         */
+        gcsStagingDir?: string | null;
+        /**
+         * The project ID that the Cloud SQL source is in with a length limit of 128 characters. If not specified, inherits the project ID from the parent request.
+         */
+        projectId?: string | null;
+    }
+    /**
+     * Cloud Storage location for input content.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaGcsSource {
+        /**
+         * The schema to use when parsing the data from the source. Supported values for document imports: * `document` (default): One JSON Document per line. Each document must have a valid Document.id. * `content`: Unstructured data (e.g. PDF, HTML). Each file matched by `input_uris` becomes a document, with the ID set to the first 128 bits of SHA256(URI) encoded as a hex string. * `custom`: One custom data JSON per row in arbitrary format that conforms to the defined Schema of the data store. This can only be used by the GENERIC Data Store vertical. * `csv`: A CSV file with header conforming to the defined Schema of the data store. Each entry after the header is imported as a Document. This can only be used by the GENERIC Data Store vertical. Supported values for user event imports: * `user_event` (default): One JSON UserEvent per line.
+         */
+        dataSchema?: string | null;
+        /**
+         * Required. Cloud Storage URIs to input files. Each URI can be up to 2000 characters long. URIs can match the full object path (for example, `gs://bucket/directory/object.json`) or a pattern matching one or more files, such as `gs://bucket/directory/x.json`. A request can contain at most 100 files (or 100,000 files if `data_schema` is `content`). Each file can be up to 2 GB (or 100 MB if `data_schema` is `content`).
+         */
+        inputUris?: string[] | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.GetUriPatternDocumentData method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaGetUriPatternDocumentDataResponse {
+        /**
+         * Document data keyed by URI pattern. For example: document_data_map = { "www.url1.com/x": { "Categories": ["category1", "category2"] \}, "www.url2.com/x": { "Categories": ["category3"] \} \}
+         */
+        documentDataMap?: {
+            [key: string]: {
+                [key: string]: any;
+            };
+        } | null;
+    }
+    /**
+     * Grounding Fact.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaGroundingFact {
+        /**
+         * Attributes associated with the fact. Common attributes include `source` (indicating where the fact was sourced from), `author` (indicating the author of the fact), and so on.
+         */
+        attributes?: {
+            [key: string]: string;
+        } | null;
+        /**
+         * Text content of the fact. Can be at most 10K characters long.
+         */
+        factText?: string | null;
+    }
+    /**
+     * Defines guided search spec.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaGuidedSearchSpec {
+        /**
+         * Whether or not to enable and include refinement attributes in gudied search result.
+         */
+        enableRefinementAttributes?: boolean | null;
+        /**
+         * Whether or not to enable and include related questions in search response.
+         */
+        enableRelatedQuestions?: boolean | null;
+        /**
+         * Max number of related questions to be returned. The valid range is [1, 5]. If enable_related_questions is true, the default value is 3.
+         */
+        maxRelatedQuestions?: number | null;
+    }
+    /**
+     * Identity Provider Config.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaIdpConfig {
+        /**
+         * External Identity provider config.
+         */
+        externalIdpConfig?: Schema$GoogleCloudDiscoveryengineV1alphaIdpConfigExternalIdpConfig;
+        /**
+         * Identity provider type configured.
+         */
+        idpType?: string | null;
+    }
+    /**
+     * Third party IDP Config.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaIdpConfigExternalIdpConfig {
+        /**
+         * Workforce pool name. Example: "locations/global/workforcePools/pool_id"
+         */
+        workforcePoolName?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the ImportCompletionSuggestions operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportCompletionSuggestionsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of CompletionSuggestions that failed to be imported.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of CompletionSuggestions successfully imported.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for CompletionService.ImportCompletionSuggestions method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportCompletionSuggestionsRequest {
+        /**
+         * BigQuery input source.
+         */
+        bigquerySource?: Schema$GoogleCloudDiscoveryengineV1alphaBigQuerySource;
+        /**
+         * The desired location of errors incurred during the Import.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * Cloud Storage location for the input content.
+         */
+        gcsSource?: Schema$GoogleCloudDiscoveryengineV1alphaGcsSource;
+        /**
+         * The Inline source for suggestion entries.
+         */
+        inlineSource?: Schema$GoogleCloudDiscoveryengineV1alphaImportCompletionSuggestionsRequestInlineSource;
+    }
+    /**
+     * The inline source for CompletionSuggestions.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportCompletionSuggestionsRequestInlineSource {
+        /**
+         * Required. A list of all denylist entries to import. Max of 1000 items.
+         */
+        suggestions?: Schema$GoogleCloudDiscoveryengineV1alphaCompletionSuggestion[];
+    }
+    /**
+     * Response of the CompletionService.ImportCompletionSuggestions method. If the long running operation is done, this message is returned by the google.longrunning.Operations.response field if the operation is successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportCompletionSuggestionsResponse {
+        /**
+         * The desired location of errors incurred during the Import.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+    }
+    /**
+     * Metadata related to the progress of the ImportDocuments operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportDocumentsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were processed successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Total count of entries that were processed.
+         */
+        totalCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for Import methods.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportDocumentsRequest {
+        /**
+         * AlloyDB input source.
+         */
+        alloyDbSource?: Schema$GoogleCloudDiscoveryengineV1alphaAlloyDbSource;
+        /**
+         * Whether to automatically generate IDs for the documents if absent. If set to `true`, Document.ids are automatically generated based on the hash of the payload, where IDs may not be consistent during multiple imports. In which case ReconciliationMode.FULL is highly recommended to avoid duplicate contents. If unset or set to `false`, Document.ids have to be specified using id_field, otherwise, documents without IDs fail to be imported. Supported data sources: * GcsSource. GcsSource.data_schema must be `custom` or `csv`. Otherwise, an INVALID_ARGUMENT error is thrown. * BigQuerySource. BigQuerySource.data_schema must be `custom` or `csv`. Otherwise, an INVALID_ARGUMENT error is thrown. * SpannerSource. * CloudSqlSource. * FirestoreSource. * BigtableSource.
+         */
+        autoGenerateIds?: boolean | null;
+        /**
+         * BigQuery input source.
+         */
+        bigquerySource?: Schema$GoogleCloudDiscoveryengineV1alphaBigQuerySource;
+        /**
+         * Cloud Bigtable input source.
+         */
+        bigtableSource?: Schema$GoogleCloudDiscoveryengineV1alphaBigtableSource;
+        /**
+         * Cloud SQL input source.
+         */
+        cloudSqlSource?: Schema$GoogleCloudDiscoveryengineV1alphaCloudSqlSource;
+        /**
+         * The desired location of errors incurred during the Import.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * FhirStore input source.
+         */
+        fhirStoreSource?: Schema$GoogleCloudDiscoveryengineV1alphaFhirStoreSource;
+        /**
+         * Firestore input source.
+         */
+        firestoreSource?: Schema$GoogleCloudDiscoveryengineV1alphaFirestoreSource;
+        /**
+         * Cloud Storage location for the input content.
+         */
+        gcsSource?: Schema$GoogleCloudDiscoveryengineV1alphaGcsSource;
+        /**
+         * The field indicates the ID field or column to be used as unique IDs of the documents. For GcsSource it is the key of the JSON field. For instance, `my_id` for JSON `{"my_id": "some_uuid"\}`. For others, it may be the column name of the table where the unique ids are stored. The values of the JSON field or the table column are used as the Document.ids. The JSON field or the table column must be of string type, and the values must be set as valid strings conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) with 1-63 characters. Otherwise, documents without valid IDs fail to be imported. Only set this field when auto_generate_ids is unset or set as `false`. Otherwise, an INVALID_ARGUMENT error is thrown. If it is unset, a default value `_id` is used when importing from the allowed data sources. Supported data sources: * GcsSource. GcsSource.data_schema must be `custom` or `csv`. Otherwise, an INVALID_ARGUMENT error is thrown. * BigQuerySource. BigQuerySource.data_schema must be `custom` or `csv`. Otherwise, an INVALID_ARGUMENT error is thrown. * SpannerSource. * CloudSqlSource. * FirestoreSource. * BigtableSource.
+         */
+        idField?: string | null;
+        /**
+         * The Inline source for the input content for documents.
+         */
+        inlineSource?: Schema$GoogleCloudDiscoveryengineV1alphaImportDocumentsRequestInlineSource;
+        /**
+         * The mode of reconciliation between existing documents and the documents to be imported. Defaults to ReconciliationMode.INCREMENTAL.
+         */
+        reconciliationMode?: string | null;
+        /**
+         * Spanner input source.
+         */
+        spannerSource?: Schema$GoogleCloudDiscoveryengineV1alphaSpannerSource;
+        /**
+         * Indicates which fields in the provided imported documents to update. If not set, the default is to update all fields.
+         */
+        updateMask?: string | null;
+    }
+    /**
+     * The inline source for the input config for ImportDocuments method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportDocumentsRequestInlineSource {
+        /**
+         * Required. A list of documents to update/create. Each document must have a valid Document.id. Recommended max of 100 items.
+         */
+        documents?: Schema$GoogleCloudDiscoveryengineV1alphaDocument[];
+    }
+    /**
+     * Response of the ImportDocumentsRequest. If the long running operation is done, then this message is returned by the google.longrunning.Operations.response field if the operation was successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportDocumentsResponse {
+        /**
+         * Echoes the destination for the complete errors in the request if set.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+    }
+    /**
+     * Configuration of destination for Import related errors.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig {
+        /**
+         * Cloud Storage prefix for import errors. This must be an empty, existing Cloud Storage directory. Import errors are written to sharded files in this directory, one per line, as a JSON-encoded `google.rpc.Status` message.
+         */
+        gcsPrefix?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the ImportSampleQueries operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportSampleQueriesMetadata {
+        /**
+         * ImportSampleQueries operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of SampleQuerys that failed to be imported.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of SampleQuerys successfully imported.
+         */
+        successCount?: string | null;
+        /**
+         * Total count of SampleQuerys that were processed.
+         */
+        totalCount?: string | null;
+        /**
+         * ImportSampleQueries operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for SampleQueryService.ImportSampleQueries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportSampleQueriesRequest {
+        /**
+         * BigQuery input source.
+         */
+        bigquerySource?: Schema$GoogleCloudDiscoveryengineV1alphaBigQuerySource;
+        /**
+         * The desired location of errors incurred during the Import.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * Cloud Storage location for the input content.
+         */
+        gcsSource?: Schema$GoogleCloudDiscoveryengineV1alphaGcsSource;
+        /**
+         * The Inline source for sample query entries.
+         */
+        inlineSource?: Schema$GoogleCloudDiscoveryengineV1alphaImportSampleQueriesRequestInlineSource;
+    }
+    /**
+     * The inline source for SampleQuerys.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportSampleQueriesRequestInlineSource {
+        /**
+         * Required. A list of SampleQuerys to import. Max of 1000 items.
+         */
+        sampleQueries?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery[];
+    }
+    /**
+     * Response of the SampleQueryService.ImportSampleQueries method. If the long running operation is done, this message is returned by the google.longrunning.Operations.response field if the operation is successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportSampleQueriesResponse {
+        /**
+         * The desired location of errors incurred during the Import.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+    }
+    /**
+     * Metadata related to the progress of the ImportSuggestionDenyListEntries operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportSuggestionDenyListEntriesMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for CompletionService.ImportSuggestionDenyListEntries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportSuggestionDenyListEntriesRequest {
+        /**
+         * Cloud Storage location for the input content. Only 1 file can be specified that contains all entries to import. Supported values `gcs_source.schema` for autocomplete suggestion deny list entry imports: * `suggestion_deny_list` (default): One JSON [SuggestionDenyListEntry] per line.
+         */
+        gcsSource?: Schema$GoogleCloudDiscoveryengineV1alphaGcsSource;
+        /**
+         * The Inline source for the input content for suggestion deny list entries.
+         */
+        inlineSource?: Schema$GoogleCloudDiscoveryengineV1alphaImportSuggestionDenyListEntriesRequestInlineSource;
+    }
+    /**
+     * The inline source for SuggestionDenyListEntry.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportSuggestionDenyListEntriesRequestInlineSource {
+        /**
+         * Required. A list of all denylist entries to import. Max of 1000 items.
+         */
+        entries?: Schema$GoogleCloudDiscoveryengineV1alphaSuggestionDenyListEntry[];
+    }
+    /**
+     * Response message for CompletionService.ImportSuggestionDenyListEntries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportSuggestionDenyListEntriesResponse {
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Count of deny list entries that failed to be imported.
+         */
+        failedEntriesCount?: string | null;
+        /**
+         * Count of deny list entries successfully imported.
+         */
+        importedEntriesCount?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the Import operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportUserEventsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were processed successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for the ImportUserEvents request.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportUserEventsRequest {
+        /**
+         * BigQuery input source.
+         */
+        bigquerySource?: Schema$GoogleCloudDiscoveryengineV1alphaBigQuerySource;
+        /**
+         * The desired location of errors incurred during the Import. Cannot be set for inline user event imports.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * Cloud Storage location for the input content.
+         */
+        gcsSource?: Schema$GoogleCloudDiscoveryengineV1alphaGcsSource;
+        /**
+         * The Inline source for the input content for UserEvents.
+         */
+        inlineSource?: Schema$GoogleCloudDiscoveryengineV1alphaImportUserEventsRequestInlineSource;
+    }
+    /**
+     * The inline source for the input config for ImportUserEvents method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportUserEventsRequestInlineSource {
+        /**
+         * Required. A list of user events to import. Recommended max of 10k items.
+         */
+        userEvents?: Schema$GoogleCloudDiscoveryengineV1alphaUserEvent[];
+    }
+    /**
+     * Response of the ImportUserEventsRequest. If the long running operation was successful, then this message is returned by the google.longrunning.Operations.response field if the operation was successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaImportUserEventsResponse {
+        /**
+         * Echoes the destination for the complete errors if this field was set in the request.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Count of user events imported with complete existing Documents.
+         */
+        joinedEventsCount?: string | null;
+        /**
+         * Count of user events imported, but with Document information not found in the existing Branch.
+         */
+        unjoinedEventsCount?: string | null;
+    }
+    /**
+     * A floating point interval.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaInterval {
+        /**
+         * Exclusive upper bound.
+         */
+        exclusiveMaximum?: number | null;
+        /**
+         * Exclusive lower bound.
+         */
+        exclusiveMinimum?: number | null;
+        /**
+         * Inclusive upper bound.
+         */
+        maximum?: number | null;
+        /**
+         * Inclusive lower bound.
+         */
+        minimum?: number | null;
+    }
+    /**
+     * Language info for DataStore.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaLanguageInfo {
+        /**
+         * Output only. Language part of normalized_language_code. E.g.: `en-US` -\> `en`, `zh-Hans-HK` -\> `zh`, `en` -\> `en`.
+         */
+        language?: string | null;
+        /**
+         * The language code for the DataStore.
+         */
+        languageCode?: string | null;
+        /**
+         * Output only. This is the normalized form of language_code. E.g.: language_code of `en-GB`, `en_GB`, `en-UK` or `en-gb` will have normalized_language_code of `en-GB`.
+         */
+        normalizedLanguageCode?: string | null;
+        /**
+         * Output only. Region part of normalized_language_code, if present. E.g.: `en-US` -\> `US`, `zh-Hans-HK` -\> `HK`, `en` -\> ``.
+         */
+        region?: string | null;
+    }
+    /**
+     * Response message for ChunkService.ListChunks method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse {
+        /**
+         * The Chunks.
+         */
+        chunks?: Schema$GoogleCloudDiscoveryengineV1alphaChunk[];
+        /**
+         * A token that can be sent as ListChunksRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+    }
+    /**
+     * Response for ListControls method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse {
+        /**
+         * All the Controls for a given data store.
+         */
+        controls?: Schema$GoogleCloudDiscoveryengineV1alphaControl[];
+        /**
+         * Pagination token, if not returned indicates the last page.
+         */
+        nextPageToken?: string | null;
+    }
+    /**
+     * Response for ListConversations method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse {
+        /**
+         * All the Conversations for a given data store.
+         */
+        conversations?: Schema$GoogleCloudDiscoveryengineV1alphaConversation[];
+        /**
+         * Pagination token, if not returned indicates the last page.
+         */
+        nextPageToken?: string | null;
+    }
+    /**
+     * Response message for SearchTuningService.ListCustomModels method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListCustomModelsResponse {
+        /**
+         * List of custom tuning models.
+         */
+        models?: Schema$GoogleCloudDiscoveryengineV1alphaCustomTuningModel[];
+    }
+    /**
+     * Response message for DataStoreService.ListDataStores method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse {
+        /**
+         * All the customer's DataStores.
+         */
+        dataStores?: Schema$GoogleCloudDiscoveryengineV1alphaDataStore[];
+        /**
+         * A token that can be sent as ListDataStoresRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+    }
+    /**
+     * Response message for DocumentService.ListDocuments method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse {
+        /**
+         * The Documents.
+         */
+        documents?: Schema$GoogleCloudDiscoveryengineV1alphaDocument[];
+        /**
+         * A token that can be sent as ListDocumentsRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+    }
+    /**
+     * Response message for EngineService.ListEngines method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListEnginesResponse {
+        /**
+         * All the customer's Engines.
+         */
+        engines?: Schema$GoogleCloudDiscoveryengineV1alphaEngine[];
+        /**
+         * Not supported.
+         */
+        nextPageToken?: string | null;
+    }
+    /**
+     * Response message for EvaluationService.ListEvaluationResults method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationResultsResponse {
+        /**
+         * The EvaluationResults.
+         */
+        evaluationResults?: Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationResultsResponseEvaluationResult[];
+        /**
+         * A token that can be sent as ListEvaluationResultsRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+    }
+    /**
+     * Represents the results of an evaluation for a single SampleQuery.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationResultsResponseEvaluationResult {
+        /**
+         * Output only. The metrics produced by the evaluation, for a given SampleQuery.
+         */
+        qualityMetrics?: Schema$GoogleCloudDiscoveryengineV1alphaQualityMetrics;
+        /**
+         * Output only. The SampleQuery that was evaluated.
+         */
+        sampleQuery?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery;
+    }
+    /**
+     * Response message for EvaluationService.ListEvaluations method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationsResponse {
+        /**
+         * The Evaluations.
+         */
+        evaluations?: Schema$GoogleCloudDiscoveryengineV1alphaEvaluation[];
+        /**
+         * A token that can be sent as ListEvaluationsRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+    }
+    /**
+     * Response message for SampleQueryService.ListSampleQueries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListSampleQueriesResponse {
+        /**
+         * A token that can be sent as ListSampleQueriesRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+        /**
+         * The SampleQuerys.
+         */
+        sampleQueries?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery[];
+    }
+    /**
+     * Response message for SampleQuerySetService.ListSampleQuerySets method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListSampleQuerySetsResponse {
+        /**
+         * A token that can be sent as ListSampleQuerySetsRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+        /**
+         * The SampleQuerySets.
+         */
+        sampleQuerySets?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet[];
+    }
+    /**
+     * Response message for SchemaService.ListSchemas method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse {
+        /**
+         * A token that can be sent as ListSchemasRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+        /**
+         * The Schemas.
+         */
+        schemas?: Schema$GoogleCloudDiscoveryengineV1alphaSchema[];
+    }
+    /**
+     * Response for ListServingConfigs method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse {
+        /**
+         * Pagination token, if not returned indicates the last page.
+         */
+        nextPageToken?: string | null;
+        /**
+         * All the ServingConfigs for a given dataStore.
+         */
+        servingConfigs?: Schema$GoogleCloudDiscoveryengineV1alphaServingConfig[];
+    }
+    /**
+     * Response for ListSessions method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse {
+        /**
+         * Pagination token, if not returned indicates the last page.
+         */
+        nextPageToken?: string | null;
+        /**
+         * All the Sessions for a given data store.
+         */
+        sessions?: Schema$GoogleCloudDiscoveryengineV1alphaSession[];
+    }
+    /**
+     * Response message for SiteSearchEngineService.ListTargetSites method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse {
+        /**
+         * A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+        /**
+         * List of TargetSites.
+         */
+        targetSites?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSite[];
+        /**
+         * The total number of items matching the request. This will always be populated in the response.
+         */
+        totalSize?: number | null;
+    }
+    /**
+     * Media-specific user event information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaMediaInfo {
+        /**
+         * The media progress time in seconds, if applicable. For example, if the end user has finished 90 seconds of a playback video, then MediaInfo.media_progress_duration.seconds should be set to 90.
+         */
+        mediaProgressDuration?: string | null;
+        /**
+         * Media progress should be computed using only the media_progress_duration relative to the media total length. This value must be between `[0, 1.0]` inclusive. If this is not a playback or the progress cannot be computed (e.g. ongoing livestream), this field should be unset.
+         */
+        mediaProgressPercentage?: number | null;
+    }
+    /**
+     * Detailed page information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPageInfo {
+        /**
+         * The most specific category associated with a category page. To represent full path of category, use '\>' sign to separate different hierarchies. If '\>' is part of the category name, replace it with other character(s). Category pages include special pages such as sales or promotions. For instance, a special sale page may have the category hierarchy: `"pageCategory" : "Sales \> 2017 Black Friday Deals"`. Required for `view-category-page` events. Other event types should not set this field. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageCategory?: string | null;
+        /**
+         * A unique ID of a web page view. This should be kept the same for all user events triggered from the same pageview. For example, an item detail page view could trigger multiple events as the user is browsing the page. The `pageview_id` property should be kept the same for all these events so that they can be grouped together properly. When using the client side event reporting with JavaScript pixel and Google Tag Manager, this value is filled in automatically.
+         */
+        pageviewId?: string | null;
+        /**
+         * The referrer URL of the current page. When using the client side event reporting with JavaScript pixel and Google Tag Manager, this value is filled in automatically. However, some browser privacy restrictions may cause this field to be empty.
+         */
+        referrerUri?: string | null;
+        /**
+         * Complete URL (window.location.href) of the user's current page. When using the client side event reporting with JavaScript pixel and Google Tag Manager, this value is filled in automatically. Maximum length 5,000 characters.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Detailed panel information associated with a user event.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPanelInfo {
+        /**
+         * The display name of the panel.
+         */
+        displayName?: string | null;
+        /**
+         * Required. The panel ID.
+         */
+        panelId?: string | null;
+        /**
+         * The ordered position of the panel, if shown to the user with other panels. If set, then total_panels must also be set.
+         */
+        panelPosition?: number | null;
+        /**
+         * The total number of panels, including this one, shown to the user. Must be set if panel_position is set.
+         */
+        totalPanels?: number | null;
+    }
+    /**
+     * Request for pausing training of an engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPauseEngineRequest {
+    }
+    /**
+     * Principal identifier of a user or a group.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPrincipal {
+        /**
+         * Group identifier. For Google Workspace user account, group_id should be the google workspace group email. For non-google identity provider user account, group_id is the mapped group identifier configured during the workforcepool config.
+         */
+        groupId?: string | null;
+        /**
+         * User identifier. For Google Workspace user account, user_id should be the google workspace user email. For non-google identity provider user account, user_id is the mapped user identifier configured during the workforcepool config.
+         */
+        userId?: string | null;
+    }
+    /**
+     * Document captures all raw metadata information of items to be recommended or searched.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument {
+        /**
+         * Required. Full resource name of the referenced document, in the format `projects/x/locations/x/collections/x/dataStores/x/branches/x/documents/x`.
+         */
+        document?: string | null;
+        /**
+         * The JSON string representation of the processed document.
+         */
+        jsonData?: string | null;
+    }
+    /**
+     * Metadata and configurations for a Google Cloud project in the service.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaProject {
+        /**
+         * Output only. The timestamp when this project is created.
+         */
+        createTime?: string | null;
+        /**
+         * Output only. Full resource name of the project, for example `projects/{project_number\}`. Note that when making requests, project number and project id are both acceptable, but the server will always respond in project number.
+         */
+        name?: string | null;
+        /**
+         * Output only. The timestamp when this project is successfully provisioned. Empty value means this project is still provisioning and is not ready for use.
+         */
+        provisionCompletionTime?: string | null;
+        /**
+         * Output only. A map of terms of services. The key is the `id` of ServiceTerms.
+         */
+        serviceTermsMap?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1alphaProjectServiceTerms;
+        } | null;
+    }
+    /**
+     * Metadata about the terms of service.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaProjectServiceTerms {
+        /**
+         * The last time when the project agreed to the terms of service.
+         */
+        acceptTime?: string | null;
+        /**
+         * The last time when the project declined or revoked the agreement to terms of service.
+         */
+        declineTime?: string | null;
+        /**
+         * The unique identifier of this terms of service. Available terms: * `GA_DATA_USE_TERMS`: [Terms for data use](https://cloud.google.com/retail/data-use-terms). When using this as `id`, the acceptable version to provide is `2022-11-23`.
+         */
+        id?: string | null;
+        /**
+         * Whether the project has accepted/rejected the service terms or it is still pending.
+         */
+        state?: string | null;
+        /**
+         * The version string of the terms of service. For acceptable values, see the comments for id above.
+         */
+        version?: string | null;
+    }
+    /**
+     * Metadata associated with a project provision operation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaProvisionProjectMetadata {
+    }
+    /**
+     * Request for ProjectService.ProvisionProject method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaProvisionProjectRequest {
+        /**
+         * Required. Set to `true` to specify that caller has read and would like to give consent to the [Terms for data use](https://cloud.google.com/retail/data-use-terms).
+         */
+        acceptDataUseTerms?: boolean | null;
+        /**
+         * Required. The version of the [Terms for data use](https://cloud.google.com/retail/data-use-terms) that caller has read and would like to give consent to. Acceptable version is `2022-11-23`, and this may change over time.
+         */
+        dataUseTermsVersion?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the PurgeCompletionSuggestions operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeCompletionSuggestionsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for CompletionService.PurgeCompletionSuggestions method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeCompletionSuggestionsRequest {
+    }
+    /**
+     * Response message for CompletionService.PurgeCompletionSuggestions method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeCompletionSuggestionsResponse {
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Whether the completion suggestions were successfully purged.
+         */
+        purgeSucceeded?: boolean | null;
+    }
+    /**
+     * Metadata related to the progress of the PurgeDocuments operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeDocumentsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were ignored as entries were not found.
+         */
+        ignoredCount?: string | null;
+        /**
+         * Count of entries that were deleted successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for DocumentService.PurgeDocuments method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeDocumentsRequest {
+        /**
+         * The desired location of errors incurred during the purge.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeErrorConfig;
+        /**
+         * Required. Filter matching documents to purge. Only currently supported value is `*` (all items).
+         */
+        filter?: string | null;
+        /**
+         * Actually performs the purge. If `force` is set to false, return the expected purge count without deleting any documents.
+         */
+        force?: boolean | null;
+        /**
+         * Cloud Storage location for the input content. Supported `data_schema`: * `document_id`: One valid Document.id per line.
+         */
+        gcsSource?: Schema$GoogleCloudDiscoveryengineV1alphaGcsSource;
+        /**
+         * Inline source for the input content for purge.
+         */
+        inlineSource?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeDocumentsRequestInlineSource;
+    }
+    /**
+     * The inline source for the input config for DocumentService.PurgeDocuments method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeDocumentsRequestInlineSource {
+        /**
+         * Required. A list of full resource name of documents to purge. In the format `projects/x/locations/x/collections/x/dataStores/x/branches/x/documents/x`. Recommended max of 100 items.
+         */
+        documents?: string[] | null;
+    }
+    /**
+     * Response message for DocumentService.PurgeDocuments method. If the long running operation is successfully done, then this message is returned by the google.longrunning.Operations.response field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeDocumentsResponse {
+        /**
+         * The total count of documents purged as a result of the operation.
+         */
+        purgeCount?: string | null;
+        /**
+         * A sample of document names that will be deleted. Only populated if `force` is set to false. A max of 100 names will be returned and the names are chosen at random.
+         */
+        purgeSample?: string[] | null;
+    }
+    /**
+     * Configuration of destination for Purge related errors.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeErrorConfig {
+        /**
+         * Cloud Storage prefix for purge errors. This must be an empty, existing Cloud Storage directory. Purge errors are written to sharded files in this directory, one per line, as a JSON-encoded `google.rpc.Status` message.
+         */
+        gcsPrefix?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the PurgeSuggestionDenyListEntries operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeSuggestionDenyListEntriesMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for CompletionService.PurgeSuggestionDenyListEntries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeSuggestionDenyListEntriesRequest {
+    }
+    /**
+     * Response message for CompletionService.PurgeSuggestionDenyListEntries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeSuggestionDenyListEntriesResponse {
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Number of suggestion deny list entries purged.
+         */
+        purgeCount?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the PurgeUserEvents operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeUserEventsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were deleted successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for PurgeUserEvents method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeUserEventsRequest {
+        /**
+         * Required. The filter string to specify the events to be deleted with a length limit of 5,000 characters. The eligible fields for filtering are: * `eventType`: Double quoted UserEvent.event_type string. * `eventTime`: in ISO 8601 "zulu" format. * `userPseudoId`: Double quoted string. Specifying this will delete all events associated with a visitor. * `userId`: Double quoted string. Specifying this will delete all events associated with a user. Examples: * Deleting all events in a time range: `eventTime \> "2012-04-23T18:25:43.511Z" eventTime < "2012-04-23T18:30:43.511Z"` * Deleting specific eventType: `eventType = "search"` * Deleting all events for a specific visitor: `userPseudoId = "visitor1024"` * Deleting all events inside a DataStore: `*` The filtering fields are assumed to have an implicit AND.
+         */
+        filter?: string | null;
+        /**
+         * The `force` field is currently not supported. Purge user event requests will permanently delete all purgeable events. Once the development is complete: If `force` is set to false, the method will return the expected purge count without deleting any user events. This field will default to false if not included in the request.
+         */
+        force?: boolean | null;
+    }
+    /**
+     * Response of the PurgeUserEventsRequest. If the long running operation is successfully done, then this message is returned by the google.longrunning.Operations.response field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaPurgeUserEventsResponse {
+        /**
+         * The total count of events purged as a result of the operation.
+         */
+        purgeCount?: string | null;
+    }
+    /**
+     * Describes the metrics produced by the evaluation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaQualityMetrics {
+        /**
+         * Normalized discounted cumulative gain (NDCG) per document, at various top-k cutoff levels. NDCG measures the ranking quality, giving higher relevance to top results. Example (top-3): Suppose SampleQuery with three retrieved documents (D1, D2, D3) and binary relevance judgements (1 for relevant, 0 for not relevant): Retrieved: [D3 (0), D1 (1), D2 (1)] Ideal: [D1 (1), D2 (1), D3 (0)] Calculate NDCG@3 for each SampleQuery: * DCG@3: 0/log2(1+1) + 1/log2(2+1) + 1/log2(3+1) = 1.13 * Ideal DCG@3: 1/log2(1+1) + 1/log2(2+1) + 0/log2(3+1) = 1.63 * NDCG@3: 1.13/1.63 = 0.693
+         */
+        docNdcg?: Schema$GoogleCloudDiscoveryengineV1alphaQualityMetricsTopkMetrics;
+        /**
+         * Precision per document, at various top-k cutoff levels. Precision is the fraction of retrieved documents that are relevant. Example (top-5): * For a single SampleQuery, If 4 out of 5 retrieved documents in the top-5 are relevant, precision@5 = 4/5 = 0.8
+         */
+        docPrecision?: Schema$GoogleCloudDiscoveryengineV1alphaQualityMetricsTopkMetrics;
+        /**
+         * Recall per document, at various top-k cutoff levels. Recall is the fraction of relevant documents retrieved out of all relevant documents. Example (top-5): * For a single SampleQuery, If 3 out of 5 relevant documents are retrieved in the top-5, recall@5 = 3/5 = 0.6
+         */
+        docRecall?: Schema$GoogleCloudDiscoveryengineV1alphaQualityMetricsTopkMetrics;
+        /**
+         * Normalized discounted cumulative gain (NDCG) per page, at various top-k cutoff levels. NDCG measures the ranking quality, giving higher relevance to top results. Example (top-3): Suppose SampleQuery with three retrieved pages (P1, P2, P3) and binary relevance judgements (1 for relevant, 0 for not relevant): Retrieved: [P3 (0), P1 (1), P2 (1)] Ideal: [P1 (1), P2 (1), P3 (0)] Calculate NDCG@3 for SampleQuery: * DCG@3: 0/log2(1+1) + 1/log2(2+1) + 1/log2(3+1) = 1.13 * Ideal DCG@3: 1/log2(1+1) + 1/log2(2+1) + 0/log2(3+1) = 1.63 * NDCG@3: 1.13/1.63 = 0.693
+         */
+        pageNdcg?: Schema$GoogleCloudDiscoveryengineV1alphaQualityMetricsTopkMetrics;
+        /**
+         * Recall per page, at various top-k cutoff levels. Recall is the fraction of relevant pages retrieved out of all relevant pages. Example (top-5): * For a single SampleQuery, if 3 out of 5 relevant pages are retrieved in the top-5, recall@5 = 3/5 = 0.6
+         */
+        pageRecall?: Schema$GoogleCloudDiscoveryengineV1alphaQualityMetricsTopkMetrics;
+    }
+    /**
+     * Stores the metric values at specific top-k levels.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaQualityMetricsTopkMetrics {
+        /**
+         * The top-1 value.
+         */
+        top1?: number | null;
+        /**
+         * The top-10 value.
+         */
+        top10?: number | null;
+        /**
+         * The top-3 value.
+         */
+        top3?: number | null;
+        /**
+         * The top-5 value.
+         */
+        top5?: number | null;
+    }
+    /**
+     * Defines a user inputed query.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaQuery {
+        /**
+         * Unique Id for the query.
+         */
+        queryId?: string | null;
+        /**
+         * Plain text.
+         */
+        text?: string | null;
+    }
+    /**
+     * Record message for RankService.Rank method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRankingRecord {
+        /**
+         * The content of the record. Empty by default. At least one of title or content should be set otherwise an INVALID_ARGUMENT error is thrown.
+         */
+        content?: string | null;
+        /**
+         * The unique ID to represent the record.
+         */
+        id?: string | null;
+        /**
+         * The score of this record based on the given query and selected model.
+         */
+        score?: number | null;
+        /**
+         * The title of the record. Empty by default. At least one of title or content should be set otherwise an INVALID_ARGUMENT error is thrown.
+         */
+        title?: string | null;
+    }
+    /**
+     * Request message for RankService.Rank method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRankRequest {
+        /**
+         * If true, the response will contain only record ID and score. By default, it is false, the response will contain record details.
+         */
+        ignoreRecordDetailsInResponse?: boolean | null;
+        /**
+         * The identifier of the model to use. It is one of: * `semantic-ranker-512@latest`: Semantic ranking model with maxiumn input token size 512. It is set to `semantic-ranker-512@latest` by default if unspecified.
+         */
+        model?: string | null;
+        /**
+         * The query to use.
+         */
+        query?: string | null;
+        /**
+         * Required. A list of records to rank. At most 200 records to rank.
+         */
+        records?: Schema$GoogleCloudDiscoveryengineV1alphaRankingRecord[];
+        /**
+         * The number of results to return. If this is unset or no bigger than zero, returns all results.
+         */
+        topN?: number | null;
+        /**
+         * The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Google Cloud Document](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
+         */
+        userLabels?: {
+            [key: string]: string;
+        } | null;
+    }
+    /**
+     * Response message for RankService.Rank method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRankResponse {
+        /**
+         * A list of records sorted by descending score.
+         */
+        records?: Schema$GoogleCloudDiscoveryengineV1alphaRankingRecord[];
+    }
+    /**
+     * Request message for Recommend method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRecommendRequest {
+        /**
+         * Filter for restricting recommendation results with a length limit of 5,000 characters. Currently, only filter expressions on the `filter_tags` attribute is supported. Examples: * `(filter_tags: ANY("Red", "Blue") OR filter_tags: ANY("Hot", "Cold"))` * `(filter_tags: ANY("Red", "Blue")) AND NOT (filter_tags: ANY("Green"))` If `attributeFilteringSyntax` is set to true under the `params` field, then attribute-based expressions are expected instead of the above described tag-based syntax. Examples: * (launguage: ANY("en", "es")) AND NOT (categories: ANY("Movie")) * (available: true) AND (launguage: ANY("en", "es")) OR (categories: ANY("Movie")) If your filter blocks all results, the API returns generic (unfiltered) popular Documents. If you only want results strictly matching the filters, set `strictFiltering` to `true` in RecommendRequest.params to receive empty results instead. Note that the API never returns Documents with `storageStatus` as `EXPIRED` or `DELETED` regardless of filter choices.
+         */
+        filter?: string | null;
+        /**
+         * Maximum number of results to return. Set this property to the number of recommendation results needed. If zero, the service chooses a reasonable default. The maximum allowed value is 100. Values above 100 are set to 100.
+         */
+        pageSize?: number | null;
+        /**
+         * Additional domain specific parameters for the recommendations. Allowed values: * `returnDocument`: Boolean. If set to `true`, the associated Document object is returned in RecommendResponse.RecommendationResult.document. * `returnScore`: Boolean. If set to true, the recommendation score corresponding to each returned Document is set in RecommendResponse.RecommendationResult.metadata. The given score indicates the probability of a Document conversion given the user's context and history. * `strictFiltering`: Boolean. True by default. If set to `false`, the service returns generic (unfiltered) popular Documents instead of empty if your filter blocks all recommendation results. * `diversityLevel`: String. Default empty. If set to be non-empty, then it needs to be one of: * `no-diversity` * `low-diversity` * `medium-diversity` * `high-diversity` * `auto-diversity` This gives request-level control and adjusts recommendation results based on Document category. * `attributeFilteringSyntax`: Boolean. False by default. If set to true, the `filter` field is interpreted according to the new, attribute-based syntax.
+         */
+        params?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Required. Context about the user, what they are looking at and what action they took to trigger the Recommend request. Note that this user event detail won't be ingested to userEvent logs. Thus, a separate userEvent write request is required for event logging. Don't set UserEvent.user_pseudo_id or UserEvent.user_info.user_id to the same fixed ID for different users. If you are trying to receive non-personalized recommendations (not recommended; this can negatively impact model performance), instead set UserEvent.user_pseudo_id to a random unique ID and leave UserEvent.user_info.user_id unset.
+         */
+        userEvent?: Schema$GoogleCloudDiscoveryengineV1alphaUserEvent;
+        /**
+         * The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
+         */
+        userLabels?: {
+            [key: string]: string;
+        } | null;
+        /**
+         * Use validate only mode for this recommendation query. If set to `true`, a fake model is used that returns arbitrary Document IDs. Note that the validate only mode should only be used for testing the API, or if the model is not ready.
+         */
+        validateOnly?: boolean | null;
+    }
+    /**
+     * Response message for Recommend method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse {
+        /**
+         * A unique attribution token. This should be included in the UserEvent logs resulting from this recommendation, which enables accurate attribution of recommendation model performance.
+         */
+        attributionToken?: string | null;
+        /**
+         * IDs of documents in the request that were missing from the default Branch associated with the requested ServingConfig.
+         */
+        missingIds?: string[] | null;
+        /**
+         * A list of recommended Documents. The order represents the ranking (from the most relevant Document to the least).
+         */
+        results?: Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponseRecommendationResult[];
+        /**
+         * True if RecommendRequest.validate_only was set.
+         */
+        validateOnly?: boolean | null;
+    }
+    /**
+     * RecommendationResult represents a generic recommendation result with associated metadata.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponseRecommendationResult {
+        /**
+         * Set if `returnDocument` is set to true in RecommendRequest.params.
+         */
+        document?: Schema$GoogleCloudDiscoveryengineV1alphaDocument;
+        /**
+         * Resource ID of the recommended Document.
+         */
+        id?: string | null;
+        /**
+         * Additional Document metadata or annotations. Possible values: * `score`: Recommendation score in double value. Is set if `returnScore` is set to true in RecommendRequest.params.
+         */
+        metadata?: {
+            [key: string]: any;
+        } | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.RecrawlUris operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Unique URIs in the request that don't match any TargetSite in the DataStore, only match TargetSites that haven't been fully indexed, or match a TargetSite with type EXCLUDE.
+         */
+        invalidUris?: string[] | null;
+        /**
+         * Total number of URIs that have yet to be crawled.
+         */
+        pendingCount?: number | null;
+        /**
+         * Total number of URIs that were rejected due to insufficient indexing resources.
+         */
+        quotaExceededCount?: number | null;
+        /**
+         * Total number of URIs that have been crawled so far.
+         */
+        successCount?: number | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+        /**
+         * Total number of unique URIs in the request that are not in invalid_uris.
+         */
+        validUrisCount?: number | null;
+    }
+    /**
+     * Request message for SiteSearchEngineService.RecrawlUris method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisRequest {
+        /**
+         * Required. List of URIs to crawl. At most 10K URIs are supported, otherwise an INVALID_ARGUMENT error is thrown. Each URI should match at least one TargetSite in `site_search_engine`.
+         */
+        uris?: string[] | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.RecrawlUris method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisResponse {
+        /**
+         * URIs that were not crawled before the LRO terminated.
+         */
+        failedUris?: string[] | null;
+        /**
+         * Details for a sample of up to 10 `failed_uris`.
+         */
+        failureSamples?: Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisResponseFailureInfo[];
+    }
+    /**
+     * Details about why a particular URI failed to be crawled. Each FailureInfo contains one FailureReason per CorpusType.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisResponseFailureInfo {
+        /**
+         * List of failure reasons by corpus type (e.g. desktop, mobile).
+         */
+        failureReasons?: Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisResponseFailureInfoFailureReason[];
+        /**
+         * URI that failed to be crawled.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Details about why crawling failed for a particular CorpusType, e.g., DESKTOP and MOBILE crawling may fail for different reasons.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisResponseFailureInfoFailureReason {
+        /**
+         * DESKTOP, MOBILE, or CORPUS_TYPE_UNSPECIFIED.
+         */
+        corpusType?: string | null;
+        /**
+         * Reason why the URI was not crawled.
+         */
+        errorMessage?: string | null;
+    }
+    /**
+     * Defines a reply message to user.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaReply {
+        /**
+         * References in the reply.
+         */
+        references?: Schema$GoogleCloudDiscoveryengineV1alphaReplyReference[];
+        /**
+         * DEPRECATED: use `summary` instead. Text reply.
+         */
+        reply?: string | null;
+        /**
+         * Summary based on search results.
+         */
+        summary?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummary;
+    }
+    /**
+     * Defines reference in reply.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaReplyReference {
+        /**
+         * Anchor text.
+         */
+        anchorText?: string | null;
+        /**
+         * Anchor text end index.
+         */
+        end?: number | null;
+        /**
+         * Anchor text start index.
+         */
+        start?: number | null;
+        /**
+         * URI link reference.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Request for ReportConsentChange method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaReportConsentChangeRequest {
+        /**
+         * Required. Whether customer decides to accept or decline service term. At this moment, only accept action is supported.
+         */
+        consentChangeAction?: string | null;
+        /**
+         * Required. The unique identifier of the terms of service to update. Available term ids: * `GA_DATA_USE_TERMS`: [Terms for data use](https://cloud.google.com/retail/data-use-terms). When using this service term id, the acceptable service_term_version to provide is `2022-11-23`.
+         */
+        serviceTermId?: string | null;
+        /**
+         * Required. The version string of the terms of service to update.
+         */
+        serviceTermVersion?: string | null;
+    }
+    /**
+     * A data requirement.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRequirement {
+        /**
+         * The condition for evaluating the requirement result. Variables in the expression should be provided by `metrics_bindings` or `threshold_bindings`. Where `metrics_bindings` are used for computed metrics and `threshold_bindings` are used to define thresholds for corresponding `metric_bindings`.
+         */
+        condition?: Schema$GoogleTypeExpr;
+        /**
+         * The description of the requirement.
+         */
+        description?: string | null;
+        /**
+         * The name of the requirement.
+         */
+        displayName?: string | null;
+        /**
+         * A list of the metric bindings to be used in `condition`.
+         */
+        metricBindings?: Schema$GoogleCloudDiscoveryengineV1alphaRequirementMetricBinding[];
+        /**
+         * A list of threshold bindings to be used in `condition`.
+         */
+        thresholdBindings?: Schema$GoogleCloudDiscoveryengineV1alphaRequirementThresholdBinding[];
+        /**
+         * The requirement type, used as an identifier. Must be unique. The type should prefix with service name to avoid possible collision. It's encouraged to use natural hierarchical grouping for similar requirements. Examples: * `library.googleapis.com/books/min_available_books` * `discoveryengine.googleapis.com/media_rec/recommended_for_you/conversion_rate`
+         */
+        type?: string | null;
+        /**
+         * A list of the metric bindings to be used in `condition`.
+         */
+        violationSamplesBindings?: Schema$GoogleCloudDiscoveryengineV1alphaRequirementViolationSamplesBinding[];
+    }
+    /**
+     * Specifies a metrics query and bind its result to a variable which will be used in the `condition`.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRequirementMetricBinding {
+        /**
+         * The category of the metric's target resource. Example: "Events"
+         */
+        category?: string | null;
+        /**
+         * Human readable description of the corresponding metric filter.
+         */
+        description?: string | null;
+        /**
+         * The filter string used for metrics query. Example: "metric.type = \"discoveryengine.googleapis.com/events/day_count\" AND " "metric.conditions.time_range = \"NINETY_DAYS\""
+         */
+        metricFilter?: string | null;
+        /**
+         * The resource being monitored for the metric.
+         */
+        resourceType?: string | null;
+        /**
+         * The variable id to be referenced in `condition`.
+         */
+        variableId?: string | null;
+    }
+    /**
+     * Specifies a multi-level threshold to apply to apply to a `metric_bindings` in the `condition` CEL expression.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRequirementThresholdBinding {
+        /**
+         * Threshold to trigger a blocking failure. If not met, the requirement will evaluate as a `FAILURE`.
+         */
+        blockingThreshold?: number | null;
+        /**
+         * Human readable description of the corresponding threshold and sub-requirement.
+         */
+        description?: string | null;
+        /**
+         * The variable id to be referenced in `condition`. Must be unique across all `metric_bindings` and `threshold_bindings`.
+         */
+        variableId?: string | null;
+        /**
+         * Threshold to trigger a warning. If not met, the requirement will evaluate as a `WARNING`.
+         */
+        warningThreshold?: number | null;
+    }
+    /**
+     * Specifies a samples query and bind its result to a variable which will be used in the `condition`.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaRequirementViolationSamplesBinding {
+        /**
+         * Description of this sample binding. Used by the UI to render user friendly descriptions for each requirement condition. Should be less than 128 characters long.
+         */
+        description?: string | null;
+        /**
+         * The filter string used for samples query. Example: "sample.type = \"retail.googleapis.com/user_event\" AND " "sample.labels.event_type = \"PURCHASE\" "
+         */
+        sampleFilter?: string | null;
+        /**
+         * The variable id to be referenced in `condition`.
+         */
+        variableId?: string | null;
+    }
+    /**
+     * Request for resuming training of an engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaResumeEngineRequest {
+    }
+    /**
+     * Sample Query captures metadata to be used for evaluation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery {
+        /**
+         * Output only. Timestamp the SampleQuery was created at.
+         */
+        createTime?: string | null;
+        /**
+         * Identifier. The full resource name of the sample query, in the format of `projects/{project\}/locations/{location\}/sampleQuerySets/{sample_query_set\}/sampleQueries/{sample_query\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * The query entry.
+         */
+        queryEntry?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQueryQueryEntry;
+    }
+    /**
+     * Query Entry captures metadata to be used for search evaluation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSampleQueryQueryEntry {
+        /**
+         * Required. The query.
+         */
+        query?: string | null;
+        /**
+         * List of targets for the query.
+         */
+        targets?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQueryQueryEntryTarget[];
+    }
+    /**
+     * Defines the parameters of the query's expected outcome.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSampleQueryQueryEntryTarget {
+        /**
+         * Expected page numbers of the target. Each page number must be non negative.
+         */
+        pageNumbers?: number[] | null;
+        /**
+         * Relevance score of the target.
+         */
+        score?: number | null;
+        /**
+         * Expected uri of the target. This field must be a UTF-8 encoded string with a length limit of 2048 characters. Example of valid uris: `https://example.com/abc`, `gcs://example/example.pdf`.
+         */
+        uri?: string | null;
+    }
+    /**
+     * A SampleQuerySet is the parent resource of SampleQuery, and contains the configurations shared by all SampleQuery under it.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet {
+        /**
+         * Output only. Timestamp the SampleQuerySet was created at.
+         */
+        createTime?: string | null;
+        /**
+         * The description of the SampleQuerySet.
+         */
+        description?: string | null;
+        /**
+         * Required. The sample query set display name. This field must be a UTF-8 encoded string with a length limit of 128 characters.
+         */
+        displayName?: string | null;
+        /**
+         * Identifier. The full resource name of the SampleQuerySet, in the format of `projects/{project\}/locations/{location\}/sampleQuerySets/{sample_query_set\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+    }
+    /**
+     * Defines the structure and layout of a type of document data.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSchema {
+        /**
+         * Output only. Configurations for fields of the schema.
+         */
+        fieldConfigs?: Schema$GoogleCloudDiscoveryengineV1alphaFieldConfig[];
+        /**
+         * The JSON representation of the schema.
+         */
+        jsonSchema?: string | null;
+        /**
+         * Immutable. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * The structured representation of the schema.
+         */
+        structSchema?: {
+            [key: string]: any;
+        } | null;
+    }
+    /**
+     * Detailed search information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchInfo {
+        /**
+         * An integer that specifies the current offset for pagination (the 0-indexed starting location, amongst the products deemed by the API as relevant). See SearchRequest.offset for definition. If this field is negative, an `INVALID_ARGUMENT` is returned. This can only be set for `search` events. Other event types should not set this field. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        offset?: number | null;
+        /**
+         * The order in which products are returned, if applicable. See SearchRequest.order_by for definition and syntax. The value must be a UTF-8 encoded string with a length limit of 1,000 characters. Otherwise, an `INVALID_ARGUMENT` error is returned. This can only be set for `search` events. Other event types should not set this field. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        orderBy?: string | null;
+        /**
+         * The user's search query. See SearchRequest.query for definition. The value must be a UTF-8 encoded string with a length limit of 5,000 characters. Otherwise, an `INVALID_ARGUMENT` error is returned. At least one of search_query or PageInfo.page_category is required for `search` events. Other event types should not set this field. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        searchQuery?: string | null;
+    }
+    /**
+     * Request message for SearchService.Search method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequest {
+        /**
+         * Boost specification to boost certain documents. For more information on boosting, see [Boosting](https://cloud.google.com/generative-ai-app-builder/docs/boost-search-results)
+         */
+        boostSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpec;
+        /**
+         * The branch resource name, such as `projects/x/locations/global/collections/default_collection/dataStores/default_data_store/branches/0`. Use `default_branch` as the branch ID or leave this field empty, to search documents under the default branch.
+         */
+        branch?: string | null;
+        /**
+         * The default filter that is applied when a user performs a search without checking any filters on the search page. The filter applied to every search request when quality improvement such as query expansion is needed. In the case a query does not have a sufficient amount of results this filter will be used to determine whether or not to enable the query expansion flow. The original filter will still be used for the query expanded search. This field is strongly recommended to achieve high search quality. For more information about filter syntax, see SearchRequest.filter.
+         */
+        canonicalFilter?: string | null;
+        /**
+         * A specification for configuring the behavior of content search.
+         */
+        contentSearchSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpec;
+        /**
+         * Custom fine tuning configs. If set, it has higher priority than the configs set in ServingConfig.custom_fine_tuning_spec.
+         */
+        customFineTuningSpec?: Schema$GoogleCloudDiscoveryengineV1alphaCustomFineTuningSpec;
+        /**
+         * Specs defining dataStores to filter on in a search call and configurations for those dataStores. This is only considered for engines with multiple dataStores use case. For single dataStore within an engine, they should use the specs at the top level.
+         */
+        dataStoreSpecs?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestDataStoreSpec[];
+        /**
+         * Uses the provided embedding to do additional semantic document retrieval. The retrieval is based on the dot product of SearchRequest.EmbeddingSpec.EmbeddingVector.vector and the document embedding that is provided in SearchRequest.EmbeddingSpec.EmbeddingVector.field_path. If SearchRequest.EmbeddingSpec.EmbeddingVector.field_path is not provided, it will use ServingConfig.EmbeddingConfig.field_path.
+         */
+        embeddingSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestEmbeddingSpec;
+        /**
+         * Facet specifications for faceted search. If empty, no facets are returned. A maximum of 100 values are allowed. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        facetSpecs?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestFacetSpec[];
+        /**
+         * The filter syntax consists of an expression language for constructing a predicate from one or more fields of the documents being filtered. Filter expression is case-sensitive. If this field is unrecognizable, an `INVALID_ARGUMENT` is returned. Filtering in Vertex AI Search is done by mapping the LHS filter key to a key property defined in the Vertex AI Search backend -- this mapping is defined by the customer in their schema. For example a media customer might have a field 'name' in their schema. In this case the filter would look like this: filter --\> name:'ANY("king kong")' For more information about filtering including syntax and filter operators, see [Filter](https://cloud.google.com/generative-ai-app-builder/docs/filter-search-metadata)
+         */
+        filter?: string | null;
+        /**
+         * Raw image query.
+         */
+        imageQuery?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestImageQuery;
+        /**
+         * The BCP-47 language code, such as "en-US" or "sr-Latn". For more information, see [Standard fields](https://cloud.google.com/apis/design/standard_fields). This field helps to better interpret the query. If a value isn't specified, the query language code is automatically detected, which may not be accurate.
+         */
+        languageCode?: string | null;
+        /**
+         * If `naturalLanguageQueryUnderstandingSpec` is not specified, no additional natural language query understanding will be done.
+         */
+        naturalLanguageQueryUnderstandingSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestNaturalLanguageQueryUnderstandingSpec;
+        /**
+         * A 0-indexed integer that specifies the current offset (that is, starting result location, amongst the Documents deemed by the API as relevant) in search results. This field is only considered if page_token is unset. If this field is negative, an `INVALID_ARGUMENT` is returned.
+         */
+        offset?: number | null;
+        /**
+         * The order in which documents are returned. Documents can be ordered by a field in an Document object. Leave it unset if ordered by relevance. `order_by` expression is case-sensitive. For more information on ordering the website search results, see [Order web search results](https://cloud.google.com/generative-ai-app-builder/docs/order-web-search-results). For more information on ordering the healthcare search results, see [Order healthcare search results](https://cloud.google.com/generative-ai-app-builder/docs/order-hc-results). If this field is unrecognizable, an `INVALID_ARGUMENT` is returned.
+         */
+        orderBy?: string | null;
+        /**
+         * Maximum number of Documents to return. The maximum allowed value depends on the data type. Values above the maximum value are coerced to the maximum value. * Websites with basic indexing: Default `10`, Maximum `25`. * Websites with advanced indexing: Default `25`, Maximum `50`. * Other: Default `50`, Maximum `100`. If this field is negative, an `INVALID_ARGUMENT` is returned.
+         */
+        pageSize?: number | null;
+        /**
+         * A page token received from a previous SearchService.Search call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to SearchService.Search must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string | null;
+        /**
+         * Additional search parameters. For public website search only, supported values are: * `user_country_code`: string. Default empty. If set to non-empty, results are restricted or boosted based on the location provided. For example, `user_country_code: "au"` For available codes see [Country Codes](https://developers.google.com/custom-search/docs/json_api_reference#countryCodes) * `search_type`: double. Default empty. Enables non-webpage searching depending on the value. The only valid non-default value is 1, which enables image searching. For example, `search_type: 1`
+         */
+        params?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Raw search query.
+         */
+        query?: string | null;
+        /**
+         * The query expansion specification that specifies the conditions under which query expansion occurs.
+         */
+        queryExpansionSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestQueryExpansionSpec;
+        /**
+         * The ranking expression controls the customized ranking on retrieval documents. This overrides ServingConfig.ranking_expression. The ranking expression is a single function or multiple functions that are joined by "+". * ranking_expression = function, { " + ", function \}; Supported functions: * double * relevance_score * double * dotProduct(embedding_field_path) Function variables: * `relevance_score`: pre-defined keywords, used for measure relevance between query and document. * `embedding_field_path`: the document embedding field used with query embedding vector. * `dotProduct`: embedding function between embedding_field_path and query embedding vector. Example ranking expression: If document has an embedding field doc_embedding, the ranking expression could be `0.5 * relevance_score + 0.3 * dotProduct(doc_embedding)`.
+         */
+        rankingExpression?: string | null;
+        /**
+         * The Unicode country/region code (CLDR) of a location, such as "US" and "419". For more information, see [Standard fields](https://cloud.google.com/apis/design/standard_fields). If set, then results will be boosted based on the region_code provided.
+         */
+        regionCode?: string | null;
+        /**
+         * The relevance threshold of the search results. Default to Google defined threshold, leveraging a balance of precision and recall to deliver both highly accurate results and comprehensive coverage of relevant information.
+         */
+        relevanceThreshold?: string | null;
+        /**
+         * Whether to turn on safe search. This is only supported for website search.
+         */
+        safeSearch?: boolean | null;
+        /**
+         * Search as you type configuration. Only supported for the IndustryVertical.MEDIA vertical.
+         */
+        searchAsYouTypeSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestSearchAsYouTypeSpec;
+        /**
+         * Required. The resource name of the Search serving config, such as `projects/x/locations/global/collections/default_collection/engines/x/servingConfigs/default_serving_config`, or `projects/x/locations/global/collections/default_collection/dataStores/default_data_store/servingConfigs/default_serving_config`. This field is used to identify the serving configuration name, set of models used to make the search.
+         */
+        servingConfig?: string | null;
+        /**
+         * The session resource name. Optional. Session allows users to do multi-turn /search API calls or coordination between /search API calls and /answer API calls. Example #1 (multi-turn /search API calls): 1. Call /search API with the auto-session mode (see below). 2. Call /search API with the session ID generated in the first call. Here, the previous search query gets considered in query standing. I.e., if the first query is "How did Alphabet do in 2022?" and the current query is "How about 2023?", the current query will be interpreted as "How did Alphabet do in 2023?". Example #2 (coordination between /search API calls and /answer API calls): 1. Call /search API with the auto-session mode (see below). 2. Call /answer API with the session ID generated in the first call. Here, the answer generation happens in the context of the search results from the first search call. Auto-session mode: when `projects/.../sessions/-` is used, a new session gets automatically created. Otherwise, users can use the create-session API to create a session manually. Multi-turn Search feature is currently at private GA stage. Please use v1alpha or v1beta version instead before we launch this feature to public GA. Or ask for allowlisting through Google Support team.
+         */
+        session?: string | null;
+        /**
+         * Session specification. Can be used only when `session` is set.
+         */
+        sessionSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestSessionSpec;
+        /**
+         * The spell correction specification that specifies the mode under which spell correction takes effect.
+         */
+        spellCorrectionSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestSpellCorrectionSpec;
+        /**
+         * Information about the end user. Highly recommended for analytics. UserInfo.user_agent is used to deduce `device_type` for analytics.
+         */
+        userInfo?: Schema$GoogleCloudDiscoveryengineV1alphaUserInfo;
+        /**
+         * The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Google Cloud Document](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
+         */
+        userLabels?: {
+            [key: string]: string;
+        } | null;
+        /**
+         * A unique identifier for tracking visitors. For example, this could be implemented with an HTTP cookie, which should be able to uniquely identify a visitor on a single device. This unique identifier should not change if the visitor logs in or out of the website. This field should NOT have a fixed value such as `unknown_visitor`. This should be the same identifier as UserEvent.user_pseudo_id and CompleteQueryRequest.user_pseudo_id The field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        userPseudoId?: string | null;
+    }
+    /**
+     * Boost specification to boost certain documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpec {
+        /**
+         * Condition boost specifications. If a document matches multiple conditions in the specifictions, boost scores from these specifications are all applied and combined in a non-linear way. Maximum number of specifications is 20.
+         */
+        conditionBoostSpecs?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpecConditionBoostSpec[];
+    }
+    /**
+     * Boost applies to documents which match a condition.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpecConditionBoostSpec {
+        /**
+         * Strength of the condition boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0. Setting to 1.0 gives the document a big promotion. However, it does not necessarily mean that the boosted document will be the top result at all times, nor that other documents will be excluded. Results could still be shown even when none of them matches the condition. And results that are significantly more relevant to the search query can still trump your heavily favored but irrelevant documents. Setting to -1.0 gives the document a big demotion. However, results that are deeply relevant might still be shown. The document will have an upstream battle to get a fairly high ranking, but it is not blocked out completely. Setting to 0.0 means no boost applied. The boosting condition is ignored. Only one of the (condition, boost) combination or the boost_control_spec below are set. If both are set then the global boost is ignored and the more fine-grained boost_control_spec is applied.
+         */
+        boost?: number | null;
+        /**
+         * Complex specification for custom ranking based on customer defined attribute value.
+         */
+        boostControlSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpecConditionBoostSpecBoostControlSpec;
+        /**
+         * An expression which specifies a boost condition. The syntax and supported fields are the same as a filter expression. See SearchRequest.filter for detail syntax and limitations. Examples: * To boost documents with document ID "doc_1" or "doc_2", and color "Red" or "Blue": `(document_id: ANY("doc_1", "doc_2")) AND (color: ANY("Red", "Blue"))`
+         */
+        condition?: string | null;
+    }
+    /**
+     * Specification for custom ranking based on customer specified attribute value. It provides more controls for customized ranking than the simple (condition, boost) combination above.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpecConditionBoostSpecBoostControlSpec {
+        /**
+         * The attribute type to be used to determine the boost amount. The attribute value can be derived from the field value of the specified field_name. In the case of numerical it is straightforward i.e. attribute_value = numerical_field_value. In the case of freshness however, attribute_value = (time.now() - datetime_field_value).
+         */
+        attributeType?: string | null;
+        /**
+         * The control points used to define the curve. The monotonic function (defined through the interpolation_type above) passes through the control points listed here.
+         */
+        controlPoints?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpecConditionBoostSpecBoostControlSpecControlPoint[];
+        /**
+         * The name of the field whose value will be used to determine the boost amount.
+         */
+        fieldName?: string | null;
+        /**
+         * The interpolation type to be applied to connect the control points listed below.
+         */
+        interpolationType?: string | null;
+    }
+    /**
+     * The control points used to define the curve. The curve defined through these control points can only be monotonically increasing or decreasing(constant values are acceptable).
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestBoostSpecConditionBoostSpecBoostControlSpecControlPoint {
+        /**
+         * Can be one of: 1. The numerical field value. 2. The duration spec for freshness: The value must be formatted as an XSD `dayTimeDuration` value (a restricted subset of an ISO 8601 duration value). The pattern for this is: `nDnM]`.
+         */
+        attributeValue?: string | null;
+        /**
+         * The value between -1 to 1 by which to boost the score if the attribute_value evaluates to the value specified above.
+         */
+        boostAmount?: number | null;
+    }
+    /**
+     * A specification for configuring the behavior of content search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpec {
+        /**
+         * Specifies the chunk spec to be returned from the search response. Only available if the SearchRequest.ContentSearchSpec.search_result_mode is set to CHUNKS
+         */
+        chunkSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecChunkSpec;
+        /**
+         * If there is no extractive_content_spec provided, there will be no extractive answer in the search response.
+         */
+        extractiveContentSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecExtractiveContentSpec;
+        /**
+         * Specifies the search result mode. If unspecified, the search result mode defaults to `DOCUMENTS`.
+         */
+        searchResultMode?: string | null;
+        /**
+         * If `snippetSpec` is not specified, snippets are not included in the search response.
+         */
+        snippetSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSnippetSpec;
+        /**
+         * If `summarySpec` is not specified, summaries are not included in the search response.
+         */
+        summarySpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSummarySpec;
+    }
+    /**
+     * Specifies the chunk spec to be returned from the search response. Only available if the SearchRequest.ContentSearchSpec.search_result_mode is set to CHUNKS
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecChunkSpec {
+        /**
+         * The number of next chunks to be returned of the current chunk. The maximum allowed value is 3. If not specified, no next chunks will be returned.
+         */
+        numNextChunks?: number | null;
+        /**
+         * The number of previous chunks to be returned of the current chunk. The maximum allowed value is 3. If not specified, no previous chunks will be returned.
+         */
+        numPreviousChunks?: number | null;
+    }
+    /**
+     * A specification for configuring the extractive content in a search response.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecExtractiveContentSpec {
+        /**
+         * The maximum number of extractive answers returned in each search result. An extractive answer is a verbatim answer extracted from the original document, which provides a precise and contextually relevant answer to the search query. If the number of matching answers is less than the `max_extractive_answer_count`, return all of the answers. Otherwise, return the `max_extractive_answer_count`. At most five answers are returned for each SearchResult.
+         */
+        maxExtractiveAnswerCount?: number | null;
+        /**
+         * The max number of extractive segments returned in each search result. Only applied if the DataStore is set to DataStore.ContentConfig.CONTENT_REQUIRED or DataStore.solution_types is SOLUTION_TYPE_CHAT. An extractive segment is a text segment extracted from the original document that is relevant to the search query, and, in general, more verbose than an extractive answer. The segment could then be used as input for LLMs to generate summaries and answers. If the number of matching segments is less than `max_extractive_segment_count`, return all of the segments. Otherwise, return the `max_extractive_segment_count`.
+         */
+        maxExtractiveSegmentCount?: number | null;
+        /**
+         * Return at most `num_next_segments` segments after each selected segments.
+         */
+        numNextSegments?: number | null;
+        /**
+         * Specifies whether to also include the adjacent from each selected segments. Return at most `num_previous_segments` segments before each selected segments.
+         */
+        numPreviousSegments?: number | null;
+        /**
+         * Specifies whether to return the confidence score from the extractive segments in each search result. This feature is available only for new or allowlisted data stores. To allowlist your data store, contact your Customer Engineer. The default value is `false`.
+         */
+        returnExtractiveSegmentScore?: boolean | null;
+    }
+    /**
+     * A specification for configuring snippets in a search response.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSnippetSpec {
+        /**
+         * [DEPRECATED] This field is deprecated. To control snippet return, use `return_snippet` field. For backwards compatibility, we will return snippet if max_snippet_count \> 0.
+         */
+        maxSnippetCount?: number | null;
+        /**
+         * [DEPRECATED] This field is deprecated and will have no affect on the snippet.
+         */
+        referenceOnly?: boolean | null;
+        /**
+         * If `true`, then return snippet. If no snippet can be generated, we return "No snippet is available for this page." A `snippet_status` with `SUCCESS` or `NO_SNIPPET_AVAILABLE` will also be returned.
+         */
+        returnSnippet?: boolean | null;
+    }
+    /**
+     * A specification for configuring a summary returned in a search response.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSummarySpec {
+        /**
+         * Specifies whether to filter out adversarial queries. The default value is `false`. Google employs search-query classification to detect adversarial queries. No summary is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output. If this field is set to `true`, we skip generating summaries for adversarial queries and return fallback messages instead.
+         */
+        ignoreAdversarialQuery?: boolean | null;
+        /**
+         * Specifies whether to filter out queries that have low relevance. The default value is `false`. If this field is set to `false`, all search results are used regardless of relevance to generate answers. If set to `true`, only queries with high relevance search results will generate answers.
+         */
+        ignoreLowRelevantContent?: boolean | null;
+        /**
+         * Specifies whether to filter out queries that are not summary-seeking. The default value is `false`. Google employs search-query classification to detect summary-seeking queries. No summary is returned if the search query is classified as a non-summary seeking query. For example, `why is the sky blue` and `Who is the best soccer player in the world?` are summary-seeking queries, but `SFO airport` and `world cup 2026` are not. They are most likely navigational queries. If this field is set to `true`, we skip generating summaries for non-summary seeking queries and return fallback messages instead.
+         */
+        ignoreNonSummarySeekingQuery?: boolean | null;
+        /**
+         * Specifies whether to include citations in the summary. The default value is `false`. When this field is set to `true`, summaries include in-line citation numbers. Example summary including citations: BigQuery is Google Cloud's fully managed and completely serverless enterprise data warehouse [1]. BigQuery supports all data types, works across clouds, and has built-in machine learning and business intelligence, all within a unified platform [2, 3]. The citation numbers refer to the returned search results and are 1-indexed. For example, [1] means that the sentence is attributed to the first search result. [2, 3] means that the sentence is attributed to both the second and third search results.
+         */
+        includeCitations?: boolean | null;
+        /**
+         * Language code for Summary. Use language tags defined by [BCP47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt). Note: This is an experimental feature.
+         */
+        languageCode?: string | null;
+        /**
+         * If specified, the spec will be used to modify the prompt provided to the LLM.
+         */
+        modelPromptSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSummarySpecModelPromptSpec;
+        /**
+         * If specified, the spec will be used to modify the model specification provided to the LLM.
+         */
+        modelSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSummarySpecModelSpec;
+        /**
+         * The number of top results to generate the summary from. If the number of results returned is less than `summaryResultCount`, the summary is generated from all of the results. At most 10 results for documents mode, or 50 for chunks mode, can be used to generate a summary. The chunks mode is used when SearchRequest.ContentSearchSpec.search_result_mode is set to CHUNKS.
+         */
+        summaryResultCount?: number | null;
+        /**
+         * If true, answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.
+         */
+        useSemanticChunks?: boolean | null;
+    }
+    /**
+     * Specification of the prompt to use with the model.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSummarySpecModelPromptSpec {
+        /**
+         * Text at the beginning of the prompt that instructs the assistant. Examples are available in the user guide.
+         */
+        preamble?: string | null;
+    }
+    /**
+     * Specification of the model.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpecSummarySpecModelSpec {
+        /**
+         * The model version used to generate the summary. Supported values are: * `stable`: string. Default value when no value is specified. Uses a generally available, fine-tuned model. For more information, see [Answer generation model versions and lifecycle](https://cloud.google.com/generative-ai-app-builder/docs/answer-generation-models). * `preview`: string. (Public preview) Uses a preview model. For more information, see [Answer generation model versions and lifecycle](https://cloud.google.com/generative-ai-app-builder/docs/answer-generation-models).
+         */
+        version?: string | null;
+    }
+    /**
+     * A struct to define data stores to filter on in a search call and configurations for those data stores. Otherwise, an `INVALID_ARGUMENT` error is returned.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestDataStoreSpec {
+        /**
+         * Required. Full resource name of DataStore, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`.
+         */
+        dataStore?: string | null;
+    }
+    /**
+     * The specification that uses customized query embedding vector to do semantic document retrieval.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestEmbeddingSpec {
+        /**
+         * The embedding vector used for retrieval. Limit to 1.
+         */
+        embeddingVectors?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestEmbeddingSpecEmbeddingVector[];
+    }
+    /**
+     * Embedding vector.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestEmbeddingSpecEmbeddingVector {
+        /**
+         * Embedding field path in schema.
+         */
+        fieldPath?: string | null;
+        /**
+         * Query embedding vector.
+         */
+        vector?: number[] | null;
+    }
+    /**
+     * A facet specification to perform faceted search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestFacetSpec {
+        /**
+         * Enables dynamic position for this facet. If set to true, the position of this facet among all facets in the response is determined automatically. If dynamic facets are enabled, it is ordered together. If set to false, the position of this facet in the response is the same as in the request, and it is ranked before the facets with dynamic position enable and all dynamic facets. For example, you may always want to have rating facet returned in the response, but it's not necessarily to always display the rating facet at the top. In that case, you can set enable_dynamic_position to true so that the position of rating facet in response is determined automatically. Another example, assuming you have the following facets in the request: * "rating", enable_dynamic_position = true * "price", enable_dynamic_position = false * "brands", enable_dynamic_position = false And also you have a dynamic facets enabled, which generates a facet `gender`. Then the final order of the facets in the response can be ("price", "brands", "rating", "gender") or ("price", "brands", "gender", "rating") depends on how API orders "gender" and "rating" facets. However, notice that "price" and "brands" are always ranked at first and second position because their enable_dynamic_position is false.
+         */
+        enableDynamicPosition?: boolean | null;
+        /**
+         * List of keys to exclude when faceting. By default, FacetKey.key is not excluded from the filter unless it is listed in this field. Listing a facet key in this field allows its values to appear as facet results, even when they are filtered out of search results. Using this field does not affect what search results are returned. For example, suppose there are 100 documents with the color facet "Red" and 200 documents with the color facet "Blue". A query containing the filter "color:ANY("Red")" and having "color" as FacetKey.key would by default return only "Red" documents in the search results, and also return "Red" with count 100 as the only color facet. Although there are also blue documents available, "Blue" would not be shown as an available facet value. If "color" is listed in "excludedFilterKeys", then the query returns the facet values "Red" with count 100 and "Blue" with count 200, because the "color" key is now excluded from the filter. Because this field doesn't affect search results, the search results are still correctly filtered to return only "Red" documents. A maximum of 100 values are allowed. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        excludedFilterKeys?: string[] | null;
+        /**
+         * Required. The facet key specification.
+         */
+        facetKey?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestFacetSpecFacetKey;
+        /**
+         * Maximum facet values that are returned for this facet. If unspecified, defaults to 20. The maximum allowed value is 300. Values above 300 are coerced to 300. For aggregation in healthcare search, when the [FacetKey.key] is "healthcare_aggregation_key", the limit will be overridden to 10,000 internally, regardless of the value set here. If this field is negative, an `INVALID_ARGUMENT` is returned.
+         */
+        limit?: number | null;
+    }
+    /**
+     * Specifies how a facet is computed.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestFacetSpecFacetKey {
+        /**
+         * True to make facet keys case insensitive when getting faceting values with prefixes or contains; false otherwise.
+         */
+        caseInsensitive?: boolean | null;
+        /**
+         * Only get facet values that contain the given strings. For example, suppose "category" has three values "Action \> 2022", "Action \> 2021" and "Sci-Fi \> 2022". If set "contains" to "2022", the "category" facet only contains "Action \> 2022" and "Sci-Fi \> 2022". Only supported on textual fields. Maximum is 10.
+         */
+        contains?: string[] | null;
+        /**
+         * Set only if values should be bucketed into intervals. Must be set for facets with numerical values. Must not be set for facet with text values. Maximum number of intervals is 30.
+         */
+        intervals?: Schema$GoogleCloudDiscoveryengineV1alphaInterval[];
+        /**
+         * Required. Supported textual and numerical facet keys in Document object, over which the facet values are computed. Facet key is case-sensitive.
+         */
+        key?: string | null;
+        /**
+         * The order in which documents are returned. Allowed values are: * "count desc", which means order by SearchResponse.Facet.values.count descending. * "value desc", which means order by SearchResponse.Facet.values.value descending. Only applies to textual facets. If not set, textual values are sorted in [natural order](https://en.wikipedia.org/wiki/Natural_sort_order); numerical intervals are sorted in the order given by FacetSpec.FacetKey.intervals.
+         */
+        orderBy?: string | null;
+        /**
+         * Only get facet values that start with the given string prefix. For example, suppose "category" has three values "Action \> 2022", "Action \> 2021" and "Sci-Fi \> 2022". If set "prefixes" to "Action", the "category" facet only contains "Action \> 2022" and "Action \> 2021". Only supported on textual fields. Maximum is 10.
+         */
+        prefixes?: string[] | null;
+        /**
+         * Only get facet for the given restricted values. Only supported on textual fields. For example, suppose "category" has three values "Action \> 2022", "Action \> 2021" and "Sci-Fi \> 2022". If set "restricted_values" to "Action \> 2022", the "category" facet only contains "Action \> 2022". Only supported on textual fields. Maximum is 10.
+         */
+        restrictedValues?: string[] | null;
+    }
+    /**
+     * Specifies the image query input.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestImageQuery {
+        /**
+         * Base64 encoded image bytes. Supported image formats: JPEG, PNG, and BMP.
+         */
+        imageBytes?: string | null;
+    }
+    /**
+     * Specification to enable natural language understanding capabilities for search requests.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestNaturalLanguageQueryUnderstandingSpec {
+        /**
+         * The condition under which filter extraction should occur. Default to Condition.DISABLED.
+         */
+        filterExtractionCondition?: string | null;
+        /**
+         * Field names used for location-based filtering, where geolocation filters are detected in natural language search queries. Only valid when the FilterExtractionCondition is set to `ENABLED`. If this field is set, it overrides the field names set in ServingConfig.geo_search_query_detection_field_names.
+         */
+        geoSearchQueryDetectionFieldNames?: string[] | null;
+    }
+    /**
+     * Specification to determine under which conditions query expansion should occur.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestQueryExpansionSpec {
+        /**
+         * The condition under which query expansion should occur. Default to Condition.DISABLED.
+         */
+        condition?: string | null;
+        /**
+         * Whether to pin unexpanded results. If this field is set to true, unexpanded products are always at the top of the search results, followed by the expanded results.
+         */
+        pinUnexpandedResults?: boolean | null;
+    }
+    /**
+     * Specification for search as you type in search requests.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestSearchAsYouTypeSpec {
+        /**
+         * The condition under which search as you type should occur. Default to Condition.DISABLED.
+         */
+        condition?: string | null;
+    }
+    /**
+     * Session specification. Multi-turn Search feature is currently at private GA stage. Please use v1alpha or v1beta version instead before we launch this feature to public GA. Or ask for allowlisting through Google Support team.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestSessionSpec {
+        /**
+         * If set, the search result gets stored to the "turn" specified by this query ID. Example: Let's say the session looks like this: session { name: ".../sessions/xxx" turns { query { text: "What is foo?" query_id: ".../questions/yyy" \} answer: "Foo is ..." \} turns { query { text: "How about bar then?" query_id: ".../questions/zzz" \} \} \} The user can call /search API with a request like this: session: ".../sessions/xxx" session_spec { query_id: ".../questions/zzz" \} Then, the API stores the search result, associated with the last turn. The stored search result can be used by a subsequent /answer API call (with the session ID and the query ID specified). Also, it is possible to call /search and /answer in parallel with the same session ID & query ID.
+         */
+        queryId?: string | null;
+        /**
+         * The number of top search results to persist. The persisted search results can be used for the subsequent /answer api call. This field is simliar to the `summary_result_count` field in SearchRequest.ContentSearchSpec.SummarySpec.summary_result_count. At most 10 results for documents mode, or 50 for chunks mode.
+         */
+        searchResultPersistenceCount?: number | null;
+    }
+    /**
+     * The specification for query spell correction.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestSpellCorrectionSpec {
+        /**
+         * The mode under which spell correction replaces the original search query. Defaults to Mode.AUTO.
+         */
+        mode?: string | null;
+    }
+    /**
+     * Response message for SearchService.Search method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse {
+        /**
+         * Controls applied as part of the Control service.
+         */
+        appliedControls?: string[] | null;
+        /**
+         * A unique search token. This should be included in the UserEvent logs resulting from this search, which enables accurate attribution of search model performance. This also helps to identify a request during the customer support scenarios.
+         */
+        attributionToken?: string | null;
+        /**
+         * Contains the spell corrected query, if found. If the spell correction type is AUTOMATIC, then the search results are based on corrected_query. Otherwise the original query is used for search.
+         */
+        correctedQuery?: string | null;
+        /**
+         * Results of facets requested by user.
+         */
+        facets?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseFacet[];
+        geoSearchDebugInfo?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseGeoSearchDebugInfo[];
+        /**
+         * Guided search result.
+         */
+        guidedSearchResult?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseGuidedSearchResult;
+        /**
+         * Natural language query understanding information for the returned results.
+         */
+        naturalLanguageQueryUnderstandingInfo?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfo;
+        /**
+         * A token that can be sent as SearchRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.
+         */
+        nextPageToken?: string | null;
+        /**
+         * A list of One Box results. There can be multiple One Box results of different types.
+         */
+        oneBoxResults?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseOneBoxResult[];
+        /**
+         * Query expansion information for the returned results.
+         */
+        queryExpansionInfo?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseQueryExpansionInfo;
+        /**
+         * The URI of a customer-defined redirect page. If redirect action is triggered, no search is performed, and only redirect_uri and attribution_token are set in the response.
+         */
+        redirectUri?: string | null;
+        /**
+         * A list of matched documents. The order represents the ranking.
+         */
+        results?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSearchResult[];
+        /**
+         * Session information. Only set if SearchRequest.session is provided. See its description for more details.
+         */
+        sessionInfo?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSessionInfo;
+        /**
+         * A summary as part of the search results. This field is only returned if SearchRequest.ContentSearchSpec.summary_spec is set.
+         */
+        summary?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummary;
+        /**
+         * The estimated total count of matched items irrespective of pagination. The count of results returned by pagination may be less than the total_size that matches.
+         */
+        totalSize?: number | null;
+    }
+    /**
+     * A facet result.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseFacet {
+        /**
+         * Whether the facet is dynamically generated.
+         */
+        dynamicFacet?: boolean | null;
+        /**
+         * The key for this facet. For example, `"colors"` or `"price"`. It matches SearchRequest.FacetSpec.FacetKey.key.
+         */
+        key?: string | null;
+        /**
+         * The facet values for this field.
+         */
+        values?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseFacetFacetValue[];
+    }
+    /**
+     * A facet value which contains value names and their count.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseFacetFacetValue {
+        /**
+         * Number of items that have this facet value.
+         */
+        count?: string | null;
+        /**
+         * Interval value for a facet, such as 10, 20) for facet "price". It matches [SearchRequest.FacetSpec.FacetKey.intervals.
+         */
+        interval?: Schema$GoogleCloudDiscoveryengineV1alphaInterval;
+        /**
+         * Text value of a facet, such as "Black" for facet "colors".
+         */
+        value?: string | null;
+    }
+    /**
+     * Debug information specifically related to forward geocoding issues arising from Geolocation Search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseGeoSearchDebugInfo {
+        /**
+         * The error produced.
+         */
+        errorMessage?: string | null;
+        /**
+         * The address from which forward geocoding ingestion produced issues.
+         */
+        originalAddressQuery?: string | null;
+    }
+    /**
+     * Guided search result. The guided search helps user to refine the search results and narrow down to the real needs from a broaded search results.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseGuidedSearchResult {
+        /**
+         * Suggested follow-up questions.
+         */
+        followUpQuestions?: string[] | null;
+        /**
+         * A list of ranked refinement attributes.
+         */
+        refinementAttributes?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseGuidedSearchResultRefinementAttribute[];
+    }
+    /**
+     * Useful attribute for search result refinements.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseGuidedSearchResultRefinementAttribute {
+        /**
+         * Attribute key used to refine the results. For example, `"movie_type"`.
+         */
+        attributeKey?: string | null;
+        /**
+         * Attribute value used to refine the results. For example, `"drama"`.
+         */
+        attributeValue?: string | null;
+    }
+    /**
+     * Information describing what natural language understanding was done on the input query.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfo {
+        /**
+         * The filters that were extracted from the input query.
+         */
+        extractedFilters?: string | null;
+        /**
+         * Rewritten input query minus the extracted filters.
+         */
+        rewrittenQuery?: string | null;
+        /**
+         * The filters that were extracted from the input query represented in a structured form.
+         */
+        structuredExtractedFilter?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilter;
+    }
+    /**
+     * The filters that were extracted from the input query represented in a structured form.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilter {
+        /**
+         * The expression denoting the filter that was extracted from the input query in a structured form. It can be a simple expression denoting a single string, numerical or geolocation constraint or a compound expression which is a combination of multiple expressions connected using logical (OR and AND) operators.
+         */
+        expression?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterExpression;
+    }
+    /**
+     * Logical `And` operator.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterAndExpression {
+        /**
+         * The expressions that were ANDed together.
+         */
+        expressions?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterExpression[];
+    }
+    /**
+     * The expression denoting the filter that was extracted from the input query.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterExpression {
+        /**
+         * Logical "And" compound operator connecting multiple expressions.
+         */
+        andExpr?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterAndExpression;
+        /**
+         * Geolocation constraint expression.
+         */
+        geolocationConstraint?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterGeolocationConstraint;
+        /**
+         * Numerical constraint expression.
+         */
+        numberConstraint?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterNumberConstraint;
+        /**
+         * Logical "Or" compound operator connecting multiple expressions.
+         */
+        orExpr?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterOrExpression;
+        /**
+         * String constraint expression.
+         */
+        stringConstraint?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterStringConstraint;
+    }
+    /**
+     * Constraint of a geolocation field. Name of the geolocation field as defined in the schema.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterGeolocationConstraint {
+        /**
+         * The reference address that was inferred from the input query. The proximity of the reference address to the geolocation field will be used to filter the results.
+         */
+        address?: string | null;
+        /**
+         * The name of the geolocation field as defined in the schema.
+         */
+        fieldName?: string | null;
+        /**
+         * The latitude of the geolocation inferred from the input query.
+         */
+        latitude?: number | null;
+        /**
+         * The longitude of the geolocation inferred from the input query.
+         */
+        longitude?: number | null;
+        /**
+         * The radius in meters around the address. The record is returned if the location of the geolocation field is within the radius.
+         */
+        radiusInMeters?: number | null;
+    }
+    /**
+     * Constraint expression of a number field. Example: price < 100.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterNumberConstraint {
+        /**
+         * The comparison operation performed between the field value and the value specified in the constraint.
+         */
+        comparison?: string | null;
+        /**
+         * Name of the numerical field as defined in the schema.
+         */
+        fieldName?: string | null;
+        /**
+         * Identifies the keywords within the search query that match a filter.
+         */
+        querySegment?: string | null;
+        /**
+         * The value specified in the numerical constraint.
+         */
+        value?: number | null;
+    }
+    /**
+     * Logical `Or` operator.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterOrExpression {
+        /**
+         * The expressions that were ORed together.
+         */
+        expressions?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterExpression[];
+    }
+    /**
+     * Constraint expression of a string field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseNaturalLanguageQueryUnderstandingInfoStructuredExtractedFilterStringConstraint {
+        /**
+         * Name of the string field as defined in the schema.
+         */
+        fieldName?: string | null;
+        /**
+         * Identifies the keywords within the search query that match a filter.
+         */
+        querySegment?: string | null;
+        /**
+         * Values of the string field. The record will only be returned if the field value matches one of the values specified here.
+         */
+        values?: string[] | null;
+    }
+    /**
+     * OneBoxResult is a holder for all results of specific type that we want to display in UI differently.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseOneBoxResult {
+        /**
+         * The type of One Box result.
+         */
+        oneBoxType?: string | null;
+        /**
+         * The search results for this One Box.
+         */
+        searchResults?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSearchResult[];
+    }
+    /**
+     * Information describing query expansion including whether expansion has occurred.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseQueryExpansionInfo {
+        /**
+         * Bool describing whether query expansion has occurred.
+         */
+        expandedQuery?: boolean | null;
+        /**
+         * Number of pinned results. This field will only be set when expansion happens and SearchRequest.QueryExpansionSpec.pin_unexpanded_results is set to true.
+         */
+        pinnedResultCount?: string | null;
+    }
+    /**
+     * Represents the search results.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSearchResult {
+        /**
+         * The chunk data in the search response if the SearchRequest.ContentSearchSpec.search_result_mode is set to CHUNKS.
+         */
+        chunk?: Schema$GoogleCloudDiscoveryengineV1alphaChunk;
+        /**
+         * The document data snippet in the search response. Only fields that are marked as `retrievable` are populated.
+         */
+        document?: Schema$GoogleCloudDiscoveryengineV1alphaDocument;
+        /**
+         * Document.id of the searched Document.
+         */
+        id?: string | null;
+        /**
+         * Google provided available scores.
+         */
+        modelScores?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1alphaDoubleList;
+        } | null;
+    }
+    /**
+     * Information about the session.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSessionInfo {
+        /**
+         * Name of the session. If the auto-session mode is used (when SearchRequest.session ends with "-"), this field holds the newly generated session name.
+         */
+        name?: string | null;
+        /**
+         * Query ID that corresponds to this search API call. One session can have multiple turns, each with a unique query ID. By specifying the session name and this query ID in the Answer API call, the answer generation happens in the context of the search results from this search call.
+         */
+        queryId?: string | null;
+    }
+    /**
+     * Summary of the top N search results specified by the summary spec.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummary {
+        /**
+         * A collection of Safety Attribute categories and their associated confidence scores.
+         */
+        safetyAttributes?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummarySafetyAttributes;
+        /**
+         * Additional summary-skipped reasons. This provides the reason for ignored cases. If nothing is skipped, this field is not set.
+         */
+        summarySkippedReasons?: string[] | null;
+        /**
+         * The summary content.
+         */
+        summaryText?: string | null;
+        /**
+         * Summary with metadata information.
+         */
+        summaryWithMetadata?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummarySummaryWithMetadata;
+    }
+    /**
+     * Citation info for a segment.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryCitation {
+        /**
+         * End of the attributed segment, exclusive.
+         */
+        endIndex?: string | null;
+        /**
+         * Citation sources for the attributed segment.
+         */
+        sources?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryCitationSource[];
+        /**
+         * Index indicates the start of the segment, measured in bytes/unicode.
+         */
+        startIndex?: string | null;
+    }
+    /**
+     * Citation metadata.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryCitationMetadata {
+        /**
+         * Citations for segments.
+         */
+        citations?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryCitation[];
+    }
+    /**
+     * Citation source.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryCitationSource {
+        /**
+         * Document reference index from SummaryWithMetadata.references. It is 0-indexed and the value will be zero if the reference_index is not set explicitly.
+         */
+        referenceIndex?: string | null;
+    }
+    /**
+     * Document reference.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryReference {
+        /**
+         * List of cited chunk contents derived from document content.
+         */
+        chunkContents?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryReferenceChunkContent[];
+        /**
+         * Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/x/locations/x/collections/x/dataStores/x/branches/x/documents/x`.
+         */
+        document?: string | null;
+        /**
+         * Title of the document.
+         */
+        title?: string | null;
+        /**
+         * Cloud Storage or HTTP uri for the document.
+         */
+        uri?: string | null;
+    }
+    /**
+     * Chunk content.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryReferenceChunkContent {
+        /**
+         * Chunk textual content.
+         */
+        content?: string | null;
+        /**
+         * Page identifier.
+         */
+        pageIdentifier?: string | null;
+    }
+    /**
+     * Safety Attribute categories and their associated confidence scores.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummarySafetyAttributes {
+        /**
+         * The display names of Safety Attribute categories associated with the generated content. Order matches the Scores.
+         */
+        categories?: string[] | null;
+        /**
+         * The confidence scores of the each category, higher value means higher confidence. Order matches the Categories.
+         */
+        scores?: number[] | null;
+    }
+    /**
+     * Summary with metadata information.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummarySummaryWithMetadata {
+        /**
+         * Citation metadata for given summary.
+         */
+        citationMetadata?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryCitationMetadata;
+        /**
+         * Document References.
+         */
+        references?: Schema$GoogleCloudDiscoveryengineV1alphaSearchResponseSummaryReference[];
+        /**
+         * Summary text with no citation information.
+         */
+        summary?: string | null;
+    }
+    /**
+     * Configures metadata that is used to generate serving time results (e.g. search results or recommendation predictions). The ServingConfig is passed in the search and predict request and generates results.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaServingConfig {
+        /**
+         * Boost controls to use in serving path. All triggered boost controls will be applied. Boost controls must be in the same data store as the serving config. Maximum of 20 boost controls.
+         */
+        boostControlIds?: string[] | null;
+        /**
+         * Output only. ServingConfig created timestamp.
+         */
+        createTime?: string | null;
+        /**
+         * Custom fine tuning configs. If SearchRequest.custom_fine_tuning_spec is set, it has higher priority than the configs set here.
+         */
+        customFineTuningSpec?: Schema$GoogleCloudDiscoveryengineV1alphaCustomFineTuningSpec;
+        /**
+         * Required. The human readable serving config display name. Used in Discovery UI. This field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        displayName?: string | null;
+        /**
+         * Condition do not associate specifications. If multiple do not associate conditions match, all matching do not associate controls in the list will execute. Order does not matter. Maximum number of specifications is 100. Can only be set if SolutionType is SOLUTION_TYPE_SEARCH.
+         */
+        dissociateControlIds?: string[] | null;
+        /**
+         * How much diversity to use in recommendation model results e.g. `medium-diversity` or `high-diversity`. Currently supported values: * `no-diversity` * `low-diversity` * `medium-diversity` * `high-diversity` * `auto-diversity` If not specified, we choose default based on recommendation model type. Default value: `no-diversity`. Can only be set if SolutionType is SOLUTION_TYPE_RECOMMENDATION.
+         */
+        diversityLevel?: string | null;
+        /**
+         * Bring your own embedding config. The config is used for search semantic retrieval. The retrieval is based on the dot product of SearchRequest.EmbeddingSpec.EmbeddingVector.vector and the document embeddings that are provided by this EmbeddingConfig. If SearchRequest.EmbeddingSpec.EmbeddingVector.vector is provided, it overrides this ServingConfig.embedding_config.
+         */
+        embeddingConfig?: Schema$GoogleCloudDiscoveryengineV1alphaEmbeddingConfig;
+        /**
+         * Filter controls to use in serving path. All triggered filter controls will be applied. Filter controls must be in the same data store as the serving config. Maximum of 20 filter controls.
+         */
+        filterControlIds?: string[] | null;
+        /**
+         * The GenericConfig of the serving configuration.
+         */
+        genericConfig?: Schema$GoogleCloudDiscoveryengineV1alphaServingConfigGenericConfig;
+        /**
+         * Guided search configs.
+         */
+        guidedSearchSpec?: Schema$GoogleCloudDiscoveryengineV1alphaGuidedSearchSpec;
+        /**
+         * Condition ignore specifications. If multiple ignore conditions match, all matching ignore controls in the list will execute. Order does not matter. Maximum number of specifications is 100.
+         */
+        ignoreControlIds?: string[] | null;
+        /**
+         * The MediaConfig of the serving configuration.
+         */
+        mediaConfig?: Schema$GoogleCloudDiscoveryengineV1alphaServingConfigMediaConfig;
+        /**
+         * The id of the model to use at serving time. Currently only RecommendationModels are supported. Can be changed but only to a compatible model (e.g. others-you-may-like CTR to others-you-may-like CVR). Required when SolutionType is SOLUTION_TYPE_RECOMMENDATION.
+         */
+        modelId?: string | null;
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/{location\}/collections/{collection_id\}/engines/{engine_id\}/servingConfigs/{serving_config_id\}`
+         */
+        name?: string | null;
+        /**
+         * Condition oneway synonyms specifications. If multiple oneway synonyms conditions match, all matching oneway synonyms controls in the list will execute. Maximum number of specifications is 100. Can only be set if SolutionType is SOLUTION_TYPE_SEARCH.
+         */
+        onewaySynonymsControlIds?: string[] | null;
+        /**
+         * The ranking expression controls the customized ranking on retrieval documents. To leverage this, document embedding is required. The ranking expression setting in ServingConfig applies to all search requests served by the serving config. However, if SearchRequest.ranking_expression is specified, it overrides the ServingConfig ranking expression. The ranking expression is a single function or multiple functions that are joined by "+". * ranking_expression = function, { " + ", function \}; Supported functions: * double * relevance_score * double * dotProduct(embedding_field_path) Function variables: * `relevance_score`: pre-defined keywords, used for measure relevance between query and document. * `embedding_field_path`: the document embedding field used with query embedding vector. * `dotProduct`: embedding function between embedding_field_path and query embedding vector. Example ranking expression: If document has an embedding field doc_embedding, the ranking expression could be `0.5 * relevance_score + 0.3 * dotProduct(doc_embedding)`.
+         */
+        rankingExpression?: string | null;
+        /**
+         * IDs of the redirect controls. Only the first triggered redirect action is applied, even if multiple apply. Maximum number of specifications is 100. Can only be set if SolutionType is SOLUTION_TYPE_SEARCH.
+         */
+        redirectControlIds?: string[] | null;
+        /**
+         * Condition replacement specifications. Applied according to the order in the list. A previously replaced term can not be re-replaced. Maximum number of specifications is 100. Can only be set if SolutionType is SOLUTION_TYPE_SEARCH.
+         */
+        replacementControlIds?: string[] | null;
+        /**
+         * Required. Immutable. Specifies the solution type that a serving config can be associated with.
+         */
+        solutionType?: string | null;
+        /**
+         * Condition synonyms specifications. If multiple synonyms conditions match, all matching synonyms controls in the list will execute. Maximum number of specifications is 100. Can only be set if SolutionType is SOLUTION_TYPE_SEARCH.
+         */
+        synonymsControlIds?: string[] | null;
+        /**
+         * Output only. ServingConfig updated timestamp.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Specifies the configurations needed for Generic Discovery.Currently we support: * `content_search_spec`: configuration for generic content search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaServingConfigGenericConfig {
+        /**
+         * Specifies the expected behavior of content search. Only valid for content-search enabled data store.
+         */
+        contentSearchSpec?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequestContentSearchSpec;
+    }
+    /**
+     * Specifies the configurations needed for Media Discovery. Currently we support: * `demote_content_watched`: Threshold for watched content demotion. Customers can specify if using watched content demotion or use viewed detail page. Using the content watched demotion, customers need to specify the watched minutes or percentage exceeds the threshold, the content will be demoted in the recommendation result. * `promote_fresh_content`: cutoff days for fresh content promotion. Customers can specify if using content freshness promotion. If the content was published within the cutoff days, the content will be promoted in the recommendation result. Can only be set if SolutionType is SOLUTION_TYPE_RECOMMENDATION.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaServingConfigMediaConfig {
+        /**
+         * Specifies the content freshness used for recommendation result. Contents will be demoted if contents were published for more than content freshness cutoff days.
+         */
+        contentFreshnessCutoffDays?: number | null;
+        /**
+         * Specifies the content watched percentage threshold for demotion. Threshold value must be between [0, 1.0] inclusive.
+         */
+        contentWatchedPercentageThreshold?: number | null;
+        /**
+         * Specifies the content watched minutes threshold for demotion.
+         */
+        contentWatchedSecondsThreshold?: number | null;
+        /**
+         * Specifies the event type used for demoting recommendation result. Currently supported values: * `view-item`: Item viewed. * `media-play`: Start/resume watching a video, playing a song, etc. * `media-complete`: Finished or stopped midway through a video, song, etc. If unset, watch history demotion will not be applied. Content freshness demotion will still be applied.
+         */
+        demotionEventType?: string | null;
+    }
+    /**
+     * External session proto definition.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSession {
+        /**
+         * Output only. The time the session finished.
+         */
+        endTime?: string | null;
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/engines/{engine\}/sessions/x`
+         */
+        name?: string | null;
+        /**
+         * Output only. The time the session started.
+         */
+        startTime?: string | null;
+        /**
+         * The state of the session.
+         */
+        state?: string | null;
+        /**
+         * Turns.
+         */
+        turns?: Schema$GoogleCloudDiscoveryengineV1alphaSessionTurn[];
+        /**
+         * A unique identifier for tracking users.
+         */
+        userPseudoId?: string | null;
+    }
+    /**
+     * Represents a turn, including a query from the user and a answer from service.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSessionTurn {
+        /**
+         * The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
+         */
+        answer?: string | null;
+        /**
+         * The user query.
+         */
+        query?: Schema$GoogleCloudDiscoveryengineV1alphaQuery;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.SetUriPatternDocumentData operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSetUriPatternDocumentDataMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for SiteSearchEngineService.SetUriPatternDocumentData method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSetUriPatternDocumentDataRequest {
+        /**
+         * Document data keyed by URI pattern. Each entry must be consistent with the Schema. For example: Schema = { "type": "object", "properties": { "Categories": { "type": "array", "items": { "retrievable": true, "type": "string" \} \} \} document_data_map = { "www.url1.com/x": { "Categories": ["category1", "category2"] \}, "www.url2.com/x": { "Categories": ["category3"] \} \}
+         */
+        documentDataMap?: {
+            [key: string]: {
+                [key: string]: any;
+            };
+        } | null;
+        /**
+         * If true, clears the document data map. If true, SetUriPatternDocumentDataRequest.document_data_map must be empty.
+         */
+        emptyDocumentDataMap?: boolean | null;
+        /**
+         * Optional. If not provided, the current Schema is used. If provided, validates and updates the Schema. If validation fails, an error is returned.
+         */
+        schema?: {
+            [key: string]: any;
+        } | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.SetUriPatternDocumentData method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSetUriPatternDocumentDataResponse {
+    }
+    /**
+     * SiteSearchEngine captures DataStore level site search persisting configurations. It is a singleton value per data store.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine {
+        /**
+         * The fully qualified resource name of the site search engine. Format: `projects/x/locations/x/dataStores/x/siteSearchEngine`
+         */
+        name?: string | null;
+    }
+    /**
+     * Verification information for target sites in advanced site search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSiteVerificationInfo {
+        /**
+         * Site verification state indicating the ownership and validity.
+         */
+        siteVerificationState?: string | null;
+        /**
+         * Latest site verification time.
+         */
+        verifyTime?: string | null;
+    }
+    /**
+     * The Spanner source for importing data
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSpannerSource {
+        /**
+         * Required. The database ID of the source Spanner table.
+         */
+        databaseId?: string | null;
+        /**
+         * Whether to apply data boost on Spanner export. Enabling this option will incur additional cost. More info can be found [here](https://cloud.google.com/spanner/docs/databoost/databoost-overview#billing_and_quotas).
+         */
+        enableDataBoost?: boolean | null;
+        /**
+         * Required. The instance ID of the source Spanner table.
+         */
+        instanceId?: string | null;
+        /**
+         * The project ID that contains the Spanner source. Has a length limit of 128 characters. If not specified, inherits the project ID from the parent request.
+         */
+        projectId?: string | null;
+        /**
+         * Required. The table name of the Spanner database that needs to be imported.
+         */
+        tableId?: string | null;
+    }
+    /**
+     * Suggestion deny list entry identifying the phrase to block from suggestions and the applied operation for the phrase.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaSuggestionDenyListEntry {
+        /**
+         * Required. Phrase to block from suggestions served. Can be maximum 125 characters.
+         */
+        blockPhrase?: string | null;
+        /**
+         * Required. The match operator to apply for this phrase. Whether to block the exact phrase, or block any suggestions containing this phrase.
+         */
+        matchOperator?: string | null;
+    }
+    /**
+     * A target site for the SiteSearchEngine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTargetSite {
+        /**
+         * Input only. If set to false, a uri_pattern is generated to include all pages whose address contains the provided_uri_pattern. If set to true, an uri_pattern is generated to try to be an exact match of the provided_uri_pattern or just the specific page if the provided_uri_pattern is a specific one. provided_uri_pattern is always normalized to generate the URI pattern to be used by the search engine.
+         */
+        exactMatch?: boolean | null;
+        /**
+         * Output only. Failure reason.
+         */
+        failureReason?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSiteFailureReason;
+        /**
+         * Output only. This is system-generated based on the provided_uri_pattern.
+         */
+        generatedUriPattern?: string | null;
+        /**
+         * Output only. Indexing status.
+         */
+        indexingStatus?: string | null;
+        /**
+         * Output only. The fully qualified resource name of the target site. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}` The `target_site_id` is system-generated.
+         */
+        name?: string | null;
+        /**
+         * Required. Input only. The user provided URI pattern from which the `generated_uri_pattern` is generated.
+         */
+        providedUriPattern?: string | null;
+        /**
+         * Output only. Root domain of the provided_uri_pattern.
+         */
+        rootDomainUri?: string | null;
+        /**
+         * Output only. Site ownership and validity verification status.
+         */
+        siteVerificationInfo?: Schema$GoogleCloudDiscoveryengineV1alphaSiteVerificationInfo;
+        /**
+         * The type of the target site, e.g., whether the site is to be included or excluded.
+         */
+        type?: string | null;
+        /**
+         * Output only. The target site's last updated time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Site search indexing failure reasons.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTargetSiteFailureReason {
+        /**
+         * Failed due to insufficient quota.
+         */
+        quotaFailure?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSiteFailureReasonQuotaFailure;
+    }
+    /**
+     * Failed due to insufficient quota.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTargetSiteFailureReasonQuotaFailure {
+        /**
+         * This number is an estimation on how much total quota this project needs to successfully complete indexing.
+         */
+        totalRequiredQuota?: string | null;
+    }
+    /**
+     * Defines text input.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTextInput {
+        /**
+         * Conversation context of the input.
+         */
+        context?: Schema$GoogleCloudDiscoveryengineV1alphaConversationContext;
+        /**
+         * Text input.
+         */
+        input?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the TrainCustomModel operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTrainCustomModelMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Request message for SearchTuningService.TrainCustomModel method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTrainCustomModelRequest {
+        /**
+         * The desired location of errors incurred during the data ingestion and training.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * Cloud Storage training input.
+         */
+        gcsTrainingInput?: Schema$GoogleCloudDiscoveryengineV1alphaTrainCustomModelRequestGcsTrainingInput;
+        /**
+         * If not provided, a UUID will be generated.
+         */
+        modelId?: string | null;
+        /**
+         * Model to be trained. Supported values are: * **search-tuning**: Fine tuning the search system based on data provided.
+         */
+        modelType?: string | null;
+    }
+    /**
+     * Cloud Storage training data input.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTrainCustomModelRequestGcsTrainingInput {
+        /**
+         * The Cloud Storage corpus data which could be associated in train data. The data path format is `gs:///`. A newline delimited jsonl/ndjson file. For search-tuning model, each line should have the _id, title and text. Example: `{"_id": "doc1", title: "relevant doc", "text": "relevant text"\}`
+         */
+        corpusDataPath?: string | null;
+        /**
+         * The gcs query data which could be associated in train data. The data path format is `gs:///`. A newline delimited jsonl/ndjson file. For search-tuning model, each line should have the _id and text. Example: {"_id": "query1", "text": "example query"\}
+         */
+        queryDataPath?: string | null;
+        /**
+         * Cloud Storage test data. Same format as train_data_path. If not provided, a random 80/20 train/test split will be performed on train_data_path.
+         */
+        testDataPath?: string | null;
+        /**
+         * Cloud Storage training data path whose format should be `gs:///`. The file should be in tsv format. Each line should have the doc_id and query_id and score (number). For search-tuning model, it should have the query-id corpus-id score as tsv file header. The score should be a number in `[0, inf+)`. The larger the number is, the more relevant the pair is. Example: * `query-id\tcorpus-id\tscore` * `query1\tdoc1\t1`
+         */
+        trainDataPath?: string | null;
+    }
+    /**
+     * Response of the TrainCustomModelRequest. This message is returned by the google.longrunning.Operations.response field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTrainCustomModelResponse {
+        /**
+         * Echoes the destination for the complete errors in the request if set.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1alphaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the data.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * The metrics of the trained model.
+         */
+        metrics?: {
+            [key: string]: number;
+        } | null;
+        /**
+         * Fully qualified name of the CustomTuningModel.
+         */
+        modelName?: string | null;
+        /**
+         * The trained model status. Possible values are: * **bad-data**: The training data quality is bad. * **no-improvement**: Tuning didn't improve performance. Won't deploy. * **in-progress**: Model training job creation is in progress. * **training**: Model is actively training. * **evaluating**: The model is evaluating trained metrics. * **indexing**: The model trained metrics are indexing. * **ready**: The model is ready for serving.
+         */
+        modelStatus?: string | null;
+    }
+    /**
+     * A transaction represents the entire purchase transaction.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTransactionInfo {
+        /**
+         * All the costs associated with the products. These can be manufacturing costs, shipping expenses not borne by the end user, or any other costs, such that: * Profit = value - tax - cost
+         */
+        cost?: number | null;
+        /**
+         * Required. Currency code. Use three-character ISO-4217 code.
+         */
+        currency?: string | null;
+        /**
+         * The total discount(s) value applied to this transaction. This figure should be excluded from TransactionInfo.value For example, if a user paid TransactionInfo.value amount, then nominal (pre-discount) value of the transaction is the sum of TransactionInfo.value and TransactionInfo.discount_value This means that profit is calculated the same way, regardless of the discount value, and that TransactionInfo.discount_value can be larger than TransactionInfo.value: * Profit = value - tax - cost
+         */
+        discountValue?: number | null;
+        /**
+         * All the taxes associated with the transaction.
+         */
+        tax?: number | null;
+        /**
+         * The transaction ID with a length limit of 128 characters.
+         */
+        transactionId?: string | null;
+        /**
+         * Required. Total non-zero value associated with the transaction. This value may include shipping, tax, or other adjustments to the total value that you want to include.
+         */
+        value?: number | null;
+    }
+    /**
+     * Metadata associated with a tune operation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTuneEngineMetadata {
+        /**
+         * Required. The resource name of the engine that this tune applies to. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`
+         */
+        engine?: string | null;
+    }
+    /**
+     * Request to manually start a tuning process now (instead of waiting for the periodically scheduled tuning to happen).
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTuneEngineRequest {
+    }
+    /**
+     * Response associated with a tune operation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaTuneEngineResponse {
+    }
+    /**
+     * Metadata for UpdateSchema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaUpdateSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.UpdateTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaUpdateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * UserEvent captures all metadata information Discovery Engine API needs to know about how end users interact with your website.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaUserEvent {
+        /**
+         * Extra user event features to include in the recommendation model. These attributes must NOT contain data that needs to be parsed or processed further, e.g. JSON or other encodings. If you provide custom attributes for ingested user events, also include them in the user events that you associate with prediction requests. Custom attribute formatting must be consistent between imported events and events provided with prediction requests. This lets the Discovery Engine API use those custom attributes when training models and serving predictions, which helps improve recommendation quality. This field needs to pass all below criteria, otherwise an `INVALID_ARGUMENT` error is returned: * The key must be a UTF-8 encoded string with a length limit of 5,000 characters. * For text attributes, at most 400 values are allowed. Empty values are not allowed. Each value must be a UTF-8 encoded string with a length limit of 256 characters. * For number attributes, at most 400 values are allowed. For product recommendations, an example of extra user information is `traffic_channel`, which is how a user arrives at the site. Users can arrive at the site by coming to the site directly, coming through Google search, or in other ways.
+         */
+        attributes?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1alphaCustomAttribute;
+        } | null;
+        /**
+         * Token to attribute an API response to user action(s) to trigger the event. Highly recommended for user events that are the result of RecommendationService.Recommend. This field enables accurate attribution of recommendation model performance. The value must be one of: * RecommendResponse.attribution_token for events that are the result of RecommendationService.Recommend. * SearchResponse.attribution_token for events that are the result of SearchService.Search. This token enables us to accurately attribute page view or conversion completion back to the event and the particular predict response containing this clicked/purchased product. If user clicks on product K in the recommendation results, pass RecommendResponse.attribution_token as a URL parameter to product K's page. When recording events on product K's page, log the RecommendResponse.attribution_token to this field.
+         */
+        attributionToken?: string | null;
+        /**
+         * CompletionService.CompleteQuery details related to the event. This field should be set for `search` event when autocomplete function is enabled and the user clicks a suggestion for search.
+         */
+        completionInfo?: Schema$GoogleCloudDiscoveryengineV1alphaCompletionInfo;
+        /**
+         * The DataStore resource full name, of the form `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. Optional. Only required for user events whose data store can't by determined by UserEvent.engine or UserEvent.documents. If data store is set in the parent of write/import/collect user event requests, this field can be omitted.
+         */
+        dataStore?: string | null;
+        /**
+         * Should set to true if the request is made directly from the end user, in which case the UserEvent.user_info.user_agent can be populated from the HTTP request. This flag should be set only if the API request is made directly from the end user such as a mobile app (and not if a gateway or a server is processing and pushing the user events). This should not be set when using the JavaScript tag in UserEventService.CollectUserEvent.
+         */
+        directUserRequest?: boolean | null;
+        /**
+         * List of Documents associated with this user event. This field is optional except for the following event types: * `view-item` * `add-to-cart` * `purchase` * `media-play` * `media-complete` In a `search` event, this field represents the documents returned to the end user on the current page (the end user may have not finished browsing the whole page yet). When a new page is returned to the end user, after pagination/filtering/ordering even for the same query, a new `search` event with different UserEvent.documents is desired.
+         */
+        documents?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentInfo[];
+        /**
+         * The Engine resource name, in the form of `projects/{project\}/locations/{location\}/collections/{collection_id\}/engines/{engine_id\}`. Optional. Only required for Engine produced user events. For example, user events from blended search.
+         */
+        engine?: string | null;
+        /**
+         * Only required for UserEventService.ImportUserEvents method. Timestamp of when the user event happened.
+         */
+        eventTime?: string | null;
+        /**
+         * Required. User event type. Allowed values are: Generic values: * `search`: Search for Documents. * `view-item`: Detailed page view of a Document. * `view-item-list`: View of a panel or ordered list of Documents. * `view-home-page`: View of the home page. * `view-category-page`: View of a category page, e.g. Home \> Men \> Jeans Retail-related values: * `add-to-cart`: Add an item(s) to cart, e.g. in Retail online shopping * `purchase`: Purchase an item(s) Media-related values: * `media-play`: Start/resume watching a video, playing a song, etc. * `media-complete`: Finished or stopped midway through a video, song, etc.
+         */
+        eventType?: string | null;
+        /**
+         * The filter syntax consists of an expression language for constructing a predicate from one or more fields of the documents being filtered. One example is for `search` events, the associated SearchRequest may contain a filter expression in SearchRequest.filter conforming to https://google.aip.dev/160#filtering. Similarly, for `view-item-list` events that are generated from a RecommendRequest, this field may be populated directly from RecommendRequest.filter conforming to https://google.aip.dev/160#filtering. The value must be a UTF-8 encoded string with a length limit of 1,000 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        filter?: string | null;
+        /**
+         * Media-specific info.
+         */
+        mediaInfo?: Schema$GoogleCloudDiscoveryengineV1alphaMediaInfo;
+        /**
+         * Page metadata such as categories and other critical information for certain event types such as `view-category-page`.
+         */
+        pageInfo?: Schema$GoogleCloudDiscoveryengineV1alphaPageInfo;
+        /**
+         * Panel metadata associated with this user event.
+         */
+        panel?: Schema$GoogleCloudDiscoveryengineV1alphaPanelInfo;
+        /**
+         * The promotion IDs if this is an event associated with promotions. Currently, this field is restricted to at most one ID.
+         */
+        promotionIds?: string[] | null;
+        /**
+         * SearchService.Search details related to the event. This field should be set for `search` event.
+         */
+        searchInfo?: Schema$GoogleCloudDiscoveryengineV1alphaSearchInfo;
+        /**
+         * A unique identifier for tracking a visitor session with a length limit of 128 bytes. A session is an aggregation of an end user behavior in a time span. A general guideline to populate the session_id: 1. If user has no activity for 30 min, a new session_id should be assigned. 2. The session_id should be unique across users, suggest use uuid or add UserEvent.user_pseudo_id as prefix.
+         */
+        sessionId?: string | null;
+        /**
+         * A list of identifiers for the independent experiment groups this user event belongs to. This is used to distinguish between user events associated with different experiment setups.
+         */
+        tagIds?: string[] | null;
+        /**
+         * The transaction metadata (if any) associated with this user event.
+         */
+        transactionInfo?: Schema$GoogleCloudDiscoveryengineV1alphaTransactionInfo;
+        /**
+         * Information about the end user.
+         */
+        userInfo?: Schema$GoogleCloudDiscoveryengineV1alphaUserInfo;
+        /**
+         * Required. A unique identifier for tracking visitors. For example, this could be implemented with an HTTP cookie, which should be able to uniquely identify a visitor on a single device. This unique identifier should not change if the visitor log in/out of the website. Do not set the field to the same fixed ID for different users. This mixes the event history of those users together, which results in degraded model quality. The field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an `INVALID_ARGUMENT` error is returned. The field should not contain PII or user-data. We recommend to use Google Analytics [Client ID](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#clientId) for this field.
+         */
+        userPseudoId?: string | null;
+    }
+    /**
+     * Information of an end user.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaUserInfo {
+        /**
+         * User agent as included in the HTTP header. The field must be a UTF-8 encoded string with a length limit of 1,000 characters. Otherwise, an `INVALID_ARGUMENT` error is returned. This should not be set when using the client side event reporting with GTM or JavaScript tag in UserEventService.CollectUserEvent or if UserEvent.direct_user_request is set.
+         */
+        userAgent?: string | null;
+        /**
+         * Highly recommended for logged-in users. Unique identifier for logged-in user, such as a user name. Don't set for anonymous users. Always use a hashed value for this ID. Don't set the field to the same fixed ID for different users. This mixes the event history of those users together, which results in degraded model quality. The field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        userId?: string | null;
+    }
+    /**
+     * Config to store data store type configuration for workspace data
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1alphaWorkspaceConfig {
+        /**
+         * Obfuscated Dasher customer ID.
+         */
+        dasherCustomerId?: string | null;
+        /**
+         * The Google Workspace data source.
+         */
+        type?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.BatchCreateTargetSites operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1BatchCreateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.BatchCreateTargetSites method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1BatchCreateTargetSitesResponse {
+        /**
+         * TargetSites created.
+         */
+        targetSites?: Schema$GoogleCloudDiscoveryengineV1TargetSite[];
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.BatchCreateTargetSites operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaBatchCreateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.BatchCreateTargetSites method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaBatchCreateTargetSitesResponse {
+        /**
+         * TargetSites created.
+         */
+        targetSites?: Schema$GoogleCloudDiscoveryengineV1betaTargetSite[];
+    }
+    /**
+     * Defines circumstances to be checked before allowing a behavior
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaCondition {
+        /**
+         * Range of time(s) specifying when condition is active. Maximum of 10 time ranges.
+         */
+        activeTimeRange?: Schema$GoogleCloudDiscoveryengineV1betaConditionTimeRange[];
+        /**
+         * Search only A list of terms to match the query on. Maximum of 10 query terms.
+         */
+        queryTerms?: Schema$GoogleCloudDiscoveryengineV1betaConditionQueryTerm[];
+    }
+    /**
+     * Matcher for search request query
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaConditionQueryTerm {
+        /**
+         * Whether the search query needs to exactly match the query term.
+         */
+        fullMatch?: boolean | null;
+        /**
+         * The specific query value to match against Must be lowercase, must be UTF-8. Can have at most 3 space separated terms if full_match is true. Cannot be an empty string. Maximum length of 5000 characters.
+         */
+        value?: string | null;
+    }
+    /**
+     * Used for time-dependent conditions.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaConditionTimeRange {
+        /**
+         * End of time range. Range is inclusive. Must be in the future.
+         */
+        endTime?: string | null;
+        /**
+         * Start of time range. Range is inclusive.
+         */
+        startTime?: string | null;
+    }
+    /**
+     * Defines a conditioned behavior to employ during serving. Must be attached to a ServingConfig to be considered at serving time. Permitted actions dependent on `SolutionType`.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaControl {
+        /**
+         * Output only. List of all ServingConfig IDs this control is attached to. May take up to 10 minutes to update after changes.
+         */
+        associatedServingConfigIds?: string[] | null;
+        /**
+         * Defines a boost-type control
+         */
+        boostAction?: Schema$GoogleCloudDiscoveryengineV1betaControlBoostAction;
+        /**
+         * Determines when the associated action will trigger. Omit to always apply the action. Currently only a single condition may be specified. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        conditions?: Schema$GoogleCloudDiscoveryengineV1betaCondition[];
+        /**
+         * Required. Human readable name. The identifier used in UI views. Must be UTF-8 encoded string. Length limit is 128 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        displayName?: string | null;
+        /**
+         * Defines a filter-type control Currently not supported by Recommendation
+         */
+        filterAction?: Schema$GoogleCloudDiscoveryengineV1betaControlFilterAction;
+        /**
+         * Immutable. Fully qualified name `projects/x/locations/global/dataStore/x/controls/x`
+         */
+        name?: string | null;
+        /**
+         * Defines a redirect-type control.
+         */
+        redirectAction?: Schema$GoogleCloudDiscoveryengineV1betaControlRedirectAction;
+        /**
+         * Required. Immutable. What solution the control belongs to. Must be compatible with vertical of resource. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        solutionType?: string | null;
+        /**
+         * Treats a group of terms as synonyms of one another.
+         */
+        synonymsAction?: Schema$GoogleCloudDiscoveryengineV1betaControlSynonymsAction;
+        /**
+         * Specifies the use case for the control. Affects what condition fields can be set. Only applies to SOLUTION_TYPE_SEARCH. Currently only allow one use case per control. Must be set when solution_type is SolutionType.SOLUTION_TYPE_SEARCH.
+         */
+        useCases?: string[] | null;
+    }
+    /**
+     * Adjusts order of products in returned list.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaControlBoostAction {
+        /**
+         * Required. Strength of the boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0 (No-op).
+         */
+        boost?: number | null;
+        /**
+         * Required. Specifies which data store's documents can be boosted by this control. Full data store name e.g. projects/123/locations/global/collections/default_collection/dataStores/default_data_store
+         */
+        dataStore?: string | null;
+        /**
+         * Required. Specifies which products to apply the boost to. If no filter is provided all products will be boosted (No-op). Syntax documentation: https://cloud.google.com/retail/docs/filter-and-order Maximum length is 5000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        filter?: string | null;
+    }
+    /**
+     * Specified which products may be included in results. Uses same filter as boost.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaControlFilterAction {
+        /**
+         * Required. Specifies which data store's documents can be filtered by this control. Full data store name e.g. projects/123/locations/global/collections/default_collection/dataStores/default_data_store
+         */
+        dataStore?: string | null;
+        /**
+         * Required. A filter to apply on the matching condition results. Required Syntax documentation: https://cloud.google.com/retail/docs/filter-and-order Maximum length is 5000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        filter?: string | null;
+    }
+    /**
+     * Redirects a shopper to the provided URI.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaControlRedirectAction {
+        /**
+         * Required. The URI to which the shopper will be redirected. Required. URI must have length equal or less than 2000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        redirectUri?: string | null;
+    }
+    /**
+     * Creates a set of terms that will act as synonyms of one another. Example: "happy" will also be considered as "glad", "glad" will also be considered as "happy".
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaControlSynonymsAction {
+        /**
+         * Defines a set of synonyms. Can specify up to 100 synonyms. Must specify at least 2 synonyms. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        synonyms?: string[] | null;
+    }
+    /**
+     * Metadata related to the progress of the DataStoreService.CreateDataStore operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaCreateDataStoreMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the EngineService.CreateEngine operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaCreateEngineMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata for EvaluationService.CreateEvaluation method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaCreateEvaluationMetadata {
+    }
+    /**
+     * Metadata for Create Schema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaCreateSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.CreateTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaCreateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata that describes a custom tuned model.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaCustomTuningModel {
+        /**
+         * Timestamp the Model was created at.
+         */
+        createTime?: string | null;
+        /**
+         * The display name of the model.
+         */
+        displayName?: string | null;
+        /**
+         * The metrics of the trained model.
+         */
+        metrics?: {
+            [key: string]: number;
+        } | null;
+        /**
+         * The state that the model is in (e.g.`TRAINING` or `TRAINING_FAILED`).
+         */
+        modelState?: string | null;
+        /**
+         * The version of the model.
+         */
+        modelVersion?: string | null;
+        /**
+         * Required. The fully qualified resource name of the model. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/customTuningModels/{custom_tuning_model\}` model must be an alpha-numerical string with limit of 40 characters.
+         */
+        name?: string | null;
+        /**
+         * Timestamp the model training was initiated.
+         */
+        trainingStartTime?: string | null;
+    }
+    /**
+     * DataStore captures global settings and configs at the DataStore level.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDataStore {
+        /**
+         * Immutable. The content config of the data store. If this field is unset, the server behavior defaults to ContentConfig.NO_CONTENT.
+         */
+        contentConfig?: string | null;
+        /**
+         * Output only. Timestamp the DataStore was created at.
+         */
+        createTime?: string | null;
+        /**
+         * Output only. The id of the default Schema asscociated to this data store.
+         */
+        defaultSchemaId?: string | null;
+        /**
+         * Required. The data store display name. This field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        displayName?: string | null;
+        /**
+         * Configuration for Document understanding and enrichment.
+         */
+        documentProcessingConfig?: Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfig;
+        /**
+         * Immutable. The industry vertical that the data store registers.
+         */
+        industryVertical?: string | null;
+        /**
+         * Language info for DataStore.
+         */
+        languageInfo?: Schema$GoogleCloudDiscoveryengineV1betaLanguageInfo;
+        /**
+         * Immutable. The full resource name of the data store. Format: `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * The solutions that the data store enrolls. Available solutions for each industry_vertical: * `MEDIA`: `SOLUTION_TYPE_RECOMMENDATION` and `SOLUTION_TYPE_SEARCH`. * `SITE_SEARCH`: `SOLUTION_TYPE_SEARCH` is automatically enrolled. Other solutions cannot be enrolled.
+         */
+        solutionTypes?: string[] | null;
+        /**
+         * The start schema to use for this DataStore when provisioning it. If unset, a default vertical specialized schema will be used. This field is only used by CreateDataStore API, and will be ignored if used in other APIs. This field will be omitted from all API responses including CreateDataStore API. To retrieve a schema of a DataStore, use SchemaService.GetSchema API instead. The provided schema will be validated against certain rules on schema. Learn more from [this doc](https://cloud.google.com/generative-ai-app-builder/docs/provide-schema).
+         */
+        startingSchema?: Schema$GoogleCloudDiscoveryengineV1betaSchema;
+        /**
+         * Config to store data store type configuration for workspace data. This must be set when DataStore.content_config is set as DataStore.ContentConfig.GOOGLE_WORKSPACE.
+         */
+        workspaceConfig?: Schema$GoogleCloudDiscoveryengineV1betaWorkspaceConfig;
+    }
+    /**
+     * Metadata related to the progress of the DataStoreService.DeleteDataStore operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDeleteDataStoreMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the EngineService.DeleteEngine operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDeleteEngineMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata for DeleteSchema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDeleteSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.DeleteTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDeleteTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.DisableAdvancedSiteSearch operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDisableAdvancedSiteSearchMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.DisableAdvancedSiteSearch method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDisableAdvancedSiteSearchResponse {
+    }
+    /**
+     * A singleton resource of DataStore. It's empty when DataStore is created, which defaults to digital parser. The first call to DataStoreService.UpdateDocumentProcessingConfig method will initialize the config.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfig {
+        /**
+         * Whether chunking mode is enabled.
+         */
+        chunkingConfig?: Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigChunkingConfig;
+        /**
+         * Configurations for default Document parser. If not specified, we will configure it as default DigitalParsingConfig, and the default parsing config will be applied to all file types for Document parsing.
+         */
+        defaultParsingConfig?: Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfig;
+        /**
+         * The full resource name of the Document Processing Config. Format: `projects/x/locations/x/collections/x/dataStores/x/documentProcessingConfig`.
+         */
+        name?: string | null;
+        /**
+         * Map from file type to override the default parsing configuration based on the file type. Supported keys: * `pdf`: Override parsing config for PDF files, either digital parsing, ocr parsing or layout parsing is supported. * `html`: Override parsing config for HTML files, only digital parsing and layout parsing are supported. * `docx`: Override parsing config for DOCX files, only digital parsing and layout parsing are supported. * `pptx`: Override parsing config for PPTX files, only digital parsing and layout parsing are supported. * `xlsx`: Override parsing config for XLSX files, only digital parsing and layout parsing are supported.
+         */
+        parsingConfigOverrides?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfig;
+        } | null;
+    }
+    /**
+     * Configuration for chunking config.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigChunkingConfig {
+        /**
+         * Configuration for the layout based chunking.
+         */
+        layoutBasedChunkingConfig?: Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig;
+    }
+    /**
+     * Configuration for the layout based chunking.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig {
+        /**
+         * The token size limit for each chunk. Supported values: 100-500 (inclusive). Default value: 500.
+         */
+        chunkSize?: number | null;
+        /**
+         * Whether to include appending different levels of headings to chunks from the middle of the document to prevent context loss. Default value: False.
+         */
+        includeAncestorHeadings?: boolean | null;
+    }
+    /**
+     * Related configurations applied to a specific type of document parser.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfig {
+        /**
+         * Configurations applied to digital parser.
+         */
+        digitalParsingConfig?: Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfigDigitalParsingConfig;
+        /**
+         * Configurations applied to layout parser.
+         */
+        layoutParsingConfig?: Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfigLayoutParsingConfig;
+        /**
+         * Configurations applied to OCR parser. Currently it only applies to PDFs.
+         */
+        ocrParsingConfig?: Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfigOcrParsingConfig;
+    }
+    /**
+     * The digital parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfigDigitalParsingConfig {
+    }
+    /**
+     * The layout parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfigLayoutParsingConfig {
+    }
+    /**
+     * The OCR parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaDocumentProcessingConfigParsingConfigOcrParsingConfig {
+        /**
+         * [DEPRECATED] This field is deprecated. To use the additional enhanced document elements processing, please switch to `layout_parsing_config`.
+         */
+        enhancedDocumentElements?: string[] | null;
+        /**
+         * If true, will use native text instead of OCR text on pages containing native text.
+         */
+        useNativeText?: boolean | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.EnableAdvancedSiteSearch operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEnableAdvancedSiteSearchMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.EnableAdvancedSiteSearch method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEnableAdvancedSiteSearchResponse {
+    }
+    /**
+     * Metadata that describes the training and serving parameters of an Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEngine {
+        /**
+         * Configurations for the Chat Engine. Only applicable if solution_type is SOLUTION_TYPE_CHAT.
+         */
+        chatEngineConfig?: Schema$GoogleCloudDiscoveryengineV1betaEngineChatEngineConfig;
+        /**
+         * Output only. Additional information of the Chat Engine. Only applicable if solution_type is SOLUTION_TYPE_CHAT.
+         */
+        chatEngineMetadata?: Schema$GoogleCloudDiscoveryengineV1betaEngineChatEngineMetadata;
+        /**
+         * Common config spec that specifies the metadata of the engine.
+         */
+        commonConfig?: Schema$GoogleCloudDiscoveryengineV1betaEngineCommonConfig;
+        /**
+         * Output only. Timestamp the Recommendation Engine was created at.
+         */
+        createTime?: string | null;
+        /**
+         * The data stores associated with this engine. For SOLUTION_TYPE_SEARCH and SOLUTION_TYPE_RECOMMENDATION type of engines, they can only associate with at most one data store. If solution_type is SOLUTION_TYPE_CHAT, multiple DataStores in the same Collection can be associated here. Note that when used in CreateEngineRequest, one DataStore id must be provided as the system will use it for necessary initializations.
+         */
+        dataStoreIds?: string[] | null;
+        /**
+         * Required. The display name of the engine. Should be human readable. UTF-8 encoded string with limit of 1024 characters.
+         */
+        displayName?: string | null;
+        /**
+         * The industry vertical that the engine registers. The restriction of the Engine industry vertical is based on DataStore: If unspecified, default to `GENERIC`. Vertical on Engine has to match vertical of the DataStore linked to the engine.
+         */
+        industryVertical?: string | null;
+        /**
+         * Immutable. The fully qualified resource name of the engine. This field must be a UTF-8 encoded string with a length limit of 1024 characters. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}` engine should be 1-63 characters, and valid characters are /a-z0-9x/. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        name?: string | null;
+        /**
+         * Configurations for the Search Engine. Only applicable if solution_type is SOLUTION_TYPE_SEARCH.
+         */
+        searchEngineConfig?: Schema$GoogleCloudDiscoveryengineV1betaEngineSearchEngineConfig;
+        /**
+         * Required. The solutions of the engine.
+         */
+        solutionType?: string | null;
+        /**
+         * Output only. Timestamp the Recommendation Engine was last updated.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Configurations for a Chat Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEngineChatEngineConfig {
+        /**
+         * The configurationt generate the Dialogflow agent that is associated to this Engine. Note that these configurations are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation.
+         */
+        agentCreationConfig?: Schema$GoogleCloudDiscoveryengineV1betaEngineChatEngineConfigAgentCreationConfig;
+        /**
+         * The resource name of an exist Dialogflow agent to link to this Chat Engine. Customers can either provide `agent_creation_config` to create agent or provide an agent name that links the agent with the Chat engine. Format: `projects//locations//agents/`. Note that the `dialogflow_agent_to_link` are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation. Use ChatEngineMetadata.dialogflow_agent for actual agent association after Engine is created.
+         */
+        dialogflowAgentToLink?: string | null;
+    }
+    /**
+     * Configurations for generating a Dialogflow agent. Note that these configurations are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEngineChatEngineConfigAgentCreationConfig {
+        /**
+         * Name of the company, organization or other entity that the agent represents. Used for knowledge connector LLM prompt and for knowledge search.
+         */
+        business?: string | null;
+        /**
+         * Required. The default language of the agent as a language tag. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes.
+         */
+        defaultLanguageCode?: string | null;
+        /**
+         * Agent location for Agent creation, supported values: global/us/eu. If not provided, us Engine will create Agent using us-central-1 by default; eu Engine will create Agent using eu-west-1 by default.
+         */
+        location?: string | null;
+        /**
+         * Required. The time zone of the agent from the [time zone database](https://www.iana.org/time-zones), e.g., America/New_York, Europe/Paris.
+         */
+        timeZone?: string | null;
+    }
+    /**
+     * Additional information of a Chat Engine. Fields in this message are output only.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEngineChatEngineMetadata {
+        /**
+         * The resource name of a Dialogflow agent, that this Chat Engine refers to. Format: `projects//locations//agents/`.
+         */
+        dialogflowAgent?: string | null;
+    }
+    /**
+     * Common configurations for an Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEngineCommonConfig {
+        /**
+         * The name of the company, business or entity that is associated with the engine. Setting this may help improve LLM related features.
+         */
+        companyName?: string | null;
+    }
+    /**
+     * Configurations for a Search Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEngineSearchEngineConfig {
+        /**
+         * The add-on that this search engine enables.
+         */
+        searchAddOns?: string[] | null;
+        /**
+         * The search feature tier of this engine. Different tiers might have different pricing. To learn more, check the pricing documentation. Defaults to SearchTier.SEARCH_TIER_STANDARD if not specified.
+         */
+        searchTier?: string | null;
+    }
+    /**
+     * An evaluation is a single execution (or run) of an evaluation process. It encapsulates the state of the evaluation and the resulting data.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEvaluation {
+        /**
+         * Output only. Timestamp the Evaluation was created at.
+         */
+        createTime?: string | null;
+        /**
+         * Output only. Timestamp the Evaluation was completed at.
+         */
+        endTime?: string | null;
+        /**
+         * Output only. The error that occurred during evaluation. Only populated when the evaluation's state is FAILED.
+         */
+        error?: Schema$GoogleRpcStatus;
+        /**
+         * Output only. A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Required. The specification of the evaluation.
+         */
+        evaluationSpec?: Schema$GoogleCloudDiscoveryengineV1betaEvaluationEvaluationSpec;
+        /**
+         * Identifier. The full resource name of the Evaluation, in the format of `projects/{project\}/locations/{location\}/evaluations/{evaluation\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * Output only. The metrics produced by the evaluation, averaged across all SampleQuerys in the SampleQuerySet. Only populated when the evaluation's state is SUCCEEDED.
+         */
+        qualityMetrics?: Schema$GoogleCloudDiscoveryengineV1betaQualityMetrics;
+        /**
+         * Output only. The state of the evaluation.
+         */
+        state?: string | null;
+    }
+    /**
+     * Describes the specification of the evaluation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEvaluationEvaluationSpec {
+        /**
+         * Required. The specification of the query set.
+         */
+        querySetSpec?: Schema$GoogleCloudDiscoveryengineV1betaEvaluationEvaluationSpecQuerySetSpec;
+        /**
+         * Required. The search request that is used to perform the evaluation. Only the following fields within SearchRequest are supported; if any other fields are provided, an UNSUPPORTED error will be returned: * SearchRequest.serving_config * SearchRequest.branch * SearchRequest.canonical_filter * SearchRequest.query_expansion_spec * SearchRequest.spell_correction_spec * SearchRequest.content_search_spec * SearchRequest.user_pseudo_id
+         */
+        searchRequest?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequest;
+    }
+    /**
+     * Describes the specification of the query set.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaEvaluationEvaluationSpecQuerySetSpec {
+        /**
+         * Required. The full resource name of the SampleQuerySet used for the evaluation, in the format of `projects/{project\}/locations/{location\}/sampleQuerySets/{sampleQuerySet\}`.
+         */
+        sampleQuerySet?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the ImportCompletionSuggestions operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportCompletionSuggestionsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of CompletionSuggestions that failed to be imported.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of CompletionSuggestions successfully imported.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the CompletionService.ImportCompletionSuggestions method. If the long running operation is done, this message is returned by the google.longrunning.Operations.response field if the operation is successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportCompletionSuggestionsResponse {
+        /**
+         * The desired location of errors incurred during the Import.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1betaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+    }
+    /**
+     * Metadata related to the progress of the ImportDocuments operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportDocumentsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were processed successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Total count of entries that were processed.
+         */
+        totalCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the ImportDocumentsRequest. If the long running operation is done, then this message is returned by the google.longrunning.Operations.response field if the operation was successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportDocumentsResponse {
+        /**
+         * Echoes the destination for the complete errors in the request if set.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1betaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+    }
+    /**
+     * Configuration of destination for Import related errors.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportErrorConfig {
+        /**
+         * Cloud Storage prefix for import errors. This must be an empty, existing Cloud Storage directory. Import errors are written to sharded files in this directory, one per line, as a JSON-encoded `google.rpc.Status` message.
+         */
+        gcsPrefix?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the ImportSampleQueries operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportSampleQueriesMetadata {
+        /**
+         * ImportSampleQueries operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of SampleQuerys that failed to be imported.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of SampleQuerys successfully imported.
+         */
+        successCount?: string | null;
+        /**
+         * Total count of SampleQuerys that were processed.
+         */
+        totalCount?: string | null;
+        /**
+         * ImportSampleQueries operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the SampleQueryService.ImportSampleQueries method. If the long running operation is done, this message is returned by the google.longrunning.Operations.response field if the operation is successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportSampleQueriesResponse {
+        /**
+         * The desired location of errors incurred during the Import.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1betaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+    }
+    /**
+     * Metadata related to the progress of the ImportSuggestionDenyListEntries operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportSuggestionDenyListEntriesMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for CompletionService.ImportSuggestionDenyListEntries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportSuggestionDenyListEntriesResponse {
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Count of deny list entries that failed to be imported.
+         */
+        failedEntriesCount?: string | null;
+        /**
+         * Count of deny list entries successfully imported.
+         */
+        importedEntriesCount?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the Import operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportUserEventsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were processed successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the ImportUserEventsRequest. If the long running operation was successful, then this message is returned by the google.longrunning.Operations.response field if the operation was successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaImportUserEventsResponse {
+        /**
+         * Echoes the destination for the complete errors if this field was set in the request.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1betaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Count of user events imported with complete existing Documents.
+         */
+        joinedEventsCount?: string | null;
+        /**
+         * Count of user events imported, but with Document information not found in the existing Branch.
+         */
+        unjoinedEventsCount?: string | null;
+    }
+    /**
+     * A floating point interval.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaInterval {
+        /**
+         * Exclusive upper bound.
+         */
+        exclusiveMaximum?: number | null;
+        /**
+         * Exclusive lower bound.
+         */
+        exclusiveMinimum?: number | null;
+        /**
+         * Inclusive upper bound.
+         */
+        maximum?: number | null;
+        /**
+         * Inclusive lower bound.
+         */
+        minimum?: number | null;
+    }
+    /**
+     * Language info for DataStore.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaLanguageInfo {
+        /**
+         * Output only. Language part of normalized_language_code. E.g.: `en-US` -\> `en`, `zh-Hans-HK` -\> `zh`, `en` -\> `en`.
+         */
+        language?: string | null;
+        /**
+         * The language code for the DataStore.
+         */
+        languageCode?: string | null;
+        /**
+         * Output only. This is the normalized form of language_code. E.g.: language_code of `en-GB`, `en_GB`, `en-UK` or `en-gb` will have normalized_language_code of `en-GB`.
+         */
+        normalizedLanguageCode?: string | null;
+        /**
+         * Output only. Region part of normalized_language_code, if present. E.g.: `en-US` -\> `US`, `zh-Hans-HK` -\> `HK`, `en` -\> ``.
+         */
+        region?: string | null;
+    }
+    /**
+     * Response message for SearchTuningService.ListCustomModels method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaListCustomModelsResponse {
+        /**
+         * List of custom tuning models.
+         */
+        models?: Schema$GoogleCloudDiscoveryengineV1betaCustomTuningModel[];
+    }
+    /**
+     * Metadata and configurations for a Google Cloud project in the service.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaProject {
+        /**
+         * Output only. The timestamp when this project is created.
+         */
+        createTime?: string | null;
+        /**
+         * Output only. Full resource name of the project, for example `projects/{project_number\}`. Note that when making requests, project number and project id are both acceptable, but the server will always respond in project number.
+         */
+        name?: string | null;
+        /**
+         * Output only. The timestamp when this project is successfully provisioned. Empty value means this project is still provisioning and is not ready for use.
+         */
+        provisionCompletionTime?: string | null;
+        /**
+         * Output only. A map of terms of services. The key is the `id` of ServiceTerms.
+         */
+        serviceTermsMap?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1betaProjectServiceTerms;
+        } | null;
+    }
+    /**
+     * Metadata about the terms of service.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaProjectServiceTerms {
+        /**
+         * The last time when the project agreed to the terms of service.
+         */
+        acceptTime?: string | null;
+        /**
+         * The last time when the project declined or revoked the agreement to terms of service.
+         */
+        declineTime?: string | null;
+        /**
+         * The unique identifier of this terms of service. Available terms: * `GA_DATA_USE_TERMS`: [Terms for data use](https://cloud.google.com/retail/data-use-terms). When using this as `id`, the acceptable version to provide is `2022-11-23`.
+         */
+        id?: string | null;
+        /**
+         * Whether the project has accepted/rejected the service terms or it is still pending.
+         */
+        state?: string | null;
+        /**
+         * The version string of the terms of service. For acceptable values, see the comments for id above.
+         */
+        version?: string | null;
+    }
+    /**
+     * Metadata associated with a project provision operation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaProvisionProjectMetadata {
+    }
+    /**
+     * Metadata related to the progress of the PurgeDocuments operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaPurgeDocumentsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were ignored as entries were not found.
+         */
+        ignoredCount?: string | null;
+        /**
+         * Count of entries that were deleted successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for DocumentService.PurgeDocuments method. If the long running operation is successfully done, then this message is returned by the google.longrunning.Operations.response field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaPurgeDocumentsResponse {
+        /**
+         * The total count of documents purged as a result of the operation.
+         */
+        purgeCount?: string | null;
+        /**
+         * A sample of document names that will be deleted. Only populated if `force` is set to false. A max of 100 names will be returned and the names are chosen at random.
+         */
+        purgeSample?: string[] | null;
+    }
+    /**
+     * Metadata related to the progress of the PurgeSuggestionDenyListEntries operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaPurgeSuggestionDenyListEntriesMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for CompletionService.PurgeSuggestionDenyListEntries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaPurgeSuggestionDenyListEntriesResponse {
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Number of suggestion deny list entries purged.
+         */
+        purgeCount?: string | null;
+    }
+    /**
+     * Describes the metrics produced by the evaluation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaQualityMetrics {
+        /**
+         * Normalized discounted cumulative gain (NDCG) per document, at various top-k cutoff levels. NDCG measures the ranking quality, giving higher relevance to top results. Example (top-3): Suppose SampleQuery with three retrieved documents (D1, D2, D3) and binary relevance judgements (1 for relevant, 0 for not relevant): Retrieved: [D3 (0), D1 (1), D2 (1)] Ideal: [D1 (1), D2 (1), D3 (0)] Calculate NDCG@3 for each SampleQuery: * DCG@3: 0/log2(1+1) + 1/log2(2+1) + 1/log2(3+1) = 1.13 * Ideal DCG@3: 1/log2(1+1) + 1/log2(2+1) + 0/log2(3+1) = 1.63 * NDCG@3: 1.13/1.63 = 0.693
+         */
+        docNdcg?: Schema$GoogleCloudDiscoveryengineV1betaQualityMetricsTopkMetrics;
+        /**
+         * Precision per document, at various top-k cutoff levels. Precision is the fraction of retrieved documents that are relevant. Example (top-5): * For a single SampleQuery, If 4 out of 5 retrieved documents in the top-5 are relevant, precision@5 = 4/5 = 0.8
+         */
+        docPrecision?: Schema$GoogleCloudDiscoveryengineV1betaQualityMetricsTopkMetrics;
+        /**
+         * Recall per document, at various top-k cutoff levels. Recall is the fraction of relevant documents retrieved out of all relevant documents. Example (top-5): * For a single SampleQuery, If 3 out of 5 relevant documents are retrieved in the top-5, recall@5 = 3/5 = 0.6
+         */
+        docRecall?: Schema$GoogleCloudDiscoveryengineV1betaQualityMetricsTopkMetrics;
+        /**
+         * Normalized discounted cumulative gain (NDCG) per page, at various top-k cutoff levels. NDCG measures the ranking quality, giving higher relevance to top results. Example (top-3): Suppose SampleQuery with three retrieved pages (P1, P2, P3) and binary relevance judgements (1 for relevant, 0 for not relevant): Retrieved: [P3 (0), P1 (1), P2 (1)] Ideal: [P1 (1), P2 (1), P3 (0)] Calculate NDCG@3 for SampleQuery: * DCG@3: 0/log2(1+1) + 1/log2(2+1) + 1/log2(3+1) = 1.13 * Ideal DCG@3: 1/log2(1+1) + 1/log2(2+1) + 0/log2(3+1) = 1.63 * NDCG@3: 1.13/1.63 = 0.693
+         */
+        pageNdcg?: Schema$GoogleCloudDiscoveryengineV1betaQualityMetricsTopkMetrics;
+        /**
+         * Recall per page, at various top-k cutoff levels. Recall is the fraction of relevant pages retrieved out of all relevant pages. Example (top-5): * For a single SampleQuery, if 3 out of 5 relevant pages are retrieved in the top-5, recall@5 = 3/5 = 0.6
+         */
+        pageRecall?: Schema$GoogleCloudDiscoveryengineV1betaQualityMetricsTopkMetrics;
+    }
+    /**
+     * Stores the metric values at specific top-k levels.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaQualityMetricsTopkMetrics {
+        /**
+         * The top-1 value.
+         */
+        top1?: number | null;
+        /**
+         * The top-10 value.
+         */
+        top10?: number | null;
+        /**
+         * The top-3 value.
+         */
+        top3?: number | null;
+        /**
+         * The top-5 value.
+         */
+        top5?: number | null;
+    }
+    /**
+     * Defines the structure and layout of a type of document data.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSchema {
+        /**
+         * The JSON representation of the schema.
+         */
+        jsonSchema?: string | null;
+        /**
+         * Immutable. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * The structured representation of the schema.
+         */
+        structSchema?: {
+            [key: string]: any;
+        } | null;
+    }
+    /**
+     * Request message for SearchService.Search method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequest {
+        /**
+         * Boost specification to boost certain documents. For more information on boosting, see [Boosting](https://cloud.google.com/generative-ai-app-builder/docs/boost-search-results)
+         */
+        boostSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestBoostSpec;
+        /**
+         * The branch resource name, such as `projects/x/locations/global/collections/default_collection/dataStores/default_data_store/branches/0`. Use `default_branch` as the branch ID or leave this field empty, to search documents under the default branch.
+         */
+        branch?: string | null;
+        /**
+         * The default filter that is applied when a user performs a search without checking any filters on the search page. The filter applied to every search request when quality improvement such as query expansion is needed. In the case a query does not have a sufficient amount of results this filter will be used to determine whether or not to enable the query expansion flow. The original filter will still be used for the query expanded search. This field is strongly recommended to achieve high search quality. For more information about filter syntax, see SearchRequest.filter.
+         */
+        canonicalFilter?: string | null;
+        /**
+         * A specification for configuring the behavior of content search.
+         */
+        contentSearchSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpec;
+        /**
+         * Specs defining dataStores to filter on in a search call and configurations for those dataStores. This is only considered for engines with multiple dataStores use case. For single dataStore within an engine, they should use the specs at the top level.
+         */
+        dataStoreSpecs?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestDataStoreSpec[];
+        /**
+         * Uses the provided embedding to do additional semantic document retrieval. The retrieval is based on the dot product of SearchRequest.EmbeddingSpec.EmbeddingVector.vector and the document embedding that is provided in SearchRequest.EmbeddingSpec.EmbeddingVector.field_path. If SearchRequest.EmbeddingSpec.EmbeddingVector.field_path is not provided, it will use ServingConfig.EmbeddingConfig.field_path.
+         */
+        embeddingSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestEmbeddingSpec;
+        /**
+         * Facet specifications for faceted search. If empty, no facets are returned. A maximum of 100 values are allowed. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        facetSpecs?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestFacetSpec[];
+        /**
+         * The filter syntax consists of an expression language for constructing a predicate from one or more fields of the documents being filtered. Filter expression is case-sensitive. If this field is unrecognizable, an `INVALID_ARGUMENT` is returned. Filtering in Vertex AI Search is done by mapping the LHS filter key to a key property defined in the Vertex AI Search backend -- this mapping is defined by the customer in their schema. For example a media customer might have a field 'name' in their schema. In this case the filter would look like this: filter --\> name:'ANY("king kong")' For more information about filtering including syntax and filter operators, see [Filter](https://cloud.google.com/generative-ai-app-builder/docs/filter-search-metadata)
+         */
+        filter?: string | null;
+        /**
+         * Raw image query.
+         */
+        imageQuery?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestImageQuery;
+        /**
+         * The BCP-47 language code, such as "en-US" or "sr-Latn". For more information, see [Standard fields](https://cloud.google.com/apis/design/standard_fields). This field helps to better interpret the query. If a value isn't specified, the query language code is automatically detected, which may not be accurate.
+         */
+        languageCode?: string | null;
+        /**
+         * If `naturalLanguageQueryUnderstandingSpec` is not specified, no additional natural language query understanding will be done.
+         */
+        naturalLanguageQueryUnderstandingSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestNaturalLanguageQueryUnderstandingSpec;
+        /**
+         * A 0-indexed integer that specifies the current offset (that is, starting result location, amongst the Documents deemed by the API as relevant) in search results. This field is only considered if page_token is unset. If this field is negative, an `INVALID_ARGUMENT` is returned.
+         */
+        offset?: number | null;
+        /**
+         * The order in which documents are returned. Documents can be ordered by a field in an Document object. Leave it unset if ordered by relevance. `order_by` expression is case-sensitive. For more information on ordering the website search results, see [Order web search results](https://cloud.google.com/generative-ai-app-builder/docs/order-web-search-results). For more information on ordering the healthcare search results, see [Order healthcare search results](https://cloud.google.com/generative-ai-app-builder/docs/order-hc-results). If this field is unrecognizable, an `INVALID_ARGUMENT` is returned.
+         */
+        orderBy?: string | null;
+        /**
+         * Maximum number of Documents to return. The maximum allowed value depends on the data type. Values above the maximum value are coerced to the maximum value. * Websites with basic indexing: Default `10`, Maximum `25`. * Websites with advanced indexing: Default `25`, Maximum `50`. * Other: Default `50`, Maximum `100`. If this field is negative, an `INVALID_ARGUMENT` is returned.
+         */
+        pageSize?: number | null;
+        /**
+         * A page token received from a previous SearchService.Search call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to SearchService.Search must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string | null;
+        /**
+         * Additional search parameters. For public website search only, supported values are: * `user_country_code`: string. Default empty. If set to non-empty, results are restricted or boosted based on the location provided. For example, `user_country_code: "au"` For available codes see [Country Codes](https://developers.google.com/custom-search/docs/json_api_reference#countryCodes) * `search_type`: double. Default empty. Enables non-webpage searching depending on the value. The only valid non-default value is 1, which enables image searching. For example, `search_type: 1`
+         */
+        params?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * Raw search query.
+         */
+        query?: string | null;
+        /**
+         * The query expansion specification that specifies the conditions under which query expansion occurs.
+         */
+        queryExpansionSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestQueryExpansionSpec;
+        /**
+         * The ranking expression controls the customized ranking on retrieval documents. This overrides ServingConfig.ranking_expression. The ranking expression is a single function or multiple functions that are joined by "+". * ranking_expression = function, { " + ", function \}; Supported functions: * double * relevance_score * double * dotProduct(embedding_field_path) Function variables: * `relevance_score`: pre-defined keywords, used for measure relevance between query and document. * `embedding_field_path`: the document embedding field used with query embedding vector. * `dotProduct`: embedding function between embedding_field_path and query embedding vector. Example ranking expression: If document has an embedding field doc_embedding, the ranking expression could be `0.5 * relevance_score + 0.3 * dotProduct(doc_embedding)`.
+         */
+        rankingExpression?: string | null;
+        /**
+         * The Unicode country/region code (CLDR) of a location, such as "US" and "419". For more information, see [Standard fields](https://cloud.google.com/apis/design/standard_fields). If set, then results will be boosted based on the region_code provided.
+         */
+        regionCode?: string | null;
+        /**
+         * The relevance threshold of the search results. Default to Google defined threshold, leveraging a balance of precision and recall to deliver both highly accurate results and comprehensive coverage of relevant information.
+         */
+        relevanceThreshold?: string | null;
+        /**
+         * Whether to turn on safe search. This is only supported for website search.
+         */
+        safeSearch?: boolean | null;
+        /**
+         * Search as you type configuration. Only supported for the IndustryVertical.MEDIA vertical.
+         */
+        searchAsYouTypeSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestSearchAsYouTypeSpec;
+        /**
+         * Required. The resource name of the Search serving config, such as `projects/x/locations/global/collections/default_collection/engines/x/servingConfigs/default_serving_config`, or `projects/x/locations/global/collections/default_collection/dataStores/default_data_store/servingConfigs/default_serving_config`. This field is used to identify the serving configuration name, set of models used to make the search.
+         */
+        servingConfig?: string | null;
+        /**
+         * The session resource name. Optional. Session allows users to do multi-turn /search API calls or coordination between /search API calls and /answer API calls. Example #1 (multi-turn /search API calls): 1. Call /search API with the auto-session mode (see below). 2. Call /search API with the session ID generated in the first call. Here, the previous search query gets considered in query standing. I.e., if the first query is "How did Alphabet do in 2022?" and the current query is "How about 2023?", the current query will be interpreted as "How did Alphabet do in 2023?". Example #2 (coordination between /search API calls and /answer API calls): 1. Call /search API with the auto-session mode (see below). 2. Call /answer API with the session ID generated in the first call. Here, the answer generation happens in the context of the search results from the first search call. Auto-session mode: when `projects/.../sessions/-` is used, a new session gets automatically created. Otherwise, users can use the create-session API to create a session manually. Multi-turn Search feature is currently at private GA stage. Please use v1alpha or v1beta version instead before we launch this feature to public GA. Or ask for allowlisting through Google Support team.
+         */
+        session?: string | null;
+        /**
+         * Session specification. Can be used only when `session` is set.
+         */
+        sessionSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestSessionSpec;
+        /**
+         * The spell correction specification that specifies the mode under which spell correction takes effect.
+         */
+        spellCorrectionSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestSpellCorrectionSpec;
+        /**
+         * Information about the end user. Highly recommended for analytics. UserInfo.user_agent is used to deduce `device_type` for analytics.
+         */
+        userInfo?: Schema$GoogleCloudDiscoveryengineV1betaUserInfo;
+        /**
+         * The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Google Cloud Document](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
+         */
+        userLabels?: {
+            [key: string]: string;
+        } | null;
+        /**
+         * A unique identifier for tracking visitors. For example, this could be implemented with an HTTP cookie, which should be able to uniquely identify a visitor on a single device. This unique identifier should not change if the visitor logs in or out of the website. This field should NOT have a fixed value such as `unknown_visitor`. This should be the same identifier as UserEvent.user_pseudo_id and CompleteQueryRequest.user_pseudo_id The field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        userPseudoId?: string | null;
+    }
+    /**
+     * Boost specification to boost certain documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestBoostSpec {
+        /**
+         * Condition boost specifications. If a document matches multiple conditions in the specifictions, boost scores from these specifications are all applied and combined in a non-linear way. Maximum number of specifications is 20.
+         */
+        conditionBoostSpecs?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestBoostSpecConditionBoostSpec[];
+    }
+    /**
+     * Boost applies to documents which match a condition.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestBoostSpecConditionBoostSpec {
+        /**
+         * Strength of the condition boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0. Setting to 1.0 gives the document a big promotion. However, it does not necessarily mean that the boosted document will be the top result at all times, nor that other documents will be excluded. Results could still be shown even when none of them matches the condition. And results that are significantly more relevant to the search query can still trump your heavily favored but irrelevant documents. Setting to -1.0 gives the document a big demotion. However, results that are deeply relevant might still be shown. The document will have an upstream battle to get a fairly high ranking, but it is not blocked out completely. Setting to 0.0 means no boost applied. The boosting condition is ignored. Only one of the (condition, boost) combination or the boost_control_spec below are set. If both are set then the global boost is ignored and the more fine-grained boost_control_spec is applied.
+         */
+        boost?: number | null;
+        /**
+         * Complex specification for custom ranking based on customer defined attribute value.
+         */
+        boostControlSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestBoostSpecConditionBoostSpecBoostControlSpec;
+        /**
+         * An expression which specifies a boost condition. The syntax and supported fields are the same as a filter expression. See SearchRequest.filter for detail syntax and limitations. Examples: * To boost documents with document ID "doc_1" or "doc_2", and color "Red" or "Blue": `(document_id: ANY("doc_1", "doc_2")) AND (color: ANY("Red", "Blue"))`
+         */
+        condition?: string | null;
+    }
+    /**
+     * Specification for custom ranking based on customer specified attribute value. It provides more controls for customized ranking than the simple (condition, boost) combination above.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestBoostSpecConditionBoostSpecBoostControlSpec {
+        /**
+         * The attribute type to be used to determine the boost amount. The attribute value can be derived from the field value of the specified field_name. In the case of numerical it is straightforward i.e. attribute_value = numerical_field_value. In the case of freshness however, attribute_value = (time.now() - datetime_field_value).
+         */
+        attributeType?: string | null;
+        /**
+         * The control points used to define the curve. The monotonic function (defined through the interpolation_type above) passes through the control points listed here.
+         */
+        controlPoints?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestBoostSpecConditionBoostSpecBoostControlSpecControlPoint[];
+        /**
+         * The name of the field whose value will be used to determine the boost amount.
+         */
+        fieldName?: string | null;
+        /**
+         * The interpolation type to be applied to connect the control points listed below.
+         */
+        interpolationType?: string | null;
+    }
+    /**
+     * The control points used to define the curve. The curve defined through these control points can only be monotonically increasing or decreasing(constant values are acceptable).
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestBoostSpecConditionBoostSpecBoostControlSpecControlPoint {
+        /**
+         * Can be one of: 1. The numerical field value. 2. The duration spec for freshness: The value must be formatted as an XSD `dayTimeDuration` value (a restricted subset of an ISO 8601 duration value). The pattern for this is: `nDnM]`.
+         */
+        attributeValue?: string | null;
+        /**
+         * The value between -1 to 1 by which to boost the score if the attribute_value evaluates to the value specified above.
+         */
+        boostAmount?: number | null;
+    }
+    /**
+     * A specification for configuring the behavior of content search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpec {
+        /**
+         * Specifies the chunk spec to be returned from the search response. Only available if the SearchRequest.ContentSearchSpec.search_result_mode is set to CHUNKS
+         */
+        chunkSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecChunkSpec;
+        /**
+         * If there is no extractive_content_spec provided, there will be no extractive answer in the search response.
+         */
+        extractiveContentSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecExtractiveContentSpec;
+        /**
+         * Specifies the search result mode. If unspecified, the search result mode defaults to `DOCUMENTS`.
+         */
+        searchResultMode?: string | null;
+        /**
+         * If `snippetSpec` is not specified, snippets are not included in the search response.
+         */
+        snippetSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecSnippetSpec;
+        /**
+         * If `summarySpec` is not specified, summaries are not included in the search response.
+         */
+        summarySpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecSummarySpec;
+    }
+    /**
+     * Specifies the chunk spec to be returned from the search response. Only available if the SearchRequest.ContentSearchSpec.search_result_mode is set to CHUNKS
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecChunkSpec {
+        /**
+         * The number of next chunks to be returned of the current chunk. The maximum allowed value is 3. If not specified, no next chunks will be returned.
+         */
+        numNextChunks?: number | null;
+        /**
+         * The number of previous chunks to be returned of the current chunk. The maximum allowed value is 3. If not specified, no previous chunks will be returned.
+         */
+        numPreviousChunks?: number | null;
+    }
+    /**
+     * A specification for configuring the extractive content in a search response.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecExtractiveContentSpec {
+        /**
+         * The maximum number of extractive answers returned in each search result. An extractive answer is a verbatim answer extracted from the original document, which provides a precise and contextually relevant answer to the search query. If the number of matching answers is less than the `max_extractive_answer_count`, return all of the answers. Otherwise, return the `max_extractive_answer_count`. At most five answers are returned for each SearchResult.
+         */
+        maxExtractiveAnswerCount?: number | null;
+        /**
+         * The max number of extractive segments returned in each search result. Only applied if the DataStore is set to DataStore.ContentConfig.CONTENT_REQUIRED or DataStore.solution_types is SOLUTION_TYPE_CHAT. An extractive segment is a text segment extracted from the original document that is relevant to the search query, and, in general, more verbose than an extractive answer. The segment could then be used as input for LLMs to generate summaries and answers. If the number of matching segments is less than `max_extractive_segment_count`, return all of the segments. Otherwise, return the `max_extractive_segment_count`.
+         */
+        maxExtractiveSegmentCount?: number | null;
+        /**
+         * Return at most `num_next_segments` segments after each selected segments.
+         */
+        numNextSegments?: number | null;
+        /**
+         * Specifies whether to also include the adjacent from each selected segments. Return at most `num_previous_segments` segments before each selected segments.
+         */
+        numPreviousSegments?: number | null;
+        /**
+         * Specifies whether to return the confidence score from the extractive segments in each search result. This feature is available only for new or allowlisted data stores. To allowlist your data store, contact your Customer Engineer. The default value is `false`.
+         */
+        returnExtractiveSegmentScore?: boolean | null;
+    }
+    /**
+     * A specification for configuring snippets in a search response.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecSnippetSpec {
+        /**
+         * [DEPRECATED] This field is deprecated. To control snippet return, use `return_snippet` field. For backwards compatibility, we will return snippet if max_snippet_count \> 0.
+         */
+        maxSnippetCount?: number | null;
+        /**
+         * [DEPRECATED] This field is deprecated and will have no affect on the snippet.
+         */
+        referenceOnly?: boolean | null;
+        /**
+         * If `true`, then return snippet. If no snippet can be generated, we return "No snippet is available for this page." A `snippet_status` with `SUCCESS` or `NO_SNIPPET_AVAILABLE` will also be returned.
+         */
+        returnSnippet?: boolean | null;
+    }
+    /**
+     * A specification for configuring a summary returned in a search response.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecSummarySpec {
+        /**
+         * Specifies whether to filter out adversarial queries. The default value is `false`. Google employs search-query classification to detect adversarial queries. No summary is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output. If this field is set to `true`, we skip generating summaries for adversarial queries and return fallback messages instead.
+         */
+        ignoreAdversarialQuery?: boolean | null;
+        /**
+         * Specifies whether to filter out queries that have low relevance. The default value is `false`. If this field is set to `false`, all search results are used regardless of relevance to generate answers. If set to `true`, only queries with high relevance search results will generate answers.
+         */
+        ignoreLowRelevantContent?: boolean | null;
+        /**
+         * Specifies whether to filter out queries that are not summary-seeking. The default value is `false`. Google employs search-query classification to detect summary-seeking queries. No summary is returned if the search query is classified as a non-summary seeking query. For example, `why is the sky blue` and `Who is the best soccer player in the world?` are summary-seeking queries, but `SFO airport` and `world cup 2026` are not. They are most likely navigational queries. If this field is set to `true`, we skip generating summaries for non-summary seeking queries and return fallback messages instead.
+         */
+        ignoreNonSummarySeekingQuery?: boolean | null;
+        /**
+         * Specifies whether to include citations in the summary. The default value is `false`. When this field is set to `true`, summaries include in-line citation numbers. Example summary including citations: BigQuery is Google Cloud's fully managed and completely serverless enterprise data warehouse [1]. BigQuery supports all data types, works across clouds, and has built-in machine learning and business intelligence, all within a unified platform [2, 3]. The citation numbers refer to the returned search results and are 1-indexed. For example, [1] means that the sentence is attributed to the first search result. [2, 3] means that the sentence is attributed to both the second and third search results.
+         */
+        includeCitations?: boolean | null;
+        /**
+         * Language code for Summary. Use language tags defined by [BCP47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt). Note: This is an experimental feature.
+         */
+        languageCode?: string | null;
+        /**
+         * If specified, the spec will be used to modify the prompt provided to the LLM.
+         */
+        modelPromptSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecSummarySpecModelPromptSpec;
+        /**
+         * If specified, the spec will be used to modify the model specification provided to the LLM.
+         */
+        modelSpec?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecSummarySpecModelSpec;
+        /**
+         * The number of top results to generate the summary from. If the number of results returned is less than `summaryResultCount`, the summary is generated from all of the results. At most 10 results for documents mode, or 50 for chunks mode, can be used to generate a summary. The chunks mode is used when SearchRequest.ContentSearchSpec.search_result_mode is set to CHUNKS.
+         */
+        summaryResultCount?: number | null;
+        /**
+         * If true, answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.
+         */
+        useSemanticChunks?: boolean | null;
+    }
+    /**
+     * Specification of the prompt to use with the model.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecSummarySpecModelPromptSpec {
+        /**
+         * Text at the beginning of the prompt that instructs the assistant. Examples are available in the user guide.
+         */
+        preamble?: string | null;
+    }
+    /**
+     * Specification of the model.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestContentSearchSpecSummarySpecModelSpec {
+        /**
+         * The model version used to generate the summary. Supported values are: * `stable`: string. Default value when no value is specified. Uses a generally available, fine-tuned model. For more information, see [Answer generation model versions and lifecycle](https://cloud.google.com/generative-ai-app-builder/docs/answer-generation-models). * `preview`: string. (Public preview) Uses a preview model. For more information, see [Answer generation model versions and lifecycle](https://cloud.google.com/generative-ai-app-builder/docs/answer-generation-models).
+         */
+        version?: string | null;
+    }
+    /**
+     * A struct to define data stores to filter on in a search call and configurations for those data stores. Otherwise, an `INVALID_ARGUMENT` error is returned.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestDataStoreSpec {
+        /**
+         * Required. Full resource name of DataStore, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`.
+         */
+        dataStore?: string | null;
+    }
+    /**
+     * The specification that uses customized query embedding vector to do semantic document retrieval.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestEmbeddingSpec {
+        /**
+         * The embedding vector used for retrieval. Limit to 1.
+         */
+        embeddingVectors?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestEmbeddingSpecEmbeddingVector[];
+    }
+    /**
+     * Embedding vector.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestEmbeddingSpecEmbeddingVector {
+        /**
+         * Embedding field path in schema.
+         */
+        fieldPath?: string | null;
+        /**
+         * Query embedding vector.
+         */
+        vector?: number[] | null;
+    }
+    /**
+     * A facet specification to perform faceted search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestFacetSpec {
+        /**
+         * Enables dynamic position for this facet. If set to true, the position of this facet among all facets in the response is determined automatically. If dynamic facets are enabled, it is ordered together. If set to false, the position of this facet in the response is the same as in the request, and it is ranked before the facets with dynamic position enable and all dynamic facets. For example, you may always want to have rating facet returned in the response, but it's not necessarily to always display the rating facet at the top. In that case, you can set enable_dynamic_position to true so that the position of rating facet in response is determined automatically. Another example, assuming you have the following facets in the request: * "rating", enable_dynamic_position = true * "price", enable_dynamic_position = false * "brands", enable_dynamic_position = false And also you have a dynamic facets enabled, which generates a facet `gender`. Then the final order of the facets in the response can be ("price", "brands", "rating", "gender") or ("price", "brands", "gender", "rating") depends on how API orders "gender" and "rating" facets. However, notice that "price" and "brands" are always ranked at first and second position because their enable_dynamic_position is false.
+         */
+        enableDynamicPosition?: boolean | null;
+        /**
+         * List of keys to exclude when faceting. By default, FacetKey.key is not excluded from the filter unless it is listed in this field. Listing a facet key in this field allows its values to appear as facet results, even when they are filtered out of search results. Using this field does not affect what search results are returned. For example, suppose there are 100 documents with the color facet "Red" and 200 documents with the color facet "Blue". A query containing the filter "color:ANY("Red")" and having "color" as FacetKey.key would by default return only "Red" documents in the search results, and also return "Red" with count 100 as the only color facet. Although there are also blue documents available, "Blue" would not be shown as an available facet value. If "color" is listed in "excludedFilterKeys", then the query returns the facet values "Red" with count 100 and "Blue" with count 200, because the "color" key is now excluded from the filter. Because this field doesn't affect search results, the search results are still correctly filtered to return only "Red" documents. A maximum of 100 values are allowed. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        excludedFilterKeys?: string[] | null;
+        /**
+         * Required. The facet key specification.
+         */
+        facetKey?: Schema$GoogleCloudDiscoveryengineV1betaSearchRequestFacetSpecFacetKey;
+        /**
+         * Maximum facet values that are returned for this facet. If unspecified, defaults to 20. The maximum allowed value is 300. Values above 300 are coerced to 300. For aggregation in healthcare search, when the [FacetKey.key] is "healthcare_aggregation_key", the limit will be overridden to 10,000 internally, regardless of the value set here. If this field is negative, an `INVALID_ARGUMENT` is returned.
+         */
+        limit?: number | null;
+    }
+    /**
+     * Specifies how a facet is computed.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestFacetSpecFacetKey {
+        /**
+         * True to make facet keys case insensitive when getting faceting values with prefixes or contains; false otherwise.
+         */
+        caseInsensitive?: boolean | null;
+        /**
+         * Only get facet values that contain the given strings. For example, suppose "category" has three values "Action \> 2022", "Action \> 2021" and "Sci-Fi \> 2022". If set "contains" to "2022", the "category" facet only contains "Action \> 2022" and "Sci-Fi \> 2022". Only supported on textual fields. Maximum is 10.
+         */
+        contains?: string[] | null;
+        /**
+         * Set only if values should be bucketed into intervals. Must be set for facets with numerical values. Must not be set for facet with text values. Maximum number of intervals is 30.
+         */
+        intervals?: Schema$GoogleCloudDiscoveryengineV1betaInterval[];
+        /**
+         * Required. Supported textual and numerical facet keys in Document object, over which the facet values are computed. Facet key is case-sensitive.
+         */
+        key?: string | null;
+        /**
+         * The order in which documents are returned. Allowed values are: * "count desc", which means order by SearchResponse.Facet.values.count descending. * "value desc", which means order by SearchResponse.Facet.values.value descending. Only applies to textual facets. If not set, textual values are sorted in [natural order](https://en.wikipedia.org/wiki/Natural_sort_order); numerical intervals are sorted in the order given by FacetSpec.FacetKey.intervals.
+         */
+        orderBy?: string | null;
+        /**
+         * Only get facet values that start with the given string prefix. For example, suppose "category" has three values "Action \> 2022", "Action \> 2021" and "Sci-Fi \> 2022". If set "prefixes" to "Action", the "category" facet only contains "Action \> 2022" and "Action \> 2021". Only supported on textual fields. Maximum is 10.
+         */
+        prefixes?: string[] | null;
+        /**
+         * Only get facet for the given restricted values. Only supported on textual fields. For example, suppose "category" has three values "Action \> 2022", "Action \> 2021" and "Sci-Fi \> 2022". If set "restricted_values" to "Action \> 2022", the "category" facet only contains "Action \> 2022". Only supported on textual fields. Maximum is 10.
+         */
+        restrictedValues?: string[] | null;
+    }
+    /**
+     * Specifies the image query input.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestImageQuery {
+        /**
+         * Base64 encoded image bytes. Supported image formats: JPEG, PNG, and BMP.
+         */
+        imageBytes?: string | null;
+    }
+    /**
+     * Specification to enable natural language understanding capabilities for search requests.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestNaturalLanguageQueryUnderstandingSpec {
+        /**
+         * The condition under which filter extraction should occur. Default to Condition.DISABLED.
+         */
+        filterExtractionCondition?: string | null;
+        /**
+         * Field names used for location-based filtering, where geolocation filters are detected in natural language search queries. Only valid when the FilterExtractionCondition is set to `ENABLED`. If this field is set, it overrides the field names set in ServingConfig.geo_search_query_detection_field_names.
+         */
+        geoSearchQueryDetectionFieldNames?: string[] | null;
+    }
+    /**
+     * Specification to determine under which conditions query expansion should occur.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestQueryExpansionSpec {
+        /**
+         * The condition under which query expansion should occur. Default to Condition.DISABLED.
+         */
+        condition?: string | null;
+        /**
+         * Whether to pin unexpanded results. If this field is set to true, unexpanded products are always at the top of the search results, followed by the expanded results.
+         */
+        pinUnexpandedResults?: boolean | null;
+    }
+    /**
+     * Specification for search as you type in search requests.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestSearchAsYouTypeSpec {
+        /**
+         * The condition under which search as you type should occur. Default to Condition.DISABLED.
+         */
+        condition?: string | null;
+    }
+    /**
+     * Session specification. Multi-turn Search feature is currently at private GA stage. Please use v1alpha or v1beta version instead before we launch this feature to public GA. Or ask for allowlisting through Google Support team.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestSessionSpec {
+        /**
+         * If set, the search result gets stored to the "turn" specified by this query ID. Example: Let's say the session looks like this: session { name: ".../sessions/xxx" turns { query { text: "What is foo?" query_id: ".../questions/yyy" \} answer: "Foo is ..." \} turns { query { text: "How about bar then?" query_id: ".../questions/zzz" \} \} \} The user can call /search API with a request like this: session: ".../sessions/xxx" session_spec { query_id: ".../questions/zzz" \} Then, the API stores the search result, associated with the last turn. The stored search result can be used by a subsequent /answer API call (with the session ID and the query ID specified). Also, it is possible to call /search and /answer in parallel with the same session ID & query ID.
+         */
+        queryId?: string | null;
+        /**
+         * The number of top search results to persist. The persisted search results can be used for the subsequent /answer api call. This field is simliar to the `summary_result_count` field in SearchRequest.ContentSearchSpec.SummarySpec.summary_result_count. At most 10 results for documents mode, or 50 for chunks mode.
+         */
+        searchResultPersistenceCount?: number | null;
+    }
+    /**
+     * The specification for query spell correction.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSearchRequestSpellCorrectionSpec {
+        /**
+         * The mode under which spell correction replaces the original search query. Defaults to Mode.AUTO.
+         */
+        mode?: string | null;
+    }
+    /**
+     * Verification information for target sites in advanced site search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaSiteVerificationInfo {
+        /**
+         * Site verification state indicating the ownership and validity.
+         */
+        siteVerificationState?: string | null;
+        /**
+         * Latest site verification time.
+         */
+        verifyTime?: string | null;
+    }
+    /**
+     * A target site for the SiteSearchEngine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaTargetSite {
+        /**
+         * Input only. If set to false, a uri_pattern is generated to include all pages whose address contains the provided_uri_pattern. If set to true, an uri_pattern is generated to try to be an exact match of the provided_uri_pattern or just the specific page if the provided_uri_pattern is a specific one. provided_uri_pattern is always normalized to generate the URI pattern to be used by the search engine.
+         */
+        exactMatch?: boolean | null;
+        /**
+         * Output only. Failure reason.
+         */
+        failureReason?: Schema$GoogleCloudDiscoveryengineV1betaTargetSiteFailureReason;
+        /**
+         * Output only. This is system-generated based on the provided_uri_pattern.
+         */
+        generatedUriPattern?: string | null;
+        /**
+         * Output only. Indexing status.
+         */
+        indexingStatus?: string | null;
+        /**
+         * Output only. The fully qualified resource name of the target site. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}` The `target_site_id` is system-generated.
+         */
+        name?: string | null;
+        /**
+         * Required. Input only. The user provided URI pattern from which the `generated_uri_pattern` is generated.
+         */
+        providedUriPattern?: string | null;
+        /**
+         * Output only. Root domain of the provided_uri_pattern.
+         */
+        rootDomainUri?: string | null;
+        /**
+         * Output only. Site ownership and validity verification status.
+         */
+        siteVerificationInfo?: Schema$GoogleCloudDiscoveryengineV1betaSiteVerificationInfo;
+        /**
+         * The type of the target site, e.g., whether the site is to be included or excluded.
+         */
+        type?: string | null;
+        /**
+         * Output only. The target site's last updated time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Site search indexing failure reasons.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaTargetSiteFailureReason {
+        /**
+         * Failed due to insufficient quota.
+         */
+        quotaFailure?: Schema$GoogleCloudDiscoveryengineV1betaTargetSiteFailureReasonQuotaFailure;
+    }
+    /**
+     * Failed due to insufficient quota.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaTargetSiteFailureReasonQuotaFailure {
+        /**
+         * This number is an estimation on how much total quota this project needs to successfully complete indexing.
+         */
+        totalRequiredQuota?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the TrainCustomModel operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaTrainCustomModelMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the TrainCustomModelRequest. This message is returned by the google.longrunning.Operations.response field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaTrainCustomModelResponse {
+        /**
+         * Echoes the destination for the complete errors in the request if set.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1betaImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the data.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * The metrics of the trained model.
+         */
+        metrics?: {
+            [key: string]: number;
+        } | null;
+        /**
+         * Fully qualified name of the CustomTuningModel.
+         */
+        modelName?: string | null;
+        /**
+         * The trained model status. Possible values are: * **bad-data**: The training data quality is bad. * **no-improvement**: Tuning didn't improve performance. Won't deploy. * **in-progress**: Model training job creation is in progress. * **training**: Model is actively training. * **evaluating**: The model is evaluating trained metrics. * **indexing**: The model trained metrics are indexing. * **ready**: The model is ready for serving.
+         */
+        modelStatus?: string | null;
+    }
+    /**
+     * Metadata associated with a tune operation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaTuneEngineMetadata {
+        /**
+         * Required. The resource name of the engine that this tune applies to. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`
+         */
+        engine?: string | null;
+    }
+    /**
+     * Response associated with a tune operation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaTuneEngineResponse {
+    }
+    /**
+     * Metadata for UpdateSchema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaUpdateSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.UpdateTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaUpdateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Information of an end user.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaUserInfo {
+        /**
+         * User agent as included in the HTTP header. The field must be a UTF-8 encoded string with a length limit of 1,000 characters. Otherwise, an `INVALID_ARGUMENT` error is returned. This should not be set when using the client side event reporting with GTM or JavaScript tag in UserEventService.CollectUserEvent or if UserEvent.direct_user_request is set.
+         */
+        userAgent?: string | null;
+        /**
+         * Highly recommended for logged-in users. Unique identifier for logged-in user, such as a user name. Don't set for anonymous users. Always use a hashed value for this ID. Don't set the field to the same fixed ID for different users. This mixes the event history of those users together, which results in degraded model quality. The field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        userId?: string | null;
+    }
+    /**
+     * Config to store data store type configuration for workspace data
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1betaWorkspaceConfig {
+        /**
+         * Obfuscated Dasher customer ID.
+         */
+        dasherCustomerId?: string | null;
+        /**
+         * The Google Workspace data source.
+         */
+        type?: string | null;
+    }
+    /**
+     * Defines circumstances to be checked before allowing a behavior
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1Condition {
+        /**
+         * Range of time(s) specifying when condition is active. Maximum of 10 time ranges.
+         */
+        activeTimeRange?: Schema$GoogleCloudDiscoveryengineV1ConditionTimeRange[];
+        /**
+         * Search only A list of terms to match the query on. Maximum of 10 query terms.
+         */
+        queryTerms?: Schema$GoogleCloudDiscoveryengineV1ConditionQueryTerm[];
+    }
+    /**
+     * Matcher for search request query
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ConditionQueryTerm {
+        /**
+         * Whether the search query needs to exactly match the query term.
+         */
+        fullMatch?: boolean | null;
+        /**
+         * The specific query value to match against Must be lowercase, must be UTF-8. Can have at most 3 space separated terms if full_match is true. Cannot be an empty string. Maximum length of 5000 characters.
+         */
+        value?: string | null;
+    }
+    /**
+     * Used for time-dependent conditions.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ConditionTimeRange {
+        /**
+         * End of time range. Range is inclusive. Must be in the future.
+         */
+        endTime?: string | null;
+        /**
+         * Start of time range. Range is inclusive.
+         */
+        startTime?: string | null;
+    }
+    /**
+     * Defines a conditioned behavior to employ during serving. Must be attached to a ServingConfig to be considered at serving time. Permitted actions dependent on `SolutionType`.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1Control {
+        /**
+         * Output only. List of all ServingConfig IDs this control is attached to. May take up to 10 minutes to update after changes.
+         */
+        associatedServingConfigIds?: string[] | null;
+        /**
+         * Defines a boost-type control
+         */
+        boostAction?: Schema$GoogleCloudDiscoveryengineV1ControlBoostAction;
+        /**
+         * Determines when the associated action will trigger. Omit to always apply the action. Currently only a single condition may be specified. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        conditions?: Schema$GoogleCloudDiscoveryengineV1Condition[];
+        /**
+         * Required. Human readable name. The identifier used in UI views. Must be UTF-8 encoded string. Length limit is 128 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        displayName?: string | null;
+        /**
+         * Defines a filter-type control Currently not supported by Recommendation
+         */
+        filterAction?: Schema$GoogleCloudDiscoveryengineV1ControlFilterAction;
+        /**
+         * Immutable. Fully qualified name `projects/x/locations/global/dataStore/x/controls/x`
+         */
+        name?: string | null;
+        /**
+         * Defines a redirect-type control.
+         */
+        redirectAction?: Schema$GoogleCloudDiscoveryengineV1ControlRedirectAction;
+        /**
+         * Required. Immutable. What solution the control belongs to. Must be compatible with vertical of resource. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        solutionType?: string | null;
+        /**
+         * Treats a group of terms as synonyms of one another.
+         */
+        synonymsAction?: Schema$GoogleCloudDiscoveryengineV1ControlSynonymsAction;
+        /**
+         * Specifies the use case for the control. Affects what condition fields can be set. Only applies to SOLUTION_TYPE_SEARCH. Currently only allow one use case per control. Must be set when solution_type is SolutionType.SOLUTION_TYPE_SEARCH.
+         */
+        useCases?: string[] | null;
+    }
+    /**
+     * Adjusts order of products in returned list.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ControlBoostAction {
+        /**
+         * Required. Strength of the boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0 (No-op).
+         */
+        boost?: number | null;
+        /**
+         * Required. Specifies which data store's documents can be boosted by this control. Full data store name e.g. projects/123/locations/global/collections/default_collection/dataStores/default_data_store
+         */
+        dataStore?: string | null;
+        /**
+         * Required. Specifies which products to apply the boost to. If no filter is provided all products will be boosted (No-op). Syntax documentation: https://cloud.google.com/retail/docs/filter-and-order Maximum length is 5000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        filter?: string | null;
+    }
+    /**
+     * Specified which products may be included in results. Uses same filter as boost.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ControlFilterAction {
+        /**
+         * Required. Specifies which data store's documents can be filtered by this control. Full data store name e.g. projects/123/locations/global/collections/default_collection/dataStores/default_data_store
+         */
+        dataStore?: string | null;
+        /**
+         * Required. A filter to apply on the matching condition results. Required Syntax documentation: https://cloud.google.com/retail/docs/filter-and-order Maximum length is 5000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        filter?: string | null;
+    }
+    /**
+     * Redirects a shopper to the provided URI.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ControlRedirectAction {
+        /**
+         * Required. The URI to which the shopper will be redirected. Required. URI must have length equal or less than 2000 characters. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        redirectUri?: string | null;
+    }
+    /**
+     * Creates a set of terms that will act as synonyms of one another. Example: "happy" will also be considered as "glad", "glad" will also be considered as "happy".
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ControlSynonymsAction {
+        /**
+         * Defines a set of synonyms. Can specify up to 100 synonyms. Must specify at least 2 synonyms. Otherwise an INVALID ARGUMENT error is thrown.
+         */
+        synonyms?: string[] | null;
+    }
+    /**
+     * Metadata related to the progress of the DataStoreService.CreateDataStore operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1CreateDataStoreMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the EngineService.CreateEngine operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1CreateEngineMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata for Create Schema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1CreateSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.CreateTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1CreateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * DataStore captures global settings and configs at the DataStore level.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DataStore {
+        /**
+         * Immutable. The content config of the data store. If this field is unset, the server behavior defaults to ContentConfig.NO_CONTENT.
+         */
+        contentConfig?: string | null;
+        /**
+         * Output only. Timestamp the DataStore was created at.
+         */
+        createTime?: string | null;
+        /**
+         * Output only. The id of the default Schema asscociated to this data store.
+         */
+        defaultSchemaId?: string | null;
+        /**
+         * Required. The data store display name. This field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        displayName?: string | null;
+        /**
+         * Configuration for Document understanding and enrichment.
+         */
+        documentProcessingConfig?: Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfig;
+        /**
+         * Immutable. The industry vertical that the data store registers.
+         */
+        industryVertical?: string | null;
+        /**
+         * Immutable. The full resource name of the data store. Format: `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * The solutions that the data store enrolls. Available solutions for each industry_vertical: * `MEDIA`: `SOLUTION_TYPE_RECOMMENDATION` and `SOLUTION_TYPE_SEARCH`. * `SITE_SEARCH`: `SOLUTION_TYPE_SEARCH` is automatically enrolled. Other solutions cannot be enrolled.
+         */
+        solutionTypes?: string[] | null;
+        /**
+         * The start schema to use for this DataStore when provisioning it. If unset, a default vertical specialized schema will be used. This field is only used by CreateDataStore API, and will be ignored if used in other APIs. This field will be omitted from all API responses including CreateDataStore API. To retrieve a schema of a DataStore, use SchemaService.GetSchema API instead. The provided schema will be validated against certain rules on schema. Learn more from [this doc](https://cloud.google.com/generative-ai-app-builder/docs/provide-schema).
+         */
+        startingSchema?: Schema$GoogleCloudDiscoveryengineV1Schema;
+        /**
+         * Config to store data store type configuration for workspace data. This must be set when DataStore.content_config is set as DataStore.ContentConfig.GOOGLE_WORKSPACE.
+         */
+        workspaceConfig?: Schema$GoogleCloudDiscoveryengineV1WorkspaceConfig;
+    }
+    /**
+     * Metadata related to the progress of the DataStoreService.DeleteDataStore operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DeleteDataStoreMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the EngineService.DeleteEngine operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DeleteEngineMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata for DeleteSchema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DeleteSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.DeleteTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DeleteTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.DisableAdvancedSiteSearch operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DisableAdvancedSiteSearchMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.DisableAdvancedSiteSearch method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DisableAdvancedSiteSearchResponse {
+    }
+    /**
+     * A singleton resource of DataStore. It's empty when DataStore is created, which defaults to digital parser. The first call to DataStoreService.UpdateDocumentProcessingConfig method will initialize the config.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfig {
+        /**
+         * Whether chunking mode is enabled.
+         */
+        chunkingConfig?: Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigChunkingConfig;
+        /**
+         * Configurations for default Document parser. If not specified, we will configure it as default DigitalParsingConfig, and the default parsing config will be applied to all file types for Document parsing.
+         */
+        defaultParsingConfig?: Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfig;
+        /**
+         * The full resource name of the Document Processing Config. Format: `projects/x/locations/x/collections/x/dataStores/x/documentProcessingConfig`.
+         */
+        name?: string | null;
+        /**
+         * Map from file type to override the default parsing configuration based on the file type. Supported keys: * `pdf`: Override parsing config for PDF files, either digital parsing, ocr parsing or layout parsing is supported. * `html`: Override parsing config for HTML files, only digital parsing and layout parsing are supported. * `docx`: Override parsing config for DOCX files, only digital parsing and layout parsing are supported. * `pptx`: Override parsing config for PPTX files, only digital parsing and layout parsing are supported. * `xlsx`: Override parsing config for XLSX files, only digital parsing and layout parsing are supported.
+         */
+        parsingConfigOverrides?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfig;
+        } | null;
+    }
+    /**
+     * Configuration for chunking config.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigChunkingConfig {
+        /**
+         * Configuration for the layout based chunking.
+         */
+        layoutBasedChunkingConfig?: Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig;
+    }
+    /**
+     * Configuration for the layout based chunking.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigChunkingConfigLayoutBasedChunkingConfig {
+        /**
+         * The token size limit for each chunk. Supported values: 100-500 (inclusive). Default value: 500.
+         */
+        chunkSize?: number | null;
+        /**
+         * Whether to include appending different levels of headings to chunks from the middle of the document to prevent context loss. Default value: False.
+         */
+        includeAncestorHeadings?: boolean | null;
+    }
+    /**
+     * Related configurations applied to a specific type of document parser.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfig {
+        /**
+         * Configurations applied to digital parser.
+         */
+        digitalParsingConfig?: Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfigDigitalParsingConfig;
+        /**
+         * Configurations applied to layout parser.
+         */
+        layoutParsingConfig?: Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfigLayoutParsingConfig;
+        /**
+         * Configurations applied to OCR parser. Currently it only applies to PDFs.
+         */
+        ocrParsingConfig?: Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfigOcrParsingConfig;
+    }
+    /**
+     * The digital parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfigDigitalParsingConfig {
+    }
+    /**
+     * The layout parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfigLayoutParsingConfig {
+    }
+    /**
+     * The OCR parsing configurations for documents.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1DocumentProcessingConfigParsingConfigOcrParsingConfig {
+        /**
+         * [DEPRECATED] This field is deprecated. To use the additional enhanced document elements processing, please switch to `layout_parsing_config`.
+         */
+        enhancedDocumentElements?: string[] | null;
+        /**
+         * If true, will use native text instead of OCR text on pages containing native text.
+         */
+        useNativeText?: boolean | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.EnableAdvancedSiteSearch operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1EnableAdvancedSiteSearchMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for SiteSearchEngineService.EnableAdvancedSiteSearch method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1EnableAdvancedSiteSearchResponse {
+    }
+    /**
+     * Metadata that describes the training and serving parameters of an Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1Engine {
+        /**
+         * Configurations for the Chat Engine. Only applicable if solution_type is SOLUTION_TYPE_CHAT.
+         */
+        chatEngineConfig?: Schema$GoogleCloudDiscoveryengineV1EngineChatEngineConfig;
+        /**
+         * Output only. Additional information of the Chat Engine. Only applicable if solution_type is SOLUTION_TYPE_CHAT.
+         */
+        chatEngineMetadata?: Schema$GoogleCloudDiscoveryengineV1EngineChatEngineMetadata;
+        /**
+         * Common config spec that specifies the metadata of the engine.
+         */
+        commonConfig?: Schema$GoogleCloudDiscoveryengineV1EngineCommonConfig;
+        /**
+         * Output only. Timestamp the Recommendation Engine was created at.
+         */
+        createTime?: string | null;
+        /**
+         * The data stores associated with this engine. For SOLUTION_TYPE_SEARCH and SOLUTION_TYPE_RECOMMENDATION type of engines, they can only associate with at most one data store. If solution_type is SOLUTION_TYPE_CHAT, multiple DataStores in the same Collection can be associated here. Note that when used in CreateEngineRequest, one DataStore id must be provided as the system will use it for necessary initializations.
+         */
+        dataStoreIds?: string[] | null;
+        /**
+         * Required. The display name of the engine. Should be human readable. UTF-8 encoded string with limit of 1024 characters.
+         */
+        displayName?: string | null;
+        /**
+         * The industry vertical that the engine registers. The restriction of the Engine industry vertical is based on DataStore: If unspecified, default to `GENERIC`. Vertical on Engine has to match vertical of the DataStore linked to the engine.
+         */
+        industryVertical?: string | null;
+        /**
+         * Immutable. The fully qualified resource name of the engine. This field must be a UTF-8 encoded string with a length limit of 1024 characters. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}` engine should be 1-63 characters, and valid characters are /a-z0-9x/. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        name?: string | null;
+        /**
+         * Configurations for the Search Engine. Only applicable if solution_type is SOLUTION_TYPE_SEARCH.
+         */
+        searchEngineConfig?: Schema$GoogleCloudDiscoveryengineV1EngineSearchEngineConfig;
+        /**
+         * Required. The solutions of the engine.
+         */
+        solutionType?: string | null;
+        /**
+         * Output only. Timestamp the Recommendation Engine was last updated.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Configurations for a Chat Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1EngineChatEngineConfig {
+        /**
+         * The configurationt generate the Dialogflow agent that is associated to this Engine. Note that these configurations are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation.
+         */
+        agentCreationConfig?: Schema$GoogleCloudDiscoveryengineV1EngineChatEngineConfigAgentCreationConfig;
+        /**
+         * The resource name of an exist Dialogflow agent to link to this Chat Engine. Customers can either provide `agent_creation_config` to create agent or provide an agent name that links the agent with the Chat engine. Format: `projects//locations//agents/`. Note that the `dialogflow_agent_to_link` are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation. Use ChatEngineMetadata.dialogflow_agent for actual agent association after Engine is created.
+         */
+        dialogflowAgentToLink?: string | null;
+    }
+    /**
+     * Configurations for generating a Dialogflow agent. Note that these configurations are one-time consumed by and passed to Dialogflow service. It means they cannot be retrieved using EngineService.GetEngine or EngineService.ListEngines API after engine creation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1EngineChatEngineConfigAgentCreationConfig {
+        /**
+         * Name of the company, organization or other entity that the agent represents. Used for knowledge connector LLM prompt and for knowledge search.
+         */
+        business?: string | null;
+        /**
+         * Required. The default language of the agent as a language tag. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes.
+         */
+        defaultLanguageCode?: string | null;
+        /**
+         * Agent location for Agent creation, supported values: global/us/eu. If not provided, us Engine will create Agent using us-central-1 by default; eu Engine will create Agent using eu-west-1 by default.
+         */
+        location?: string | null;
+        /**
+         * Required. The time zone of the agent from the [time zone database](https://www.iana.org/time-zones), e.g., America/New_York, Europe/Paris.
+         */
+        timeZone?: string | null;
+    }
+    /**
+     * Additional information of a Chat Engine. Fields in this message are output only.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1EngineChatEngineMetadata {
+        /**
+         * The resource name of a Dialogflow agent, that this Chat Engine refers to. Format: `projects//locations//agents/`.
+         */
+        dialogflowAgent?: string | null;
+    }
+    /**
+     * Common configurations for an Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1EngineCommonConfig {
+        /**
+         * The name of the company, business or entity that is associated with the engine. Setting this may help improve LLM related features.
+         */
+        companyName?: string | null;
+    }
+    /**
+     * Configurations for a Search Engine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1EngineSearchEngineConfig {
+        /**
+         * The add-on that this search engine enables.
+         */
+        searchAddOns?: string[] | null;
+        /**
+         * The search feature tier of this engine. Different tiers might have different pricing. To learn more, check the pricing documentation. Defaults to SearchTier.SEARCH_TIER_STANDARD if not specified.
+         */
+        searchTier?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the ImportCompletionSuggestions operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportCompletionSuggestionsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of CompletionSuggestions that failed to be imported.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of CompletionSuggestions successfully imported.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the CompletionService.ImportCompletionSuggestions method. If the long running operation is done, this message is returned by the google.longrunning.Operations.response field if the operation is successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportCompletionSuggestionsResponse {
+        /**
+         * The desired location of errors incurred during the Import.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1ImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+    }
+    /**
+     * Metadata related to the progress of the ImportDocuments operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportDocumentsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were processed successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Total count of entries that were processed.
+         */
+        totalCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the ImportDocumentsRequest. If the long running operation is done, then this message is returned by the google.longrunning.Operations.response field if the operation was successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportDocumentsResponse {
+        /**
+         * Echoes the destination for the complete errors in the request if set.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1ImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+    }
+    /**
+     * Configuration of destination for Import related errors.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportErrorConfig {
+        /**
+         * Cloud Storage prefix for import errors. This must be an empty, existing Cloud Storage directory. Import errors are written to sharded files in this directory, one per line, as a JSON-encoded `google.rpc.Status` message.
+         */
+        gcsPrefix?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the ImportSuggestionDenyListEntries operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportSuggestionDenyListEntriesMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for CompletionService.ImportSuggestionDenyListEntries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportSuggestionDenyListEntriesResponse {
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Count of deny list entries that failed to be imported.
+         */
+        failedEntriesCount?: string | null;
+        /**
+         * Count of deny list entries successfully imported.
+         */
+        importedEntriesCount?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the Import operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportUserEventsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were processed successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the ImportUserEventsRequest. If the long running operation was successful, then this message is returned by the google.longrunning.Operations.response field if the operation was successful.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ImportUserEventsResponse {
+        /**
+         * Echoes the destination for the complete errors if this field was set in the request.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1ImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Count of user events imported with complete existing Documents.
+         */
+        joinedEventsCount?: string | null;
+        /**
+         * Count of user events imported, but with Document information not found in the existing Branch.
+         */
+        unjoinedEventsCount?: string | null;
+    }
+    /**
+     * Metadata and configurations for a Google Cloud project in the service.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1Project {
+        /**
+         * Output only. The timestamp when this project is created.
+         */
+        createTime?: string | null;
+        /**
+         * Output only. Full resource name of the project, for example `projects/{project_number\}`. Note that when making requests, project number and project id are both acceptable, but the server will always respond in project number.
+         */
+        name?: string | null;
+        /**
+         * Output only. The timestamp when this project is successfully provisioned. Empty value means this project is still provisioning and is not ready for use.
+         */
+        provisionCompletionTime?: string | null;
+        /**
+         * Output only. A map of terms of services. The key is the `id` of ServiceTerms.
+         */
+        serviceTermsMap?: {
+            [key: string]: Schema$GoogleCloudDiscoveryengineV1ProjectServiceTerms;
+        } | null;
+    }
+    /**
+     * Metadata about the terms of service.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ProjectServiceTerms {
+        /**
+         * The last time when the project agreed to the terms of service.
+         */
+        acceptTime?: string | null;
+        /**
+         * The last time when the project declined or revoked the agreement to terms of service.
+         */
+        declineTime?: string | null;
+        /**
+         * The unique identifier of this terms of service. Available terms: * `GA_DATA_USE_TERMS`: [Terms for data use](https://cloud.google.com/retail/data-use-terms). When using this as `id`, the acceptable version to provide is `2022-11-23`.
+         */
+        id?: string | null;
+        /**
+         * Whether the project has accepted/rejected the service terms or it is still pending.
+         */
+        state?: string | null;
+        /**
+         * The version string of the terms of service. For acceptable values, see the comments for id above.
+         */
+        version?: string | null;
+    }
+    /**
+     * Metadata associated with a project provision operation.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1ProvisionProjectMetadata {
+    }
+    /**
+     * Metadata related to the progress of the PurgeCompletionSuggestions operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1PurgeCompletionSuggestionsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for CompletionService.PurgeCompletionSuggestions method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1PurgeCompletionSuggestionsResponse {
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Whether the completion suggestions were successfully purged.
+         */
+        purgeSucceeded?: boolean | null;
+    }
+    /**
+     * Metadata related to the progress of the PurgeDocuments operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1PurgeDocumentsMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Count of entries that encountered errors while processing.
+         */
+        failureCount?: string | null;
+        /**
+         * Count of entries that were ignored as entries were not found.
+         */
+        ignoredCount?: string | null;
+        /**
+         * Count of entries that were deleted successfully.
+         */
+        successCount?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for DocumentService.PurgeDocuments method. If the long running operation is successfully done, then this message is returned by the google.longrunning.Operations.response field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1PurgeDocumentsResponse {
+        /**
+         * The total count of documents purged as a result of the operation.
+         */
+        purgeCount?: string | null;
+        /**
+         * A sample of document names that will be deleted. Only populated if `force` is set to false. A max of 100 names will be returned and the names are chosen at random.
+         */
+        purgeSample?: string[] | null;
+    }
+    /**
+     * Metadata related to the progress of the PurgeSuggestionDenyListEntries operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1PurgeSuggestionDenyListEntriesMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response message for CompletionService.PurgeSuggestionDenyListEntries method.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1PurgeSuggestionDenyListEntriesResponse {
+        /**
+         * A sample of errors encountered while processing the request.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * Number of suggestion deny list entries purged.
+         */
+        purgeCount?: string | null;
+    }
+    /**
+     * Defines the structure and layout of a type of document data.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1Schema {
+        /**
+         * The JSON representation of the schema.
+         */
+        jsonSchema?: string | null;
+        /**
+         * Immutable. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string | null;
+        /**
+         * The structured representation of the schema.
+         */
+        structSchema?: {
+            [key: string]: any;
+        } | null;
+    }
+    /**
+     * Verification information for target sites in advanced site search.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1SiteVerificationInfo {
+        /**
+         * Site verification state indicating the ownership and validity.
+         */
+        siteVerificationState?: string | null;
+        /**
+         * Latest site verification time.
+         */
+        verifyTime?: string | null;
+    }
+    /**
+     * A target site for the SiteSearchEngine.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1TargetSite {
+        /**
+         * Input only. If set to false, a uri_pattern is generated to include all pages whose address contains the provided_uri_pattern. If set to true, an uri_pattern is generated to try to be an exact match of the provided_uri_pattern or just the specific page if the provided_uri_pattern is a specific one. provided_uri_pattern is always normalized to generate the URI pattern to be used by the search engine.
+         */
+        exactMatch?: boolean | null;
+        /**
+         * Output only. Failure reason.
+         */
+        failureReason?: Schema$GoogleCloudDiscoveryengineV1TargetSiteFailureReason;
+        /**
+         * Output only. This is system-generated based on the provided_uri_pattern.
+         */
+        generatedUriPattern?: string | null;
+        /**
+         * Output only. Indexing status.
+         */
+        indexingStatus?: string | null;
+        /**
+         * Output only. The fully qualified resource name of the target site. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}` The `target_site_id` is system-generated.
+         */
+        name?: string | null;
+        /**
+         * Required. Input only. The user provided URI pattern from which the `generated_uri_pattern` is generated.
+         */
+        providedUriPattern?: string | null;
+        /**
+         * Output only. Root domain of the provided_uri_pattern.
+         */
+        rootDomainUri?: string | null;
+        /**
+         * Output only. Site ownership and validity verification status.
+         */
+        siteVerificationInfo?: Schema$GoogleCloudDiscoveryengineV1SiteVerificationInfo;
+        /**
+         * The type of the target site, e.g., whether the site is to be included or excluded.
+         */
+        type?: string | null;
+        /**
+         * Output only. The target site's last updated time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Site search indexing failure reasons.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1TargetSiteFailureReason {
+        /**
+         * Failed due to insufficient quota.
+         */
+        quotaFailure?: Schema$GoogleCloudDiscoveryengineV1TargetSiteFailureReasonQuotaFailure;
+    }
+    /**
+     * Failed due to insufficient quota.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1TargetSiteFailureReasonQuotaFailure {
+        /**
+         * This number is an estimation on how much total quota this project needs to successfully complete indexing.
+         */
+        totalRequiredQuota?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the TrainCustomModel operation. This is returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1TrainCustomModelMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Response of the TrainCustomModelRequest. This message is returned by the google.longrunning.Operations.response field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1TrainCustomModelResponse {
+        /**
+         * Echoes the destination for the complete errors in the request if set.
+         */
+        errorConfig?: Schema$GoogleCloudDiscoveryengineV1ImportErrorConfig;
+        /**
+         * A sample of errors encountered while processing the data.
+         */
+        errorSamples?: Schema$GoogleRpcStatus[];
+        /**
+         * The metrics of the trained model.
+         */
+        metrics?: {
+            [key: string]: number;
+        } | null;
+        /**
+         * Fully qualified name of the CustomTuningModel.
+         */
+        modelName?: string | null;
+        /**
+         * The trained model status. Possible values are: * **bad-data**: The training data quality is bad. * **no-improvement**: Tuning didn't improve performance. Won't deploy. * **in-progress**: Model training job creation is in progress. * **training**: Model is actively training. * **evaluating**: The model is evaluating trained metrics. * **indexing**: The model trained metrics are indexing. * **ready**: The model is ready for serving.
+         */
+        modelStatus?: string | null;
+    }
+    /**
+     * Metadata for UpdateSchema LRO.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1UpdateSchemaMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Metadata related to the progress of the SiteSearchEngineService.UpdateTargetSite operation. This will be returned by the google.longrunning.Operation.metadata field.
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1UpdateTargetSiteMetadata {
+        /**
+         * Operation create time.
+         */
+        createTime?: string | null;
+        /**
+         * Operation last update time. If the operation is done, this is also the finish time.
+         */
+        updateTime?: string | null;
+    }
+    /**
+     * Config to store data store type configuration for workspace data
+     */
+    export interface Schema$GoogleCloudDiscoveryengineV1WorkspaceConfig {
+        /**
+         * Obfuscated Dasher customer ID.
+         */
+        dasherCustomerId?: string | null;
+        /**
+         * The Google Workspace data source.
+         */
+        type?: string | null;
+    }
+    /**
+     * The request message for Operations.CancelOperation.
+     */
+    export interface Schema$GoogleLongrunningCancelOperationRequest {
+    }
+    /**
+     * The response message for Operations.ListOperations.
+     */
+    export interface Schema$GoogleLongrunningListOperationsResponse {
+        /**
+         * The standard List next-page token.
+         */
+        nextPageToken?: string | null;
+        /**
+         * A list of operations that matches the specified filter in the request.
+         */
+        operations?: Schema$GoogleLongrunningOperation[];
+    }
+    /**
+     * This resource represents a long-running operation that is the result of a network API call.
+     */
+    export interface Schema$GoogleLongrunningOperation {
+        /**
+         * If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+         */
+        done?: boolean | null;
+        /**
+         * The error result of the operation in case of failure or cancellation.
+         */
+        error?: Schema$GoogleRpcStatus;
+        /**
+         * Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+         */
+        metadata?: {
+            [key: string]: any;
+        } | null;
+        /**
+         * The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id\}`.
+         */
+        name?: string | null;
+        /**
+         * The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+         */
+        response?: {
+            [key: string]: any;
+        } | null;
+    }
+    /**
+     * A single strongly-typed value.
+     */
+    export interface Schema$GoogleMonitoringV3TypedValue {
+        /**
+         * A Boolean value: `true` or `false`.
+         */
+        boolValue?: boolean | null;
+        /**
+         * A distribution value.
+         */
+        distributionValue?: Schema$GoogleApiDistribution;
+        /**
+         * A 64-bit double-precision floating-point number. Its magnitude is approximately ±10±300 and it has 16 significant digits of precision.
+         */
+        doubleValue?: number | null;
+        /**
+         * A 64-bit integer. Its range is approximately ±9.2x1018.
+         */
+        int64Value?: string | null;
+        /**
+         * A variable-length string value.
+         */
+        stringValue?: string | null;
+    }
+    /**
+     * A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); \}
+     */
+    export interface Schema$GoogleProtobufEmpty {
+    }
+    /**
+     * The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).
+     */
+    export interface Schema$GoogleRpcStatus {
+        /**
+         * The status code, which should be an enum value of google.rpc.Code.
+         */
+        code?: number | null;
+        /**
+         * A list of messages that carry the error details. There is a common set of message types for APIs to use.
+         */
+        details?: Array<{
+            [key: string]: any;
+        }> | null;
+        /**
+         * A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+         */
+        message?: string | null;
+    }
+    /**
+     * Represents a whole or partial calendar date, such as a birthday. The time of day and time zone are either specified elsewhere or are insignificant. The date is relative to the Gregorian Calendar. This can represent one of the following: * A full date, with non-zero year, month, and day values. * A month and day, with a zero year (for example, an anniversary). * A year on its own, with a zero month and a zero day. * A year and month, with a zero day (for example, a credit card expiration date). Related types: * google.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp
+     */
+    export interface Schema$GoogleTypeDate {
+        /**
+         * Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.
+         */
+        day?: number | null;
+        /**
+         * Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.
+         */
+        month?: number | null;
+        /**
+         * Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.
+         */
+        year?: number | null;
+    }
+    /**
+     * Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: "Summary size limit" description: "Determines if a summary is less than 100 chars" expression: "document.summary.size() < 100" Example (Equality): title: "Requestor is owner" description: "Determines if requestor is the document owner" expression: "document.owner == request.auth.claims.email" Example (Logic): title: "Public documents" description: "Determine whether the document should be publicly visible" expression: "document.type != 'private' && document.type != 'internal'" Example (Data Manipulation): title: "Notification string" description: "Create a notification string with a timestamp." expression: "'New message received at ' + string(document.create_time)" The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.
+     */
+    export interface Schema$GoogleTypeExpr {
+        /**
+         * Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+         */
+        description?: string | null;
+        /**
+         * Textual representation of an expression in Common Expression Language syntax.
+         */
+        expression?: string | null;
+        /**
+         * Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+         */
+        location?: string | null;
+        /**
+         * Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+         */
+        title?: string | null;
+    }
+    export class Resource$Projects {
+        context: APIRequestContext;
+        locations: Resource$Projects$Locations;
+        operations: Resource$Projects$Operations;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets a Project. Returns NOT_FOUND when the project is not yet created.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaProject>;
+        get(params: Params$Resource$Projects$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProject>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProject>): void;
+        get(params: Params$Resource$Projects$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProject>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProject>): void;
+        /**
+         * Provisions the project resource. During the process, related systems will get prepared and initialized. Caller must read the [Terms for data use](https://cloud.google.com/retail/data-use-terms), and optionally specify in request to provide consent to that service terms.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        provision(params: Params$Resource$Projects$Provision, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        provision(params?: Params$Resource$Projects$Provision, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        provision(params: Params$Resource$Projects$Provision, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        provision(params: Params$Resource$Projects$Provision, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        provision(params: Params$Resource$Projects$Provision, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        provision(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Updates service terms for this project. This method can be used to retroactively accept the latest terms. Terms available for update: * [Terms for data use](https://cloud.google.com/retail/data-use-terms)
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        reportConsentChange(params: Params$Resource$Projects$Reportconsentchange, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        reportConsentChange(params?: Params$Resource$Projects$Reportconsentchange, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaProject>;
+        reportConsentChange(params: Params$Resource$Projects$Reportconsentchange, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        reportConsentChange(params: Params$Resource$Projects$Reportconsentchange, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProject>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProject>): void;
+        reportConsentChange(params: Params$Resource$Projects$Reportconsentchange, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProject>): void;
+        reportConsentChange(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProject>): void;
+    }
+    export interface Params$Resource$Projects$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of a Project, such as `projects/{project_id_or_number\}`.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Provision extends StandardParameters {
+        /**
+         * Required. Full resource name of a Project, such as `projects/{project_id_or_number\}`.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaProvisionProjectRequest;
+    }
+    export interface Params$Resource$Projects$Reportconsentchange extends StandardParameters {
+        /**
+         * Required. Full resource name of a Project, such as `projects/{project_id_or_number\}`.
+         */
+        project?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaReportConsentChangeRequest;
+    }
+    export class Resource$Projects$Locations {
+        context: APIRequestContext;
+        collections: Resource$Projects$Locations$Collections;
+        dataStores: Resource$Projects$Locations$Datastores;
+        evaluations: Resource$Projects$Locations$Evaluations;
+        groundingConfigs: Resource$Projects$Locations$Groundingconfigs;
+        identity_mapping_stores: Resource$Projects$Locations$Identity_mapping_stores;
+        operations: Resource$Projects$Locations$Operations;
+        rankingConfigs: Resource$Projects$Locations$Rankingconfigs;
+        requirements: Resource$Projects$Locations$Requirements;
+        sampleQuerySets: Resource$Projects$Locations$Samplequerysets;
+        userEvents: Resource$Projects$Locations$Userevents;
+        userStores: Resource$Projects$Locations$Userstores;
+        constructor(context: APIRequestContext);
+        /**
+         * Estimates the data size to be used by a customer.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        estimateDataSize(params: Params$Resource$Projects$Locations$Estimatedatasize, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        estimateDataSize(params?: Params$Resource$Projects$Locations$Estimatedatasize, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        estimateDataSize(params: Params$Resource$Projects$Locations$Estimatedatasize, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        estimateDataSize(params: Params$Resource$Projects$Locations$Estimatedatasize, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        estimateDataSize(params: Params$Resource$Projects$Locations$Estimatedatasize, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        estimateDataSize(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets the AclConfig.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        getAclConfig(params: Params$Resource$Projects$Locations$Getaclconfig, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        getAclConfig(params?: Params$Resource$Projects$Locations$Getaclconfig, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>;
+        getAclConfig(params: Params$Resource$Projects$Locations$Getaclconfig, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        getAclConfig(params: Params$Resource$Projects$Locations$Getaclconfig, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>): void;
+        getAclConfig(params: Params$Resource$Projects$Locations$Getaclconfig, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>): void;
+        getAclConfig(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>): void;
+        /**
+         * Default ACL configuration for use in a location of a customer's project. Updates will only reflect to new data stores. Existing data stores will still use the old value.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        updateAclConfig(params: Params$Resource$Projects$Locations$Updateaclconfig, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        updateAclConfig(params?: Params$Resource$Projects$Locations$Updateaclconfig, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>;
+        updateAclConfig(params: Params$Resource$Projects$Locations$Updateaclconfig, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        updateAclConfig(params: Params$Resource$Projects$Locations$Updateaclconfig, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>): void;
+        updateAclConfig(params: Params$Resource$Projects$Locations$Updateaclconfig, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>): void;
+        updateAclConfig(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAclConfig>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Estimatedatasize extends StandardParameters {
+        /**
+         * Required. Full resource name of the location, such as `projects/{project\}/locations/{location\}`.
+         */
+        location?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaEstimateDataSizeRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Getaclconfig extends StandardParameters {
+        /**
+         * Required. Resource name of AclConfig, such as `projects/x/locations/x/aclConfig`. If the caller does not have permission to access the AclConfig, regardless of whether or not it exists, a PERMISSION_DENIED error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Updateaclconfig extends StandardParameters {
+        /**
+         * Immutable. The full resource name of the acl configuration. Format: `projects/{project\}/locations/{location\}/aclConfig`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaAclConfig;
+    }
+    export class Resource$Projects$Locations$Collections {
+        context: APIRequestContext;
+        dataConnector: Resource$Projects$Locations$Collections$Dataconnector;
+        dataStores: Resource$Projects$Locations$Collections$Datastores;
+        engines: Resource$Projects$Locations$Collections$Engines;
+        operations: Resource$Projects$Locations$Collections$Operations;
+        constructor(context: APIRequestContext);
+    }
+    export class Resource$Projects$Locations$Collections$Dataconnector {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Collections$Dataconnector$Operations;
+        constructor(context: APIRequestContext);
+    }
+    export class Resource$Projects$Locations$Collections$Dataconnector$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Dataconnector$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores {
+        context: APIRequestContext;
+        branches: Resource$Projects$Locations$Collections$Datastores$Branches;
+        completionSuggestions: Resource$Projects$Locations$Collections$Datastores$Completionsuggestions;
+        controls: Resource$Projects$Locations$Collections$Datastores$Controls;
+        conversations: Resource$Projects$Locations$Collections$Datastores$Conversations;
+        customModels: Resource$Projects$Locations$Collections$Datastores$Custommodels;
+        models: Resource$Projects$Locations$Collections$Datastores$Models;
+        operations: Resource$Projects$Locations$Collections$Datastores$Operations;
+        schemas: Resource$Projects$Locations$Collections$Datastores$Schemas;
+        servingConfigs: Resource$Projects$Locations$Collections$Datastores$Servingconfigs;
+        sessions: Resource$Projects$Locations$Collections$Datastores$Sessions;
+        siteSearchEngine: Resource$Projects$Locations$Collections$Datastores$Sitesearchengine;
+        suggestionDenyListEntries: Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries;
+        userEvents: Resource$Projects$Locations$Collections$Datastores$Userevents;
+        constructor(context: APIRequestContext);
+        /**
+         * Completes the specified user input with keyword suggestions.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        completeQuery(params: Params$Resource$Projects$Locations$Collections$Datastores$Completequery, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        completeQuery(params?: Params$Resource$Projects$Locations$Collections$Datastores$Completequery, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>;
+        completeQuery(params: Params$Resource$Projects$Locations$Collections$Datastores$Completequery, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        completeQuery(params: Params$Resource$Projects$Locations$Collections$Datastores$Completequery, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>): void;
+        completeQuery(params: Params$Resource$Projects$Locations$Collections$Datastores$Completequery, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>): void;
+        completeQuery(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>): void;
+        /**
+         * Creates a DataStore. DataStore is for storing Documents. To serve these documents for Search, or Recommendation use case, an Engine needs to be created separately.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Datastores$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Create, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Datastores$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Delete, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        /**
+         * Gets a DocumentProcessingConfig.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        getDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Collections$Datastores$Getdocumentprocessingconfig, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        getDocumentProcessingConfig(params?: Params$Resource$Projects$Locations$Collections$Datastores$Getdocumentprocessingconfig, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>;
+        getDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Collections$Datastores$Getdocumentprocessingconfig, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        getDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Collections$Datastores$Getdocumentprocessingconfig, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        getDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Collections$Datastores$Getdocumentprocessingconfig, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        getDocumentProcessingConfig(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        /**
+         * Gets the SiteSearchEngine.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        getSiteSearchEngine(params: Params$Resource$Projects$Locations$Collections$Datastores$Getsitesearchengine, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        getSiteSearchEngine(params?: Params$Resource$Projects$Locations$Collections$Datastores$Getsitesearchengine, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>;
+        getSiteSearchEngine(params: Params$Resource$Projects$Locations$Collections$Datastores$Getsitesearchengine, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        getSiteSearchEngine(params: Params$Resource$Projects$Locations$Collections$Datastores$Getsitesearchengine, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>): void;
+        getSiteSearchEngine(params: Params$Resource$Projects$Locations$Collections$Datastores$Getsitesearchengine, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>): void;
+        getSiteSearchEngine(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>): void;
+        /**
+         * Lists all the DataStores associated with the project.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>): void;
+        /**
+         * Updates a DataStore
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        /**
+         * Trains a custom model.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        trainCustomModel(params: Params$Resource$Projects$Locations$Collections$Datastores$Traincustommodel, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        trainCustomModel(params?: Params$Resource$Projects$Locations$Collections$Datastores$Traincustommodel, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        trainCustomModel(params: Params$Resource$Projects$Locations$Collections$Datastores$Traincustommodel, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        trainCustomModel(params: Params$Resource$Projects$Locations$Collections$Datastores$Traincustommodel, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        trainCustomModel(params: Params$Resource$Projects$Locations$Collections$Datastores$Traincustommodel, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        trainCustomModel(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Updates the DocumentProcessingConfig. DocumentProcessingConfig is a singleon resource of DataStore. It's empty when DataStore is created. The first call to this method will set up DocumentProcessingConfig.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        updateDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Collections$Datastores$Updatedocumentprocessingconfig, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        updateDocumentProcessingConfig(params?: Params$Resource$Projects$Locations$Collections$Datastores$Updatedocumentprocessingconfig, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>;
+        updateDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Collections$Datastores$Updatedocumentprocessingconfig, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        updateDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Collections$Datastores$Updatedocumentprocessingconfig, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        updateDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Collections$Datastores$Updatedocumentprocessingconfig, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        updateDocumentProcessingConfig(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Completequery extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which the completion is performed, such as `projects/x/locations/global/collections/default_collection/dataStores/default_data_store`.
+         */
+        dataStore?: string;
+        /**
+         * Indicates if tail suggestions should be returned if there are no suggestions that match the full query. Even if set to true, if there are suggestions that match the full query, those are returned and no tail suggestions are returned.
+         */
+        includeTailSuggestions?: boolean;
+        /**
+         * Required. The typeahead input used to fetch suggestions. Maximum length is 128 characters.
+         */
+        query?: string;
+        /**
+         * Specifies the autocomplete data model. This overrides any model specified in the Configuration \> Autocomplete section of the Cloud console. Currently supported values: * `document` - Using suggestions generated from user-imported documents. * `search-history` - Using suggestions generated from the past history of SearchService.Search API calls. Do not use it when there is no traffic for Search API. * `user-event` - Using suggestions generated from user-imported search events. * `document-completable` - Using suggestions taken directly from user-imported document fields marked as completable. Default values: * `document` is the default model for regular dataStores. * `search-history` is the default model for site search dataStores.
+         */
+        queryModel?: string;
+        /**
+         * A unique identifier for tracking visitors. For example, this could be implemented with an HTTP cookie, which should be able to uniquely identify a visitor on a single device. This unique identifier should not change if the visitor logs in or out of the website. This field should NOT have a fixed value such as `unknown_visitor`. This should be the same identifier as UserEvent.user_pseudo_id and SearchRequest.user_pseudo_id. The field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        userPseudoId?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Create extends StandardParameters {
+        /**
+         * A boolean flag indicating whether user want to directly create an advanced data store for site search. If the data store is not configured as site search (GENERIC vertical and PUBLIC_WEBSITE content_config), this flag will be ignored.
+         */
+        createAdvancedSiteSearch?: boolean;
+        /**
+         * Required. The ID to use for the DataStore, which will become the final component of the DataStore's resource name. This field must conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        dataStoreId?: string;
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}`.
+         */
+        parent?: string;
+        /**
+         * A boolean flag indicating whether to skip the default schema creation for the data store. Only enable this flag if you are certain that the default schema is incompatible with your use case. If set to true, you must manually create a schema for the data store before any documents can be ingested. This flag cannot be specified if `data_store.starting_schema` is specified.
+         */
+        skipDefaultSchemaCreation?: boolean;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDataStore;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of DataStore, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. If the caller does not have permission to delete the DataStore, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the DataStore to delete does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of DataStore, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. If the caller does not have permission to access the DataStore, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested DataStore does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Getdocumentprocessingconfig extends StandardParameters {
+        /**
+         * Required. Full DocumentProcessingConfig resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}/documentProcessingConfig`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Getsitesearchengine extends StandardParameters {
+        /**
+         * Required. Resource name of SiteSearchEngine, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`. If the caller does not have permission to access the [SiteSearchEngine], regardless of whether or not it exists, a PERMISSION_DENIED error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$List extends StandardParameters {
+        /**
+         * Filter by solution type . For example: `filter = 'solution_type:SOLUTION_TYPE_SEARCH'`
+         */
+        filter?: string;
+        /**
+         * Maximum number of DataStores to return. If unspecified, defaults to 10. The maximum allowed value is 50. Values above 50 will be coerced to 50. If this field is negative, an INVALID_ARGUMENT is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListDataStoresResponse.next_page_token, received from a previous DataStoreService.ListDataStores call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to DataStoreService.ListDataStores must match the call that provided the page token. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent branch resource name, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}`. If the caller does not have permission to list DataStores under this location, regardless of whether or not this data store exists, a PERMISSION_DENIED error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Patch extends StandardParameters {
+        /**
+         * Immutable. The full resource name of the data store. Format: `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided DataStore to update. If an unsupported or unknown field is provided, an INVALID_ARGUMENT error is returned.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDataStore;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Traincustommodel extends StandardParameters {
+        /**
+         * Required. The resource name of the Data Store, such as `projects/x/locations/global/collections/default_collection/dataStores/default_data_store`. This field is used to identify the data store where to train the models.
+         */
+        dataStore?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaTrainCustomModelRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Updatedocumentprocessingconfig extends StandardParameters {
+        /**
+         * The full resource name of the Document Processing Config. Format: `projects/x/locations/x/collections/x/dataStores/x/documentProcessingConfig`.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided DocumentProcessingConfig to update. The following are the only supported fields: * DocumentProcessingConfig.ocr_config If not set, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Branches {
+        context: APIRequestContext;
+        documents: Resource$Projects$Locations$Collections$Datastores$Branches$Documents;
+        operations: Resource$Projects$Locations$Collections$Datastores$Branches$Operations;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets index freshness metadata for Documents. Supported for website search only.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        batchGetDocumentsMetadata(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Batchgetdocumentsmetadata, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        batchGetDocumentsMetadata(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Batchgetdocumentsmetadata, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>;
+        batchGetDocumentsMetadata(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Batchgetdocumentsmetadata, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        batchGetDocumentsMetadata(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Batchgetdocumentsmetadata, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>): void;
+        batchGetDocumentsMetadata(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Batchgetdocumentsmetadata, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>): void;
+        batchGetDocumentsMetadata(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Batchgetdocumentsmetadata extends StandardParameters {
+        /**
+         * Required. The FHIR resources to match by. Format: projects/{project\}/locations/{location\}/datasets/{dataset\}/fhirStores/{fhir_store\}/fhir/{resource_type\}/{fhir_resource_id\}
+         */
+        'matcher.fhirMatcher.fhirResources'?: string[];
+        /**
+         * The exact URIs to match by.
+         */
+        'matcher.urisMatcher.uris'?: string[];
+        /**
+         * Required. The parent branch resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`.
+         */
+        parent?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Branches$Documents {
+        context: APIRequestContext;
+        chunks: Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocument>;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        /**
+         * Deletes a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocument>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        /**
+         * Gets the parsed layout information for a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        getProcessedDocument(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Getprocesseddocument, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        getProcessedDocument(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Getprocesseddocument, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>;
+        getProcessedDocument(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Getprocesseddocument, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        getProcessedDocument(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Getprocesseddocument, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>): void;
+        getProcessedDocument(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Getprocesseddocument, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>): void;
+        getProcessedDocument(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>): void;
+        /**
+         * Bulk import of multiple Documents. Request processing may be synchronous. Non-existing items are created. Note: It is possible for a subset of the Documents to be successfully updated.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a list of Documents.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>): void;
+        /**
+         * Updates a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocument>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        /**
+         * Permanently deletes all selected Documents in a branch. This process is asynchronous. Depending on the number of Documents to be deleted, this operation can take hours to complete. Before the delete operation completes, some Documents might still be returned by DocumentService.GetDocument or DocumentService.ListDocuments. To get a list of the Documents to be deleted, set PurgeDocumentsRequest.force to false.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Purge, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        purge(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Purge, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Purge, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Purge, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Purge, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Create extends StandardParameters {
+        /**
+         * Required. The ID to use for the Document, which becomes the final component of the Document.name. If the caller does not have permission to create the Document, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. This field must be unique among all Documents with the same parent. Otherwise, an `ALREADY_EXISTS` error is returned. This field must conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        documentId?: string;
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDocument;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of Document, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}`. If the caller does not have permission to delete the Document, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the Document to delete does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of Document, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}`. If the caller does not have permission to access the Document, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the requested Document does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Getprocesseddocument extends StandardParameters {
+        /**
+         * Required. Full resource name of Document, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}`. If the caller does not have permission to access the Document, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the requested Document does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+        /**
+         * What format output should be. If unspecified, defaults to JSON.
+         */
+        processedDocumentFormat?: string;
+        /**
+         * Required. What type of processing to return.
+         */
+        processedDocumentType?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Import extends StandardParameters {
+        /**
+         * Required. The parent branch resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`. Requires create/update permission.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportDocumentsRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$List extends StandardParameters {
+        /**
+         * Maximum number of Documents to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 are set to 1000. If this field is negative, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListDocumentsResponse.next_page_token, received from a previous DocumentService.ListDocuments call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to DocumentService.ListDocuments must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent branch resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`. Use `default_branch` as the branch ID, to list documents under the default branch. If the caller does not have permission to list Documents under this branch, regardless of whether or not this branch exists, a `PERMISSION_DENIED` error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Patch extends StandardParameters {
+        /**
+         * If set to `true` and the Document is not found, a new Document is be created.
+         */
+        allowMissing?: boolean;
+        /**
+         * Immutable. The full resource name of the document. Format: `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided imported 'document' to update. If not set, by default updates all fields.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDocument;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Purge extends StandardParameters {
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeDocumentsRequest;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaChunk>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaChunk>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaChunk>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaChunk>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaChunk>): void;
+        /**
+         * Gets a list of Chunks.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of Chunk, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}/chunks/{chunk\}`. If the caller does not have permission to access the Chunk, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the requested Chunk does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Documents$Chunks$List extends StandardParameters {
+        /**
+         * Maximum number of Chunks to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 will be coerced to 1000. If this field is negative, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListChunksResponse.next_page_token, received from a previous ChunkService.ListChunks call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to ChunkService.ListChunks must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent document resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}`. If the caller does not have permission to list Chunks under this document, regardless of whether or not this document exists, a `PERMISSION_DENIED` error is returned.
+         */
+        parent?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Branches$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of 1, corresponding to `Code.CANCELLED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        cancel(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Cancel, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        cancel(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Cancel, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        cancel(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Cancel, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        cancel(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Cancel, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        cancel(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Cancel, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        cancel(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Cancel extends StandardParameters {
+        /**
+         * The name of the operation resource to be cancelled.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleLongrunningCancelOperationRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Branches$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Completionsuggestions {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Imports CompletionSuggestions for a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Permanently deletes all CompletionSuggestions for a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Purge, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        purge(params?: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Purge, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Purge, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Purge, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Purge, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Import extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which to import customer autocomplete suggestions. Follows pattern `projects/x/locations/x/collections/x/dataStores/x`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportCompletionSuggestionsRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Completionsuggestions$Purge extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which to purge completion suggestions. Follows pattern projects/x/locations/x/collections/x/dataStores/x.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeCompletionSuggestionsRequest;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Controls {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Control. By default 1000 controls are allowed for a data store. A request can be submitted to adjust this limit. If the Control to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        /**
+         * Deletes a Control. If the Control to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Control.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        /**
+         * Lists all Controls by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Controls$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        /**
+         * Updates a Control. Control action type cannot be changed. If the Control to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Controls$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Controls$Create extends StandardParameters {
+        /**
+         * Required. The ID to use for the Control, which will become the final component of the Control's resource name. This value must be within 1-63 characters. Valid characters are /a-z-_/.
+         */
+        controlId?: string;
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}` or `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaControl;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Controls$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Control to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}/controls/{control_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Controls$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Control to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}/controls/{control_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Controls$List extends StandardParameters {
+        /**
+         * Optional. A filter to apply on the list results. Supported features: * List all the products under the parent branch if filter is unset. Currently this field is unsupported.
+         */
+        filter?: string;
+        /**
+         * Optional. Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * Optional. A page token, received from a previous `ListControls` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}` or `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Controls$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/x/locations/global/dataStore/x/controls/x`
+         */
+        name?: string;
+        /**
+         * Optional. Indicates which fields in the provided Control to update. The following are NOT supported: * Control.name * Control.solution_type If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaControl;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Conversations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Converses a conversation.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        converse(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Converse, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        converse(params?: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Converse, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>;
+        converse(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Converse, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        converse(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Converse, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        converse(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Converse, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        converse(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        /**
+         * Creates a Conversation. If the Conversation to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        /**
+         * Deletes a Conversation. If the Conversation to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Conversation.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        /**
+         * Lists all Conversations by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        /**
+         * Updates a Conversation. Conversation action type cannot be changed. If the Conversation to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Converse extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`. Use `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/-` to activate auto session mode, which automatically creates a new conversation inside a ConverseConversation session.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Create extends StandardParameters {
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConversation;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Conversations$List extends StandardParameters {
+        /**
+         * A filter to apply on the list results. The supported features are: user_pseudo_id, state. Example: "user_pseudo_id = some_id"
+         */
+        filter?: string;
+        /**
+         * A comma-separated list of fields to order by, sorted in ascending order. Use "desc" after a field name for descending. Supported fields: * `update_time` * `create_time` * `conversation_name` Example: "update_time desc" "create_time"
+         */
+        orderBy?: string;
+        /**
+         * Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `ListConversations` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Conversations$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/dataStore/x/conversations/x` or `projects/{project\}/locations/global/collections/{collection\}/engines/x/conversations/x`.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided Conversation to update. The following are NOT supported: * Conversation.name If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConversation;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Custommodels {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets a list of all the custom models.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Custommodels$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Custommodels$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListCustomModelsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Custommodels$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Custommodels$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListCustomModelsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListCustomModelsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Custommodels$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListCustomModelsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListCustomModelsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Custommodels$List extends StandardParameters {
+        /**
+         * Required. The resource name of the parent Data Store, such as `projects/x/locations/global/collections/default_collection/dataStores/default_data_store`. This field is used to identify the data store where to fetch the models from.
+         */
+        dataStore?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Models {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Collections$Datastores$Models$Operations;
+        constructor(context: APIRequestContext);
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Models$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Models$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Schemas {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Collections$Datastores$Schemas$Operations;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Schema.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Create, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes a Schema.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Delete, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a Schema.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSchema>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSchema>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSchema>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSchema>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSchema>): void;
+        /**
+         * Gets a list of Schemas.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>): void;
+        /**
+         * Updates a Schema.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Patch, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Create extends StandardParameters {
+        /**
+         * Required. The parent data store resource name, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`.
+         */
+        parent?: string;
+        /**
+         * Required. The ID to use for the Schema, which becomes the final component of the Schema.name. This field should conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters.
+         */
+        schemaId?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSchema;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Delete extends StandardParameters {
+        /**
+         * Required. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Get extends StandardParameters {
+        /**
+         * Required. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Schemas$List extends StandardParameters {
+        /**
+         * The maximum number of Schemas to return. The service may return fewer than this value. If unspecified, at most 100 Schemas are returned. The maximum value is 1000; values above 1000 are set to 1000.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous SchemaService.ListSchemas call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to SchemaService.ListSchemas must match the call that provided the page token.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent data store resource name, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Patch extends StandardParameters {
+        /**
+         * If set to true, and the Schema is not found, a new Schema is created. In this situation, `update_mask` is ignored.
+         */
+        allowMissing?: boolean;
+        /**
+         * Immutable. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSchema;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Schemas$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Schemas$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Servingconfigs {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Answer query method.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        answer(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Answer, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        answer(params?: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Answer, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>;
+        answer(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Answer, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        answer(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Answer, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        answer(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Answer, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        answer(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        /**
+         * Gets a ServingConfig. Returns a NotFound error if the ServingConfig does not exist.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        /**
+         * Lists all ServingConfigs linked to this dataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        /**
+         * Updates a ServingConfig. Returns a NOT_FOUND error if the ServingConfig does not exist.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        /**
+         * Makes a recommendation, which requires a contextual user event.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        recommend(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Recommend, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        recommend(params?: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Recommend, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>;
+        recommend(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Recommend, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        recommend(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Recommend, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        recommend(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Recommend, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        recommend(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        /**
+         * Performs a search.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        search(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Search, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        search(params?: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Search, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>;
+        search(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Search, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        search(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Search, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+        search(params: Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Search, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+        search(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Answer extends StandardParameters {
+        /**
+         * Required. The resource name of the Search serving config, such as `projects/x/locations/global/collections/default_collection/engines/x/servingConfigs/default_serving_config`, or `projects/x/locations/global/collections/default_collection/dataStores/x/servingConfigs/default_serving_config`. This field is used to identify the serving configuration name, set of models used to make the search.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the ServingConfig to get. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}/servingConfigs/{serving_config_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$List extends StandardParameters {
+        /**
+         * Optional. Maximum number of results to return. If unspecified, defaults to 100. If a value greater than 100 is provided, at most 100 results are returned.
+         */
+        pageSize?: number;
+        /**
+         * Optional. A page token, received from a previous `ListServingConfigs` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. Full resource name of the parent resource. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/{location\}/collections/{collection_id\}/engines/{engine_id\}/servingConfigs/{serving_config_id\}`
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided ServingConfig to update. The following are NOT supported: * ServingConfig.name If not set, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaServingConfig;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Recommend extends StandardParameters {
+        /**
+         * Required. Full resource name of a ServingConfig: `projects/x/locations/global/collections/x/engines/x/servingConfigs/x`, or `projects/x/locations/global/collections/x/dataStores/x/servingConfigs/x` One default serving config is created along with your recommendation engine creation. The engine ID is used as the ID of the default serving config. For example, for Engine `projects/x/locations/global/collections/x/engines/my-engine`, you can use `projects/x/locations/global/collections/x/engines/my-engine/servingConfigs/my-engine` for your RecommendationService.Recommend requests.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaRecommendRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Servingconfigs$Search extends StandardParameters {
+        /**
+         * Required. The resource name of the Search serving config, such as `projects/x/locations/global/collections/default_collection/engines/x/servingConfigs/default_serving_config`, or `projects/x/locations/global/collections/default_collection/dataStores/default_data_store/servingConfigs/default_serving_config`. This field is used to identify the serving configuration name, set of models used to make the search.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequest;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Sessions {
+        context: APIRequestContext;
+        answers: Resource$Projects$Locations$Collections$Datastores$Sessions$Answers;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Session. If the Session to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        /**
+         * Deletes a Session. If the Session to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Session.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        /**
+         * Lists all Sessions by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        /**
+         * Updates a Session. Session action type cannot be changed. If the Session to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Create extends StandardParameters {
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSession;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Session to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/sessions/{session_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Session to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/sessions/{session_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sessions$List extends StandardParameters {
+        /**
+         * A filter to apply on the list results. The supported features are: user_pseudo_id, state. Example: "user_pseudo_id = some_id"
+         */
+        filter?: string;
+        /**
+         * A comma-separated list of fields to order by, sorted in ascending order. Use "desc" after a field name for descending. Supported fields: * `update_time` * `create_time` * `session_name` Example: "update_time desc" "create_time"
+         */
+        orderBy?: string;
+        /**
+         * Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `ListSessions` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/engines/{engine\}/sessions/x`
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided Session to update. The following are NOT supported: * Session.name If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSession;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Sessions$Answers {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets a Answer.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Answers$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Answers$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Answers$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Answers$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Answers$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sessions$Answers$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Answer to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/engines/{engine_id\}/sessions/{session_id\}/answers/{answer_id\}`
+         */
+        name?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Sitesearchengine {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations;
+        targetSites: Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites;
+        constructor(context: APIRequestContext);
+        /**
+         * Verify target sites' ownership and validity. This API sends all the target sites under site search engine for verification.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        batchVerifyTargetSites(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Batchverifytargetsites, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        batchVerifyTargetSites(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Batchverifytargetsites, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        batchVerifyTargetSites(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Batchverifytargetsites, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        batchVerifyTargetSites(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Batchverifytargetsites, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        batchVerifyTargetSites(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Batchverifytargetsites, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        batchVerifyTargetSites(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Downgrade from advanced site search to basic site search.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        disableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Disableadvancedsitesearch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        disableAdvancedSiteSearch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Disableadvancedsitesearch, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        disableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Disableadvancedsitesearch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        disableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Disableadvancedsitesearch, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        disableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Disableadvancedsitesearch, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        disableAdvancedSiteSearch(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Upgrade from basic site search to advanced site search.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        enableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Enableadvancedsitesearch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        enableAdvancedSiteSearch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Enableadvancedsitesearch, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        enableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Enableadvancedsitesearch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        enableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Enableadvancedsitesearch, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        enableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Enableadvancedsitesearch, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        enableAdvancedSiteSearch(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Returns list of target sites with its domain verification status. This method can only be called under data store with BASIC_SITE_SEARCH state at the moment.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        fetchDomainVerificationStatus(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Fetchdomainverificationstatus, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        fetchDomainVerificationStatus(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Fetchdomainverificationstatus, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaFetchDomainVerificationStatusResponse>;
+        fetchDomainVerificationStatus(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Fetchdomainverificationstatus, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        fetchDomainVerificationStatus(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Fetchdomainverificationstatus, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaFetchDomainVerificationStatusResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaFetchDomainVerificationStatusResponse>): void;
+        fetchDomainVerificationStatus(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Fetchdomainverificationstatus, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaFetchDomainVerificationStatusResponse>): void;
+        fetchDomainVerificationStatus(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaFetchDomainVerificationStatusResponse>): void;
+        /**
+         * Gets the URI Pattern to Document data mapping for an Advanced Site Search DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        getUriPatternDocumentData(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Geturipatterndocumentdata, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        getUriPatternDocumentData(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Geturipatterndocumentdata, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaGetUriPatternDocumentDataResponse>;
+        getUriPatternDocumentData(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Geturipatterndocumentdata, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        getUriPatternDocumentData(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Geturipatterndocumentdata, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaGetUriPatternDocumentDataResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaGetUriPatternDocumentDataResponse>): void;
+        getUriPatternDocumentData(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Geturipatterndocumentdata, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaGetUriPatternDocumentDataResponse>): void;
+        getUriPatternDocumentData(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaGetUriPatternDocumentDataResponse>): void;
+        /**
+         * Request on-demand recrawl for a list of URIs.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        recrawlUris(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Recrawluris, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        recrawlUris(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Recrawluris, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        recrawlUris(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Recrawluris, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        recrawlUris(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Recrawluris, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        recrawlUris(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Recrawluris, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        recrawlUris(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Sets the URI Pattern to Document data mapping for an Advanced Site Search DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        setUriPatternDocumentData(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Seturipatterndocumentdata, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        setUriPatternDocumentData(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Seturipatterndocumentdata, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        setUriPatternDocumentData(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Seturipatterndocumentdata, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        setUriPatternDocumentData(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Seturipatterndocumentdata, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        setUriPatternDocumentData(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Seturipatterndocumentdata, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        setUriPatternDocumentData(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Batchverifytargetsites extends StandardParameters {
+        /**
+         * Required. The parent resource shared by all TargetSites being verified. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaBatchVerifyTargetSitesRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Disableadvancedsitesearch extends StandardParameters {
+        /**
+         * Required. Full resource name of the SiteSearchEngine, such as `projects/{project\}/locations/{location\}/dataStores/{data_store_id\}/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDisableAdvancedSiteSearchRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Enableadvancedsitesearch extends StandardParameters {
+        /**
+         * Required. Full resource name of the SiteSearchEngine, such as `projects/{project\}/locations/{location\}/dataStores/{data_store_id\}/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaEnableAdvancedSiteSearchRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Fetchdomainverificationstatus extends StandardParameters {
+        /**
+         * Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default. The maximum value is 1000; values above 1000 will be coerced to 1000. If this field is negative, an INVALID_ARGUMENT error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `FetchDomainVerificationStatus` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `FetchDomainVerificationStatus` must match the call that provided the page token.
+         */
+        pageToken?: string;
+        /**
+         * Required. The site search engine resource under which we fetch all the domain verification status. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Geturipatterndocumentdata extends StandardParameters {
+        /**
+         * Required. Full resource name of the SiteSearchEngine, such as `projects/x/locations/x/collections/x/dataStores/x/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Recrawluris extends StandardParameters {
+        /**
+         * Required. Full resource name of the SiteSearchEngine, such as `projects/x/locations/x/collections/x/dataStores/x/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Seturipatterndocumentdata extends StandardParameters {
+        /**
+         * Required. Full resource name of the SiteSearchEngine, such as `projects/x/locations/x/collections/x/dataStores/x/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSetUriPatternDocumentDataRequest;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates TargetSite in a batch.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        batchCreate(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Batchcreate, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        batchCreate(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Batchcreate, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        batchCreate(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Batchcreate, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        batchCreate(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Batchcreate, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        batchCreate(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Batchcreate, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        batchCreate(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Creates a TargetSite.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Create, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes a TargetSite.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Delete, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a TargetSite.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>): void;
+        /**
+         * Gets a list of TargetSites.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>): void;
+        /**
+         * Updates a TargetSite.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Patch, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Batchcreate extends StandardParameters {
+        /**
+         * Required. The parent resource shared by all TargetSites being created. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`. The parent field in the CreateBookRequest messages must either be empty or match this field.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaBatchCreateTargetSitesRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Create extends StandardParameters {
+        /**
+         * Required. Parent resource name of TargetSite, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSite;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of TargetSite, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}`. If the caller does not have permission to access the TargetSite, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested TargetSite does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of TargetSite, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}`. If the caller does not have permission to access the TargetSite, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested TargetSite does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$List extends StandardParameters {
+        /**
+         * Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default. The maximum value is 1000; values above 1000 will be coerced to 1000. If this field is negative, an INVALID_ARGUMENT error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `ListTargetSites` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListTargetSites` must match the call that provided the page token.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent site search engine resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`. If the caller does not have permission to list TargetSites under this site search engine, regardless of whether or not this branch exists, a PERMISSION_DENIED error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Patch extends StandardParameters {
+        /**
+         * Output only. The fully qualified resource name of the target site. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}` The `target_site_id` is system-generated.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSite;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Sitesearchengine$Targetsites$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Imports all SuggestionDenyListEntry for a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Permanently deletes all SuggestionDenyListEntry for a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Purge, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        purge(params?: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Purge, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Purge, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Purge, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Purge, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Import extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which to import denylist entries. Follows pattern projects/x/locations/x/collections/x/dataStores/x.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportSuggestionDenyListEntriesRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Suggestiondenylistentries$Purge extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which to import denylist entries. Follows pattern projects/x/locations/x/collections/x/dataStores/x.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeSuggestionDenyListEntriesRequest;
+    }
+    export class Resource$Projects$Locations$Collections$Datastores$Userevents {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Writes a single user event from the browser. This uses a GET request to due to browser restriction of POST-ing to a third-party domain. This method is used only by the Discovery Engine API JavaScript pixel and Google Tag Manager. Users should not call this method directly.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        collect(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Collect, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        collect(params?: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Collect, options?: MethodOptions): GaxiosPromise<Schema$GoogleApiHttpBody>;
+        collect(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Collect, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        collect(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Collect, options: MethodOptions | BodyResponseCallback<Schema$GoogleApiHttpBody>, callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        collect(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Collect, callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        collect(callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        /**
+         * Bulk import of user events. Request processing might be synchronous. Events that already exist are skipped. Use this method for backfilling historical user events. Operation.response is of type ImportResponse. Note that it is possible for a subset of the items to be successfully inserted. Operation.metadata is of type ImportMetadata.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes permanently all user events specified by the filter provided. Depending on the number of events specified by the filter, this operation could take hours or days to complete. To test a filter, use the list command first.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Purge, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        purge(params?: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Purge, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Purge, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Purge, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Purge, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Writes a single user event.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        write(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Write, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        write(params?: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Write, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>;
+        write(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Write, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        write(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Write, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+        write(params: Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Write, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+        write(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Collect extends StandardParameters {
+        /**
+         * The event timestamp in milliseconds. This prevents browser caching of otherwise identical get requests. The name is abbreviated to reduce the payload bytes.
+         */
+        ets?: string;
+        /**
+         * Required. The parent DataStore resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`.
+         */
+        parent?: string;
+        /**
+         * The URL including cgi-parameters but excluding the hash fragment with a length limit of 5,000 characters. This is often more useful than the referer URL, because many browsers only send the domain for third-party requests.
+         */
+        uri?: string;
+        /**
+         * Required. URL encoded UserEvent proto with a length limit of 2,000,000 characters.
+         */
+        userEvent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Import extends StandardParameters {
+        /**
+         * Required. Parent DataStore resource name, of the form `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportUserEventsRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Purge extends StandardParameters {
+        /**
+         * Required. The resource name of the catalog under which the events are created. The format is `projects/${projectId\}/locations/global/collections/{$collectionId\}/dataStores/${dataStoreId\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeUserEventsRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Datastores$Userevents$Write extends StandardParameters {
+        /**
+         * Required. The parent resource name. If the write user event action is applied in DataStore level, the format is: `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`. If the write user event action is applied in Location level, for example, the event with Document across multiple DataStore, the format is: `projects/{project\}/locations/{location\}`.
+         */
+        parent?: string;
+        /**
+         * If set to true, the user event is written asynchronously after validation, and the API responds without waiting for the write.
+         */
+        writeAsync?: boolean;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaUserEvent;
+    }
+    export class Resource$Projects$Locations$Collections$Engines {
+        context: APIRequestContext;
+        controls: Resource$Projects$Locations$Collections$Engines$Controls;
+        conversations: Resource$Projects$Locations$Collections$Engines$Conversations;
+        operations: Resource$Projects$Locations$Collections$Engines$Operations;
+        servingConfigs: Resource$Projects$Locations$Collections$Engines$Servingconfigs;
+        sessions: Resource$Projects$Locations$Collections$Engines$Sessions;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Engine.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Engines$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Create, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes a Engine.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Engines$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Delete, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a Engine.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Engines$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaEngine>;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        /**
+         * Lists all the Engines associated with the project.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Engines$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListEnginesResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEnginesResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEnginesResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEnginesResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEnginesResponse>): void;
+        /**
+         * Updates an Engine
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Engines$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaEngine>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        /**
+         * Pauses the training of an existing engine. Only applicable if SolutionType is SOLUTION_TYPE_RECOMMENDATION.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        pause(params: Params$Resource$Projects$Locations$Collections$Engines$Pause, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        pause(params?: Params$Resource$Projects$Locations$Collections$Engines$Pause, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaEngine>;
+        pause(params: Params$Resource$Projects$Locations$Collections$Engines$Pause, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        pause(params: Params$Resource$Projects$Locations$Collections$Engines$Pause, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        pause(params: Params$Resource$Projects$Locations$Collections$Engines$Pause, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        pause(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        /**
+         * Resumes the training of an existing engine. Only applicable if SolutionType is SOLUTION_TYPE_RECOMMENDATION.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        resume(params: Params$Resource$Projects$Locations$Collections$Engines$Resume, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        resume(params?: Params$Resource$Projects$Locations$Collections$Engines$Resume, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaEngine>;
+        resume(params: Params$Resource$Projects$Locations$Collections$Engines$Resume, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        resume(params: Params$Resource$Projects$Locations$Collections$Engines$Resume, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        resume(params: Params$Resource$Projects$Locations$Collections$Engines$Resume, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        resume(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEngine>): void;
+        /**
+         * Tunes an existing engine. Only applicable if SolutionType is SOLUTION_TYPE_RECOMMENDATION.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        tune(params: Params$Resource$Projects$Locations$Collections$Engines$Tune, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        tune(params?: Params$Resource$Projects$Locations$Collections$Engines$Tune, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        tune(params: Params$Resource$Projects$Locations$Collections$Engines$Tune, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        tune(params: Params$Resource$Projects$Locations$Collections$Engines$Tune, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        tune(params: Params$Resource$Projects$Locations$Collections$Engines$Tune, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        tune(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Create extends StandardParameters {
+        /**
+         * Required. The ID to use for the Engine, which will become the final component of the Engine's resource name. This field must conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        engineId?: string;
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaEngine;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of Engine, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}/engines/{engine_id\}`. If the caller does not have permission to delete the Engine, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the Engine to delete does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of Engine, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}/engines/{engine_id\}`.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$List extends StandardParameters {
+        /**
+         * Optional. Filter by solution type. For example: solution_type=SOLUTION_TYPE_SEARCH
+         */
+        filter?: string;
+        /**
+         * Optional. Not supported.
+         */
+        pageSize?: number;
+        /**
+         * Optional. Not supported.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}`.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Patch extends StandardParameters {
+        /**
+         * Immutable. The fully qualified resource name of the engine. This field must be a UTF-8 encoded string with a length limit of 1024 characters. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}` engine should be 1-63 characters, and valid characters are /a-z0-9x/. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided Engine to update. If an unsupported or unknown field is provided, an INVALID_ARGUMENT error is returned.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaEngine;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Pause extends StandardParameters {
+        /**
+         * Required. The name of the engine to pause. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPauseEngineRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Resume extends StandardParameters {
+        /**
+         * Required. The name of the engine to resume. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaResumeEngineRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Tune extends StandardParameters {
+        /**
+         * Required. The resource name of the engine to tune. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaTuneEngineRequest;
+    }
+    export class Resource$Projects$Locations$Collections$Engines$Controls {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Control. By default 1000 controls are allowed for a data store. A request can be submitted to adjust this limit. If the Control to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Engines$Controls$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        /**
+         * Deletes a Control. If the Control to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Engines$Controls$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Control.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Engines$Controls$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        /**
+         * Lists all Controls by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Engines$Controls$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        /**
+         * Updates a Control. Control action type cannot be changed. If the Control to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Engines$Controls$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Controls$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Controls$Create extends StandardParameters {
+        /**
+         * Required. The ID to use for the Control, which will become the final component of the Control's resource name. This value must be within 1-63 characters. Valid characters are /a-z-_/.
+         */
+        controlId?: string;
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}` or `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaControl;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Controls$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Control to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}/controls/{control_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Controls$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Control to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}/controls/{control_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Controls$List extends StandardParameters {
+        /**
+         * Optional. A filter to apply on the list results. Supported features: * List all the products under the parent branch if filter is unset. Currently this field is unsupported.
+         */
+        filter?: string;
+        /**
+         * Optional. Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * Optional. A page token, received from a previous `ListControls` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}` or `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Controls$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/x/locations/global/dataStore/x/controls/x`
+         */
+        name?: string;
+        /**
+         * Optional. Indicates which fields in the provided Control to update. The following are NOT supported: * Control.name * Control.solution_type If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaControl;
+    }
+    export class Resource$Projects$Locations$Collections$Engines$Conversations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Converses a conversation.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        converse(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Converse, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        converse(params?: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Converse, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>;
+        converse(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Converse, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        converse(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Converse, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        converse(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Converse, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        converse(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        /**
+         * Creates a Conversation. If the Conversation to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        /**
+         * Deletes a Conversation. If the Conversation to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Conversation.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        /**
+         * Lists all Conversations by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Engines$Conversations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        /**
+         * Updates a Conversation. Conversation action type cannot be changed. If the Conversation to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Conversations$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Conversations$Converse extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`. Use `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/-` to activate auto session mode, which automatically creates a new conversation inside a ConverseConversation session.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Conversations$Create extends StandardParameters {
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConversation;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Conversations$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Conversations$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Conversations$List extends StandardParameters {
+        /**
+         * A filter to apply on the list results. The supported features are: user_pseudo_id, state. Example: "user_pseudo_id = some_id"
+         */
+        filter?: string;
+        /**
+         * A comma-separated list of fields to order by, sorted in ascending order. Use "desc" after a field name for descending. Supported fields: * `update_time` * `create_time` * `conversation_name` Example: "update_time desc" "create_time"
+         */
+        orderBy?: string;
+        /**
+         * Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `ListConversations` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Conversations$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/dataStore/x/conversations/x` or `projects/{project\}/locations/global/collections/{collection\}/engines/x/conversations/x`.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided Conversation to update. The following are NOT supported: * Conversation.name If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConversation;
+    }
+    export class Resource$Projects$Locations$Collections$Engines$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Engines$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Engines$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Engines$Servingconfigs {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Answer query method.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        answer(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Answer, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        answer(params?: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Answer, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>;
+        answer(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Answer, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        answer(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Answer, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        answer(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Answer, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        answer(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        /**
+         * Gets a ServingConfig. Returns a NotFound error if the ServingConfig does not exist.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        /**
+         * Lists all ServingConfigs linked to this dataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        /**
+         * Updates a ServingConfig. Returns a NOT_FOUND error if the ServingConfig does not exist.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        /**
+         * Makes a recommendation, which requires a contextual user event.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        recommend(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Recommend, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        recommend(params?: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Recommend, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>;
+        recommend(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Recommend, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        recommend(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Recommend, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        recommend(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Recommend, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        recommend(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        /**
+         * Performs a search.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        search(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Search, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        search(params?: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Search, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>;
+        search(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Search, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        search(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Search, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+        search(params: Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Search, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+        search(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Answer extends StandardParameters {
+        /**
+         * Required. The resource name of the Search serving config, such as `projects/x/locations/global/collections/default_collection/engines/x/servingConfigs/default_serving_config`, or `projects/x/locations/global/collections/default_collection/dataStores/x/servingConfigs/default_serving_config`. This field is used to identify the serving configuration name, set of models used to make the search.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the ServingConfig to get. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}/servingConfigs/{serving_config_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$List extends StandardParameters {
+        /**
+         * Optional. Maximum number of results to return. If unspecified, defaults to 100. If a value greater than 100 is provided, at most 100 results are returned.
+         */
+        pageSize?: number;
+        /**
+         * Optional. A page token, received from a previous `ListServingConfigs` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. Full resource name of the parent resource. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/{location\}/collections/{collection_id\}/engines/{engine_id\}/servingConfigs/{serving_config_id\}`
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided ServingConfig to update. The following are NOT supported: * ServingConfig.name If not set, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaServingConfig;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Recommend extends StandardParameters {
+        /**
+         * Required. Full resource name of a ServingConfig: `projects/x/locations/global/collections/x/engines/x/servingConfigs/x`, or `projects/x/locations/global/collections/x/dataStores/x/servingConfigs/x` One default serving config is created along with your recommendation engine creation. The engine ID is used as the ID of the default serving config. For example, for Engine `projects/x/locations/global/collections/x/engines/my-engine`, you can use `projects/x/locations/global/collections/x/engines/my-engine/servingConfigs/my-engine` for your RecommendationService.Recommend requests.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaRecommendRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Servingconfigs$Search extends StandardParameters {
+        /**
+         * Required. The resource name of the Search serving config, such as `projects/x/locations/global/collections/default_collection/engines/x/servingConfigs/default_serving_config`, or `projects/x/locations/global/collections/default_collection/dataStores/default_data_store/servingConfigs/default_serving_config`. This field is used to identify the serving configuration name, set of models used to make the search.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequest;
+    }
+    export class Resource$Projects$Locations$Collections$Engines$Sessions {
+        context: APIRequestContext;
+        answers: Resource$Projects$Locations$Collections$Engines$Sessions$Answers;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Session. If the Session to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        create(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        /**
+         * Deletes a Session. If the Session to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Session.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        /**
+         * Lists all Sessions by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Engines$Sessions$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        /**
+         * Updates a Session. Session action type cannot be changed. If the Session to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        patch(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Sessions$Create extends StandardParameters {
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSession;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Sessions$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Session to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/sessions/{session_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Sessions$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Session to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/sessions/{session_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Sessions$List extends StandardParameters {
+        /**
+         * A filter to apply on the list results. The supported features are: user_pseudo_id, state. Example: "user_pseudo_id = some_id"
+         */
+        filter?: string;
+        /**
+         * A comma-separated list of fields to order by, sorted in ascending order. Use "desc" after a field name for descending. Supported fields: * `update_time` * `create_time` * `session_name` Example: "update_time desc" "create_time"
+         */
+        orderBy?: string;
+        /**
+         * Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `ListSessions` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Sessions$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/engines/{engine\}/sessions/x`
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided Session to update. The following are NOT supported: * Session.name If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSession;
+    }
+    export class Resource$Projects$Locations$Collections$Engines$Sessions$Answers {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets a Answer.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Answers$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Answers$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Answers$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Answers$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Engines$Sessions$Answers$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Engines$Sessions$Answers$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Answer to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/engines/{engine_id\}/sessions/{session_id\}/answers/{answer_id\}`
+         */
+        name?: string;
+    }
+    export class Resource$Projects$Locations$Collections$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Collections$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Collections$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Collections$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Collections$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Collections$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Collections$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Collections$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Collections$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Collections$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Datastores {
+        context: APIRequestContext;
+        branches: Resource$Projects$Locations$Datastores$Branches;
+        completionSuggestions: Resource$Projects$Locations$Datastores$Completionsuggestions;
+        controls: Resource$Projects$Locations$Datastores$Controls;
+        conversations: Resource$Projects$Locations$Datastores$Conversations;
+        models: Resource$Projects$Locations$Datastores$Models;
+        operations: Resource$Projects$Locations$Datastores$Operations;
+        schemas: Resource$Projects$Locations$Datastores$Schemas;
+        servingConfigs: Resource$Projects$Locations$Datastores$Servingconfigs;
+        sessions: Resource$Projects$Locations$Datastores$Sessions;
+        siteSearchEngine: Resource$Projects$Locations$Datastores$Sitesearchengine;
+        suggestionDenyListEntries: Resource$Projects$Locations$Datastores$Suggestiondenylistentries;
+        userEvents: Resource$Projects$Locations$Datastores$Userevents;
+        constructor(context: APIRequestContext);
+        /**
+         * Completes the specified user input with keyword suggestions.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        completeQuery(params: Params$Resource$Projects$Locations$Datastores$Completequery, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        completeQuery(params?: Params$Resource$Projects$Locations$Datastores$Completequery, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>;
+        completeQuery(params: Params$Resource$Projects$Locations$Datastores$Completequery, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        completeQuery(params: Params$Resource$Projects$Locations$Datastores$Completequery, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>): void;
+        completeQuery(params: Params$Resource$Projects$Locations$Datastores$Completequery, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>): void;
+        completeQuery(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCompleteQueryResponse>): void;
+        /**
+         * Creates a DataStore. DataStore is for storing Documents. To serve these documents for Search, or Recommendation use case, an Engine needs to be created separately.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Datastores$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Datastores$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        create(params: Params$Resource$Projects$Locations$Datastores$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Create, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Datastores$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Datastores$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Delete, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        /**
+         * Gets a DocumentProcessingConfig.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        getDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Datastores$Getdocumentprocessingconfig, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        getDocumentProcessingConfig(params?: Params$Resource$Projects$Locations$Datastores$Getdocumentprocessingconfig, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>;
+        getDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Datastores$Getdocumentprocessingconfig, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        getDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Datastores$Getdocumentprocessingconfig, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        getDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Datastores$Getdocumentprocessingconfig, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        getDocumentProcessingConfig(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        /**
+         * Gets the SiteSearchEngine.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        getSiteSearchEngine(params: Params$Resource$Projects$Locations$Datastores$Getsitesearchengine, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        getSiteSearchEngine(params?: Params$Resource$Projects$Locations$Datastores$Getsitesearchengine, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>;
+        getSiteSearchEngine(params: Params$Resource$Projects$Locations$Datastores$Getsitesearchengine, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        getSiteSearchEngine(params: Params$Resource$Projects$Locations$Datastores$Getsitesearchengine, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>): void;
+        getSiteSearchEngine(params: Params$Resource$Projects$Locations$Datastores$Getsitesearchengine, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>): void;
+        getSiteSearchEngine(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSiteSearchEngine>): void;
+        /**
+         * Lists all the DataStores associated with the project.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDataStoresResponse>): void;
+        /**
+         * Updates a DataStore
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Datastores$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Datastores$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDataStore>): void;
+        /**
+         * Updates the DocumentProcessingConfig. DocumentProcessingConfig is a singleon resource of DataStore. It's empty when DataStore is created. The first call to this method will set up DocumentProcessingConfig.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        updateDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Datastores$Updatedocumentprocessingconfig, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        updateDocumentProcessingConfig(params?: Params$Resource$Projects$Locations$Datastores$Updatedocumentprocessingconfig, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>;
+        updateDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Datastores$Updatedocumentprocessingconfig, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        updateDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Datastores$Updatedocumentprocessingconfig, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        updateDocumentProcessingConfig(params: Params$Resource$Projects$Locations$Datastores$Updatedocumentprocessingconfig, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+        updateDocumentProcessingConfig(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Completequery extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which the completion is performed, such as `projects/x/locations/global/collections/default_collection/dataStores/default_data_store`.
+         */
+        dataStore?: string;
+        /**
+         * Indicates if tail suggestions should be returned if there are no suggestions that match the full query. Even if set to true, if there are suggestions that match the full query, those are returned and no tail suggestions are returned.
+         */
+        includeTailSuggestions?: boolean;
+        /**
+         * Required. The typeahead input used to fetch suggestions. Maximum length is 128 characters.
+         */
+        query?: string;
+        /**
+         * Specifies the autocomplete data model. This overrides any model specified in the Configuration \> Autocomplete section of the Cloud console. Currently supported values: * `document` - Using suggestions generated from user-imported documents. * `search-history` - Using suggestions generated from the past history of SearchService.Search API calls. Do not use it when there is no traffic for Search API. * `user-event` - Using suggestions generated from user-imported search events. * `document-completable` - Using suggestions taken directly from user-imported document fields marked as completable. Default values: * `document` is the default model for regular dataStores. * `search-history` is the default model for site search dataStores.
+         */
+        queryModel?: string;
+        /**
+         * A unique identifier for tracking visitors. For example, this could be implemented with an HTTP cookie, which should be able to uniquely identify a visitor on a single device. This unique identifier should not change if the visitor logs in or out of the website. This field should NOT have a fixed value such as `unknown_visitor`. This should be the same identifier as UserEvent.user_pseudo_id and SearchRequest.user_pseudo_id. The field must be a UTF-8 encoded string with a length limit of 128 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        userPseudoId?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Create extends StandardParameters {
+        /**
+         * A boolean flag indicating whether user want to directly create an advanced data store for site search. If the data store is not configured as site search (GENERIC vertical and PUBLIC_WEBSITE content_config), this flag will be ignored.
+         */
+        createAdvancedSiteSearch?: boolean;
+        /**
+         * Required. The ID to use for the DataStore, which will become the final component of the DataStore's resource name. This field must conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        dataStoreId?: string;
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}`.
+         */
+        parent?: string;
+        /**
+         * A boolean flag indicating whether to skip the default schema creation for the data store. Only enable this flag if you are certain that the default schema is incompatible with your use case. If set to true, you must manually create a schema for the data store before any documents can be ingested. This flag cannot be specified if `data_store.starting_schema` is specified.
+         */
+        skipDefaultSchemaCreation?: boolean;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDataStore;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of DataStore, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. If the caller does not have permission to delete the DataStore, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the DataStore to delete does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of DataStore, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. If the caller does not have permission to access the DataStore, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested DataStore does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Getdocumentprocessingconfig extends StandardParameters {
+        /**
+         * Required. Full DocumentProcessingConfig resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}/documentProcessingConfig`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Getsitesearchengine extends StandardParameters {
+        /**
+         * Required. Resource name of SiteSearchEngine, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`. If the caller does not have permission to access the [SiteSearchEngine], regardless of whether or not it exists, a PERMISSION_DENIED error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$List extends StandardParameters {
+        /**
+         * Filter by solution type . For example: `filter = 'solution_type:SOLUTION_TYPE_SEARCH'`
+         */
+        filter?: string;
+        /**
+         * Maximum number of DataStores to return. If unspecified, defaults to 10. The maximum allowed value is 50. Values above 50 will be coerced to 50. If this field is negative, an INVALID_ARGUMENT is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListDataStoresResponse.next_page_token, received from a previous DataStoreService.ListDataStores call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to DataStoreService.ListDataStores must match the call that provided the page token. Otherwise, an INVALID_ARGUMENT error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent branch resource name, such as `projects/{project\}/locations/{location\}/collections/{collection_id\}`. If the caller does not have permission to list DataStores under this location, regardless of whether or not this data store exists, a PERMISSION_DENIED error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Patch extends StandardParameters {
+        /**
+         * Immutable. The full resource name of the data store. Format: `projects/{project\}/locations/{location\}/collections/{collection_id\}/dataStores/{data_store_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided DataStore to update. If an unsupported or unknown field is provided, an INVALID_ARGUMENT error is returned.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDataStore;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Updatedocumentprocessingconfig extends StandardParameters {
+        /**
+         * The full resource name of the Document Processing Config. Format: `projects/x/locations/x/collections/x/dataStores/x/documentProcessingConfig`.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided DocumentProcessingConfig to update. The following are the only supported fields: * DocumentProcessingConfig.ocr_config If not set, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDocumentProcessingConfig;
+    }
+    export class Resource$Projects$Locations$Datastores$Branches {
+        context: APIRequestContext;
+        documents: Resource$Projects$Locations$Datastores$Branches$Documents;
+        operations: Resource$Projects$Locations$Datastores$Branches$Operations;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets index freshness metadata for Documents. Supported for website search only.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        batchGetDocumentsMetadata(params: Params$Resource$Projects$Locations$Datastores$Branches$Batchgetdocumentsmetadata, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        batchGetDocumentsMetadata(params?: Params$Resource$Projects$Locations$Datastores$Branches$Batchgetdocumentsmetadata, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>;
+        batchGetDocumentsMetadata(params: Params$Resource$Projects$Locations$Datastores$Branches$Batchgetdocumentsmetadata, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        batchGetDocumentsMetadata(params: Params$Resource$Projects$Locations$Datastores$Branches$Batchgetdocumentsmetadata, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>): void;
+        batchGetDocumentsMetadata(params: Params$Resource$Projects$Locations$Datastores$Branches$Batchgetdocumentsmetadata, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>): void;
+        batchGetDocumentsMetadata(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaBatchGetDocumentsMetadataResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Batchgetdocumentsmetadata extends StandardParameters {
+        /**
+         * Required. The FHIR resources to match by. Format: projects/{project\}/locations/{location\}/datasets/{dataset\}/fhirStores/{fhir_store\}/fhir/{resource_type\}/{fhir_resource_id\}
+         */
+        'matcher.fhirMatcher.fhirResources'?: string[];
+        /**
+         * The exact URIs to match by.
+         */
+        'matcher.urisMatcher.uris'?: string[];
+        /**
+         * Required. The parent branch resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`.
+         */
+        parent?: string;
+    }
+    export class Resource$Projects$Locations$Datastores$Branches$Documents {
+        context: APIRequestContext;
+        chunks: Resource$Projects$Locations$Datastores$Branches$Documents$Chunks;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocument>;
+        create(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        /**
+         * Deletes a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocument>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        /**
+         * Gets the parsed layout information for a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        getProcessedDocument(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Getprocesseddocument, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        getProcessedDocument(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Getprocesseddocument, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>;
+        getProcessedDocument(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Getprocesseddocument, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        getProcessedDocument(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Getprocesseddocument, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>): void;
+        getProcessedDocument(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Getprocesseddocument, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>): void;
+        getProcessedDocument(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaProcessedDocument>): void;
+        /**
+         * Bulk import of multiple Documents. Request processing may be synchronous. Non-existing items are created. Note: It is possible for a subset of the Documents to be successfully updated.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a list of Documents.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListDocumentsResponse>): void;
+        /**
+         * Updates a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaDocument>;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaDocument>): void;
+        /**
+         * Permanently deletes all selected Documents in a branch. This process is asynchronous. Depending on the number of Documents to be deleted, this operation can take hours to complete. Before the delete operation completes, some Documents might still be returned by DocumentService.GetDocument or DocumentService.ListDocuments. To get a list of the Documents to be deleted, set PurgeDocumentsRequest.force to false.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        purge(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Purge, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        purge(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Purge, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Purge, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Purge, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Purge, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Create extends StandardParameters {
+        /**
+         * Required. The ID to use for the Document, which becomes the final component of the Document.name. If the caller does not have permission to create the Document, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. This field must be unique among all Documents with the same parent. Otherwise, an `ALREADY_EXISTS` error is returned. This field must conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        documentId?: string;
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDocument;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of Document, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}`. If the caller does not have permission to delete the Document, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the Document to delete does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of Document, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}`. If the caller does not have permission to access the Document, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the requested Document does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Getprocesseddocument extends StandardParameters {
+        /**
+         * Required. Full resource name of Document, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}`. If the caller does not have permission to access the Document, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the requested Document does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+        /**
+         * What format output should be. If unspecified, defaults to JSON.
+         */
+        processedDocumentFormat?: string;
+        /**
+         * Required. What type of processing to return.
+         */
+        processedDocumentType?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Import extends StandardParameters {
+        /**
+         * Required. The parent branch resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`. Requires create/update permission.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportDocumentsRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$List extends StandardParameters {
+        /**
+         * Maximum number of Documents to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 are set to 1000. If this field is negative, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListDocumentsResponse.next_page_token, received from a previous DocumentService.ListDocuments call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to DocumentService.ListDocuments must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent branch resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`. Use `default_branch` as the branch ID, to list documents under the default branch. If the caller does not have permission to list Documents under this branch, regardless of whether or not this branch exists, a `PERMISSION_DENIED` error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Patch extends StandardParameters {
+        /**
+         * If set to `true` and the Document is not found, a new Document is be created.
+         */
+        allowMissing?: boolean;
+        /**
+         * Immutable. The full resource name of the document. Format: `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document_id\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided imported 'document' to update. If not set, by default updates all fields.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDocument;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Purge extends StandardParameters {
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeDocumentsRequest;
+    }
+    export class Resource$Projects$Locations$Datastores$Branches$Documents$Chunks {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets a Document.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaChunk>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaChunk>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaChunk>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaChunk>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaChunk>): void;
+        /**
+         * Gets a list of Chunks.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListChunksResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of Chunk, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}/chunks/{chunk\}`. If the caller does not have permission to access the Chunk, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the requested Chunk does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Documents$Chunks$List extends StandardParameters {
+        /**
+         * Maximum number of Chunks to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 will be coerced to 1000. If this field is negative, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListChunksResponse.next_page_token, received from a previous ChunkService.ListChunks call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to ChunkService.ListChunks must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent document resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/branches/{branch\}/documents/{document\}`. If the caller does not have permission to list Chunks under this document, regardless of whether or not this document exists, a `PERMISSION_DENIED` error is returned.
+         */
+        parent?: string;
+    }
+    export class Resource$Projects$Locations$Datastores$Branches$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of 1, corresponding to `Code.CANCELLED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        cancel(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Cancel, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        cancel(params?: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Cancel, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        cancel(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Cancel, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        cancel(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Cancel, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        cancel(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Cancel, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        cancel(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Branches$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Branches$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Operations$Cancel extends StandardParameters {
+        /**
+         * The name of the operation resource to be cancelled.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleLongrunningCancelOperationRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Branches$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Datastores$Completionsuggestions {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Imports CompletionSuggestions for a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Permanently deletes all CompletionSuggestions for a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        purge(params: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Purge, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        purge(params?: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Purge, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Purge, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Purge, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Purge, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Import extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which to import customer autocomplete suggestions. Follows pattern `projects/x/locations/x/collections/x/dataStores/x`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportCompletionSuggestionsRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Completionsuggestions$Purge extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which to purge completion suggestions. Follows pattern projects/x/locations/x/collections/x/dataStores/x.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeCompletionSuggestionsRequest;
+    }
+    export class Resource$Projects$Locations$Datastores$Controls {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Control. By default 1000 controls are allowed for a data store. A request can be submitted to adjust this limit. If the Control to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Datastores$Controls$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Datastores$Controls$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        create(params: Params$Resource$Projects$Locations$Datastores$Controls$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Controls$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Controls$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        /**
+         * Deletes a Control. If the Control to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Datastores$Controls$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Datastores$Controls$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Controls$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Controls$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Controls$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Control.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Controls$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Controls$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Controls$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Controls$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Controls$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        /**
+         * Lists all Controls by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Controls$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Controls$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Controls$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Controls$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Controls$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListControlsResponse>): void;
+        /**
+         * Updates a Control. Control action type cannot be changed. If the Control to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Datastores$Controls$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Datastores$Controls$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaControl>;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Controls$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Controls$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Controls$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaControl>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Controls$Create extends StandardParameters {
+        /**
+         * Required. The ID to use for the Control, which will become the final component of the Control's resource name. This value must be within 1-63 characters. Valid characters are /a-z-_/.
+         */
+        controlId?: string;
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}` or `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaControl;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Controls$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Control to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}/controls/{control_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Controls$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Control to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}/controls/{control_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Controls$List extends StandardParameters {
+        /**
+         * Optional. A filter to apply on the list results. Supported features: * List all the products under the parent branch if filter is unset. Currently this field is unsupported.
+         */
+        filter?: string;
+        /**
+         * Optional. Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * Optional. A page token, received from a previous `ListControls` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/dataStores/{data_store_id\}` or `projects/{project_number\}/locations/{location_id\}/collections/{collection_id\}/engines/{engine_id\}`.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Controls$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/x/locations/global/dataStore/x/controls/x`
+         */
+        name?: string;
+        /**
+         * Optional. Indicates which fields in the provided Control to update. The following are NOT supported: * Control.name * Control.solution_type If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaControl;
+    }
+    export class Resource$Projects$Locations$Datastores$Conversations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Converses a conversation.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        converse(params: Params$Resource$Projects$Locations$Datastores$Conversations$Converse, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        converse(params?: Params$Resource$Projects$Locations$Datastores$Conversations$Converse, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>;
+        converse(params: Params$Resource$Projects$Locations$Datastores$Conversations$Converse, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        converse(params: Params$Resource$Projects$Locations$Datastores$Conversations$Converse, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        converse(params: Params$Resource$Projects$Locations$Datastores$Conversations$Converse, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        converse(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationResponse>): void;
+        /**
+         * Creates a Conversation. If the Conversation to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Datastores$Conversations$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Datastores$Conversations$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        create(params: Params$Resource$Projects$Locations$Datastores$Conversations$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Conversations$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Conversations$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        /**
+         * Deletes a Conversation. If the Conversation to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Datastores$Conversations$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Datastores$Conversations$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Conversations$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Conversations$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Conversations$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Conversation.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Conversations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Conversations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Conversations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Conversations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Conversations$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        /**
+         * Lists all Conversations by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Conversations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Conversations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Conversations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Conversations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Conversations$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListConversationsResponse>): void;
+        /**
+         * Updates a Conversation. Conversation action type cannot be changed. If the Conversation to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Datastores$Conversations$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Datastores$Conversations$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaConversation>;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Conversations$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Conversations$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Conversations$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaConversation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Conversations$Converse extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`. Use `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/-` to activate auto session mode, which automatically creates a new conversation inside a ConverseConversation session.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConverseConversationRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Conversations$Create extends StandardParameters {
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConversation;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Conversations$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Conversations$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Conversation to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/conversations/{conversation_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Conversations$List extends StandardParameters {
+        /**
+         * A filter to apply on the list results. The supported features are: user_pseudo_id, state. Example: "user_pseudo_id = some_id"
+         */
+        filter?: string;
+        /**
+         * A comma-separated list of fields to order by, sorted in ascending order. Use "desc" after a field name for descending. Supported fields: * `update_time` * `create_time` * `conversation_name` Example: "update_time desc" "create_time"
+         */
+        orderBy?: string;
+        /**
+         * Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `ListConversations` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Conversations$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/dataStore/x/conversations/x` or `projects/{project\}/locations/global/collections/{collection\}/engines/x/conversations/x`.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided Conversation to update. The following are NOT supported: * Conversation.name If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaConversation;
+    }
+    export class Resource$Projects$Locations$Datastores$Models {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Datastores$Models$Operations;
+        constructor(context: APIRequestContext);
+    }
+    export class Resource$Projects$Locations$Datastores$Models$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Models$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Models$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Models$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Models$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Models$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Models$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Models$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Models$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Models$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Models$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Models$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Models$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Datastores$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Datastores$Schemas {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Schema.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Datastores$Schemas$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Datastores$Schemas$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        create(params: Params$Resource$Projects$Locations$Datastores$Schemas$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Schemas$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Schemas$Create, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes a Schema.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Datastores$Schemas$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Datastores$Schemas$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Schemas$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Schemas$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Schemas$Delete, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a Schema.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Schemas$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Schemas$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSchema>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Schemas$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Schemas$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSchema>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSchema>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Schemas$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSchema>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSchema>): void;
+        /**
+         * Gets a list of Schemas.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Schemas$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Schemas$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Schemas$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Schemas$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Schemas$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSchemasResponse>): void;
+        /**
+         * Updates a Schema.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Datastores$Schemas$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Datastores$Schemas$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Schemas$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Schemas$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Schemas$Patch, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Schemas$Create extends StandardParameters {
+        /**
+         * Required. The parent data store resource name, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`.
+         */
+        parent?: string;
+        /**
+         * Required. The ID to use for the Schema, which becomes the final component of the Schema.name. This field should conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters.
+         */
+        schemaId?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSchema;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Schemas$Delete extends StandardParameters {
+        /**
+         * Required. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Schemas$Get extends StandardParameters {
+        /**
+         * Required. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Schemas$List extends StandardParameters {
+        /**
+         * The maximum number of Schemas to return. The service may return fewer than this value. If unspecified, at most 100 Schemas are returned. The maximum value is 1000; values above 1000 are set to 1000.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous SchemaService.ListSchemas call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to SchemaService.ListSchemas must match the call that provided the page token.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent data store resource name, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Schemas$Patch extends StandardParameters {
+        /**
+         * If set to true, and the Schema is not found, a new Schema is created. In this situation, `update_mask` is ignored.
+         */
+        allowMissing?: boolean;
+        /**
+         * Immutable. The full resource name of the schema, in the format of `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/schemas/{schema\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSchema;
+    }
+    export class Resource$Projects$Locations$Datastores$Servingconfigs {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Answer query method.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        answer(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Answer, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        answer(params?: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Answer, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>;
+        answer(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Answer, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        answer(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Answer, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        answer(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Answer, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        answer(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryResponse>): void;
+        /**
+         * Gets a ServingConfig. Returns a NotFound error if the ServingConfig does not exist.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        /**
+         * Lists all ServingConfigs linked to this dataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Servingconfigs$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListServingConfigsResponse>): void;
+        /**
+         * Updates a ServingConfig. Returns a NOT_FOUND error if the ServingConfig does not exist.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaServingConfig>): void;
+        /**
+         * Makes a recommendation, which requires a contextual user event.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        recommend(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Recommend, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        recommend(params?: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Recommend, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>;
+        recommend(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Recommend, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        recommend(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Recommend, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        recommend(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Recommend, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        recommend(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRecommendResponse>): void;
+        /**
+         * Performs a search.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        search(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Search, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        search(params?: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Search, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>;
+        search(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Search, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        search(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Search, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+        search(params: Params$Resource$Projects$Locations$Datastores$Servingconfigs$Search, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+        search(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSearchResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Servingconfigs$Answer extends StandardParameters {
+        /**
+         * Required. The resource name of the Search serving config, such as `projects/x/locations/global/collections/default_collection/engines/x/servingConfigs/default_serving_config`, or `projects/x/locations/global/collections/default_collection/dataStores/x/servingConfigs/default_serving_config`. This field is used to identify the serving configuration name, set of models used to make the search.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaAnswerQueryRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Servingconfigs$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the ServingConfig to get. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}/servingConfigs/{serving_config_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Servingconfigs$List extends StandardParameters {
+        /**
+         * Optional. Maximum number of results to return. If unspecified, defaults to 100. If a value greater than 100 is provided, at most 100 results are returned.
+         */
+        pageSize?: number;
+        /**
+         * Optional. A page token, received from a previous `ListServingConfigs` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. Full resource name of the parent resource. Format: `projects/{project_number\}/locations/{location\}/collections/{collection\}/engines/{engine\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Servingconfigs$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/{location\}/collections/{collection_id\}/engines/{engine_id\}/servingConfigs/{serving_config_id\}`
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided ServingConfig to update. The following are NOT supported: * ServingConfig.name If not set, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaServingConfig;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Servingconfigs$Recommend extends StandardParameters {
+        /**
+         * Required. Full resource name of a ServingConfig: `projects/x/locations/global/collections/x/engines/x/servingConfigs/x`, or `projects/x/locations/global/collections/x/dataStores/x/servingConfigs/x` One default serving config is created along with your recommendation engine creation. The engine ID is used as the ID of the default serving config. For example, for Engine `projects/x/locations/global/collections/x/engines/my-engine`, you can use `projects/x/locations/global/collections/x/engines/my-engine/servingConfigs/my-engine` for your RecommendationService.Recommend requests.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaRecommendRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Servingconfigs$Search extends StandardParameters {
+        /**
+         * Required. The resource name of the Search serving config, such as `projects/x/locations/global/collections/default_collection/engines/x/servingConfigs/default_serving_config`, or `projects/x/locations/global/collections/default_collection/dataStores/default_data_store/servingConfigs/default_serving_config`. This field is used to identify the serving configuration name, set of models used to make the search.
+         */
+        servingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSearchRequest;
+    }
+    export class Resource$Projects$Locations$Datastores$Sessions {
+        context: APIRequestContext;
+        answers: Resource$Projects$Locations$Datastores$Sessions$Answers;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Session. If the Session to create already exists, an ALREADY_EXISTS error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Datastores$Sessions$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Datastores$Sessions$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        create(params: Params$Resource$Projects$Locations$Datastores$Sessions$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Sessions$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Sessions$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        /**
+         * Deletes a Session. If the Session to delete does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Datastores$Sessions$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Datastores$Sessions$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Sessions$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Sessions$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Sessions$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a Session.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Sessions$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Sessions$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sessions$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sessions$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sessions$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        /**
+         * Lists all Sessions by their parent DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Sessions$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Sessions$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Sessions$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Sessions$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Sessions$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSessionsResponse>): void;
+        /**
+         * Updates a Session. Session action type cannot be changed. If the Session to update does not exist, a NOT_FOUND error is returned.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Datastores$Sessions$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Datastores$Sessions$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSession>;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Sessions$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Sessions$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Sessions$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSession>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sessions$Create extends StandardParameters {
+        /**
+         * Required. Full resource name of parent data store. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSession;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sessions$Delete extends StandardParameters {
+        /**
+         * Required. The resource name of the Session to delete. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/sessions/{session_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sessions$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Session to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}/sessions/{session_id\}`
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sessions$List extends StandardParameters {
+        /**
+         * A filter to apply on the list results. The supported features are: user_pseudo_id, state. Example: "user_pseudo_id = some_id"
+         */
+        filter?: string;
+        /**
+         * A comma-separated list of fields to order by, sorted in ascending order. Use "desc" after a field name for descending. Supported fields: * `update_time` * `create_time` * `session_name` Example: "update_time desc" "create_time"
+         */
+        orderBy?: string;
+        /**
+         * Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `ListSessions` call. Provide this to retrieve the subsequent page.
+         */
+        pageToken?: string;
+        /**
+         * Required. The data store resource name. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/dataStores/{data_store_id\}`
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sessions$Patch extends StandardParameters {
+        /**
+         * Immutable. Fully qualified name `projects/{project\}/locations/global/collections/{collection\}/engines/{engine\}/sessions/x`
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided Session to update. The following are NOT supported: * Session.name If not set or empty, all supported fields are updated.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSession;
+    }
+    export class Resource$Projects$Locations$Datastores$Sessions$Answers {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets a Answer.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Sessions$Answers$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Sessions$Answers$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sessions$Answers$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sessions$Answers$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sessions$Answers$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaAnswer>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sessions$Answers$Get extends StandardParameters {
+        /**
+         * Required. The resource name of the Answer to get. Format: `projects/{project_number\}/locations/{location_id\}/collections/{collection\}/engines/{engine_id\}/sessions/{session_id\}/answers/{answer_id\}`
+         */
+        name?: string;
+    }
+    export class Resource$Projects$Locations$Datastores$Sitesearchengine {
+        context: APIRequestContext;
+        targetSites: Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites;
+        constructor(context: APIRequestContext);
+        /**
+         * Downgrade from advanced site search to basic site search.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        disableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Disableadvancedsitesearch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        disableAdvancedSiteSearch(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Disableadvancedsitesearch, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        disableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Disableadvancedsitesearch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        disableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Disableadvancedsitesearch, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        disableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Disableadvancedsitesearch, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        disableAdvancedSiteSearch(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Upgrade from basic site search to advanced site search.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        enableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Enableadvancedsitesearch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        enableAdvancedSiteSearch(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Enableadvancedsitesearch, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        enableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Enableadvancedsitesearch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        enableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Enableadvancedsitesearch, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        enableAdvancedSiteSearch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Enableadvancedsitesearch, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        enableAdvancedSiteSearch(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Request on-demand recrawl for a list of URIs.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        recrawlUris(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Recrawluris, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        recrawlUris(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Recrawluris, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        recrawlUris(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Recrawluris, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        recrawlUris(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Recrawluris, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        recrawlUris(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Recrawluris, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        recrawlUris(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Disableadvancedsitesearch extends StandardParameters {
+        /**
+         * Required. Full resource name of the SiteSearchEngine, such as `projects/{project\}/locations/{location\}/dataStores/{data_store_id\}/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaDisableAdvancedSiteSearchRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Enableadvancedsitesearch extends StandardParameters {
+        /**
+         * Required. Full resource name of the SiteSearchEngine, such as `projects/{project\}/locations/{location\}/dataStores/{data_store_id\}/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaEnableAdvancedSiteSearchRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Recrawluris extends StandardParameters {
+        /**
+         * Required. Full resource name of the SiteSearchEngine, such as `projects/x/locations/x/collections/x/dataStores/x/siteSearchEngine`.
+         */
+        siteSearchEngine?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaRecrawlUrisRequest;
+    }
+    export class Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates TargetSite in a batch.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        batchCreate(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Batchcreate, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        batchCreate(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Batchcreate, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        batchCreate(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Batchcreate, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        batchCreate(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Batchcreate, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        batchCreate(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Batchcreate, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        batchCreate(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Creates a TargetSite.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        create(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Create, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes a TargetSite.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Delete, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a TargetSite.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>): void;
+        get(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaTargetSite>): void;
+        /**
+         * Gets a list of TargetSites.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>;
+        list(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListTargetSitesResponse>): void;
+        /**
+         * Updates a TargetSite.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        patch(params: Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Patch, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Batchcreate extends StandardParameters {
+        /**
+         * Required. The parent resource shared by all TargetSites being created. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`. The parent field in the CreateBookRequest messages must either be empty or match this field.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaBatchCreateTargetSitesRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Create extends StandardParameters {
+        /**
+         * Required. Parent resource name of TargetSite, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSite;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of TargetSite, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}`. If the caller does not have permission to access the TargetSite, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested TargetSite does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of TargetSite, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}`. If the caller does not have permission to access the TargetSite, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested TargetSite does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$List extends StandardParameters {
+        /**
+         * Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default. The maximum value is 1000; values above 1000 will be coerced to 1000. If this field is negative, an INVALID_ARGUMENT error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token, received from a previous `ListTargetSites` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListTargetSites` must match the call that provided the page token.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent site search engine resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine`. If the caller does not have permission to list TargetSites under this site search engine, regardless of whether or not this branch exists, a PERMISSION_DENIED error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Sitesearchengine$Targetsites$Patch extends StandardParameters {
+        /**
+         * Output only. The fully qualified resource name of the target site. `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}/siteSearchEngine/targetSites/{target_site\}` The `target_site_id` is system-generated.
+         */
+        name?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaTargetSite;
+    }
+    export class Resource$Projects$Locations$Datastores$Suggestiondenylistentries {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Imports all SuggestionDenyListEntry for a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Permanently deletes all SuggestionDenyListEntry for a DataStore.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        purge(params: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Purge, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        purge(params?: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Purge, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Purge, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Purge, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Purge, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Import extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which to import denylist entries. Follows pattern projects/x/locations/x/collections/x/dataStores/x.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportSuggestionDenyListEntriesRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Suggestiondenylistentries$Purge extends StandardParameters {
+        /**
+         * Required. The parent data store resource name for which to import denylist entries. Follows pattern projects/x/locations/x/collections/x/dataStores/x.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeSuggestionDenyListEntriesRequest;
+    }
+    export class Resource$Projects$Locations$Datastores$Userevents {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Writes a single user event from the browser. This uses a GET request to due to browser restriction of POST-ing to a third-party domain. This method is used only by the Discovery Engine API JavaScript pixel and Google Tag Manager. Users should not call this method directly.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        collect(params: Params$Resource$Projects$Locations$Datastores$Userevents$Collect, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        collect(params?: Params$Resource$Projects$Locations$Datastores$Userevents$Collect, options?: MethodOptions): GaxiosPromise<Schema$GoogleApiHttpBody>;
+        collect(params: Params$Resource$Projects$Locations$Datastores$Userevents$Collect, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        collect(params: Params$Resource$Projects$Locations$Datastores$Userevents$Collect, options: MethodOptions | BodyResponseCallback<Schema$GoogleApiHttpBody>, callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        collect(params: Params$Resource$Projects$Locations$Datastores$Userevents$Collect, callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        collect(callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        /**
+         * Bulk import of user events. Request processing might be synchronous. Events that already exist are skipped. Use this method for backfilling historical user events. Operation.response is of type ImportResponse. Note that it is possible for a subset of the items to be successfully inserted. Operation.metadata is of type ImportMetadata.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Datastores$Userevents$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Datastores$Userevents$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Datastores$Userevents$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Datastores$Userevents$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Datastores$Userevents$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Deletes permanently all user events specified by the filter provided. Depending on the number of events specified by the filter, this operation could take hours or days to complete. To test a filter, use the list command first.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        purge(params: Params$Resource$Projects$Locations$Datastores$Userevents$Purge, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        purge(params?: Params$Resource$Projects$Locations$Datastores$Userevents$Purge, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Userevents$Purge, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Userevents$Purge, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(params: Params$Resource$Projects$Locations$Datastores$Userevents$Purge, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        purge(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Writes a single user event.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        write(params: Params$Resource$Projects$Locations$Datastores$Userevents$Write, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        write(params?: Params$Resource$Projects$Locations$Datastores$Userevents$Write, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>;
+        write(params: Params$Resource$Projects$Locations$Datastores$Userevents$Write, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        write(params: Params$Resource$Projects$Locations$Datastores$Userevents$Write, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+        write(params: Params$Resource$Projects$Locations$Datastores$Userevents$Write, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+        write(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Userevents$Collect extends StandardParameters {
+        /**
+         * The event timestamp in milliseconds. This prevents browser caching of otherwise identical get requests. The name is abbreviated to reduce the payload bytes.
+         */
+        ets?: string;
+        /**
+         * Required. The parent DataStore resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`.
+         */
+        parent?: string;
+        /**
+         * The URL including cgi-parameters but excluding the hash fragment with a length limit of 5,000 characters. This is often more useful than the referer URL, because many browsers only send the domain for third-party requests.
+         */
+        uri?: string;
+        /**
+         * Required. URL encoded UserEvent proto with a length limit of 2,000,000 characters.
+         */
+        userEvent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Userevents$Import extends StandardParameters {
+        /**
+         * Required. Parent DataStore resource name, of the form `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportUserEventsRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Userevents$Purge extends StandardParameters {
+        /**
+         * Required. The resource name of the catalog under which the events are created. The format is `projects/${projectId\}/locations/global/collections/{$collectionId\}/dataStores/${dataStoreId\}`
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaPurgeUserEventsRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Datastores$Userevents$Write extends StandardParameters {
+        /**
+         * Required. The parent resource name. If the write user event action is applied in DataStore level, the format is: `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`. If the write user event action is applied in Location level, for example, the event with Document across multiple DataStore, the format is: `projects/{project\}/locations/{location\}`.
+         */
+        parent?: string;
+        /**
+         * If set to true, the user event is written asynchronously after validation, and the API responds without waiting for the write.
+         */
+        writeAsync?: boolean;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaUserEvent;
+    }
+    export class Resource$Projects$Locations$Evaluations {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Evaluations$Operations;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a Evaluation. Upon creation, the evaluation will be automatically triggered and begin execution.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Evaluations$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Evaluations$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        create(params: Params$Resource$Projects$Locations$Evaluations$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Evaluations$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(params: Params$Resource$Projects$Locations$Evaluations$Create, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a Evaluation.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Evaluations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Evaluations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaEvaluation>;
+        get(params: Params$Resource$Projects$Locations$Evaluations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Evaluations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEvaluation>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEvaluation>): void;
+        get(params: Params$Resource$Projects$Locations$Evaluations$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEvaluation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaEvaluation>): void;
+        /**
+         * Gets a list of Evaluations.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Evaluations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Evaluations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Evaluations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Evaluations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Evaluations$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationsResponse>): void;
+        /**
+         * Gets a list of results for a given a Evaluation.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        listResults(params: Params$Resource$Projects$Locations$Evaluations$Listresults, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        listResults(params?: Params$Resource$Projects$Locations$Evaluations$Listresults, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationResultsResponse>;
+        listResults(params: Params$Resource$Projects$Locations$Evaluations$Listresults, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        listResults(params: Params$Resource$Projects$Locations$Evaluations$Listresults, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationResultsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationResultsResponse>): void;
+        listResults(params: Params$Resource$Projects$Locations$Evaluations$Listresults, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationResultsResponse>): void;
+        listResults(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListEvaluationResultsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Evaluations$Create extends StandardParameters {
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}`.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaEvaluation;
+    }
+    export interface Params$Resource$Projects$Locations$Evaluations$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of Evaluation, such as `projects/{project\}/locations/{location\}/evaluations/{evaluation\}`. If the caller does not have permission to access the Evaluation, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested Evaluation does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Evaluations$List extends StandardParameters {
+        /**
+         * Maximum number of Evaluations to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 will be coerced to 1000. If this field is negative, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListEvaluationsResponse.next_page_token, received from a previous EvaluationService.ListEvaluations call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to EvaluationService.ListEvaluations must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent location resource name, such as `projects/{project\}/locations/{location\}`. If the caller does not have permission to list Evaluations under this location, regardless of whether or not this location exists, a `PERMISSION_DENIED` error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Evaluations$Listresults extends StandardParameters {
+        /**
+         * Required. The evaluation resource name, such as `projects/{project\}/locations/{location\}/evaluations/{evaluation\}`. If the caller does not have permission to list EvaluationResult under this evaluation, regardless of whether or not this evaluation set exists, a `PERMISSION_DENIED` error is returned.
+         */
+        evaluation?: string;
+        /**
+         * Maximum number of EvaluationResult to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 will be coerced to 1000. If this field is negative, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListEvaluationResultsResponse.next_page_token, received from a previous EvaluationService.ListEvaluationResults call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to EvaluationService.ListEvaluationResults must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Evaluations$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Evaluations$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Evaluations$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Evaluations$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Evaluations$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Evaluations$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Evaluations$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export class Resource$Projects$Locations$Groundingconfigs {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Performs a grounding check.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        check(params: Params$Resource$Projects$Locations$Groundingconfigs$Check, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        check(params?: Params$Resource$Projects$Locations$Groundingconfigs$Check, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingResponse>;
+        check(params: Params$Resource$Projects$Locations$Groundingconfigs$Check, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        check(params: Params$Resource$Projects$Locations$Groundingconfigs$Check, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingResponse>): void;
+        check(params: Params$Resource$Projects$Locations$Groundingconfigs$Check, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingResponse>): void;
+        check(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Groundingconfigs$Check extends StandardParameters {
+        /**
+         * Required. The resource name of the grounding config, such as `projects/x/locations/global/groundingConfigs/default_grounding_config`.
+         */
+        groundingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaCheckGroundingRequest;
+    }
+    export class Resource$Projects$Locations$Identity_mapping_stores {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Identity_mapping_stores$Operations;
+        constructor(context: APIRequestContext);
+    }
+    export class Resource$Projects$Locations$Identity_mapping_stores$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Identity_mapping_stores$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Locations$Rankingconfigs {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Ranks a list of text records based on the given input query.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        rank(params: Params$Resource$Projects$Locations$Rankingconfigs$Rank, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        rank(params?: Params$Resource$Projects$Locations$Rankingconfigs$Rank, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaRankResponse>;
+        rank(params: Params$Resource$Projects$Locations$Rankingconfigs$Rank, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        rank(params: Params$Resource$Projects$Locations$Rankingconfigs$Rank, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRankResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRankResponse>): void;
+        rank(params: Params$Resource$Projects$Locations$Rankingconfigs$Rank, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRankResponse>): void;
+        rank(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaRankResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Rankingconfigs$Rank extends StandardParameters {
+        /**
+         * Required. The resource name of the rank service config, such as `projects/{project_num\}/locations/{location_id\}/rankingConfigs/default_ranking_config`.
+         */
+        rankingConfig?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaRankRequest;
+    }
+    export class Resource$Projects$Locations$Requirements {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Check a particular requirement.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        checkRequirement(params: Params$Resource$Projects$Locations$Requirements$Checkrequirement, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        checkRequirement(params?: Params$Resource$Projects$Locations$Requirements$Checkrequirement, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementResponse>;
+        checkRequirement(params: Params$Resource$Projects$Locations$Requirements$Checkrequirement, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        checkRequirement(params: Params$Resource$Projects$Locations$Requirements$Checkrequirement, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementResponse>): void;
+        checkRequirement(params: Params$Resource$Projects$Locations$Requirements$Checkrequirement, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementResponse>): void;
+        checkRequirement(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Requirements$Checkrequirement extends StandardParameters {
+        /**
+         * Required. Full resource name of the location. Format `projects/{project_number_or_id\}/locations/{location\}`
+         */
+        location?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaCheckRequirementRequest;
+    }
+    export class Resource$Projects$Locations$Samplequerysets {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Samplequerysets$Operations;
+        sampleQueries: Resource$Projects$Locations$Samplequerysets$Samplequeries;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a SampleQuerySet
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Samplequerysets$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Samplequerysets$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>;
+        create(params: Params$Resource$Projects$Locations$Samplequerysets$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Samplequerysets$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+        create(params: Params$Resource$Projects$Locations$Samplequerysets$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+        /**
+         * Deletes a SampleQuerySet.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Samplequerysets$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Samplequerysets$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Samplequerysets$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Samplequerysets$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Samplequerysets$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a SampleQuerySet.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Samplequerysets$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+        /**
+         * Gets a list of SampleQuerySets.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Samplequerysets$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Samplequerysets$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQuerySetsResponse>;
+        list(params: Params$Resource$Projects$Locations$Samplequerysets$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Samplequerysets$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQuerySetsResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQuerySetsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Samplequerysets$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQuerySetsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQuerySetsResponse>): void;
+        /**
+         * Updates a SampleQuerySet.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Samplequerysets$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Samplequerysets$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>;
+        patch(params: Params$Resource$Projects$Locations$Samplequerysets$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Samplequerysets$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+        patch(params: Params$Resource$Projects$Locations$Samplequerysets$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Create extends StandardParameters {
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}`.
+         */
+        parent?: string;
+        /**
+         * Required. The ID to use for the SampleQuerySet, which will become the final component of the SampleQuerySet.name. If the caller does not have permission to create the SampleQuerySet, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. This field must be unique among all SampleQuerySets with the same parent. Otherwise, an `ALREADY_EXISTS` error is returned. This field must conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        sampleQuerySetId?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of SampleQuerySet, such as `projects/{project\}/locations/{location\}/sampleQuerySets/{sample_query_set\}`. If the caller does not have permission to delete the SampleQuerySet, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the SampleQuerySet to delete does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of SampleQuerySet, such as `projects/{project\}/locations/{location\}/sampleQuerySets/{sample_query_set\}`. If the caller does not have permission to access the SampleQuerySet, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested SampleQuerySet does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$List extends StandardParameters {
+        /**
+         * Maximum number of SampleQuerySets to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 will be coerced to 1000. If this field is negative, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListSampleQuerySetsResponse.next_page_token, received from a previous SampleQuerySetService.ListSampleQuerySets call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to SampleQuerySetService.ListSampleQuerySets must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent location resource name, such as `projects/{project\}/locations/{location\}`. If the caller does not have permission to list SampleQuerySets under this location, regardless of whether or not this location exists, a `PERMISSION_DENIED` error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Patch extends StandardParameters {
+        /**
+         * Identifier. The full resource name of the SampleQuerySet, in the format of `projects/{project\}/locations/{location\}/sampleQuerySets/{sample_query_set\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided imported 'sample query set' to update. If not set, will by default update all fields.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQuerySet;
+    }
+    export class Resource$Projects$Locations$Samplequerysets$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Samplequerysets$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export class Resource$Projects$Locations$Samplequerysets$Samplequeries {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Creates a SampleQuery
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        create(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Create, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        create(params?: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Create, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>;
+        create(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Create, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        create(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Create, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+        create(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Create, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+        create(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+        /**
+         * Deletes a SampleQuery.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        delete(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Delete, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        delete(params?: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Delete, options?: MethodOptions): GaxiosPromise<Schema$GoogleProtobufEmpty>;
+        delete(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Delete, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        delete(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Delete, options: MethodOptions | BodyResponseCallback<Schema$GoogleProtobufEmpty>, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Delete, callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        delete(callback: BodyResponseCallback<Schema$GoogleProtobufEmpty>): void;
+        /**
+         * Gets a SampleQuery.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+        get(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Get, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+        /**
+         * Bulk import of multiple SampleQuerys. Sample queries that already exist may be deleted. Note: It is possible for a subset of the SampleQuerys to be successfully imported.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        import(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Import, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        import(params?: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Import, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        import(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Import, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        import(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Import, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Import, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        import(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Gets a list of SampleQuerys.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQueriesResponse>;
+        list(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQueriesResponse>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQueriesResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$List, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQueriesResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaListSampleQueriesResponse>): void;
+        /**
+         * Updates a SampleQuery.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        patch(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Patch, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        patch(params?: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Patch, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>;
+        patch(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Patch, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        patch(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Patch, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+        patch(params: Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Patch, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+        patch(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Create extends StandardParameters {
+        /**
+         * Required. The parent resource name, such as `projects/{project\}/locations/{location\}/sampleQuerySets/{sampleQuerySet\}`.
+         */
+        parent?: string;
+        /**
+         * Required. The ID to use for the SampleQuery, which will become the final component of the SampleQuery.name. If the caller does not have permission to create the SampleQuery, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. This field must be unique among all SampleQuerys with the same parent. Otherwise, an `ALREADY_EXISTS` error is returned. This field must conform to [RFC-1034](https://tools.ietf.org/html/rfc1034) standard with a length limit of 63 characters. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        sampleQueryId?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Delete extends StandardParameters {
+        /**
+         * Required. Full resource name of SampleQuery, such as `projects/{project\}/locations/{location\}/sampleQuerySets/{sample_query_set\}/sampleQueries/{sample_query\}`. If the caller does not have permission to delete the SampleQuery, regardless of whether or not it exists, a `PERMISSION_DENIED` error is returned. If the SampleQuery to delete does not exist, a `NOT_FOUND` error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Get extends StandardParameters {
+        /**
+         * Required. Full resource name of SampleQuery, such as `projects/{project\}/locations/{location\}/sampleQuerySets/{sample_query_set\}/sampleQueries/{sample_query\}`. If the caller does not have permission to access the SampleQuery, regardless of whether or not it exists, a PERMISSION_DENIED error is returned. If the requested SampleQuery does not exist, a NOT_FOUND error is returned.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Import extends StandardParameters {
+        /**
+         * Required. The parent sample query set resource name, such as `projects/{project\}/locations/{location\}/sampleQuerySets/{sampleQuerySet\}`. If the caller does not have permission to list SampleQuerys under this sample query set, regardless of whether or not this sample query set exists, a `PERMISSION_DENIED` error is returned.
+         */
+        parent?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaImportSampleQueriesRequest;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$List extends StandardParameters {
+        /**
+         * Maximum number of SampleQuerys to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 will be coerced to 1000. If this field is negative, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageSize?: number;
+        /**
+         * A page token ListSampleQueriesResponse.next_page_token, received from a previous SampleQueryService.ListSampleQueries call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to SampleQueryService.ListSampleQueries must match the call that provided the page token. Otherwise, an `INVALID_ARGUMENT` error is returned.
+         */
+        pageToken?: string;
+        /**
+         * Required. The parent sample query set resource name, such as `projects/{project\}/locations/{location\}/sampleQuerySets/{sampleQuerySet\}`. If the caller does not have permission to list SampleQuerys under this sample query set, regardless of whether or not this sample query set exists, a `PERMISSION_DENIED` error is returned.
+         */
+        parent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Samplequerysets$Samplequeries$Patch extends StandardParameters {
+        /**
+         * Identifier. The full resource name of the sample query, in the format of `projects/{project\}/locations/{location\}/sampleQuerySets/{sample_query_set\}/sampleQueries/{sample_query\}`. This field must be a UTF-8 encoded string with a length limit of 1024 characters.
+         */
+        name?: string;
+        /**
+         * Indicates which fields in the provided imported 'simple query' to update. If not set, will by default update all fields.
+         */
+        updateMask?: string;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaSampleQuery;
+    }
+    export class Resource$Projects$Locations$Userevents {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Writes a single user event from the browser. This uses a GET request to due to browser restriction of POST-ing to a third-party domain. This method is used only by the Discovery Engine API JavaScript pixel and Google Tag Manager. Users should not call this method directly.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        collect(params: Params$Resource$Projects$Locations$Userevents$Collect, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        collect(params?: Params$Resource$Projects$Locations$Userevents$Collect, options?: MethodOptions): GaxiosPromise<Schema$GoogleApiHttpBody>;
+        collect(params: Params$Resource$Projects$Locations$Userevents$Collect, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        collect(params: Params$Resource$Projects$Locations$Userevents$Collect, options: MethodOptions | BodyResponseCallback<Schema$GoogleApiHttpBody>, callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        collect(params: Params$Resource$Projects$Locations$Userevents$Collect, callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        collect(callback: BodyResponseCallback<Schema$GoogleApiHttpBody>): void;
+        /**
+         * Writes a single user event.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        write(params: Params$Resource$Projects$Locations$Userevents$Write, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        write(params?: Params$Resource$Projects$Locations$Userevents$Write, options?: MethodOptions): GaxiosPromise<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>;
+        write(params: Params$Resource$Projects$Locations$Userevents$Write, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        write(params: Params$Resource$Projects$Locations$Userevents$Write, options: MethodOptions | BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+        write(params: Params$Resource$Projects$Locations$Userevents$Write, callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+        write(callback: BodyResponseCallback<Schema$GoogleCloudDiscoveryengineV1alphaUserEvent>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Userevents$Collect extends StandardParameters {
+        /**
+         * The event timestamp in milliseconds. This prevents browser caching of otherwise identical get requests. The name is abbreviated to reduce the payload bytes.
+         */
+        ets?: string;
+        /**
+         * Required. The parent DataStore resource name, such as `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`.
+         */
+        parent?: string;
+        /**
+         * The URL including cgi-parameters but excluding the hash fragment with a length limit of 5,000 characters. This is often more useful than the referer URL, because many browsers only send the domain for third-party requests.
+         */
+        uri?: string;
+        /**
+         * Required. URL encoded UserEvent proto with a length limit of 2,000,000 characters.
+         */
+        userEvent?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Userevents$Write extends StandardParameters {
+        /**
+         * Required. The parent resource name. If the write user event action is applied in DataStore level, the format is: `projects/{project\}/locations/{location\}/collections/{collection\}/dataStores/{data_store\}`. If the write user event action is applied in Location level, for example, the event with Document across multiple DataStore, the format is: `projects/{project\}/locations/{location\}`.
+         */
+        parent?: string;
+        /**
+         * If set to true, the user event is written asynchronously after validation, and the API responds without waiting for the write.
+         */
+        writeAsync?: boolean;
+        /**
+         * Request body metadata
+         */
+        requestBody?: Schema$GoogleCloudDiscoveryengineV1alphaUserEvent;
+    }
+    export class Resource$Projects$Locations$Userstores {
+        context: APIRequestContext;
+        operations: Resource$Projects$Locations$Userstores$Operations;
+        constructor(context: APIRequestContext);
+    }
+    export class Resource$Projects$Locations$Userstores$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Locations$Userstores$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Locations$Userstores$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Locations$Userstores$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Locations$Userstores$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Locations$Userstores$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Locations$Userstores$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Locations$Userstores$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Locations$Userstores$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Locations$Userstores$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Locations$Userstores$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Locations$Userstores$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Locations$Userstores$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export class Resource$Projects$Operations {
+        context: APIRequestContext;
+        constructor(context: APIRequestContext);
+        /**
+         * Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        get(params: Params$Resource$Projects$Operations$Get, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        get(params?: Params$Resource$Projects$Operations$Get, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningOperation>;
+        get(params: Params$Resource$Projects$Operations$Get, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        get(params: Params$Resource$Projects$Operations$Get, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningOperation>, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(params: Params$Resource$Projects$Operations$Get, callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        get(callback: BodyResponseCallback<Schema$GoogleLongrunningOperation>): void;
+        /**
+         * Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.
+         *
+         * @param params - Parameters for request
+         * @param options - Optionally override request options, such as `url`, `method`, and `encoding`.
+         * @param callback - Optional callback that handles the response.
+         * @returns A promise if used with async/await, or void if used with a callback.
+         */
+        list(params: Params$Resource$Projects$Operations$List, options: StreamMethodOptions): GaxiosPromise<Readable>;
+        list(params?: Params$Resource$Projects$Operations$List, options?: MethodOptions): GaxiosPromise<Schema$GoogleLongrunningListOperationsResponse>;
+        list(params: Params$Resource$Projects$Operations$List, options: StreamMethodOptions | BodyResponseCallback<Readable>, callback: BodyResponseCallback<Readable>): void;
+        list(params: Params$Resource$Projects$Operations$List, options: MethodOptions | BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(params: Params$Resource$Projects$Operations$List, callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+        list(callback: BodyResponseCallback<Schema$GoogleLongrunningListOperationsResponse>): void;
+    }
+    export interface Params$Resource$Projects$Operations$Get extends StandardParameters {
+        /**
+         * The name of the operation resource.
+         */
+        name?: string;
+    }
+    export interface Params$Resource$Projects$Operations$List extends StandardParameters {
+        /**
+         * The standard list filter.
+         */
+        filter?: string;
+        /**
+         * The name of the operation's parent resource.
+         */
+        name?: string;
+        /**
+         * The standard list page size.
+         */
+        pageSize?: number;
+        /**
+         * The standard list page token.
+         */
+        pageToken?: string;
+    }
+    export {};
+}

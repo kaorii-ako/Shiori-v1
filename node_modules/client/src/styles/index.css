@@ -1,0 +1,376 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0a0a14;
+  --bg-secondary: #12121f;
+  --bg-card: #1a1a2e;
+  --bg-glass: rgba(20, 20, 35, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.03);
+
+  --accent-pink: #ff6b9d;
+  --accent-purple: #c44dff;
+  --accent-blue: #4d9fff;
+  --accent-cyan: #00f5ff;
+  --accent-yellow: #ffe94e;
+
+  --accent-success: #4dff91;
+  --accent-warning: #ffaa4d;
+  --accent-danger: #ff4d6a;
+
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0b5;
+  --text-muted: #606080;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Press Start 2P', monospace;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  image-rendering: pixelated;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Pixel art font for headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Press Start 2P', 'VT323', monospace;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Pixel-style border utility */
+.pixel-border {
+  box-shadow:
+    inset -4px -4px 0 0 #1a1a2e,
+    inset 4px 4px 0 0 #2a2a4e,
+    0 0 0 2px #0a0a14,
+    0 0 0 4px var(--accent-purple);
+}
+
+.pixel-border-glow {
+  box-shadow:
+    inset -4px -4px 0 0 #1a1a2e,
+    inset 4px 4px 0 0 #2a2a4e,
+    0 0 0 2px #0a0a14,
+    0 0 0 4px var(--accent-pink),
+    0 0 30px rgba(255, 107, 157, 0.3);
+}
+
+/* Glass effect */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid var(--glass-border);
+  image-rendering: pixelated;
+}
+
+.glass:hover {
+  border-color: rgba(255, 107, 157, 0.3);
+}
+
+.glass-strong {
+  background: linear-gradient(135deg, rgba(30, 30, 50, 0.9) 0%, rgba(20, 20, 35, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44dff 50%, #4d9fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pixel button styles */
+.btn-primary {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44dff 100%);
+  color: #0a0a14;
+  padding: 12px 24px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  border-radius: 0;
+  font-weight: bold;
+  transition: all 0.1s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow:
+    inset -2px -2px 0 0 #993d6b,
+    inset 2px 2px 0 0 #ff9dc4,
+    0 4px 0 #1a1a2e;
+  text-transform: uppercase;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset -2px -2px 0 0 #993d6b,
+    inset 2px 2px 0 0 #ff9dc4,
+    0 6px 0 #1a1a2e;
+}
+
+.btn-primary:active {
+  transform: translateY(2px);
+  box-shadow:
+    inset 2px 2px 0 0 #993d6b,
+    inset -2px -2px 0 0 #ff9dc4,
+    0 2px 0 #1a1a2e;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  padding: 12px 24px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  border-radius: 0;
+  transition: all 0.1s ease;
+  border: 2px solid var(--accent-purple);
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.btn-secondary:hover {
+  background: var(--accent-purple);
+  color: var(--bg-primary);
+}
+
+/* Pixel input */
+.input-glass {
+  background: rgba(10, 10, 20, 0.8);
+  border: 2px solid var(--glass-border);
+  border-radius: 0;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  transition: all 0.1s ease;
+  outline: none;
+  box-shadow: inset 4px 4px 0 0 rgba(0, 0, 0, 0.3);
+}
+
+.input-glass:focus {
+  border-color: var(--accent-pink);
+  box-shadow:
+    inset 4px 4px 0 0 rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--accent-pink);
+}
+
+.input-glass::placeholder {
+  color: var(--text-muted);
+  font-family: 'VT323', monospace;
+}
+
+/* Scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--accent-purple);
+  border-radius: 0;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-pink);
+}
+
+/* Floating orbs with anime colors */
+.floating-orb {
+  position: fixed;
+  border-radius: 0;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+  image-rendering: auto;
+}
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #ff6b9d 0%, transparent 70%);
+  top: -150px;
+  right: -150px;
+  animation: float1 12s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #c44dff 0%, transparent 70%);
+  bottom: -100px;
+  left: -100px;
+  animation: float2 15s ease-in-out infinite;
+}
+
+.orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #4d9fff 0%, transparent 70%);
+  top: 40%;
+  left: 60%;
+  animation: float3 18s ease-in-out infinite;
+}
+
+.orb-4 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #00f5ff 0%, transparent 70%);
+  top: 20%;
+  left: 10%;
+  animation: float4 10s ease-in-out infinite;
+}
+
+@keyframes float1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-30px, 30px) rotate(5deg); }
+  66% { transform: translate(20px, -20px) rotate(-5deg); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(40px, -30px) rotate(10deg); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-40px, 20px); }
+  50% { transform: translate(20px, 40px); }
+  75% { transform: translate(30px, -20px); }
+}
+
+@keyframes float4 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -30px) scale(1.2); }
+}
+
+/* Starfield background */
+.starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #ffffff20, transparent),
+    radial-gradient(2px 2px at 40px 70px, #ffffff15, transparent),
+    radial-gradient(1px 1px at 90px 40px, #ffffff25, transparent),
+    radial-gradient(2px 2px at 130px 80px, #ffffff10, transparent),
+    radial-gradient(1px 1px at 160px 30px, #ffffff20, transparent),
+    radial-gradient(2px 2px at 200px 60px, #ffffff15, transparent),
+    radial-gradient(1px 1px at 250px 90px, #ffffff25, transparent),
+    radial-gradient(2px 2px at 300px 20px, #ffffff10, transparent);
+  background-repeat: repeat;
+  background-size: 320px 100px;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Pixel corner decorations */
+.pixel-corners::before,
+.pixel-corners::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--accent-pink);
+}
+
+.pixel-corners::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.pixel-corners::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Pixel card animation */
+@keyframes pixel-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.pixel-hover:hover {
+  animation: pixel-bounce 0.3s ease infinite;
+}
+
+/* Badge with pixel style */
+.pixel-badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 4px 8px;
+  border-radius: 0;
+  text-transform: uppercase;
+  border: 2px solid currentColor;
+  box-shadow: 2px 2px 0 0 currentColor;
+}
+
+/* Modal with pixel frame */
+.pixel-modal {
+  background: var(--bg-card);
+  border: 4px solid var(--accent-purple);
+  box-shadow:
+    8px 8px 0 0 #0a0a14,
+    8px 8px 0 4px var(--accent-purple);
+}
+
+/* Custom selection */
+::selection {
+  background: var(--accent-pink);
+  color: var(--bg-primary);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Loading pixel animation */
+@keyframes pixel-loading {
+  0% { background-position: 0 0; }
+  25% { background-position: 10px 0; }
+  50% { background-position: 20px 0; }
+  75% { background-position: 10px 0; }
+  100% { background-position: 0 0; }
+}
+
+.pixel-loading {
+  background: linear-gradient(90deg,
+    var(--accent-pink) 0%,
+    var(--accent-purple) 25%,
+    var(--accent-blue) 50%,
+    var(--accent-purple) 75%,
+    var(--accent-pink) 100%
+  );
+  background-size: 40px 100%;
+  animation: pixel-loading 1s linear infinite;
+}

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(timeout 5 node index.js)",
+      "Bash(pkill -f \"node.*index.js\")",
+      "Bash(pkill -f vite)",
+      "Bash(node -e \":*)",
+      "Bash(curl -s http://localhost:3000/api/classroom/courses)",
+      "Bash(ls:*)",
+      "Bash(curl -s http://localhost:3000/api/health)",
+      "Bash(curl -s http://localhost:5173)"
+    ]
+  }
+}
