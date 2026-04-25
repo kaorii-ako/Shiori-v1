@@ -9,7 +9,7 @@
 [![Status](https://img.shields.io/badge/status-active%20development-brightgreen?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1)
 [![JavaScript](https://img.shields.io/badge/JavaScript-91.5%25-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://github.com/kaorii-ako/Shiori-v1)
 [![Node.js](https://img.shields.io/badge/Node.js-v14%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![License](https://img.shields.io/badge/license-mit?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1)
+[![License](https://img.shields.io/badge/license-mit-orange?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1)
 
 </div>
 
