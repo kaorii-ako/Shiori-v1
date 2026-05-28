@@ -14,7 +14,7 @@
 
 <br/>
 
-**[🚀 Live Demo →](https://shiori.study)** &nbsp;|&nbsp; **[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;|&nbsp; **[💜 Get Pro](https://shiori.study/pro)**
+**[🚀 Live Demo →](https://shiori-v1.vercel.app)** &nbsp;|&nbsp; **[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;|&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)**
 
 </div>
 
@@ -172,7 +172,7 @@ Shiori-v1/
 
 Want the hosted version with no setup, unlimited AI, and premium features?
 
-**[→ shiori.study/pro](https://shiori.study/pro)**
+**[→ shiori-v1.vercel.app/pro](https://shiori-v1.vercel.app/pro)**
 
 | | Free (Self-hosted) | Pro (Cloud) |
 |---|---|---|
