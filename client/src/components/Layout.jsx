@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import AIChat from './AIChat'
+import PomodoroTimer from './PomodoroTimer'
 import ToastContainer from './ToastContainer'
 import { useUIStore, useAuthStore } from '../stores'
 import { AnimatePresence } from 'framer-motion'
@@ -60,6 +61,7 @@ const Layout = () => {
       <AnimatePresence>
         {aiChatOpen && <AIChat />}
       </AnimatePresence>
+      <PomodoroTimer />
       <ToastContainer />
     </div>
   )

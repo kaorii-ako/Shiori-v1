@@ -240,6 +240,53 @@ export const useCalendarStore = create((set, get) => ({
   setLoading: (loading) => set({ isLoading: loading })
 }))
 
+export const usePomodoroStore = create(
+  persist(
+    (set, get) => ({
+      isRunning: false,
+      isBreak: false,
+      secondsLeft: 25 * 60,
+      workSeconds: 25 * 60,
+      breakSeconds: 5 * 60,
+      sessionCount: 0,
+      activeAssignment: null,
+      totalFocusMinutes: 0,
+
+      setActiveAssignment: (assignment) => set({ activeAssignment: assignment }),
+
+      start: () => set({ isRunning: true }),
+      pause: () => set({ isRunning: false }),
+
+      reset: () => {
+        const { isBreak, workSeconds, breakSeconds } = get()
+        set({ secondsLeft: isBreak ? breakSeconds : workSeconds, isRunning: false })
+      },
+
+      tick: () => {
+        const { secondsLeft, isBreak, workSeconds, breakSeconds, sessionCount, totalFocusMinutes } = get()
+        if (secondsLeft <= 1) {
+          if (!isBreak) {
+            set({
+              isBreak: true,
+              secondsLeft: breakSeconds,
+              isRunning: true,
+              sessionCount: sessionCount + 1,
+              totalFocusMinutes: totalFocusMinutes + Math.round(workSeconds / 60),
+            })
+          } else {
+            set({ isBreak: false, secondsLeft: workSeconds, isRunning: false })
+          }
+        } else {
+          set({ secondsLeft: secondsLeft - 1 })
+        }
+      },
+
+      close: () => set({ isRunning: false, secondsLeft: 25 * 60, isBreak: false, activeAssignment: null }),
+    }),
+    { name: 'shiori-pomodoro' }
+  )
+)
+
 export const useUIStore = create((set) => ({
   sidebarCollapsed: false,
   aiChatOpen: false,
