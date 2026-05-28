@@ -1,0 +1,151 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#10141a"/>
+
+  <!-- Ambient glow left -->
+  <radialGradient id="glowLeft" cx="30%" cy="40%" r="40%">
+    <stop offset="0%" stop-color="#528dff" stop-opacity="0.12"/>
+    <stop offset="100%" stop-color="#528dff" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="1200" height="630" fill="url(#glowLeft)"/>
+
+  <!-- Ambient glow right -->
+  <radialGradient id="glowRight" cx="75%" cy="60%" r="35%">
+    <stop offset="0%" stop-color="#c44dff" stop-opacity="0.10"/>
+    <stop offset="100%" stop-color="#c44dff" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="1200" height="630" fill="url(#glowRight)"/>
+
+  <!-- Floating dots -->
+  <circle cx="100" cy="80" r="2" fill="#afc6ff" fill-opacity="0.4"/>
+  <circle cx="200" cy="150" r="1.5" fill="#afc6ff" fill-opacity="0.3"/>
+  <circle cx="350" cy="60" r="2" fill="#e5b5ff" fill-opacity="0.35"/>
+  <circle cx="900" cy="100" r="1.5" fill="#afc6ff" fill-opacity="0.3"/>
+  <circle cx="1050" cy="180" r="2" fill="#e5b5ff" fill-opacity="0.4"/>
+  <circle cx="1100" cy="80" r="1.5" fill="#afc6ff" fill-opacity="0.25"/>
+  <circle cx="80" cy="520" r="2" fill="#4dff91" fill-opacity="0.3"/>
+  <circle cx="1150" cy="480" r="2" fill="#ff6b9d" fill-opacity="0.3"/>
+  <circle cx="600" cy="40" r="1.5" fill="#afc6ff" fill-opacity="0.2"/>
+
+  <!-- Left content area -->
+  <!-- Japanese bookmark character -->
+  <text x="80" y="280" font-family="serif" font-size="200" fill="#afc6ff" fill-opacity="0.06">栞</text>
+
+  <!-- Logo badge -->
+  <rect x="80" y="120" width="52" height="52" rx="12" fill="url(#logoGrad)"/>
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#afc6ff"/>
+      <stop offset="1" stop-color="#528dff"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="500" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#afc6ff"/>
+      <stop offset="0.5" stop-color="#c44dff"/>
+      <stop offset="1" stop-color="#ff6b9d"/>
+    </linearGradient>
+  </defs>
+  <text x="106" y="157" font-family="serif" font-size="28" fill="#10141a" text-anchor="middle" font-weight="bold">栞</text>
+
+  <!-- App name -->
+  <text x="148" y="148" font-family="Space Grotesk, sans-serif" font-size="32" font-weight="700" fill="#dfe2eb">Shiori</text>
+  <text x="148" y="168" font-family="Manrope, sans-serif" font-size="14" fill="#606080">AI Study Companion</text>
+
+  <!-- Main headline -->
+  <text x="80" y="260" font-family="monospace" font-size="52" font-weight="700" fill="url(#titleGrad)">Stop juggling tabs.</text>
+  <text x="80" y="330" font-family="monospace" font-size="52" font-weight="700" fill="#dfe2eb">Start actually studying.</text>
+
+  <!-- Subtext -->
+  <text x="80" y="390" font-family="Manrope, sans-serif" font-size="20" fill="#8c90a0">
+    Google Classroom + Gmail + Calendar → AI study plan
+  </text>
+  <text x="80" y="418" font-family="Manrope, sans-serif" font-size="20" fill="#8c90a0">
+    Powered by Gemini · Free &amp; open source · MIT license
+  </text>
+
+  <!-- Feature pills -->
+  <rect x="80" y="455" width="140" height="36" rx="18" fill="rgba(82,141,255,0.12)" stroke="rgba(82,141,255,0.25)" stroke-width="1"/>
+  <text x="150" y="479" font-family="Space Grotesk, sans-serif" font-size="13" fill="#afc6ff" text-anchor="middle" font-weight="600">AI Study Plans</text>
+
+  <rect x="234" y="455" width="150" height="36" rx="18" fill="rgba(196,77,255,0.12)" stroke="rgba(196,77,255,0.25)" stroke-width="1"/>
+  <text x="309" y="479" font-family="Space Grotesk, sans-serif" font-size="13" fill="#e5b5ff" text-anchor="middle" font-weight="600">Classroom Sync</text>
+
+  <rect x="398" y="455" width="130" height="36" rx="18" fill="rgba(74,215,120,0.12)" stroke="rgba(74,215,120,0.25)" stroke-width="1"/>
+  <text x="463" y="479" font-family="Space Grotesk, sans-serif" font-size="13" fill="#d7ffc5" text-anchor="middle" font-weight="600">Grade Tracker</text>
+
+  <rect x="542" y="455" width="130" height="36" rx="18" fill="rgba(255,107,157,0.12)" stroke="rgba(255,107,157,0.25)" stroke-width="1"/>
+  <text x="607" y="479" font-family="Space Grotesk, sans-serif" font-size="13" fill="#ff6b9d" text-anchor="middle" font-weight="600">Pomodoro Timer</text>
+
+  <!-- URL -->
+  <text x="80" y="578" font-family="Space Grotesk, sans-serif" font-size="16" fill="#424754">github.com/kaorii-ako/Shiori-v1 · shiori-v1.vercel.app</text>
+
+  <!-- Right side: mini app mockup -->
+  <rect x="760" y="60" width="380" height="510" rx="14" fill="rgba(10,14,20,0.9)" stroke="rgba(66,71,84,0.4)" stroke-width="1"/>
+
+  <!-- Window chrome -->
+  <rect x="760" y="60" width="380" height="36" rx="14" fill="rgba(10,14,20,0.95)"/>
+  <rect x="760" y="78" width="380" height="18" fill="rgba(10,14,20,0.95)"/>
+  <circle cx="784" cy="78" r="5" fill="#ff5f57"/>
+  <circle cx="800" cy="78" r="5" fill="#febc2e"/>
+  <circle cx="816" cy="78" r="5" fill="#28c840"/>
+
+  <!-- App header in mockup -->
+  <rect x="760" y="96" width="380" height="48" fill="rgba(16,20,26,0.8)"/>
+  <text x="780" y="126" font-family="monospace" font-size="11" fill="#dfe2eb" font-weight="600">GOOD EVENING, ALEX</text>
+  <rect x="1060" y="110" width="64" height="22" rx="11" fill="rgba(196,77,255,0.15)" stroke="rgba(196,77,255,0.3)" stroke-width="1"/>
+  <text x="1092" y="126" font-family="Space Grotesk, sans-serif" font-size="9" fill="#e5b5ff" text-anchor="middle">✦ SYNCED</text>
+
+  <!-- Stats row -->
+  <rect x="772" y="154" width="80" height="54" rx="6" fill="rgba(24,28,34,0.7)" stroke="rgba(66,71,84,0.2)" stroke-width="1"/>
+  <text x="812" y="172" font-family="Manrope, sans-serif" font-size="8" fill="#606080" text-anchor="middle">DUE TODAY</text>
+  <text x="812" y="197" font-family="monospace" font-size="20" fill="#ffaa4d" text-anchor="middle" font-weight="700">2</text>
+
+  <rect x="860" y="154" width="80" height="54" rx="6" fill="rgba(24,28,34,0.7)" stroke="rgba(66,71,84,0.2)" stroke-width="1"/>
+  <text x="900" y="172" font-family="Manrope, sans-serif" font-size="8" fill="#606080" text-anchor="middle">THIS WEEK</text>
+  <text x="900" y="197" font-family="monospace" font-size="20" fill="#c44dff" text-anchor="middle" font-weight="700">5</text>
+
+  <rect x="948" y="154" width="80" height="54" rx="6" fill="rgba(24,28,34,0.7)" stroke="rgba(66,71,84,0.2)" stroke-width="1"/>
+  <text x="988" y="172" font-family="Manrope, sans-serif" font-size="8" fill="#606080" text-anchor="middle">COURSES</text>
+  <text x="988" y="197" font-family="monospace" font-size="20" fill="#4d9fff" text-anchor="middle" font-weight="700">4</text>
+
+  <rect x="1036" y="154" width="88" height="54" rx="6" fill="rgba(24,28,34,0.7)" stroke="rgba(66,71,84,0.2)" stroke-width="1"/>
+  <text x="1080" y="172" font-family="Manrope, sans-serif" font-size="8" fill="#606080" text-anchor="middle">AVG GRADE</text>
+  <text x="1080" y="197" font-family="monospace" font-size="20" fill="#4dff91" text-anchor="middle" font-weight="700">87%</text>
+
+  <!-- AI insight box -->
+  <rect x="772" y="220" width="352" height="68" rx="8" fill="rgba(82,141,255,0.08)" stroke="rgba(82,141,255,0.2)" stroke-width="1"/>
+  <text x="790" y="240" font-family="Space Grotesk, sans-serif" font-size="9" fill="#afc6ff" font-weight="600">✦ SHIORI AI INSIGHT</text>
+  <text x="790" y="258" font-family="Manrope, sans-serif" font-size="10" fill="#8c90a0">You have 3 high-priority tasks this week.</text>
+  <text x="790" y="274" font-family="Manrope, sans-serif" font-size="10" fill="#8c90a0">I've front-loaded Calculus prep — tackle it in the morning.</text>
+
+  <!-- Assignment list -->
+  <rect x="772" y="300" width="352" height="36" rx="6" fill="rgba(24,28,34,0.6)" stroke="rgba(255,107,157,0.2)" stroke-width="1"/>
+  <circle cx="789" cy="318" r="4" fill="rgba(255,107,157,0.4)"/>
+  <text x="800" y="322" font-family="Manrope, sans-serif" font-size="11" fill="#dfe2eb">Integration by Parts Problem Set</text>
+  <text x="1097" y="322" font-family="Space Grotesk, sans-serif" font-size="9" fill="#ff6b9d" text-anchor="end">Tomorrow</text>
+
+  <rect x="772" y="342" width="352" height="36" rx="6" fill="rgba(24,28,34,0.6)" stroke="rgba(196,77,255,0.2)" stroke-width="1"/>
+  <circle cx="789" cy="360" r="4" fill="rgba(196,77,255,0.4)"/>
+  <text x="800" y="364" font-family="Manrope, sans-serif" font-size="11" fill="#dfe2eb">Binary Search Tree Implementation</text>
+  <text x="1097" y="364" font-family="Space Grotesk, sans-serif" font-size="9" fill="#c44dff" text-anchor="end">Thu</text>
+
+  <rect x="772" y="384" width="352" height="36" rx="6" fill="rgba(24,28,34,0.6)" stroke="rgba(77,170,255,0.2)" stroke-width="1"/>
+  <circle cx="789" cy="402" r="4" fill="rgba(77,170,255,0.4)"/>
+  <text x="800" y="406" font-family="Manrope, sans-serif" font-size="11" fill="#dfe2eb">Essay: Causes of WWI</text>
+  <text x="1097" y="406" font-family="Space Grotesk, sans-serif" font-size="9" fill="#4daaff" text-anchor="end">Fri</text>
+
+  <!-- Pomodoro widget -->
+  <rect x="772" y="432" width="170" height="70" rx="8" fill="rgba(196,77,255,0.08)" stroke="rgba(196,77,255,0.25)" stroke-width="1"/>
+  <text x="785" y="450" font-family="monospace" font-size="9" fill="#e5b5ff">⬡ FOCUS</text>
+  <text x="833" y="490" font-family="monospace" font-size="24" fill="#dfe2eb" text-anchor="middle" font-weight="700">24:32</text>
+
+  <!-- AI chat preview -->
+  <rect x="952" y="432" width="172" height="70" rx="8" fill="rgba(24,28,34,0.6)" stroke="rgba(66,71,84,0.25)" stroke-width="1"/>
+  <text x="965" y="450" font-family="Space Grotesk, sans-serif" font-size="9" fill="#8c90a0">SHIORI AI</text>
+  <rect x="965" y="458" width="148" height="34" rx="6" fill="rgba(82,141,255,0.1)"/>
+  <text x="972" y="471" font-family="Manrope, sans-serif" font-size="9" fill="#afc6ff">Start with the Math quiz —</text>
+  <text x="972" y="484" font-family="Manrope, sans-serif" font-size="9" fill="#afc6ff">it's worth 30% of your grade.</text>
+
+  <!-- Bottom border line -->
+  <line x1="760" y1="570" x2="1140" y2="570" stroke="rgba(66,71,84,0.25)" stroke-width="1"/>
+  <text x="950" y="590" font-family="Manrope, sans-serif" font-size="12" fill="#424754" text-anchor="middle">Try the demo → shiori-v1.vercel.app</text>
+</svg>
