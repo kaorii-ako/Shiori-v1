@@ -1,6 +1,18 @@
 # Shiori Launch Kit
 
+## CRITICAL: Do these 3 things RIGHT NOW (< 10 min each)
+
+**1. Add GitHub topics** (2 min) → github.com/kaorii-ako/Shiori-v1 → gear ⚙️ → Topics:
+`google-classroom ai-study-planner gemini react student open-source productivity pomodoro edtech`
+
+**2. Post the Twitter/X thread below** (5 min)
+
+**3. Submit to nologin.tools** (3 min) → email or submit form
+
+---
+
 Copy-paste these to launch. Post them in this order: Twitter/X first, then HN, then Product Hunt.
+**Product Hunt timing: schedule for 12:01am Pacific. Reply to EVERY comment within minutes — this is the #1 ranking factor.**
 
 ---
 
@@ -215,7 +227,34 @@ google-classroom  ai-study-planner  gemini  react  student  open-source  product
 ```
 Topics are how GitHub's Explore page surfaces repos. This alone can drive 20-50 stars/week.
 
-### 5. classroomio/classroomio community
+### 5. nologin.tools directory (submit today — free, instant traffic)
+Shiori's demo mode qualifies: free, no login needed, education + productivity.
+- Go to: https://nologin.tools (email them or find submit link in footer)
+- Category: **Education** or **Productivity**
+- Description to use:
+```
+AI study companion that syncs Google Classroom, Gmail, and Calendar to build personalized study plans.
+Try the full app with demo data — no account, no API keys, no setup.
+```
+- Link: https://shiori-v1.vercel.app
+
+### 6. AlternativeTo listing (90+ DA backlink = long-term organic traffic)
+- Go to: https://alternativeto.net/software/add/
+- Alternative to: Notion, Google Classroom, Todoist
+- Description: "AI-powered student productivity app with Google Classroom sync, Gemini AI study plans, and Pomodoro timer. Free & open source."
+
+### 7. Bluesky (outperforms X for small products right now)
+```
+Just shipped Shiori — an open source AI study companion for students.
+
+It connects to your Google Classroom, Gmail, and Calendar. Gemini AI builds your study plan.
+
+Try it with zero setup → shiori-v1.vercel.app (click "Try Demo", no Google login)
+
+Code: github.com/kaorii-ako/Shiori-v1
+```
+
+### 8. classroomio/classroomio community
 Star them + open a Discussion: "Built Shiori — an open-source student study companion that complements ClassroomIO"
 Link: https://github.com/classroomio/classroomio/discussions
 They have 1500+ stars and an active community of educators and students.
