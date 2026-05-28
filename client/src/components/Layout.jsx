@@ -8,6 +8,7 @@ import AIChat from './AIChat'
 import PomodoroTimer from './PomodoroTimer'
 import ToastContainer from './ToastContainer'
 import { useUIStore, useAuthStore } from '../stores'
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 
 const GITHUB_URL = 'https://github.com/kaorii-ako/Shiori-v1'
 
@@ -80,6 +81,8 @@ const Layout = () => {
   const navigate = useNavigate()
   const [showStarPrompt, setShowStarPrompt] = useState(false)
   const promptFired = useRef(false)
+
+  useKeyboardShortcuts()
 
   const handleExitDemo = () => {
     exitDemoMode()

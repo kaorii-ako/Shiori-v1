@@ -6,7 +6,8 @@ import {
   CheckCircle,
   AlertCircle,
   Plus,
-  ExternalLink
+  ExternalLink,
+  Download,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Badge from '../components/Badge'
@@ -14,6 +15,7 @@ import Button from '../components/Button'
 import Modal from '../components/Modal'
 import Input from '../components/Input'
 import { useAssignmentsStore } from '../stores'
+import { exportAssignmentsToICal } from '../utils/icalExport'
 
 const Assignments = () => {
   const {
@@ -81,7 +83,14 @@ const Assignments = () => {
             {assignments.length} total tasks
           </p>
         </div>
-        <Button icon={Plus}>ADD TASK</Button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Button variant="secondary" icon={Download} size="sm"
+            onClick={() => exportAssignmentsToICal(assignments)}
+            style={{ borderColor: '#4daaff', color: '#4daaff' }}>
+            EXPORT .ICS
+          </Button>
+          <Button icon={Plus}>ADD TASK</Button>
+        </div>
       </motion.div>
 
       <GlassCard>
