@@ -1,49 +1,45 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react'
-import { useUIStore } from '../stores'
+import { motion, AnimatePresence } from 'framer-motion'
 
-const Toast = ({ toast }) => {
-  const { removeToast } = useUIStore()
-
-  const icons = {
-    success: <CheckCircle className="w-5 h-5 text-accent-success" />,
-    error: <AlertCircle className="w-5 h-5 text-accent-danger" />,
-    warning: <AlertTriangle className="w-5 h-5 text-accent-warning" />,
-    info: <Info className="w-5 h-5 text-accent-secondary" />
-  }
+const ToastContainer = ({ toasts, removeToast }) => {
+  if (!toasts || toasts.length === 0) return null
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 50, scale: 0.9 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 50, scale: 0.9 }}
-      className="glass rounded-xl p-4 flex items-start gap-3 min-w-[300px] max-w-md shadow-xl"
-    >
-      {icons[toast.type || 'info']}
-      <div className="flex-1">
-        {toast.title && (
-          <p className="font-medium text-sm">{toast.title}</p>
-        )}
-        <p className="text-text-secondary text-sm">{toast.message}</p>
-      </div>
-      <button
-        onClick={() => removeToast(toast.id)}
-        className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-      >
-        <X className="w-4 h-4" />
-      </button>
-    </motion.div>
-  )
-}
-
-const ToastContainer = () => {
-  const { toasts } = useUIStore()
-
-  return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+    <div className="fixed top-4 right-4 z-50 space-y-3 max-w-sm">
       <AnimatePresence>
         {toasts.map((toast) => (
-          <Toast key={toast.id} toast={toast} />
+          <motion.div
+            key={toast.id}
+            initial={{ opacity: 0, y: -16, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 30, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className={`
+              rounded-xl px-4 py-3 shadow-lg glass
+              toast-${toast.type} text-sm
+              flex items-start gap-3
+            `}
+            style={{ backdropFilter: 'blur(20px)' }}
+          >
+            {/* Icon */}
+            <span className="flex-shrink-0 mt-0.5">
+              {toast.type === 'success' && '✓'}
+              {toast.type === 'error' && '✕'}
+              {toast.type === 'warning' && '⚠'}
+              {toast.type === 'info' && 'ℹ'}
+            </span>
+
+            {/* Content */}
+            <p className="flex-1">{toast.message}</p>
+
+            {/* Close */}
+            <button
+              className="flex-shrink-0 p-0.5 rounded"
+              style={{ color: 'inherit', opacity: 0.6 }}
+              onClick={() => removeToast(toast.id)}
+            >
+              ✕
+            </button>
+          </motion.div>
         ))}
       </AnimatePresence>
     </div>

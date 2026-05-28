@@ -5,36 +5,45 @@ const ProgressBar = ({
   max = 100,
   size = 'md',
   showLabel = false,
-  color,
-  className = ''
+  className = '',
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100)
 
   const getColor = () => {
-    if (color) return color
-    if (percentage >= 70) return 'bg-accent-success'
-    if (percentage >= 40) return 'bg-accent-warning'
-    return 'bg-accent-danger'
+    if (percentage >= 70) return '#4ad778'
+    if (percentage >= 40) return '#ffb44d'
+    return '#ffb4ab'
   }
 
-  const sizes = {
-    sm: 'h-1',
-    md: 'h-2',
-    lg: 'h-3'
+  const barColors = {
+    success: 'linear-gradient(90deg, #4ad778 0%, #6ae898 100%)',
+    warning: 'linear-gradient(90deg, #ffb44d 0%, #ffc673 100%)',
+    danger: 'linear-gradient(90deg, #ffb4ab 0%, #ffc4be 100%)',
   }
 
   return (
     <div className={`w-full ${className}`}>
-      <div className={`w-full bg-white/10 rounded-full overflow-hidden ${sizes[size]}`}>
+      <div
+        className="w-full rounded-full overflow-hidden"
+        style={{
+          background: 'rgba(0,0,0,0.3)',
+          height: size === 'sm' ? 4 : size === 'lg' ? 12 : 8,
+        }}
+      >
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className={`h-full rounded-full ${getColor()}`}
+          style={{
+            height: '100%',
+            background: percentage >= 70 ? barColors.success : percentage >= 40 ? barColors.warning : barColors.danger,
+            borderRadius: '4px',
+            boxShadow: `0 0 8px ${getColor()}40`
+          }}
         />
       </div>
       {showLabel && (
-        <div className="flex justify-between mt-1 text-xs text-text-muted">
+        <div className="flex justify-between mt-1 text-xs" style={{ color: '#606080', fontFamily: "'Manrope', sans-serif" }}>
           <span>{value}</span>
           <span>{max}</span>
         </div>

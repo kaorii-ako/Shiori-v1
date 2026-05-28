@@ -6,17 +6,12 @@ const Clock = () => {
   const [time, setTime] = useState(new Date())
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date())
-    }, 1000)
-
+    const timer = setInterval(() => setTime(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
 
-  // Get timezone from user country if available
   const getTimezoneOffset = () => {
     if (!user?.country) return 0
-
     const timezoneMap = {
       'United States': 'America/New_York',
       'United Kingdom': 'Europe/London',
@@ -29,7 +24,6 @@ const Clock = () => {
       'Canada': 'America/Toronto',
       'Brazil': 'America/Sao_Paulo'
     }
-
     const timezone = timezoneMap[user.country] || 'UTC'
     return time.toLocaleString('en-US', { timeZone: timezone })
   }
@@ -38,38 +32,36 @@ const Clock = () => {
 
   return (
     <div
-      className="p-6 text-center"
+      className="px-3 py-2 text-center rounded-lg"
       style={{
-        background: 'linear-gradient(135deg, rgba(26,26,46,0.95) 0%, rgba(18,18,31,0.98) 100%)',
-        border: '3px solid rgba(196,77,255,0.4)',
-        boxShadow: '0 0 20px rgba(77,159,255,0.2)'
+        background: 'rgba(24, 28, 34, 0.60)',
+        border: '1px solid rgba(66, 71, 84, 0.25)',
+        fontFamily: "'Space Grotesk', sans-serif"
       }}
     >
-      <h3
-        className="text-accent-blue mb-4"
-        style={{ fontFamily: '"Press Start 2P"', fontSize: '10px' }}
-      >
+      <p className="text-[0.6rem] on-surface-tertiary mb-0.5" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
         CURRENT TIME
-      </h3>
-      <div
-        className="text-6xl font-mono mb-2"
+      </p>
+      <p
         style={{
-          fontFamily: 'VT323',
-          color: '#00f5ff',
-          textShadow: '0 0 20px rgba(0,245,255,0.5)'
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 700,
+          fontSize: '0.875rem',
+          color: '#afc6ff',
+          textShadow: '0 0 8px rgba(175, 198, 255, 0.3)'
         }}
       >
         {displayTime.split(' ')[0]}
-      </div>
-      <div
+      </p>
+      <p
         style={{
-          fontFamily: 'VT323',
-          fontSize: '14px',
-          color: '#a0a0b5'
+          fontSize: '0.625rem',
+          color: '#606080',
+          fontFamily: "'Manrope', sans-serif"
         }}
       >
         {user?.country || 'Timezone'}
-      </div>
+      </p>
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
+import Landing from './pages/Landing'
+import Pro from './pages/Pro'
 import Home from './pages/Home'
 import Assignments from './pages/Assignments'
 import Calendar from './pages/Calendar'
@@ -14,26 +16,27 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public routes */}
+        {/* Public */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/pro" element={<Pro />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Protected routes */}
+        {/* Protected app — Layout renders Outlet for all children */}
         <Route
-          path="/"
           element={
             <ProtectedRoute>
               <Layout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<Home />} />
-          <Route path="home" element={<Home />} />
-          <Route path="assignments" element={<Assignments />} />
-          <Route path="calendar" element={<Calendar />} />
-          <Route path="grades" element={<Grades />} />
-          <Route path="study" element={<StudyPlans />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/assignments" element={<Assignments />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/grades" element={<Grades />} />
+          <Route path="/study" element={<StudyPlans />} />
+          <Route path="/study-plans" element={<StudyPlans />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,50 +1,56 @@
 import { motion } from 'framer-motion'
-import { forwardRef } from 'react'
 
-const GlassCard = forwardRef(({
+const GlassCard = ({
   children,
   className = '',
-  hover = true,
-  padding = 'p-6',
-  pixel = true,
+  hover = false,
+  noShadow = false,
   ...props
-}, ref) => {
+}) => {
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
+      whileHover={hover ? {
+        translateY: -2,
+        backgroundColor: 'rgba(9, 30, 66, 0.45)'
+      } : {}}
       className={`
-        relative ${padding} ${className}
-        ${pixel ? 'pixel-card' : ''}
+        relative overflow-hidden transition-sa
+        ${className}
       `}
       style={{
-        background: 'linear-gradient(135deg, rgba(26,26,46,0.95) 0%, rgba(18,18,31,0.98) 100%)',
-        border: '3px solid rgba(196,77,255,0.4)',
-        boxShadow: hover
-          ? '0 0 20px rgba(196,77,255,0.2), inset 0 0 30px rgba(196,77,255,0.05)'
-          : 'none',
-        imageRendering: 'pixelated'
+        background: 'rgba(24, 28, 34, 0.55)',
+        backdropFilter: 'blur(16px)',
+        borderRadius: '8px',
+        padding: '1.5rem',
+        ...(!noShadow && {
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+        })
       }}
       {...props}
     >
-      {hover && (
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255,107,157,0.1) 0%, transparent 50%)',
-            opacity: 0,
-            transition: 'opacity 0.2s'
-          }}
-          whileHover={{ opacity: 1 }}
-        />
-      )}
-      {children}
+      {/* Top-left ambient glow */}
+      <div
+        className="absolute -top-8 -left-8 w-24 h-24 rounded-full"
+        style={{
+          background: 'rgba(175, 198, 255, 0.08)',
+          filter: 'blur(20px)',
+          pointerEvents: 'none',
+        }}
+      />
+      {/* Bottom-right ambient glow */}
+      <div
+        className="absolute -bottom-8 -right-8 w-20 h-20 rounded-full"
+        style={{
+          background: 'rgba(74, 215, 120, 0.06)',
+          filter: 'blur(20px)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div className="relative" style={{ zIndex: 1 }}>
+        {children}
+      </div>
     </motion.div>
   )
-})
-
-GlassCard.displayName = 'GlassCard'
+}
 
 export default GlassCard

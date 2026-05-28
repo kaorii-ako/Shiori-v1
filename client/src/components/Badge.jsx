@@ -1,63 +1,45 @@
-const Badge = ({ children, variant = 'default', size = 'md', className = '' }) => {
-  const variants = {
-    default: {
-      bg: 'rgba(255,255,255,0.1)',
-      color: '#a0a0b5',
-      border: 'rgba(255,255,255,0.2)'
-    },
-    success: {
-      bg: 'rgba(77,255,145,0.2)',
-      color: '#4dff91',
-      border: '#4dff91'
-    },
-    warning: {
-      bg: 'rgba(255,170,77,0.2)',
-      color: '#ffaa4d',
-      border: '#ffaa4d'
-    },
-    danger: {
-      bg: 'rgba(255,77,106,0.2)',
-      color: '#ff4d6a',
-      border: '#ff4d6a'
-    },
-    info: {
-      bg: 'rgba(77,159,255,0.2)',
-      color: '#4d9fff',
-      border: '#4d9fff'
-    },
-    primary: {
-      bg: 'rgba(196,77,255,0.2)',
-      color: '#c44dff',
-      border: '#c44dff'
-    }
+import { motion } from 'framer-motion'
+import Icon from './Icon'
+
+const Badge = ({
+  children,
+  variant = 'default',
+  size = 'md',
+  icon: IconComp,
+  className = '',
+  ...props
+}) => {
+  const variantStyles = {
+    default: 'bg-[#2e3148] text-text-primary',
+    success: 'bg-[#172502] text-accent-success stroke-success',
+    info: 'bg-[#0c4a6e] text-blue-400 stroke-primary',
+    warning: 'bg-[#462c02] text-accent-warning stroke-warning',
+    danger: 'bg-[#310b0b] text-accent-danger stroke-danger',
+    purple: 'bg-[#1c0e35] text-tertiary stroke-tertiary',
   }
 
   const sizes = {
-    sm: 'px-2 py-0.5',
-    md: 'px-3 py-1',
-    lg: 'px-4 py-2'
+    sm: 'px-2 py-0.5 text-xs gap-1',
+    md: 'px-2.5 py-1 text-sm gap-1.5',
+    lg: 'px-3 py-1.5 text-base gap-2',
   }
 
-  const style = variants[variant]
-
   return (
-    <span
+    <motion.span
       className={`
-        inline-flex items-center font-bold uppercase ${className}
+        inline-flex items-center font-medium border rounded-full
+        ${variantStyles[variant]}
         ${sizes[size]}
+        ${className}
       `}
       style={{
-        background: style.bg,
-        color: style.color,
-        border: `2px solid ${style.border}`,
-        fontFamily: '"Press Start 2P"',
-        fontSize: size === 'sm' ? '6px' : size === 'lg' ? '10px' : '8px',
-        boxShadow: `2px 2px 0 ${style.border}`,
-        imageRendering: 'pixelated'
+        borderColor: variant === 'default' ? 'rgba(66, 71, 84, 0.30)' : undefined,
       }}
+      {...props}
     >
+      {IconComp && <IconComp className="w-3.5 h-3.5 flex-shrink-0" style={{ display: 'block' }} />}
       {children}
-    </span>
+    </motion.span>
   )
 }
 

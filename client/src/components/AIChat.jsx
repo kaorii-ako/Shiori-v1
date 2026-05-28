@@ -1,246 +1,204 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Send, X, Bot, User } from 'lucide-react'
-import { useUIStore, useAssignmentsStore, useGradesStore } from '../stores'
+import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Send, X, Sparkles } from 'lucide-react'
+import { ai } from '../lib/api'
+import { useAuthStore } from '../stores'
 
-const AIChat = () => {
-  const { aiChatOpen, toggleAIChat, addToast } = useUIStore()
-  const { assignments, courses } = useAssignmentsStore()
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      role: 'assistant',
-      content: "Hey there! I'm 栞 (Shiori), your AI study buddy. I can see you have " + assignments.length + " assignments and " + courses.length + " courses in your data. I can help you organize assignments, answer questions, and create study plans. What do you need help with today?"
-    }
-  ])
+const AIChat = ({ onClose }) => {
+  const { user } = useAuthStore()
+  const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const messagesEndRef = useRef(null)
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
-    const userMessage = {
-      id: Date.now(),
-      role: 'user',
-      content: input.trim()
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const sendMessage = async () => {
+    if (!input.trim() || generating) return
+    if (!user) {
+      setMessages([...messages, { id: Date.now(), role: 'system', content: 'Please sign in to use AI chat.' }])
+      return
     }
 
-    setMessages(prev => [...prev, userMessage])
+    const userMsg = { id: Date.now(), role: 'user', content: input.trim(), timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+    setMessages((prev) => [...prev, userMsg])
+
+    setGenerating(true)
     setInput('')
-    setLoading(true)
 
     try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: input.trim(),
-          context: {
-            assignments,
-            courses
-          }
-        })
-      })
-      const data = await response.json()
+      const reply = await ai(user, input.trim())
+      setMessages((prev) => [...prev, reply])
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now(), role: 'assistant', content: 'Sorry, something went wrong. Please try again later.', timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+      ])
+    }
 
-      // Check if the AI wants to generate a study plan
-      if (data.shouldGeneratePlan) {
-        addToast({
-          type: 'success',
-          message: 'Study plan context ready! Check the Study page.'
-        })
-      }
+    setGenerating(false)
+  }
 
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: data.message
-      }])
-    } catch (error) {
-      addToast({
-        type: 'error',
-        message: 'Failed to get AI response'
-      })
-    } finally {
-      setLoading(false)
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
     }
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 20, scale: 0.95 }}
-      className="fixed bottom-6 right-6 w-[420px] h-[560px] z-50 flex flex-col overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #12121f 100%)',
-        border: '4px solid #c44dff',
-        boxShadow: '8px 8px 0 0 #0a0a14, 8px 8px 0 4px #c44dff, 0 0 60px rgba(196,77,255,0.3)'
-      }}
-    >
+    <div className="h-full flex flex-col">
       {/* Header */}
       <div
-        className="p-4 flex items-center justify-between"
-        style={{
-          background: 'linear-gradient(135deg, rgba(255,107,157,0.2) 0%, rgba(196,77,255,0.2) 100%)',
-          borderBottom: '2px solid rgba(196,77,255,0.5)'
-        }}
+        className="flex items-center justify-between px-4 py-3"
+        style={{ background: '#14181e', borderBottom: '1px solid rgba(66,71,84,0.30)' }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div
-            className="w-12 h-12 flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(135deg, #ff6b9d 0%, #c44dff 100%)',
-              boxShadow: '0 0 20px rgba(255,107,157,0.5)',
-              imageRendering: 'pixelated'
-            }}
+            className="w-8 h-8 flex items-center justify-center rounded-lg"
+            style={{ background: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)', color: '#10141a' }}
           >
-            <span className="text-white font-bold text-lg" style={{ fontFamily: 'serif' }}>栞</span>
+            <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h3
-              className="font-bold gradient-text"
-              style={{ fontFamily: '"Press Start 2P"', fontSize: '12px' }}
-            >
-              SHIORI AI
-            </h3>
-            <p className="text-xs" style={{ color: '#4dff91', fontFamily: 'VT323', fontSize: '14px' }}>
-              Online & Ready
+            <p className="on-surface-primary" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '0.875rem' }}>
+              Shiori AI
+            </p>
+            <p className="on-surface-secondary" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '0.7rem' }}>
+              Your AI Study Buddy
             </p>
           </div>
         </div>
-        <button
-          onClick={toggleAIChat}
-          className="p-2 transition-colors"
-          style={{
-            background: 'rgba(255,77,106,0.2)',
-            border: '2px solid #ff4d6a'
-          }}
-        >
-          <X className="w-5 h-5" style={{ color: '#ff4d6a' }} />
-        </button>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg transition-sa"
+            style={{ color: '#8c90a0' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(175, 180, 255, 0.10)'
+              e.currentTarget.style.color = '#afc6ff'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.color = '#8c90a0'
+            }}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
-        {messages.map((message) => (
-          <motion.div
-            key={message.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            {message.role === 'assistant' && (
-              <div
-                className="w-8 h-8 rounded-none flex items-center justify-center flex-shrink-0"
-                style={{
-                  background: 'linear-gradient(135deg, #c44dff 0%, #ff6b9d 100%)',
-                  boxShadow: '2px 2px 0 #993d6b'
-                }}
-              >
-                <span style={{ fontFamily: 'serif', color: 'white' }}>栞</span>
-              </div>
-            )}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4" style={{ background: 'rgba(24,28,34,0.30)' }}>
+        {messages.length === 0 && (
+          <div className="text-center py-8">
             <div
-              className={`max-w-[75%] px-4 py-3 ${
-                message.role === 'user'
-                  ? 'text-white'
-                  : 'text-text-primary'
-              }`}
+              className="w-12 h-12 mx-auto mb-3 flex items-center justify-center rounded-full"
+              style={{ background: 'linear-gradient(45deg, rgba(175,198,255,0.15) 0%, rgba(82,141,255,0.10) 100%)' }}
+            >
+              <Sparkles className="w-6 h-6" style={{ color: '#afc6ff' }} />
+            </div>
+            <p className="on-surface-secondary" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '0.875rem' }}>
+              Ask me anything! I can help with
+            </p>
+            <ul className="mt-3 space-y-1.5" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '0.8rem' }}>
+              {['Explaining concepts', 'Study tips', 'Summarizing notes', 'Quiz practice'].map((item) => (
+                <li key={item} className="on-surface-tertiary">
+                  • {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {messages.map((msg) => (
+          <motion.div
+            key={msg.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[80%] max-w-[80%] px-4 py-3 ${msg.role === 'user' ? 'chat-bubble-sent on-surface-primary' : 'chat-bubble-received on-surface-primary'}`}
               style={{
-                background: message.role === 'user'
-                  ? 'linear-gradient(135deg, #ff6b9d 0%, #c44dff 100%)'
-                  : 'rgba(255,255,255,0.05)',
-                border: message.role === 'user'
-                  ? '2px solid #ff9dc4'
-                  : '2px solid rgba(196,77,255,0.3)',
-                fontFamily: 'VT323',
-                fontSize: '16px',
-                boxShadow: message.role === 'user'
-                  ? '2px 2px 0 #993d6b'
-                  : 'none'
+                fontFamily: "'Manrope', sans-serif",
+                fontSize: '0.875rem',
+                background: msg.role === 'user'
+                  ? 'linear-gradient(45deg, #a9c2ff 0%, #7ea5ff 100%)'
+                  : '#181c22',
+                borderRadius: msg.role === 'user' ? '8px 8px 2px 8px' : '8px 8px 8px 2px',
               }}
             >
-              <p>{message.content}</p>
+              <p className="leading-relaxed">{msg.content}</p>
+              <p className="text-[0.65rem] mt-1.5 on-surface-tertiary">
+                {msg.timestamp}
+              </p>
             </div>
-            {message.role === 'user' && (
-              <div
-                className="w-8 h-8 rounded-none flex items-center justify-center flex-shrink-0"
-                style={{
-                  background: 'rgba(77,159,255,0.2)',
-                  border: '2px solid #4d9fff'
-                }}
-              >
-                <User className="w-4 h-4" style={{ color: '#4d9fff' }} />
-              </div>
-            )}
           </motion.div>
         ))}
 
-        {loading && (
-          <div className="flex gap-3">
-            <div
-              className="w-8 h-8 rounded-none flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #c44dff 0%, #ff6b9d 100%)' }}
-            >
-              <span style={{ fontFamily: 'serif', color: 'white' }}>栞</span>
-            </div>
-            <div
-              className="px-4 py-3"
-              style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '2px solid rgba(196,77,255,0.3)'
-              }}
-            >
-              <div className="flex gap-1">
+        {generating && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex justify-start"
+          >
+            <div className="chat-bubble-received px-4 py-3" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '0.875rem' }}>
+              <div className="flex gap-1.5">
                 {[0, 1, 2].map((i) => (
                   <motion.span
                     key={i}
+                    className="w-2 h-2 rounded-full"
+                    style={{ background: '#8c90a0' }}
                     animate={{ opacity: [0.3, 1, 0.3] }}
-                    transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                      delay: i * 0.2
-                    }}
-                    className="w-2 h-2"
-                    style={{ background: '#c44dff', display: 'inline-block' }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
                   />
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
-      <div
-        className="p-4"
-        style={{
-          borderTop: '2px solid rgba(196,77,255,0.5)',
-          background: 'rgba(10,10,20,0.5)'
-        }}
-      >
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Ask Shiori anything..."
+      <div className="p-3" style={{ borderTop: '1px solid rgba(66,71,84,0.30)' }}>
+        <div
+          className="flex items-center gap-2 px-3 py-2 rounded-xl"
+          style={{ background: '#14181e', border: '1px solid rgba(66,71,84,0.40)' }}
+        >
+          <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            className="input-glass flex-1 pr-12"
-            disabled={loading}
-            style={{ fontFamily: 'VT323', fontSize: '18px' }}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask Shiori..."
+            rows={1}
+            className="flex-1 bg-transparent text-on-surface-primary resize-none outline-none min-h-[24px] text-sm"
+            style={{ fontFamily: "'Manrope', sans-serif", color: '#dfe2eb' }}
           />
           <button
-            onClick={handleSend}
-            disabled={!input.trim() || loading}
-            className="btn-primary px-4"
+            onClick={sendMessage}
+            disabled={!input.trim() || generating}
+            className="p-2 rounded-lg transition-sa"
+            style={{
+              background: input.trim() && !generating
+                ? 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)'
+                : 'rgba(66,71,84,0.25)',
+              color: input.trim() && !generating ? '#10141a' : '#606080',
+            }}
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4" style={{ display: 'block' }} />
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
 

@@ -3,51 +3,62 @@ import Icon from './Icon'
 
 const Input = forwardRef(({
   label,
+  type = 'text',
+  name,
+  value,
+  onChange,
+  placeholder,
   error,
-  icon: IconComponent,
+  icon: IconComp,
+  disabled,
   className = '',
+  autoComplete,
   ...props
 }, ref) => {
   return (
-    <div className="w-full">
+    <div className={`space-y-1.5 ${className}`}>
       {label && (
         <label
-          className="block text-sm mb-2"
-          style={{ fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#a0a0b5' }}
+          htmlFor={name}
+          className="block text-xs label-strong on-surface-tertiary"
+          style={{ paddingLeft: IconComp ? '0.5rem' : '0' }}
         >
           {label}
         </label>
       )}
       <div className="relative">
-        {IconComponent && (
-          <div
-            className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-            style={{ color: '#606080', zIndex: 1 }}
-          >
-            <Icon icon={IconComponent} size={20} />
+        {IconComp && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#606080' }}>
+            <IconComp className="w-5 h-5" style={{ display: 'block' }} />
           </div>
         )}
         <input
           ref={ref}
+          type={type}
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
+          autoComplete={autoComplete}
           className={`
-            input-glass w-full
-            ${IconComponent ? 'pl-10' : ''}
-            ${error ? 'border-accent-danger' : ''}
-            ${className}
+            input-sa w-full box-border
+            ${IconComp ? 'pl-10' : 'pl-3'}
+            ${error ? 'border-b-2 border-b-danger' : ''}
           `}
           style={{
-            fontFamily: 'VT323',
-            fontSize: '18px',
-            position: 'relative',
-            zIndex: 0
+            borderRadius: '4px',
+            minHeight: 44,
+            background: '#14181e',
           }}
           {...props}
         />
       </div>
       {error && (
         <p
-          className="mt-2"
-          style={{ fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#ff4d6a' }}
+          className="text-xs"
+          style={{ color: '#ffb4ab', fontWeight: 500, fontFamily: "'Manrope', sans-serif", paddingLeft: IconComp ? '0.5rem' : '0' }}
         >
           {error}
         </p>

@@ -7,48 +7,99 @@ export default {
   theme: {
     extend: {
       colors: {
-        'bg-primary': '#0a0a14',
-        'bg-secondary': '#12121f',
-        'bg-card': '#1a1a2e',
-        'accent-pink': '#ff6b9d',
-        'accent-purple': '#c44dff',
-        'accent-blue': '#4d9fff',
-        'accent-cyan': '#00f5ff',
-        'accent-yellow': '#ffe94e',
-        'accent-success': '#4dff91',
-        'accent-warning': '#ffaa4d',
-        'accent-danger': '#ff4d6a',
-        'text-primary': '#f0f0f5',
-        'text-secondary': '#a0a0b5',
-        'text-muted': '#606080',
+        // Surface tokens
+        surface: '#10141a',
+        surface_bright: '#181c22',
+        surface_container_lowest: '#0a0e14',
+        surface_container_low: '#14181e',
+        surface_container: '#181c22',
+        surface_container_high: '#21262d',
+        surface_container_highest: '#31353c',
+        surface_variant: '#31353c',
+        outline: '#8c90a0',
+        outline_variant: '#424754',
+        on_surface: '#dfe2eb',
+        on_surface_variant: '#8c90a0',
+        on_background: '#e3e6ed',
+        on_surface_inverse: '#10141a',
+
+        // Accent tokens
+        primary: '#afc6ff',
+        primary_container: '#528dff',
+        primary_dim: '#7da5f9',
+        secondary: '#d7ffc5',
+        secondary_container: '#4a6c3a',
+        tertiary: '#e5b5ff',
+        tertiary_container: '#8b63a5',
+        tertiary_variant: '#c58aff',
+        inverse_surface: '#21262d',
+        inverse_primary: '#3964c5',
+
+        // Semantic
+        error: '#ffb4ab',
+        success: '#4ad778',
       },
+
       fontFamily: {
-        'pixel': ['"Press Start 2P"', 'monospace'],
-        'pixel-alt': ['VT323', 'monospace'],
-        'body': ['Inter', 'sans-serif'],
-        'mono': ['JetBrains Mono', 'monospace'],
+        display: ['Space Grotesk', 'sans-serif'],
+        body: ['Manrope', 'sans-serif'],
       },
+
       borderRadius: {
         'none': '0',
+        'xs': '4px',
+        'sm': '8px',
+        'DEFAULT': '4px',
+        'md': '8px',
+        'lg': '12px',
+        'xl': '16px',
       },
+
       boxShadow: {
-        'pixel': 'inset -2px -2px 0 0 #1a1a2e, inset 2px 2px 0 0 #2a2a4e, 0 4px 0 #1a1a2e',
-        'pixel-glow': 'inset -2px -2px 0 0 #1a1a2e, inset 2px 2px 0 0 #2a2a4e, 0 4px 0 #1a1a2e, 0 0 20px rgba(255, 107, 157, 0.3)',
+        'ambient': '0 32px 64px rgba(223,226,235,0.04)',
+        'ambient-lg': '0 48px 96px rgba(223,226,235,0.06)',
+        'ambient-sm': '0 8px 32px rgba(223,226,235,0.03)',
+        'primary': '0 8px 32px rgba(82,141,255,0.15)',
+        'secondary': '0 8px 32px rgba(215,255,197,0.08)',
+        'tertiary': '0 8px 32px rgba(229,181,255,0.1)',
+        'inner': 'inset 0 1px 0 rgba(223,226,235,0.04)',
+        'ghost': '0 2px 8px rgba(0,0,0,0.12)',
       },
-      animation: {
-        'bounce-pixel': 'pixel-bounce 0.3s ease infinite',
-        'twinkle': 'twinkle 4s ease-in-out infinite',
-        'float': 'float 6s ease-in-out infinite',
+
+      backdropBlur: {
+        'glass': '20px',
       },
+
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+
       keyframes: {
-        'pixel-bounce': {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-5px)' },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
-        'twinkle': {
-          '0%, 100%': { opacity: '0.5' },
-          '50%': { opacity: '1' },
+        'slide-up': {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        'slide-down': {
+          '0%': { opacity: '0', transform: 'translateY(-16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'scale-in': {
+          '0%': { opacity: '0', transform: 'scale(0.96)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+      },
+
+      animation: {
+        'fade-in': 'fade-in 0.2s ease-out',
+        'slide-up': 'slide-up 0.25s ease-out',
+        'slide-down': 'slide-down 0.25s ease-out',
+        'scale-in': 'scale-in 0.2s ease-out',
       },
     },
   },

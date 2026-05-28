@@ -26,32 +26,33 @@ const Avatar = ({
       .slice(0, 2)
   }
 
-  const statusColors = {
-    online: 'bg-accent-success',
-    offline: 'bg-text-muted',
-    away: 'bg-accent-warning'
-  }
-
   return (
     <div className={`relative inline-flex ${className}`}>
       {src ? (
         <img
           src={src}
           alt={name}
-          className={`${sizes[size]} rounded-full object-cover`}
+          className={`${sizes[size]} rounded-lg object-cover`}
         />
       ) : (
         <div className={`
-          ${sizes[size]} rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary
-          flex items-center justify-center font-semibold text-white
-        `}>
+          ${sizes[size]} rounded-lg
+          flex items-center justify-center font-semibold
+          on-surface-primary
+        `}
+        style={{
+          background: 'linear-gradient(135deg, #afc6ff 0%, #528dff 100%)',
+          color: '#10141a',
+          fontFamily: "'Space Grotesk', sans-serif"
+        }}>
           {getInitials(name)}
         </div>
       )}
       {status && (
         <span className={`
-          absolute bottom-0 right-0 ${statusSizes[size]} ${statusColors[status]}
-          rounded-full border-2 border-bg-primary
+          absolute bottom-0 right-0 ${statusSizes[size]}
+          rounded-full border-2 border-surface-container-low
+          dot-${status}
         `} />
       )}
     </div>

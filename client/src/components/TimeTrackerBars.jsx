@@ -3,16 +3,13 @@ import { motion } from 'framer-motion'
 const TimeTrackerBars = () => {
   const now = new Date()
 
-  // Day progress (0-24 hours)
   const dayProgress = ((now.getHours() * 60 + now.getMinutes()) / (24 * 60)) * 100
   const dayLabel = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} / 24H`
 
-  // Month progress
   const monthDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
   const monthProgress = (now.getDate() / monthDays) * 100
   const monthLabel = `${now.getDate()} / ${monthDays} DAYS`
 
-  // Year progress
   const yearStart = new Date(now.getFullYear(), 0, 0)
   const yearEnd = new Date(now.getFullYear() + 1, 0, 0)
   const yearDayOfYear = Math.floor((now - yearStart) / (24 * 60 * 60 * 1000))
@@ -21,13 +18,13 @@ const TimeTrackerBars = () => {
   const yearLabel = `${yearDayOfYear} / ${daysInYear} DAYS`
 
   const trackers = [
-    { label: 'TODAY', progress: dayProgress, unit: dayLabel, color: '#ff6b9d' },
-    { label: 'THIS MONTH', progress: monthProgress, unit: monthLabel, color: '#4d9fff' },
-    { label: 'THIS YEAR', progress: yearProgress, unit: yearLabel, color: '#ffe94e' }
+    { label: 'TODAY', progress: dayProgress, unit: dayLabel, color: '#afc6ff' },
+    { label: 'THIS MONTH', progress: monthProgress, unit: monthLabel, color: '#d7ffc5' },
+    { label: 'THIS YEAR', progress: yearProgress, unit: yearLabel, color: '#e5b5ff' }
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {trackers.map((tracker, idx) => (
         <motion.div
           key={tracker.label}
@@ -36,30 +33,20 @@ const TimeTrackerBars = () => {
           transition={{ delay: idx * 0.1 }}
         >
           <div
-            className="p-4"
+            className="rounded-xl px-4 py-3"
             style={{
-              background: 'linear-gradient(135deg, rgba(26,26,46,0.95) 0%, rgba(18,18,31,0.98) 100%)',
-              border: '3px solid rgba(196,77,255,0.4)',
-              boxShadow: '0 0 15px rgba(196,77,255,0.1)'
+              background: 'rgba(24, 28, 34, 0.60)',
+              border: '1px solid rgba(66, 71, 84, 0.25)',
+              fontFamily: "'Manrope', sans-serif"
             }}
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <h4
-                style={{
-                  fontFamily: '"Press Start 2P"',
-                  fontSize: '10px',
-                  color: tracker.color
-                }}
+                style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '0.7rem', color: tracker.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}
               >
                 {tracker.label}
               </h4>
-              <span
-                style={{
-                  fontFamily: 'VT323',
-                  fontSize: '12px',
-                  color: '#a0a0b5'
-                }}
-              >
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: '0.7rem', color: '#606080' }}>
                 {tracker.unit}
               </span>
             </div>
@@ -67,9 +54,9 @@ const TimeTrackerBars = () => {
             {/* Progress bar */}
             <div
               style={{
-                background: 'rgba(0,0,0,0.3)',
-                border: '2px solid rgba(196,77,255,0.3)',
-                height: '24px',
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '4px',
+                height: '16px',
                 position: 'relative',
                 overflow: 'hidden'
               }}
@@ -81,11 +68,11 @@ const TimeTrackerBars = () => {
                 style={{
                   background: `linear-gradient(90deg, ${tracker.color} 0%, ${tracker.color}cc 100%)`,
                   height: '100%',
-                  boxShadow: `0 0 15px ${tracker.color}`,
-                  position: 'relative'
+                  boxShadow: `0 0 12px ${tracker.color}40`,
+                  position: 'relative',
+                  borderRadius: '4px'
                 }}
               >
-                {/* Animated gradient overlay */}
                 <motion.div
                   animate={{ backgroundPosition: ['0% 0%', '100% 0%'] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
@@ -96,7 +83,8 @@ const TimeTrackerBars = () => {
                     position: 'absolute',
                     width: '100%',
                     top: 0,
-                    left: 0
+                    left: 0,
+                    borderRadius: '4px'
                   }}
                 />
               </motion.div>
@@ -105,12 +93,12 @@ const TimeTrackerBars = () => {
             {/* Percentage label */}
             <div
               style={{
-                marginTop: '8px',
+                marginTop: '6px',
                 textAlign: 'right',
-                fontFamily: 'VT323',
-                fontSize: '14px',
-                color: tracker.color,
-                fontWeight: 'bold'
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                color: tracker.color
               }}
             >
               {Math.round(tracker.progress)}%
