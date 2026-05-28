@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { auth as authAPI } from '../lib/api'
+import { DEMO_USER } from '../utils/demoData'
 
 export const useAuthStore = create(
   persist(
@@ -11,6 +12,7 @@ export const useAuthStore = create(
       isLoading: false,
       error: null,
       isAuthenticated: false,
+      isDemo: false,
 
       setUser: (user) => set({ user, error: null, isAuthenticated: !!user }),
       setToken: (token) => set({ token }),
@@ -19,12 +21,28 @@ export const useAuthStore = create(
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
 
+      enterDemoMode: () => {
+        set({
+          user: DEMO_USER,
+          token: 'demo-token',
+          isAuthenticated: true,
+          isDemo: true,
+          isLoading: false,
+          error: null,
+          googleConnected: false
+        })
+      },
+
+      exitDemoMode: () => {
+        set({ user: null, token: null, isAuthenticated: false, isDemo: false, error: null })
+      },
+
       loginWithEmail: async (email, password) => {
         set({ isLoading: true, error: null })
         try {
           const response = await authAPI.login(email, password)
           const { user, token } = response.data
-          set({ user, token, isAuthenticated: true, isLoading: false, error: null })
+          set({ user, token, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
           return user
         } catch (error) {
           const message = error.response?.data?.error || 'Login failed'
@@ -38,7 +56,7 @@ export const useAuthStore = create(
         try {
           const response = await authAPI.register(userData)
           const { user, token } = response.data
-          set({ user, token, isAuthenticated: true, isLoading: false, error: null })
+          set({ user, token, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
           return user
         } catch (error) {
           const message = error.response?.data?.error || 'Registration failed'
@@ -48,8 +66,9 @@ export const useAuthStore = create(
       },
 
       logout: () => {
-        authAPI.logout().catch(() => {})
-        set({ user: null, token: null, isAuthenticated: false, googleConnected: false, error: null })
+        const { isDemo } = get()
+        if (!isDemo) authAPI.logout().catch(() => {})
+        set({ user: null, token: null, isAuthenticated: false, googleConnected: false, error: null, isDemo: false })
       }
     }),
     {

@@ -1,16 +1,20 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, Lock, AlertCircle } from 'lucide-react'
+import { Mail, Lock, AlertCircle, Sparkles } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { useAuthStore } from '../stores'
+import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore } from '../stores'
 import { validateLoginForm } from '../utils/authValidation'
+import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES } from '../utils/demoData'
 
 const Login = () => {
   const navigate = useNavigate()
-  const { loginWithEmail, isLoading, error, clearError } = useAuthStore()
+  const { loginWithEmail, isLoading, error, clearError, enterDemoMode } = useAuthStore()
+  const { setAssignments, setCourses } = useAssignmentsStore()
+  const { setEvents } = useEventStore()
+  const { setCourseGrades } = useGradesStore()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -50,12 +54,14 @@ const Login = () => {
   }
 
   const handleDemoClick = () => {
-    setFormData({
-      email: 'demo@example.com',
-      password: 'DemoPass123!'
+    enterDemoMode()
+    setCourses(DEMO_COURSES)
+    setAssignments(DEMO_ASSIGNMENTS)
+    setEvents(DEMO_EVENTS)
+    Object.entries(DEMO_GRADES).forEach(([courseId, grades]) => {
+      setCourseGrades(courseId, grades)
     })
-    setErrors({})
-    if (error) clearError()
+    navigate('/home')
   }
 
   return (
@@ -101,20 +107,29 @@ const Login = () => {
             LOGIN
           </h2>
 
-          {/* Demo Button */}
-          <Button
+          {/* Demo CTA */}
+          <button
             type="button"
-            variant="secondary"
-            size="sm"
-            className="w-full mb-4"
             onClick={handleDemoClick}
+            className="w-full mb-6 p-4 relative overflow-hidden group cursor-pointer"
             style={{
-              borderColor: '#4dff91',
-              color: '#4dff91'
+              background: 'linear-gradient(135deg, rgba(196,77,255,0.15) 0%, rgba(255,107,157,0.15) 100%)',
+              border: '2px solid rgba(196,77,255,0.6)',
+              transition: 'all 0.2s'
             }}
           >
-            📋 FILL DEMO DATA
-          </Button>
+            <div className="flex items-center justify-center gap-3">
+              <Sparkles size={20} style={{ color: '#c44dff' }} />
+              <div className="text-left">
+                <p style={{ fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#c44dff' }}>
+                  TRY DEMO — NO LOGIN NEEDED
+                </p>
+                <p style={{ fontFamily: 'VT323', fontSize: '14px', color: '#9060c0', marginTop: '2px' }}>
+                  See Shiori in action with sample data
+                </p>
+              </div>
+            </div>
+          </button>
 
           {error && (
             <div
