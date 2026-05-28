@@ -81,6 +81,21 @@ const AIChat = ({ onClose }) => {
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
+    if (user?.isDemo && messages.length === 0 && assignments.length > 0) {
+      const pending = assignments.filter(a => a.status !== 'graded')
+      const soonest = pending.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))[0]
+      setTimeout(() => {
+        setMessages([{
+          id: Date.now(),
+          role: 'assistant',
+          content: `Hey! I'm Shiori (栞). I can see you have ${pending.length} pending assignments.\n\nMost urgent: **${soonest?.title}** (${soonest?.courseName}) due ${soonest ? new Date(soonest.dueDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : 'soon'}.\n\nAsk me anything — I know your full schedule.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        }])
+      }, 600)
+    }
+  }, [user, assignments]) // eslint-disable-line
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
