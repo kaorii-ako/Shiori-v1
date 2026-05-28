@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shiori Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #10141a;
+  color: #dfe2eb;
+  font-family: 'Manrope', sans-serif;
+  width: 1200px;
+  height: 675px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ambient background */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+  animation: pulse 6s ease-in-out infinite;
+}
+.orb-1 { width: 400px; height: 400px; top: -100px; left: -80px; background: radial-gradient(circle, rgba(82,141,255,0.10), transparent 70%); }
+.orb-2 { width: 350px; height: 350px; bottom: -60px; right: -60px; background: radial-gradient(circle, rgba(196,77,255,0.09), transparent 70%); animation-delay: -3s; }
+.orb-3 { width: 250px; height: 250px; top: 40%; left: 30%; background: radial-gradient(circle, rgba(74,215,120,0.06), transparent 70%); animation-delay: -1.5s; }
+
+@keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: 0.85; } }
+
+/* Particles */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: #afc6ff;
+  opacity: 0;
+  animation: twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle { 0%,100% { opacity: 0.1; } 50% { opacity: 0.5; } }
+
+/* Main layout */
+.layout {
+  display: flex;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: linear-gradient(180deg, #14181e 0%, #10141a 100%);
+  border-right: 1px solid rgba(66,71,84,0.30);
+  padding: 20px 12px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+.logo { display: flex; align-items: center; gap: 10px; padding: 0 8px 20px; }
+.logo-icon {
+  width: 38px; height: 38px; border-radius: 8px;
+  background: linear-gradient(135deg, #afc6ff, #528dff);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #10141a; font-weight: 700; flex-shrink: 0;
+}
+.logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; }
+.logo-sub { font-size: 10px; color: #606080; font-family: 'Manrope', sans-serif; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 7px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600;
+  color: #606080; margin-bottom: 2px; cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+}
+.nav-item.active {
+  background: rgba(82,141,255,0.12);
+  border-left-color: #528dff;
+  color: #afc6ff;
+}
+.nav-icon { font-size: 15px; width: 20px; text-align: center; }
+
+/* Main content */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Demo banner */
+.demo-banner {
+  background: linear-gradient(90deg, rgba(196,77,255,0.18), rgba(255,107,157,0.15));
+  border-bottom: 1px solid rgba(196,77,255,0.35);
+  padding: 6px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.demo-text { font-size: 11px; color: #c44dff; font-family: 'Space Grotesk', sans-serif; }
+.demo-exit { font-size: 8px; color: #ff6b9d; font-family: 'Press Start 2P', monospace; }
+
+/* Content area */
+.content { padding: 20px; flex: 1; overflow: hidden; }
+
+/* Page header */
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+.page-title { font-family: 'Press Start 2P', monospace; font-size: 13px; color: #dfe2eb; line-height: 1.4; }
+.page-sub { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: #606080; margin-top: 4px; }
+
+/* Sync badge */
+.sync-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 20px;
+  background: rgba(196,77,255,0.12);
+  border: 1px solid rgba(196,77,255,0.3);
+  font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: #e5b5ff;
+  font-weight: 600;
+  animation: syncPulse 2s ease-in-out infinite;
+}
+@keyframes syncPulse { 0%,100% { box-shadow: 0 0 0 rgba(196,77,255,0); } 50% { box-shadow: 0 0 12px rgba(196,77,255,0.25); } }
+
+/* Stats grid */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.stat-card {
+  padding: 14px 12px; border-radius: 8px;
+  background: rgba(24,28,34,0.55);
+  border: 1px solid rgba(66,71,84,0.25);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.stat-card.visible { opacity: 1; transform: translateY(0); }
+.stat-label { font-size: 8px; color: #606080; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.06em; margin-bottom: 6px; }
+.stat-value { font-family: 'Press Start 2P', monospace; font-size: 18px; }
+
+/* Two col layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Glass card */
+.glass {
+  background: rgba(24,28,34,0.55);
+  border: 1px solid rgba(66,71,84,0.25);
+  border-radius: 10px;
+  padding: 14px;
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.glass.visible { opacity: 1; transform: translateY(0); }
+
+.section-label {
+  font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  color: #8c90a0; letter-spacing: 0.06em; margin-bottom: 10px;
+}
+
+/* Assignment rows */
+.assignment-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(66,71,84,0.12);
+  opacity: 0;
+  animation: slideIn 0.3s ease forwards;
+}
+.assignment-row:last-child { border-bottom: none; }
+@keyframes slideIn { to { opacity: 1; transform: translateX(0); } from { opacity: 0; transform: translateX(-8px); } }
+
+.assignment-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-right: 8px; }
+.assignment-title { font-size: 11px; color: #dfe2eb; font-family: 'Manrope', sans-serif; }
+.assignment-due { font-size: 9px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+
+/* AI insight */
+.ai-insight {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 10px;
+  background: rgba(82,141,255,0.08);
+  border: 1px solid rgba(82,141,255,0.2);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.ai-icon {
+  width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0;
+  background: linear-gradient(45deg, #afc6ff, #528dff);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.ai-label { font-size: 9px; font-weight: 700; color: #afc6ff; font-family: 'Space Grotesk', sans-serif; margin-bottom: 3px; letter-spacing: 0.06em; }
+.ai-text { font-size: 11px; color: #8c90a0; font-family: 'Manrope', sans-serif; line-height: 1.5; }
+
+/* Pomodoro widget */
+.pomodoro {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  width: 190px;
+  background: rgba(16,20,26,0.95);
+  border: 1px solid rgba(196,77,255,0.35);
+  border-radius: 14px;
+  padding: 12px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 30px rgba(196,77,255,0.15);
+  opacity: 0;
+  transform: scale(0.88) translateY(12px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 10;
+}
+.pomodoro.visible { opacity: 1; transform: scale(1) translateY(0); }
+
+.pomo-header { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.pomo-dot { width: 8px; height: 8px; border-radius: 50%; background: #c44dff; animation: pomoBlink 1.2s ease-in-out infinite; }
+@keyframes pomoBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.pomo-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: #e5b5ff; }
+
+.pomo-ring-wrap { display: flex; align-items: center; gap: 12px; }
+.pomo-time { font-family: 'Press Start 2P', monospace; font-size: 18px; color: #dfe2eb; }
+.pomo-sub { font-size: 9px; color: #606080; font-family: 'Manrope', sans-serif; margin-top: 3px; }
+
+.pomo-ring { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
+.pomo-ring svg { transform: rotate(-90deg); }
+.pomo-ring-track { fill: none; stroke: rgba(66,71,84,0.35); stroke-width: 4; }
+.pomo-ring-fill {
+  fill: none; stroke: #c44dff; stroke-width: 4; stroke-linecap: round;
+  stroke-dasharray: 138.2;
+  stroke-dashoffset: 0;
+  filter: drop-shadow(0 0 5px rgba(196,77,255,0.6));
+  animation: ringCountdown 1500s linear forwards;
+}
+@keyframes ringCountdown { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 138.2; } }
+
+/* Chat bubble (bottom right) */
+.chat-bubble {
+  position: absolute; bottom: 20px; right: 20px; z-index: 11;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #afc6ff, #528dff);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer;
+  box-shadow: 0 0 20px rgba(82,141,255,0.30);
+  animation: floatChat 3s ease-in-out infinite;
+}
+@keyframes floatChat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* Typewriter cursor */
+.typewriter { border-right: 2px solid #afc6ff; animation: blink 0.7s step-end infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* Watermark */
+.watermark {
+  position: absolute; bottom: 14px; left: 20px; z-index: 10;
+  font-family: monospace; font-size: 10px; color: rgba(255,255,255,0.2);
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<!-- Ambient -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Particles -->
+<script>
+for (let i = 0; i < 30; i++) {
+  const p = document.createElement('div')
+  p.className = 'particle'
+  p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2.5+1}px;height:${p.style.width};animation-delay:${Math.random()*5}s;animation-duration:${3+Math.random()*4}s`
+  document.body.appendChild(p)
+}
+</script>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">栞</div>
+      <div>
+        <div class="logo-text">SHIORI</div>
+        <div class="logo-sub">AI Study Buddy</div>
+      </div>
+    </div>
+    <div class="nav-item active"><span class="nav-icon">⌂</span> Home</div>
+    <div class="nav-item"><span class="nav-icon">📋</span> Assignments</div>
+    <div class="nav-item"><span class="nav-icon">📅</span> Calendar</div>
+    <div class="nav-item"><span class="nav-icon">🎯</span> Grades</div>
+    <div class="nav-item"><span class="nav-icon">📊</span> Study Plans</div>
+    <div class="nav-item"><span class="nav-icon">⚙</span> Settings</div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="demo-banner">
+      <span class="demo-text">✦ DEMO MODE — Explore freely with sample data</span>
+      <span class="demo-exit">EXIT DEMO</span>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">GOOD EVENING, ALEX</div>
+          <div class="page-sub">3 assignments due this week · Calculus midterm in 10 days</div>
+        </div>
+        <div class="sync-badge">✦ SYNCED WITH GOOGLE</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card" id="s1"><div class="stat-label">DUE TODAY</div><div class="stat-value" style="color:#ffaa4d">2</div></div>
+        <div class="stat-card" id="s2"><div class="stat-label">THIS WEEK</div><div class="stat-value" style="color:#c44dff">5</div></div>
+        <div class="stat-card" id="s3"><div class="stat-label">COURSES</div><div class="stat-value" style="color:#4d9fff">4</div></div>
+        <div class="stat-card" id="s4"><div class="stat-label">AVG GRADE</div><div class="stat-value" style="color:#4dff91">87%</div></div>
+      </div>
+
+      <!-- Two col -->
+      <div class="two-col">
+        <!-- Assignments -->
+        <div class="glass" id="assignCard">
+          <div class="section-label">UPCOMING</div>
+          <div class="assignment-row" style="animation-delay:0s">
+            <div style="display:flex;align-items:center;flex:1">
+              <div class="assignment-dot" style="background:#ff6b9d"></div>
+              <div class="assignment-title">Integration by Parts Problem Set</div>
+            </div>
+            <div class="assignment-due" style="color:#ff6b9d">Tomorrow</div>
+          </div>
+          <div class="assignment-row" style="animation-delay:0.1s">
+            <div style="display:flex;align-items:center;flex:1">
+              <div class="assignment-dot" style="background:#c44dff"></div>
+              <div class="assignment-title">Binary Search Tree Implementation</div>
+            </div>
+            <div class="assignment-due" style="color:#c44dff">Thu</div>
+          </div>
+          <div class="assignment-row" style="animation-delay:0.2s">
+            <div style="display:flex;align-items:center;flex:1">
+              <div class="assignment-dot" style="background:#4daaff"></div>
+              <div class="assignment-title">Essay: Causes of WWI</div>
+            </div>
+            <div class="assignment-due" style="color:#4daaff">Fri</div>
+          </div>
+          <div class="assignment-row" style="animation-delay:0.3s">
+            <div style="display:flex;align-items:center;flex:1">
+              <div class="assignment-dot" style="background:#4dff91"></div>
+              <div class="assignment-title">Newton's Laws Lab Report</div>
+            </div>
+            <div class="assignment-due" style="color:#4dff91">Sun</div>
+          </div>
+        </div>
+
+        <!-- AI -->
+        <div class="glass" id="aiCard">
+          <div class="section-label">SHIORI AI</div>
+          <div class="ai-insight">
+            <div class="ai-icon">✦</div>
+            <div>
+              <div class="ai-label">AI INSIGHT</div>
+              <div class="ai-text" id="aiTyping"></div>
+            </div>
+          </div>
+          <div style="margin-top:8px;padding:8px 10px;border-radius:7px;background:linear-gradient(45deg,rgba(196,77,255,0.10),rgba(82,141,255,0.06));border:1px solid rgba(196,77,255,0.18);font-family:'Space Grotesk',sans-serif;font-size:10px;color:#e5b5ff;font-weight:600;cursor:pointer;">
+            ⚡ GENERATE STUDY PLAN →
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pomodoro widget -->
+<div class="pomodoro" id="pomodoro">
+  <div class="pomo-header">
+    <div class="pomo-dot"></div>
+    <div class="pomo-label">FOCUS</div>
+  </div>
+  <div class="pomo-ring-wrap">
+    <div class="pomo-ring">
+      <svg width="52" height="52" viewBox="0 0 52 52">
+        <circle class="pomo-ring-track" cx="26" cy="26" r="22"/>
+        <circle class="pomo-ring-fill" cx="26" cy="26" r="22"/>
+      </svg>
+    </div>
+    <div>
+      <div class="pomo-time" id="pomoTime">24:38</div>
+      <div class="pomo-sub">Integration by Parts</div>
+    </div>
+  </div>
+</div>
+
+<!-- Chat FAB -->
+<div class="chat-bubble">✦</div>
+
+<div class="watermark">shiori-v1.vercel.app</div>
+
+<script>
+// Stagger stat card animations
+const statCards = document.querySelectorAll('.stat-card')
+statCards.forEach((c, i) => setTimeout(() => c.classList.add('visible'), 200 + i * 120))
+
+// Glass cards
+setTimeout(() => document.getElementById('assignCard').classList.add('visible'), 700)
+setTimeout(() => document.getElementById('aiCard').classList.add('visible'), 900)
+
+// Pomodoro
+setTimeout(() => document.getElementById('pomodoro').classList.add('visible'), 1400)
+
+// Pomodoro countdown
+let seconds = 24 * 60 + 38
+const pomoEl = document.getElementById('pomoTime')
+setInterval(() => {
+  seconds = Math.max(0, seconds - 1)
+  const m = String(Math.floor(seconds / 60)).padStart(2, '0')
+  const s = String(seconds % 60).padStart(2, '0')
+  pomoEl.textContent = `${m}:${s}`
+}, 1000)
+
+// AI typewriter
+const aiText = "You have 2 tasks due tomorrow. I'd start with the Integration by Parts set — it's worth 30% of your Calculus grade. Block 90 min tonight."
+const el = document.getElementById('aiTyping')
+let i = 0
+function type() {
+  if (i < aiText.length) {
+    el.textContent = aiText.slice(0, ++i)
+    setTimeout(type, 28 + Math.random() * 18)
+  }
+}
+setTimeout(type, 1200)
+</script>
+</body>
+</html>
