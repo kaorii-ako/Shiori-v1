@@ -32,11 +32,11 @@ No more manually tracking due dates across five different tabs. Shiori handles i
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Google Classroom  +  Gmail  +  Calendar                 │
-│         ↓                ↓           ↓                   │
-│              Shiori AI (Gemini)                          │
-│                     ↓                                    │
-│    Personalized study plan · AI chat · Grade tracker     │
+│  Google Classroom  +  Gmail  +  Calendar                │
+│         ↓                ↓           ↓                  │
+│              Shiori AI (Gemini)                         │
+│                     ↓                                   │
+│    Personalized study plan · AI chat · Grade tracker    │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -51,11 +51,14 @@ No more manually tracking due dates across five different tabs. Shiori handles i
 | 🤖 | **AI Study Plans** | Gemini generates a real day-by-day schedule based on your actual deadlines |
 | 📚 | **Google Classroom Sync** | Pulls in assignments and due dates the moment they're posted |
 | 📧 | **Gmail Intelligence** | Scans your inbox and surfaces anything with a deadline |
-| 📅 | **Calendar Integration** | Slots study blocks into your schedule automatically |
-| 📊 | **Grade Calculator** | Track grades per course with weighted category support |
-| 💬 | **AI Chat** | Ask Shiori anything about your schedule — it knows your data |
+| 📅 | **Calendar Integration** | Slots study blocks into your schedule automatically — assignments show as deadline dots |
+| 📊 | **Live GPA Dashboard** | Track per-course grades, letter grades, and cumulative GPA in real time |
+| 🎯 | **Final Exam Predictor** | "What score do I need on the final to get an A?" — Shiori calculates it instantly |
+| ⏱️ | **Pomodoro Timer** | Focus sessions tied to specific assignments, with session history |
+| 💬 | **AI Chat** | Ask Shiori anything about your schedule — it knows your actual data |
+| 🔥 | **Study Streak** | Track consecutive study days to stay motivated |
 | 🎨 | **Midnight Study Room UI** | Dark glassmorphism aesthetic built for late-night studying |
-| 🔓 | **Demo Mode** | Try everything with sample data — zero setup required |
+| 🔓 | **Demo Mode** | Try everything with sample data — zero setup, runs in your browser |
 
 ---
 
@@ -159,12 +162,14 @@ Shiori-v1/
 ## 🗺 Roadmap
 
 - [x] **v1.0** — Core app: Classroom sync, Gmail, Calendar, AI plans, Grade tracker
+- [x] **v1.0** — Core app: Classroom sync, Gmail, Calendar, AI plans, Grade tracker
 - [x] **v1.1** — Demo mode (try Shiori without any setup)
 - [x] **v1.1** — Public landing page + Pro pricing
-- [ ] **v1.2** — Electron desktop app wrapper
-- [ ] **v1.3** — Pomodoro timer integration
+- [x] **v1.2** — Pomodoro timer, study streak, live GPA dashboard
+- [x] **v1.3** — Final exam predictor, calendar assignment overlay
 - [ ] **v1.4** — PDF export + iCal sync
-- [ ] **v2.0** — Shiori Cloud (hosted, no setup needed)
+- [ ] **v1.5** — Electron desktop app wrapper
+- [ ] **v2.0** — Shiori Cloud (hosted, zero setup)
 - [ ] **v2.1** — Mobile app (React Native)
 - [ ] Browser extension for quick task capture
 
