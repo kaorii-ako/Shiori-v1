@@ -14,7 +14,11 @@
 
 <br/>
 
-**[🚀 Live Demo →](https://shiori-v1.vercel.app)** &nbsp;|&nbsp; **[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;|&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)**
+**[🚀 Live Demo →](https://shiori-v1.vercel.app)**
+
+<br/>
+
+![Shiori App Preview](demo/preview.png) &nbsp;|&nbsp; **[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;|&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)**
 
 </div>
 
