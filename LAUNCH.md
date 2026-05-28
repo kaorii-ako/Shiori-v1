@@ -171,3 +171,51 @@ Live: shiori-v1.vercel.app | GitHub: github.com/kaorii-ako/Shiori-v1
 - **Dev.to** — write a blog post: "How I built an AI study planner with Google APIs"
 - **Thai developer communities** (Facebook groups: "JavaScript Thailand", "React Thailand")
 - **Student Discord servers** — find servers for your school or region
+
+---
+
+## Awesome List PRs — highest ROI for GitHub stars
+
+Each merged PR into an awesome list can drive 100-500 organic stars. Submit these in order.
+
+### 1. awesome-xyz/awesome-productivity (highest priority)
+PR to: https://github.com/awesome-xyz/awesome-productivity
+
+Add under **AI Assistants** section:
+```
+- [Shiori](https://shiori-v1.vercel.app) – AI study companion that syncs Google Classroom, Gmail, and Calendar to generate personalized day-by-day study plans. Open source, MIT. ([GitHub](https://github.com/kaorii-ako/Shiori-v1))
+```
+
+Also add under **Pomodoro & Timers** section:
+```
+- [Shiori](https://shiori-v1.vercel.app) – Student productivity app with integrated Pomodoro timer that tracks which assignment you're currently studying. ([GitHub](https://github.com/kaorii-ako/Shiori-v1))
+```
+
+### 2. yantoumu/awesome-ai-tools-4
+PR to: https://github.com/yantoumu/awesome-ai-tools-4
+
+Add under **Educational AI Tools** → Students subsection:
+```
+| [Shiori](https://github.com/kaorii-ako/Shiori-v1) | Open-source AI study companion — syncs Google Classroom, Gmail & Calendar, generates personalized study plans via Gemini AI. Demo at shiori-v1.vercel.app | 🆓 |
+```
+
+### 3. balavenkatesh3322/awesome-AI-toolkit
+PR to: https://github.com/balavenkatesh3322/awesome-AI-toolkit
+
+Add under educational/productivity tools:
+```
+| Shiori | AI-powered student study planner with Google Classroom sync, Gemini AI study plans, and Pomodoro timer | https://github.com/kaorii-ako/Shiori-v1 | — |
+```
+
+### 4. Add GitHub topics (do this NOW — 2 minutes)
+Go to: https://github.com/kaorii-ako/Shiori-v1
+Click the ⚙️ gear next to "About" → add these topics:
+```
+google-classroom  ai-study-planner  gemini  react  student  open-source  productivity  study-planner  pomodoro  edtech
+```
+Topics are how GitHub's Explore page surfaces repos. This alone can drive 20-50 stars/week.
+
+### 5. classroomio/classroomio community
+Star them + open a Discussion: "Built Shiori — an open-source student study companion that complements ClassroomIO"
+Link: https://github.com/classroomio/classroomio/discussions
+They have 1500+ stars and an active community of educators and students.

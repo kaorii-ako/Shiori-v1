@@ -342,13 +342,12 @@ const Landing = () => {
             style={{
               fontFamily: "'Manrope', sans-serif",
               fontSize: 18, color: '#8c90a0',
-              maxWidth: 560, margin: '24px auto 0',
+              maxWidth: 520, margin: '24px auto 0',
               lineHeight: 1.7,
             }}
           >
-            Shiori connects to your Google Classroom, Gmail, and Calendar —
-            then builds a personalized AI study plan so you can stop organizing
-            and start learning.
+            Connects to Google Classroom, Gmail, and Calendar.
+            Gemini AI builds your study plan. You just open the app.
           </motion.p>
 
           {/* CTAs */}
