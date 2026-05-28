@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Landing from './pages/Landing'
 import Pro from './pages/Pro'
 import ProSuccess from './pages/ProSuccess'
+import AuthCallback from './pages/AuthCallback'
 import Home from './pages/Home'
 import Assignments from './pages/Assignments'
 import Calendar from './pages/Calendar'
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/pro" element={<Pro />} />
         <Route path="/pro/success" element={<ProSuccess />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
