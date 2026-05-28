@@ -93,12 +93,13 @@ const StudyPlans = () => {
     setLoading(true)
     try {
       const response = await ai.generateStudyPlan(assignments, { daysPerWeek: 5, hoursPerDay: 3 })
-      if (response.data?.sessions?.length > 0) {
-        setSessions(response.data.sessions)
+      const data = response.data
+      if (data?.sessions?.length > 0) {
+        setSessions(data.sessions)
       } else {
         setSessions(buildSessionsFromAssignments(assignments))
       }
-      if (response.data?.insight) setAiInsight(response.data.insight)
+      if (data?.insight) setAiInsight(data.insight)
     } catch {
       setSessions(buildSessionsFromAssignments(assignments))
     } finally {
