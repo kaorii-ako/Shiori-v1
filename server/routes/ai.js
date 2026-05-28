@@ -2,8 +2,35 @@ import express from 'express'
 
 const router = express.Router()
 
+let geminiModel = null
+
+async function getGemini() {
+  if (geminiModel) return geminiModel
+  const key = process.env.GEMINI_API_KEY
+  if (!key) return null
+  try {
+    const { GoogleGenerativeAI } = await import('@google/generative-ai')
+    const genAI = new GoogleGenerativeAI(key)
+    geminiModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    return geminiModel
+  } catch {
+    return null
+  }
+}
+
+async function callGemini(model, systemContext, userMessage) {
+  const chat = model.startChat({
+    history: [
+      { role: 'user', parts: [{ text: systemContext }] },
+      { role: 'model', parts: [{ text: 'Understood. I am Shiori, your AI study companion. I will help you stay on top of your academics.' }] }
+    ]
+  })
+  const result = await chat.sendMessage(userMessage)
+  return result.response.text()
+}
+
 // AI Chat endpoint
-router.post('/chat', (req, res) => {
+router.post('/chat', async (req, res) => {
   try {
     const { message, context } = req.body
 
@@ -11,11 +38,6 @@ router.post('/chat', (req, res) => {
       return res.status(400).json({ error: 'Message is required' })
     }
 
-    // Simple rule-based responses for demo
-    // In production, this would call Google Gemini or OpenAI
-    const lowerMessage = message.toLowerCase()
-
-    // Extract context info for smarter responses
     const assignments = context?.assignments || []
     const courses = context?.courses || []
     const pendingAssignments = assignments.filter(a => a.status !== 'graded')
@@ -23,76 +45,91 @@ router.post('/chat', (req, res) => {
       .filter(a => a.dueDate)
       .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
       .slice(0, 5)
-
     const courseNames = [...new Set(assignments.map(a => a.courseName).filter(Boolean))]
     const subjectsText = courseNames.length > 0 ? courseNames.join(', ') : 'your courses'
 
-    let response = "I'm here to help! I can assist with your study planning, assignment questions, and time management. What would you like to know?"
+    const model = await getGemini()
+    if (model) {
+      const systemContext = `You are Shiori (栞), a warm and knowledgeable AI study companion for students. You have access to the student's current academic data:
+- Total assignments: ${assignments.length}
+- Pending assignments: ${pendingAssignments.length}
+- Subjects: ${subjectsText}
+- Upcoming deadlines: ${upcomingDeadlines.map(a => `"${a.title}" (${a.courseName || 'Unknown'}) due ${new Date(a.dueDate).toLocaleDateString()}`).join('; ') || 'none'}
+
+Keep responses concise (2-4 sentences), encouraging, and actionable. You can suggest generating a study plan, analyzing grades, or reviewing deadlines. Use the student's actual data in your responses.`
+
+      try {
+        const text = await callGemini(model, systemContext, message)
+        const lowerMsg = message.toLowerCase()
+        const wantsStudyPlan = (lowerMsg.includes('generate') || lowerMsg.includes('create')) &&
+          (lowerMsg.includes('study') || lowerMsg.includes('plan') || lowerMsg.includes('schedule'))
+        return res.json({
+          message: text,
+          ...(wantsStudyPlan && pendingAssignments.length > 0 ? { shouldGeneratePlan: true } : {})
+        })
+      } catch (geminiErr) {
+        console.warn('Gemini error, using fallback:', geminiErr.message)
+      }
+    }
+
+    // Fallback rule-based responses when Gemini is unavailable
+    const lowerMessage = message.toLowerCase()
+    const gradedAssignments = assignments.filter(a => a.status === 'graded' && a.grade)
+    let response = "I'm here to help you study smarter! I can analyze your assignments, create personalized study plans, and track your deadlines. What would you like to work on?"
 
     if (lowerMessage.includes('assignment') || lowerMessage.includes('homework')) {
       if (upcomingDeadlines.length > 0) {
-        const deadlinesList = upcomingDeadlines.map(a =>
+        const list = upcomingDeadlines.map(a =>
           `• ${a.title} (${a.courseName || 'Unknown'}): ${new Date(a.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
         ).join('\n')
-        response = `I can see you have ${pendingAssignments.length} pending assignments. Here are your upcoming deadlines:\n${deadlinesList}\n\nWould you like me to generate a personalized study plan based on these?`
+        response = `You have ${pendingAssignments.length} pending assignments. Upcoming deadlines:\n${list}\n\nWant me to generate a study plan around these?`
       } else {
-        response = "You don't have any pending assignments right now. Great job staying on top of your work! Would you like me to help you prepare for upcoming topics or create a study schedule?"
+        response = "No pending assignments! Great work staying ahead. Want me to help you prepare for upcoming topics?"
       }
-    } else if (lowerMessage.includes('study') || lowerMessage.includes('plan')) {
+    } else if (lowerMessage.includes('study') || lowerMessage.includes('plan') || lowerMessage.includes('schedule')) {
       if (pendingAssignments.length > 0) {
-        response = `I can create a personalized study plan for you based on your ${pendingAssignments.length} pending assignments across ${subjectsText}. Just say "yes" and I'll generate a schedule that optimizes your study time based on your upcoming deadlines!`
+        response = `I'll create a personalized study plan for your ${pendingAssignments.length} pending assignments across ${subjectsText}. Say "generate study plan" and I'll schedule optimal sessions based on your deadlines!`
       } else {
-        response = "I don't see any pending assignments in your data. Add some tasks first, or let me know what subjects you'd like to study and I'll create a plan for you!"
+        response = "No pending assignments right now! Add some tasks or let me know what subjects you're studying and I'll build a plan."
       }
     } else if (lowerMessage.includes('grade') || lowerMessage.includes('gpa')) {
-      const gradedAssignments = assignments.filter(a => a.status === 'graded' && a.grade)
       if (gradedAssignments.length > 0) {
-        const avgGrade = gradedAssignments.reduce((sum, a) =>
-          sum + (parseFloat(a.grade.percentage) || 0), 0) / gradedAssignments.length
-        response = `I can see you have ${gradedAssignments.length} graded assignments. Your average score so far is ${avgGrade.toFixed(1)}%. Would you like me to analyze your grades by subject or calculate what you need on upcoming assignments to reach a target grade?`
+        const avg = gradedAssignments.reduce((s, a) => s + (parseFloat(a.grade?.percentage) || 0), 0) / gradedAssignments.length
+        response = `You have ${gradedAssignments.length} graded assignments with an average of ${avg.toFixed(1)}%. Want me to break it down by subject or calculate what you need to hit your target grade?`
       } else {
-        response = "I don't have any graded assignments in your data yet. Keep working on your tasks and I'll help you track your progress and calculate your grades!"
+        response = "No graded assignments yet. Keep working and I'll help you track your progress!"
       }
     } else if (lowerMessage.includes('deadline') || lowerMessage.includes('due')) {
       if (upcomingDeadlines.length > 0) {
-        const deadlinesList = upcomingDeadlines.map(a =>
-          `• ${a.title} - ${a.courseName || 'Unknown'} - Due: ${new Date(a.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`
+        const list = upcomingDeadlines.map(a =>
+          `• ${a.title} - ${a.courseName || 'Unknown'} — Due: ${new Date(a.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`
         ).join('\n')
-        response = `Based on your data, here are your upcoming deadlines:\n${deadlinesList}\n\nI can help you create a study schedule to complete everything on time. Just ask!`
+        response = `Here are your upcoming deadlines:\n${list}\n\nI can build a study schedule to help you hit everything on time!`
       } else {
-        response = "I don't see any upcoming deadlines in your data. You're all caught up! Would you like to add new assignments or prepare for upcoming course material?"
+        response = "No upcoming deadlines — you're all caught up! Want to add new assignments or study proactively?"
       }
-    } else if (lowerMessage.includes('calendar') || lowerMessage.includes('schedule')) {
-      response = `I can help you manage your calendar and study schedule! I see you're tracking ${assignments.length} assignments across ${courseNames.length || 'multiple'} subjects. I can create study blocks around your deadlines and help you manage your time effectively.`
     } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
       const status = pendingAssignments.length > 0
         ? `You have ${pendingAssignments.length} tasks pending.`
-        : "You're all caught up with your tasks!"
-      response = `Hey there! I'm Shiori, your AI study companion. ${status} I'm connected to your data to help you stay on top of your work. What can I help you with today?`
+        : "You're all caught up!"
+      response = `Hey! I'm Shiori, your AI study companion. ${status} How can I help you today?`
     } else if (lowerMessage.includes('help')) {
-      response = `I can help you with:\n• Analyzing your ${assignments.length} assignments across ${subjectsText}\n• Creating personalized study plans based on your deadlines\n• Calculating and tracking your grades\n• Managing your study schedule\n• Answering questions about your courses\n\nJust ask me anything or say "generate study plan" to get started!`
+      response = `I can help with:\n• Analyzing your ${assignments.length} assignments across ${subjectsText}\n• Creating personalized study plans\n• Tracking grades and GPA\n• Managing deadlines\n\nJust ask, or say "generate study plan" to get started!`
     }
 
-    // Check if user wants to generate a study plan
     const wantsStudyPlan = lowerMessage.includes('generate') && (
-      lowerMessage.includes('study') || lowerMessage.includes('plan') ||
-      lowerMessage.includes('schedule') || lowerMessage === 'yes' ||
-      lowerMessage.includes('yes') && lowerMessage.includes('plan')
+      lowerMessage.includes('study') || lowerMessage.includes('plan') || lowerMessage === 'yes'
     )
 
     if (wantsStudyPlan && pendingAssignments.length > 0) {
-      response = {
+      return res.json({
         message: response,
         shouldGeneratePlan: true,
-        planContext: {
-          assignments: pendingAssignments,
-          courses: courseNames,
-          subjects: subjectsText
-        }
-      }
+        planContext: { assignments: pendingAssignments, courses: courseNames, subjects: subjectsText }
+      })
     }
 
-    res.json(typeof response === 'string' ? { message: response } : response)
+    res.json({ message: response })
   } catch (error) {
     console.error('AI chat error:', error)
     res.status(500).json({ error: 'Failed to process message' })
@@ -100,42 +137,49 @@ router.post('/chat', (req, res) => {
 })
 
 // Generate AI study plan
-router.post('/study-plan', (req, res) => {
+router.post('/study-plan', async (req, res) => {
   try {
     const { assignments, preferences } = req.body
 
     const daysPerWeek = preferences?.daysPerWeek || 5
     const hoursPerDay = preferences?.hoursPerDay || 3
-
-    // Generate a simple study plan based on assignments
-    const sessions = []
     const today = new Date()
 
-    // Get pending assignments sorted by due date
-    const pendingAssignments = (assignments || [])
-      .filter(a => a.status !== 'graded')
+    const pending = (assignments || [])
+      .filter(a => a.status !== 'graded' && a.dueDate)
       .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
 
-    // Create study sessions for each assignment
-    pendingAssignments.forEach((assignment, index) => {
-      const daysUntilDue = Math.ceil(
-        (new Date(assignment.dueDate) - today) / (24 * 60 * 60 * 1000)
-      )
+    // Try Gemini for smarter study plan advice
+    const model = await getGemini()
+    let aiInsight = null
+    if (model && pending.length > 0) {
+      try {
+        const prompt = `A student has these upcoming assignments: ${pending.map(a =>
+          `"${a.title}" (${a.courseName || 'Unknown'}) due ${new Date(a.dueDate).toLocaleDateString()}`
+        ).join(', ')}. They study ${daysPerWeek} days/week, ${hoursPerDay} hours/day. Give ONE specific, actionable study tip in 1-2 sentences.`
+        aiInsight = await callGemini(model, 'You are a helpful study advisor. Give concise, practical advice.', prompt)
+      } catch (e) {
+        // ignore gemini errors for study plan insight
+      }
+    }
 
-      // Create 2-3 study sessions per assignment
-      const numSessions = Math.min(Math.ceil(daysUntilDue / 2), 3)
+    // Build sessions
+    const sessions = []
+    pending.forEach((assignment, index) => {
+      const daysUntilDue = Math.ceil((new Date(assignment.dueDate) - today) / (1000 * 60 * 60 * 24))
+      const numSessions = Math.min(Math.max(1, Math.ceil(daysUntilDue / 2)), 3)
 
       for (let i = 0; i < numSessions; i++) {
         const sessionDate = new Date(today)
-        sessionDate.setDate(today.getDate() + Math.floor((index * 2) + i))
-
+        sessionDate.setDate(today.getDate() + (index * 2) + i)
         if (sessionDate <= new Date(assignment.dueDate)) {
           sessions.push({
             id: `session-${assignment.id}-${i}`,
             assignmentId: assignment.id,
-            title: `Study: ${assignment.courseName || 'Review'}`,
+            title: `Study: ${assignment.title || assignment.courseName || 'Review'}`,
+            subject: assignment.courseName || 'General',
             date: sessionDate.toISOString(),
-            duration: 45 + Math.random() * 45, // 45-90 minutes
+            duration: 45 + Math.round(Math.random() * 45),
             completed: false,
             aiGenerated: true
           })
@@ -143,15 +187,17 @@ router.post('/study-plan', (req, res) => {
       }
     })
 
-    const plan = {
-      generated: new Date().toISOString(),
-      daysPerWeek,
-      hoursPerDay,
-      totalSessions: sessions.length,
-      estimatedHours: sessions.reduce((sum, s) => sum + s.duration, 0) / 60
-    }
-
-    res.json({ plan, sessions })
+    res.json({
+      plan: {
+        generated: new Date().toISOString(),
+        daysPerWeek,
+        hoursPerDay,
+        totalSessions: sessions.length,
+        estimatedHours: +(sessions.reduce((s, x) => s + x.duration, 0) / 60).toFixed(1),
+        aiInsight
+      },
+      sessions
+    })
   } catch (error) {
     console.error('Study plan generation error:', error)
     res.status(500).json({ error: 'Failed to generate study plan' })

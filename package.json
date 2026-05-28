@@ -18,10 +18,14 @@
     "productivity",
     "google-classroom",
     "study-planner",
-    "electron"
+    "ai",
+    "gemini",
+    "student",
+    "react",
+    "express"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "kaorii-ako",
+  "license": "MIT",
   "devDependencies": {
     "concurrently": "^9.1.2"
   },
