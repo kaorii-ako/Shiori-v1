@@ -1,79 +1,104 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import {
   ChevronLeft,
   ChevronRight,
   Plus,
   Clock,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  ClipboardList,
+  AlertTriangle,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
-import Badge from '../components/Badge'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import Input from '../components/Input'
-import { useCalendarStore } from '../stores'
+import { useCalendarStore, useEventStore, useAssignmentsStore } from '../stores'
+
+const TYPE_COLORS = {
+  exam: '#ff4d6a',
+  deadline: '#ff6b9d',
+  academic: '#afc6ff',
+  study: '#c44dff',
+  personal: '#4daaff',
+  class: '#4dff91',
+  assignment: '#ffd6a0',
+}
 
 const Calendar = () => {
-  const { events, addEvent } = useCalendarStore()
+  const { events: calEvents, addEvent } = useCalendarStore()
+  const { events: demoEvents } = useEventStore()
+  const { assignments } = useAssignmentsStore()
+
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [newEvent, setNewEvent] = useState({ title: '', start: '', end: '', type: 'personal' })
+
+  const today = new Date()
+
+  const allEvents = useMemo(() => {
+    const merged = [...calEvents, ...demoEvents]
+    const seen = new Set()
+    return merged.filter(e => {
+      if (seen.has(e.id)) return false
+      seen.add(e.id)
+      return true
+    })
+  }, [calEvents, demoEvents])
+
+  const assignmentDots = useMemo(() => {
+    const map = {}
+    assignments.forEach(a => {
+      if (!a.dueDate || a.status === 'graded' || a.status === 'completed') return
+      const key = new Date(a.dueDate).toISOString().split('T')[0]
+      if (!map[key]) map[key] = []
+      map[key].push(a)
+    })
+    return map
+  }, [assignments])
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear()
     const month = date.getMonth()
     const firstDay = new Date(year, month, 1)
     const lastDay = new Date(year, month + 1, 0)
-    const daysInMonth = lastDay.getDate()
     const startingDay = firstDay.getDay()
-
     const days = []
-
     for (let i = 0; i < startingDay; i++) {
-      const prevDate = new Date(year, month, -startingDay + i + 1)
-      days.push({ date: prevDate, currentMonth: false })
+      days.push({ date: new Date(year, month, -startingDay + i + 1), currentMonth: false })
     }
-
-    for (let i = 1; i <= daysInMonth; i++) {
+    for (let i = 1; i <= lastDay.getDate(); i++) {
       days.push({ date: new Date(year, month, i), currentMonth: true })
     }
-
     const remaining = 42 - days.length
     for (let i = 1; i <= remaining; i++) {
       days.push({ date: new Date(year, month + 1, i), currentMonth: false })
     }
-
     return days
   }
 
   const days = getDaysInMonth(currentDate)
-  const today = new Date()
 
-  const getEventsForDate = (date) => {
+  const getItemsForDate = (date) => {
     const dateStr = date.toISOString().split('T')[0]
-    return events.filter(e => {
-      const eventDate = new Date(e.start).toISOString().split('T')[0]
-      return eventDate === dateStr
+    const evts = allEvents.filter(e => {
+      const d = new Date(e.start || e.date)
+      return d.toISOString().split('T')[0] === dateStr
     })
+    const asgns = (assignmentDots[dateStr] || []).map(a => ({
+      id: a.id, title: a.title, type: 'assignment', isAssignment: true,
+      courseName: a.courseName, color: TYPE_COLORS.assignment, priority: a.priority
+    }))
+    return [...evts, ...asgns]
   }
 
-  const prevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
-  }
+  const monthYear = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 
-  const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
-  }
-
-  const goToToday = () => {
-    setCurrentDate(new Date())
-  }
+  const selectedItems = selectedDate ? getItemsForDate(selectedDate) : []
 
   const handleCreateEvent = () => {
     if (!newEvent.title || !newEvent.start) return
-
     addEvent({
       id: Date.now().toString(),
       title: newEvent.title,
@@ -82,224 +107,197 @@ const Calendar = () => {
       type: newEvent.type,
       source: 'manual'
     })
-
     setModalOpen(false)
     setNewEvent({ title: '', start: '', end: '', type: 'personal' })
   }
 
-  const monthYear = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-
-  const typeColors = {
-    class: 'bg-accent-primary',
-    personal: 'bg-accent-secondary',
-    study: 'bg-accent-tertiary'
-  }
-
-  const selectedDateEvents = selectedDate ? getEventsForDate(selectedDate) : []
-
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
-      >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-heading font-bold">Calendar</h1>
-          <p className="text-text-secondary mt-1">Manage your schedule and deadlines</p>
+          <h1 style={{ fontFamily: '"Press Start 2P"', fontSize: 16,
+            background: 'linear-gradient(135deg, #afc6ff, #e5b5ff)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            CALENDAR
+          </h1>
+          <p style={{ fontFamily: 'VT323', fontSize: 18, color: '#8c90a0', marginTop: 4 }}>
+            Deadlines, exams, and study sessions
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" onClick={goToToday}>Today</Button>
-          <Button icon={Plus} onClick={() => setModalOpen(true)}>Add Event</Button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Button variant="secondary" onClick={() => setCurrentDate(new Date())} size="sm">TODAY</Button>
+          <Button icon={Plus} onClick={() => setModalOpen(true)} size="sm">ADD EVENT</Button>
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="lg:col-span-2"
-        >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20 }}>
+        {/* Calendar grid */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <GlassCard>
-            <div className="flex items-center justify-between mb-6">
-              <button
-                onClick={prevMonth}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5" />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))}
+                style={{ padding: 8, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 6, cursor: 'pointer', color: '#dfe2eb' }}>
+                <ChevronLeft size={16} />
               </button>
-              <h2 className="font-heading font-semibold text-lg">{monthYear}</h2>
-              <button
-                onClick={nextMonth}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                <ChevronRight className="w-5 h-5" />
+              <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 12, color: '#dfe2eb' }}>{monthYear.toUpperCase()}</h2>
+              <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))}
+                style={{ padding: 8, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 6, cursor: 'pointer', color: '#dfe2eb' }}>
+                <ChevronRight size={16} />
               </button>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 mb-2">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                <div key={day} className="text-center text-text-muted text-sm py-2">
-                  {day}
-                </div>
+            {/* Day headers */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 8 }}>
+              {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(d => (
+                <div key={d} style={{ textAlign: 'center', fontFamily: '"Press Start 2P"', fontSize: 7,
+                  color: '#424754', padding: '4px 0' }}>{d}</div>
               ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-1">
-              {days.map(({ date, currentMonth }, index) => {
+            {/* Day cells */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+              {days.map(({ date, currentMonth }, i) => {
                 const isToday = date.toDateString() === today.toDateString()
                 const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString()
-                const dateEvents = getEventsForDate(date)
+                const items = getItemsForDate(date)
+                const hasExam = items.some(e => e.type === 'exam')
+                const hasDeadline = items.some(e => e.isAssignment)
 
                 return (
-                  <motion.button
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.9 }}
+                  <motion.button key={i}
+                    initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.01 }}
+                    transition={{ delay: i * 0.005 }}
                     onClick={() => setSelectedDate(date)}
-                    className={`
-                      p-2 rounded-xl text-sm transition-all min-h-[70px] relative
-                      ${currentMonth ? 'text-text-primary' : 'text-text-muted'}
-                      ${isToday ? 'bg-accent-primary/20 ring-1 ring-accent-primary' : ''}
-                      ${isSelected ? 'bg-white/10 ring-1 ring-white/20' : 'hover:bg-white/5'}
-                    `}
-                  >
-                    <span className={`font-medium ${isToday ? 'text-accent-primary' : ''}`}>
+                    style={{
+                      minHeight: 64, padding: '6px 4px', borderRadius: 6,
+                      background: isSelected ? 'rgba(196,77,255,0.15)' : isToday ? 'rgba(82,141,255,0.12)' : 'rgba(255,255,255,0.02)',
+                      border: `1px solid ${isSelected ? 'rgba(196,77,255,0.5)' : isToday ? 'rgba(82,141,255,0.4)' : 'rgba(255,255,255,0.06)'}`,
+                      cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      opacity: currentMonth ? 1 : 0.35,
+                      boxShadow: hasExam ? '0 0 8px rgba(255,77,106,0.3)' : 'none',
+                    }}>
+                    <span style={{ fontFamily: isToday ? '"Press Start 2P"' : 'VT323',
+                      fontSize: isToday ? 10 : 18,
+                      color: isToday ? '#afc6ff' : isSelected ? '#e5b5ff' : '#dfe2eb',
+                      marginBottom: 4 }}>
                       {date.getDate()}
                     </span>
-                    <div className="mt-1 space-y-0.5">
-                      {dateEvents.slice(0, 3).map((event) => (
-                        <div
-                          key={event.id}
-                          className={`${typeColors[event.type] || typeColors.class} h-1.5 rounded-full`}
-                        />
+                    <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+                      {items.slice(0, 4).map((item, idx) => (
+                        <div key={idx} style={{
+                          width: 5, height: 5, borderRadius: '50%',
+                          background: item.type === 'exam' ? '#ff4d6a' : item.isAssignment ? '#ffd6a0' : (TYPE_COLORS[item.type] || '#afc6ff'),
+                          boxShadow: item.type === 'exam' ? '0 0 4px #ff4d6a' : 'none',
+                        }} />
                       ))}
-                      {dateEvents.length > 3 && (
-                        <p className="text-xs text-text-muted">+{dateEvents.length - 3} more</p>
+                      {items.length > 4 && (
+                        <span style={{ fontFamily: 'VT323', fontSize: 10, color: '#606080' }}>+{items.length - 4}</span>
                       )}
                     </div>
                   </motion.button>
                 )
               })}
             </div>
+
+            {/* Legend */}
+            <div style={{ display: 'flex', gap: 16, marginTop: 16, paddingTop: 14,
+              borderTop: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap' }}>
+              {[
+                { color: '#ff4d6a', label: 'Exam' },
+                { color: '#ffd6a0', label: 'Assignment due' },
+                { color: '#c44dff', label: 'Study session' },
+                { color: '#afc6ff', label: 'Academic' },
+              ].map(l => (
+                <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: l.color }} />
+                  <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080' }}>{l.label}</span>
+                </div>
+              ))}
+            </div>
           </GlassCard>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <GlassCard className="sticky top-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-heading font-semibold">
+        {/* Side panel */}
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+          <GlassCard>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#dfe2eb' }}>
                 {selectedDate
-                  ? selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
-                  : 'Select a Date'}
+                  ? selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()
+                  : 'SELECT DATE'}
               </h2>
-              <CalendarIcon className="w-5 h-5 text-text-muted" />
+              <CalendarIcon size={14} style={{ color: '#424754' }} />
             </div>
 
-            {selectedDateEvents.length > 0 ? (
-              <div className="space-y-3">
-                {selectedDateEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-                  >
-                    <div className="flex items-start gap-2">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${typeColors[event.type]}`} />
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{event.title}</p>
-                        <p className="text-xs text-text-muted flex items-center gap-1 mt-1">
-                          <Clock className="w-3 h-3" />
-                          {new Date(event.start).toLocaleTimeString('en-US', {
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
-                          {event.end && ` - ${new Date(event.end).toLocaleTimeString('en-US', {
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}`}
-                        </p>
+            {selectedItems.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {selectedItems.map(item => {
+                  const color = item.type === 'exam' ? '#ff4d6a' : item.isAssignment ? '#ffd6a0' : (TYPE_COLORS[item.type] || '#afc6ff')
+                  return (
+                    <div key={item.id} style={{ padding: '10px 12px', borderRadius: 6,
+                      background: `${color}0f`, border: `1px solid ${color}33` }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                        {item.isAssignment
+                          ? <ClipboardList size={13} style={{ color, flexShrink: 0, marginTop: 2 }} />
+                          : item.type === 'exam'
+                          ? <AlertTriangle size={13} style={{ color, flexShrink: 0, marginTop: 2 }} />
+                          : <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0, marginTop: 5 }} />
+                        }
+                        <div>
+                          <p style={{ fontFamily: 'VT323', fontSize: 17, color: '#dfe2eb', lineHeight: 1.2 }}>{item.title}</p>
+                          <p style={{ fontFamily: 'VT323', fontSize: 13, color: '#606080', marginTop: 2 }}>
+                            {item.isAssignment ? `${item.courseName} — due` : item.type}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-text-secondary text-sm">No events</p>
-                <p className="text-text-muted text-xs mt-1">Click a date to see events</p>
+              <div style={{ textAlign: 'center', padding: '32px 0', color: '#606080' }}>
+                <CalendarIcon size={28} style={{ margin: '0 auto 10px', opacity: 0.3 }} />
+                <p style={{ fontFamily: 'VT323', fontSize: 16 }}>
+                  {selectedDate ? 'Nothing scheduled' : 'Click a date'}
+                </p>
               </div>
             )}
-
-            <div className="mt-4 pt-4 border-t border-glass-border">
-              <p className="text-xs text-text-muted mb-2">Event Types</p>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-accent-primary" />
-                  <span className="text-xs">Class</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-accent-secondary" />
-                  <span className="text-xs">Personal</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-accent-tertiary" />
-                  <span className="text-xs">Study Session</span>
-                </div>
-              </div>
-            </div>
           </GlassCard>
         </motion.div>
       </div>
 
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Add Event"
-        size="md"
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Add Event" size="md"
         footer={
           <>
             <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button>
             <Button onClick={handleCreateEvent}>Create Event</Button>
           </>
-        }
-      >
-        <div className="space-y-4">
-          <Input
-            label="Event Title"
-            value={newEvent.title}
-            onChange={(e) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
-            placeholder="Study session, Assignment due..."
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Start Time"
-              type="datetime-local"
-              value={newEvent.start}
-              onChange={(e) => setNewEvent(prev => ({ ...prev, start: e.target.value }))}
-            />
-            <Input
-              label="End Time"
-              type="datetime-local"
-              value={newEvent.end}
-              onChange={(e) => setNewEvent(prev => ({ ...prev, end: e.target.value }))}
-            />
+        }>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Input label="Event Title" value={newEvent.title}
+            onChange={(e) => setNewEvent(p => ({ ...p, title: e.target.value }))}
+            placeholder="Study session, Assignment due..." />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <Input label="Start" type="datetime-local" value={newEvent.start}
+              onChange={(e) => setNewEvent(p => ({ ...p, start: e.target.value }))} />
+            <Input label="End (optional)" type="datetime-local" value={newEvent.end}
+              onChange={(e) => setNewEvent(p => ({ ...p, end: e.target.value }))} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">Event Type</label>
-            <select
-              value={newEvent.type}
-              onChange={(e) => setNewEvent(prev => ({ ...prev, type: e.target.value }))}
-              className="input-glass w-full"
-            >
+            <label style={{ display: 'block', fontFamily: '"Press Start 2P"', fontSize: 8, color: '#8c90a0', marginBottom: 8 }}>
+              TYPE
+            </label>
+            <select value={newEvent.type} onChange={(e) => setNewEvent(p => ({ ...p, type: e.target.value }))}
+              className="input-glass w-full">
               <option value="personal">Personal</option>
               <option value="study">Study Session</option>
               <option value="class">Class</option>
+              <option value="exam">Exam</option>
+              <option value="academic">Academic</option>
             </select>
           </div>
         </div>
