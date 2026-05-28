@@ -21,6 +21,7 @@ const COURSE_COLORS = {
   'course-2': '#c44dff',
   'course-3': '#4daaff',
   'course-4': '#4dff91',
+  'course-5': '#ffd6a0',
 }
 
 // Build smart sessions from actual assignments
@@ -30,7 +31,7 @@ const buildSessionsFromAssignments = (assignments) => {
   const sessions = []
 
   const pending = assignments
-    .filter(a => a.status !== 'graded' && a.dueDate)
+    .filter(a => a.status !== 'graded' && a.status !== 'completed' && a.dueDate)
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
 
   if (pending.length === 0) return []
@@ -83,8 +84,11 @@ const StudyPlans = () => {
   // Auto-generate for demo mode
   useEffect(() => {
     if (user?.isDemo && assignments.length > 0 && sessions.length === 0 && !generated) {
-      setSessions(buildSessionsFromAssignments(assignments))
-      setAiInsight("You have 3 high-priority tasks in the next 10 days. I've front-loaded your Calculus prep since the midterm is worth 30% — tackle it in the morning when your focus is sharpest.")
+      const built = buildSessionsFromAssignments(assignments)
+      setSessions(built)
+      const highPriority = assignments.filter(a => a.priority === 'high' && a.status !== 'graded' && a.status !== 'completed')
+      const totalHours = built.reduce((s, ss) => s + ss.duration, 0) / 60
+      setAiInsight(`${highPriority.length > 0 ? `${highPriority.length} high-priority tasks detected.` : ''} I've scheduled ${built.length} sessions (${totalHours.toFixed(1)}h total) and front-loaded your most urgent assignments. Tackle heavy sessions in the morning when focus peaks — check off each one as you go!`)
       setGenerated(true)
     }
   }, [user, assignments, sessions.length, generated])
