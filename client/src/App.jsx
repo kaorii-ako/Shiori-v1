@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Landing from './pages/Landing'
 import Pro from './pages/Pro'
+import ProSuccess from './pages/ProSuccess'
 import Home from './pages/Home'
 import Assignments from './pages/Assignments'
 import Calendar from './pages/Calendar'
@@ -19,6 +20,7 @@ function App() {
         {/* Public */}
         <Route path="/" element={<Landing />} />
         <Route path="/pro" element={<Pro />} />
+        <Route path="/pro/success" element={<ProSuccess />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 

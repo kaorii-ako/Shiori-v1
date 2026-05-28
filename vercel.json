@@ -4,6 +4,8 @@
   "outputDirectory": "client/dist",
   "installCommand": "npm install",
   "rewrites": [
+    { "source": "/api/create-checkout-session", "destination": "/api/create-checkout-session" },
+    { "source": "/api/webhook", "destination": "/api/webhook" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

@@ -60,6 +60,30 @@ const FadeIn = ({ children, delay = 0, className = '' }) => {
 const Pro = () => {
   const [billingAnnual, setBillingAnnual] = useState(false)
   const [openFaq, setOpenFaq] = useState(null)
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState(null)
+
+  const handleCheckout = async () => {
+    setCheckoutLoading(true)
+    setCheckoutError(null)
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ billing: billingAnnual ? 'annual' : 'monthly' }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setCheckoutError(data.error || 'Something went wrong. Please try again.')
+      }
+    } catch {
+      setCheckoutError('Could not connect to payment server. Please try again.')
+    } finally {
+      setCheckoutLoading(false)
+    }
+  }
 
   const monthlyPrice = 199
   const annualPrice = Math.round(monthlyPrice * 12 * 0.75)
@@ -242,7 +266,8 @@ const Pro = () => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => alert('Stripe integration coming soon! Self-host for free in the meantime: github.com/kaorii-ako/Shiori-v1')}
+                  onClick={handleCheckout}
+                  disabled={checkoutLoading}
                   style={{
                     width: '100%', padding: '14px 24px', borderRadius: 8,
                     background: 'linear-gradient(135deg, #c44dff 0%, #7b3fa8 100%)',
@@ -253,8 +278,14 @@ const Pro = () => {
                     marginBottom: 16,
                   }}
                 >
-                  START FREE TRIAL
+                  {checkoutLoading ? 'REDIRECTING...' : 'START FREE TRIAL'}
                 </motion.button>
+
+                {checkoutError && (
+                  <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#ffb4ab', marginTop: 8, textAlign: 'center' }}>
+                    {checkoutError}
+                  </p>
+                )}
 
                 <div style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
