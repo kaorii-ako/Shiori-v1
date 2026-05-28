@@ -1,0 +1,125 @@
+name: Setup Repository
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/setup-repo.yml'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set repository topics
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.repos.replaceAllTopics({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              names: [
+                'google-classroom',
+                'ai-study-planner',
+                'gemini',
+                'react',
+                'student',
+                'open-source',
+                'productivity',
+                'study-planner',
+                'pomodoro',
+                'edtech',
+                'vite',
+                'framer-motion'
+              ]
+            });
+            console.log('Topics set successfully');
+
+      - name: Update repository description
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.repos.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              description: 'AI study companion — syncs Google Classroom, Gmail & Calendar → personalized study plan via Gemini. Free & open source.',
+              homepage: 'https://shiori-v1.vercel.app',
+              has_issues: true,
+              has_projects: false,
+              has_wiki: false
+            });
+            console.log('Repository updated');
+
+      - name: Create good first issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = [
+              {
+                title: 'feat: keyboard shortcuts for power users (G+H home, G+A assignments, ? help)',
+                body: `## Summary\n\nAdd keyboard shortcuts so power users can navigate without the mouse.\n\n## Proposed Shortcuts\n\n| Shortcut | Action |\n|---|---|\n| \`G H\` | Go to Home |\n| \`G A\` | Go to Assignments |\n| \`G C\` | Go to Calendar |\n| \`G G\` | Go to Grades |\n| \`G S\` | Go to Study Plans |\n| \`?\` | Show keyboard shortcut cheatsheet |\n| \`Ctrl+K\` | Open AI chat |\n| \`Escape\` | Close any open modal |\n\n## Implementation\n\nCreate \`client/src/hooks/useKeyboardShortcuts.js\`. Use \`useEffect\` + \`keydown\` listener. Don't fire when user is typing in an input.\n\n**No backend changes needed. Perfect first issue.**`,
+                labels: ['good first issue', 'enhancement']
+              },
+              {
+                title: 'feat: mobile-responsive layout (stats grid, assignment cards, AI chat fullscreen)',
+                body: `## Summary\n\nImprove the mobile experience at 375px (iPhone SE) and 414px (iPhone 14 Pro).\n\n## Areas\n\n1. Home stats grid — stack to 2 columns on mobile\n2. Assignment cards — fix overflow on small screens\n3. AI Chat — fullscreen on mobile instead of side panel\n4. Study Plans — day columns should wrap correctly\n\n## Notes\n\nPure Tailwind/CSS changes. No backend or state changes needed.\n\n**Great first issue for frontend contributors.**`,
+                labels: ['good first issue', 'enhancement', 'mobile']
+              },
+              {
+                title: 'feat: export study plan to PDF and .ics calendar file',
+                body: `## Summary\n\nStudents want to print or import their Shiori study plan into Apple Calendar / Outlook.\n\n## PDF\n- Use \`jspdf\` or \`@react-pdf/renderer\`\n- Render current study plan as a printable layout\n\n## iCal (.ics)\n- Generate a \`.ics\` file client-side\n- Each study session = a VEVENT\n- Trigger download via \`URL.createObjectURL(new Blob([icsContent]))\`\n\n## Where\n- Add export buttons to \`client/src/pages/StudyPlans.jsx\`\n- Create \`client/src/utils/exportUtils.js\` for the logic\n\n**This is a v1.4 roadmap item. Client-side only, no backend needed.**`,
+                labels: ['good first issue', 'enhancement', 'help wanted']
+              },
+              {
+                title: 'feat: dark/light theme toggle',
+                body: `## Summary\n\nShiori currently has a fixed dark theme ("Midnight Study Room"). Add a light theme option for users who prefer studying in bright environments.\n\n## Implementation\n\n1. Create a \`theme\` key in \`useUIStore\` (Zustand) — \`'dark' | 'light'\`\n2. Toggle a \`data-theme\` attribute on \`<html>\`\n3. Add CSS variables in \`index.css\` for light theme overrides\n4. Add toggle button in \`Settings.jsx\`\n\n## Light theme palette suggestion\n- Background: \`#f8f9fc\`\n- Surface: \`#ffffff\`\n- Text: \`#1a1d23\`\n- Accents: keep same blue/purple/green\n\n**Pure frontend. No API changes needed.**`,
+                labels: ['good first issue', 'enhancement']
+              }
+            ];
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+            const existingTitles = existing.data.map(i => i.title);
+
+            for (const issue of issues) {
+              if (existingTitles.includes(issue.title)) {
+                console.log(`Issue already exists: ${issue.title}`);
+                continue;
+              }
+              try {
+                // Ensure labels exist first
+                for (const label of issue.labels) {
+                  try {
+                    await github.rest.issues.createLabel({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      name: label,
+                      color: label === 'good first issue' ? '7057ff' :
+                             label === 'enhancement' ? 'a2eeef' :
+                             label === 'mobile' ? 'e4e669' :
+                             label === 'help wanted' ? '008672' : 'ededed'
+                    });
+                  } catch {}
+                }
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: issue.title,
+                  body: issue.body,
+                  labels: issue.labels
+                });
+                console.log(`Created issue: ${issue.title}`);
+              } catch (e) {
+                console.log(`Failed to create issue: ${e.message}`);
+              }
+            }
