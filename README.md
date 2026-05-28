@@ -1,64 +1,52 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/Shiori-栞-e5b5ff?style=for-the-badge&labelColor=0a0a14&color=e5b5ff" alt="Shiori">
+# 栞 Shiori v1
 
-# Shiori — AI Study Companion
+### *Your AI-powered study companion*
 
-**The open-source AI productivity app for students.**  
-Connect Google Classroom, Gmail & Calendar. Get AI-powered study plans. Never miss a deadline.
+> **Shiori** (栞) means *bookmark* in Japanese — because every deadline deserves to be remembered.
 
-[![MIT License](https://img.shields.io/badge/license-MIT-afc6ff?style=flat-square&labelColor=0a0a14)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/kaorii-ako/Shiori-v1?style=flat-square&labelColor=0a0a14&color=e5b5ff)](https://github.com/kaorii-ako/Shiori-v1/stargazers)
-[![Issues](https://img.shields.io/github/issues/kaorii-ako/Shiori-v1?style=flat-square&labelColor=0a0a14&color=4ad778)](https://github.com/kaorii-ako/Shiori-v1/issues)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-afc6ff?style=flat-square&labelColor=0a0a14)](https://github.com/kaorii-ako/Shiori-v1/blob/master/.github/CONTRIBUTING.md)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-4ad778?style=flat-square&labelColor=0a0a14)](https://nodejs.org)
-
-[Features](#-features) · [Quick Start](#-quick-start) · [Screenshots](#-screenshots) · [Tech Stack](#-tech-stack) · [Contributing](#-contributing)
+[![Status](https://img.shields.io/badge/status-active%20development-brightgreen?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1)
+[![MIT License](https://img.shields.io/badge/license-MIT-orange?style=for-the-badge)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-afc6ff?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1/blob/master/.github/CONTRIBUTING.md)
+[![Stars](https://img.shields.io/github/stars/kaorii-ako/Shiori-v1?style=for-the-badge&color=e5b5ff)](https://github.com/kaorii-ako/Shiori-v1/stargazers)
 
 </div>
 
 ---
 
-## What is Shiori?
+## 🌸 What is Shiori?
 
-Shiori (栞 — Japanese for *bookmark*) is a **free, open-source AI study companion** built for students who use Google Workspace. It automatically syncs your assignments from Google Classroom, extracts deadlines from Gmail, and uses Gemini AI to generate personalized study schedules — all wrapped in a gorgeous dark glassmorphism UI inspired by a midnight Tokyo study session.
+Shiori is a **free, open-source AI productivity app** that connects to your Google ecosystem — Classroom, Gmail, and Calendar — and does the mental overhead *for* you. It reads your assignments, hunts down buried deadlines, and hands you a personalized study plan powered by **Google Gemini AI** so you can stop organizing and start actually studying.
 
-> **No subscriptions. No data harvesting. Your credentials stay local.**
+No more manually tracking due dates across five different tabs. Shiori handles it.
+
+> **Your credentials stay local. No subscriptions. No data harvesting.**
 
 ---
 
 ## ✨ Features
 
-### 🤖 Real AI Study Plans
-Powered by Google Gemini. Shiori analyzes your deadlines, subject load, and available hours to generate a realistic, day-by-day study schedule — not just a generic template.
-
-### 📚 Google Classroom Sync
-Automatically pulls all your courses, assignments, due dates, and submission status. Works with any Google Workspace school account.
-
-### 📧 Gmail Deadline Extraction
-Scans emails from your teachers and Google Classroom notifications to surface deadlines you might have missed.
-
-### 📅 Calendar Integration
-Two-way sync with Google Calendar. Shiori can block out study sessions directly on your calendar, and shows your existing events alongside your assignments.
-
-### 📊 Grade Calculator
-Track grades per assignment, per category (homework/quiz/exam), and per course. Real-time GPA estimation with weighted categories.
-
-### 💬 AI Chat Assistant
-Ask Shiori anything about your schedule: *"What should I study this weekend?"*, *"When is my next Chemistry assignment due?"*, *"How many hours do I need to get an A in Math?"*
-
-### 🎨 Midnight Study Room Aesthetic
-Dark glassmorphism UI with neon purple/blue accents. Looks incredible on any screen. Designed to make late-night studying feel a little more magical.
+| | Feature | What it does |
+|---|---|---|
+| 🤖 | **AI Study Plans** | Gemini generates a real day-by-day schedule based on your actual deadlines |
+| 📚 | **Google Classroom Sync** | Pulls in assignments and due dates the moment they're posted |
+| 📧 | **Gmail Intelligence** | Scans your inbox and surfaces anything with a deadline |
+| 📅 | **Calendar Integration** | Slots study blocks into your schedule automatically |
+| 📊 | **Grade Calculator** | Track grades per course with weighted category support |
+| 💬 | **AI Chat** | Ask Shiori anything about your schedule — it knows your data |
+| 🎨 | **Midnight Study Room UI** | Dark glassmorphism aesthetic. Makes late-night studying feel magical. |
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - **Node.js** v18 or higher
-- A **Google Cloud** project with Classroom, Gmail, and Calendar APIs enabled
-- (Optional) A **Gemini API key** for AI features
+- A Google Cloud project with Classroom, Gmail & Calendar APIs enabled
+- (Optional) A **Gemini API key** for real AI study plans
 
 ### 1. Clone & install
 
@@ -68,13 +56,13 @@ cd Shiori-v1
 npm install
 ```
 
-### 2. Set up environment
+### 2. Set up your environment
 
 ```bash
 cp .env.example .env
 ```
 
-Open `.env` and fill in your credentials:
+Open `.env` and add your credentials:
 
 ```env
 GOOGLE_CLIENT_ID=your_client_id
@@ -82,8 +70,8 @@ GOOGLE_CLIENT_SECRET=your_client_secret
 GEMINI_API_KEY=your_gemini_key   # optional — enables real AI
 ```
 
-**How to get credentials:**
-- Google OAuth → [console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials)
+**Where to get them:**
+- Google OAuth → [console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials) (enable Classroom, Gmail, Calendar APIs)
 - Gemini API key → [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (free tier available)
 
 ### 3. Run
@@ -92,20 +80,27 @@ GEMINI_API_KEY=your_gemini_key   # optional — enables real AI
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) — sign up, connect Google, and you're in.
+Open [http://localhost:5173](http://localhost:5173), sign up, connect Google, and you're in.
 
 ---
 
-## 📸 Screenshots
+## ⚙️ How It Works
 
-> *Screenshots coming soon — star the repo and watch for the first stable release!*
-
-The UI features:
-- Deep space dark background (`#0a0a14`) with frosted glass panels
-- Neon purple (`#e5b5ff`) and blue (`#afc6ff`) accents
-- Space Grotesk + Manrope typography
-- Framer Motion animations throughout
-- Fully responsive (desktop-first, mobile-ready)
+```
+[ Your Google Account ]
+         │
+         ▼
+[ Shiori syncs Classroom + Gmail + Calendar ]
+         │
+         ▼
+[ Gemini AI extracts deadlines, tasks & requirements ]
+         │
+         ▼
+[ Personalized study plan generated ]
+         │
+         ▼
+[ You study. Shiori worries about the rest. ]
+```
 
 ---
 
@@ -115,11 +110,10 @@ The UI features:
 |-------|------------|
 | **Frontend** | React 18, Vite, Framer Motion, Tailwind CSS |
 | **State** | Zustand with persistence |
-| **Routing** | React Router v6 |
 | **Backend** | Express.js (Node.js) |
 | **AI** | Google Gemini 1.5 Flash |
 | **Auth** | Appwrite + Google OAuth 2.0 |
-| **Google APIs** | Classroom, Gmail, Calendar (via `googleapis`) |
+| **Google APIs** | Classroom, Gmail, Calendar (`googleapis`) |
 | **Icons** | Lucide React |
 
 ---
@@ -133,13 +127,12 @@ Shiori-v1/
 │       ├── components/        # GlassCard, Button, Sidebar, AIChat...
 │       ├── pages/             # Home, Assignments, Calendar, Grades, StudyPlans
 │       ├── stores/            # Zustand state (auth, assignments, events)
-│       ├── services/          # Appwrite integration
 │       └── lib/               # Axios API client
 ├── server/                    # Express backend
 │   ├── routes/                # ai, auth, classroom, gmail, calendar, grades
 │   └── services/              # Google OAuth & API wrapper
-├── .env.example               # Environment template
-└── package.json               # Workspace root
+├── .env.example               # Environment template — copy to .env
+└── package.json               # Workspace root (npm workspaces)
 ```
 
 ---
@@ -149,11 +142,9 @@ Shiori-v1/
 - [ ] **v1.1** — Demo mode (try Shiori without any setup)
 - [ ] **v1.2** — Electron desktop app wrapper
 - [ ] **v1.3** — Pomodoro timer integration
-- [ ] **v1.4** — Assignment collaboration (share study plans)
 - [ ] **v2.0** — Mobile app (React Native)
-- [ ] Offline mode with sync-on-connect
-- [ ] Browser extension for quick task capture
 - [ ] Export study plans to PDF / iCal
+- [ ] Browser extension for quick task capture
 
 **Have an idea?** [Open a feature request →](https://github.com/kaorii-ako/Shiori-v1/issues/new?template=feature_request.md)
 
@@ -161,40 +152,34 @@ Shiori-v1/
 
 ## 🤝 Contributing
 
-Shiori is fully open source and contributions are welcome! Whether it's a bug fix, a new feature, or a design improvement — all PRs are appreciated.
+Contributions are welcome and appreciated! Here's how to get involved:
 
 ```bash
-# Fork → clone → create branch
-git checkout -b feature/your-feature
-
-# Make changes, then
-git commit -m "feat: add your feature"
-git push origin feature/your-feature
+# Fork, then:
+git checkout -b feature/your-feature-name
+git commit -m "feat: describe what you added"
+git push origin feature/your-feature-name
 # Open a PR!
 ```
 
-See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines.
+Please open an issue first if you're planning something big. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for full guidelines.
 
-**Good first issues:** Look for the [`good first issue`](https://github.com/kaorii-ako/Shiori-v1/issues?q=is%3Aissue+label%3A%22good+first+issue%22) label.
-
----
-
-## 🛡 Privacy
-
-Shiori runs **locally on your machine**. Your Google tokens are stored in `tokens.json` (gitignored). No data is sent to any third-party server other than Google's own APIs and Gemini (when you opt in).
+Look for [`good first issue`](https://github.com/kaorii-ako/Shiori-v1/issues?q=label%3A%22good+first+issue%22) if you're new here.
 
 ---
 
-## 📝 License
+## 👤 Author
 
-[MIT](LICENSE) — free to use, modify, and distribute.
+Built with care by **[@kaorii-ako](https://github.com/kaorii-ako)**
+
+Got questions? Found a bug? [Open an issue](https://github.com/kaorii-ako/Shiori-v1/issues) — happy to help.
 
 ---
 
 <div align="center">
 
-Made with ☕ and late nights by [@kaorii-ako](https://github.com/kaorii-ako)
+*栞 — bookmark the things that matter.*
 
-**If Shiori helps you study better, please give it a ⭐ — it means a lot!**
+**If Shiori helps you study better, please give it a ⭐**
 
 </div>
