@@ -259,6 +259,22 @@ Return ONLY the bullet points, one per line, each starting with "• ". No intro
   }
 
   const [copied, setCopied] = useState(false)
+  const importFileRef = useRef(null)
+
+  const handleImportFile = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const content = ev.target.result || ''
+      const title = file.name.replace(/\.(md|txt)$/i, '')
+      const id = addNote({ title, content, courseId: null, color: NOTE_COLORS[notes.length % NOTE_COLORS.length], pinned: false })
+      setSelectedId(id)
+      setSaved(true)
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
   const wordCount = selected?.content
     ? selected.content.trim().split(/\s+/).filter(Boolean).length
     : 0
@@ -292,7 +308,11 @@ Return ONLY the bullet points, one per line, each starting with "• ". No intro
             {notes.length} note{notes.length !== 1 ? 's' : ''} · markdown supported
           </p>
         </div>
-        <Button icon={Plus} onClick={handleNew}>NEW NOTE</Button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <input ref={importFileRef} type="file" accept=".md,.txt" style={{ display: 'none' }} onChange={handleImportFile} />
+          <Button variant="secondary" icon={FileText} onClick={() => importFileRef.current?.click()}>IMPORT .MD</Button>
+          <Button icon={Plus} onClick={handleNew}>NEW NOTE</Button>
+        </div>
       </motion.div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 20, minHeight: 500 }}>
