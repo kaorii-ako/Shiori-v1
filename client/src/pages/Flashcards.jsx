@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Layers, Plus, Trash2, ChevronLeft, ChevronRight,
   Check, X, RotateCcw, BookOpen, Zap, Trophy,
-  Edit3, ArrowLeft, BarChart3, Upload,
+  Edit3, ArrowLeft, BarChart3, Upload, Download,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
@@ -15,6 +15,16 @@ import { useFlashcardsStore, useAssignmentsStore } from '../stores'
 const COURSE_COLORS = ['#ff6b9d', '#c44dff', '#afc6ff', '#4dff91', '#ffd6a0', '#4daaff']
 
 // ─── Deck List ───────────────────────────────────────────────────────────────
+const exportAnki = (deck) => {
+  const tsv = deck.cards.map(c => `${c.front}\t${c.back}`).join('\n')
+  const blob = new Blob([tsv], { type: 'text/plain' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = `${deck.name.replace(/\s+/g, '-')}-anki.txt`
+  a.click()
+  URL.revokeObjectURL(a.href)
+}
+
 const DeckCard = ({ deck, course, onStudy, onEdit, onDelete }) => {
   const mastered = deck.cards.filter(c => (c.streak || 0) >= 3).length
   const total = deck.cards.length
@@ -46,6 +56,13 @@ const DeckCard = ({ deck, course, onStudy, onEdit, onDelete }) => {
           )}
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
+          <button onClick={(e) => { e.stopPropagation(); exportAnki(deck) }}
+            title="Export to Anki (.txt)"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, opacity: 0.5 }}
+            onMouseEnter={e => e.currentTarget.style.opacity = 1}
+            onMouseLeave={e => e.currentTarget.style.opacity = 0.5}>
+            <Download size={13} color="#ffd6a0" />
+          </button>
           <button onClick={(e) => { e.stopPropagation(); onEdit() }}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, opacity: 0.5 }}
             onMouseEnter={e => e.currentTarget.style.opacity = 1}

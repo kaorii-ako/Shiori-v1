@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   StickyNote, Plus, Trash2, BookOpen, Save, Clock,
-  Download, Search, Pin, PinOff, Tag, FileText, Layers, Sparkles,
+  Download, Search, Pin, PinOff, Tag, FileText, Layers, Sparkles, Copy, Check as CheckIcon,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
@@ -258,9 +258,19 @@ Return ONLY the bullet points, one per line, each starting with "• ". No intro
     setSummary(result || 'Could not generate summary. Check your Gemini API key in Settings.')
   }
 
+  const [copied, setCopied] = useState(false)
   const wordCount = selected?.content
     ? selected.content.trim().split(/\s+/).filter(Boolean).length
     : 0
+  const readTime = Math.max(1, Math.round(wordCount / 200))
+
+  const handleCopy = () => {
+    if (!selected?.content) return
+    navigator.clipboard.writeText(selected.content).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   // Auto-select first note
   useEffect(() => {
@@ -390,8 +400,17 @@ Return ONLY the bullet points, one per line, each starting with "• ". No intro
                     {saved ? '✓ saved' : '● saving…'}
                   </span>
                   <span style={{ fontFamily: 'VT323', fontSize: 13, color: '#424754' }}>
-                    {wordCount} words
+                    {wordCount} words · {readTime} min read
                   </span>
+                  <button
+                    onClick={handleCopy}
+                    title="Copy note to clipboard"
+                    style={{ padding: '4px 8px', background: copied ? 'rgba(77,255,145,0.12)' : 'rgba(255,255,255,0.06)',
+                      border: `1px solid ${copied ? 'rgba(77,255,145,0.4)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 6,
+                      color: copied ? '#4dff91' : '#8c90a0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {copied ? <CheckIcon size={12} /> : <Copy size={12} />}
+                    <span style={{ fontFamily: 'VT323', fontSize: 13 }}>{copied ? 'COPIED!' : 'COPY'}</span>
+                  </button>
                   <button
                     onClick={() => setPreview(p => !p)}
                     style={{ padding: '4px 10px', background: preview ? 'rgba(196,77,255,0.15)' : 'rgba(255,255,255,0.06)',
