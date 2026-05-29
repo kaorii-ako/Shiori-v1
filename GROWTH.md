@@ -5,6 +5,39 @@ Time estimates are realistic — these are not vague suggestions.
 
 ---
 
+## 🆕 NEW HIGHEST-PRIORITY: Post to Claude Code community
+
+Shiori now has a **MCP server** (see `mcp/`). This is the angle that gets stars from developers.
+
+**Post to r/ClaudeAI and r/mcp immediately:**
+```
+Title: I added a MCP server to my open-source student productivity app — Claude can now read your assignments, grades, and notes
+
+Body:
+I built Shiori, a study companion that syncs Google Classroom. Just added a MCP server
+so Claude Code / Claude Desktop can access your data directly.
+
+"What's due this week?"  "Show my grades"  "Add: essay due Friday"
+
+Config (4 lines in ~/.claude.json):
+{
+  "mcpServers": {
+    "shiori": {
+      "command": "node",
+      "args": ["/path/to/Shiori-v1/mcp/index.js"],
+      "env": { "SHIORI_DATA_FILE": "/path/to/shiori-data.json" }
+    }
+  }
+}
+
+GitHub: https://github.com/kaorii-ako/Shiori-v1
+Demo: https://shiori-v1.vercel.app
+```
+
+Also post to **Anthropic Discord #mcp-servers** channel and **Claude Code Discord**.
+
+---
+
 ## 🔴 Do RIGHT NOW (30 min total)
 
 ### 1. Add GitHub repo topics (2 min)
