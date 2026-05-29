@@ -14,7 +14,8 @@ import {
   Menu,
   X,
   Sparkles,
-  Flame
+  Flame,
+  Brain,
 } from 'lucide-react'
 import { useAuthStore, useUIStore } from '../stores'
 
@@ -28,6 +29,7 @@ const navItems = [
   { icon: Layers, label: 'Flashcards', path: '/flashcards' },
   { icon: TrendingUp, label: 'Analytics', path: '/analytics' },
   { icon: Flame, label: 'Habits', path: '/habits' },
+  { icon: Brain, label: 'AI Quiz', path: '/quiz' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ]
 

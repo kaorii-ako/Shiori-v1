@@ -16,6 +16,7 @@ import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
 import Habits from './pages/Habits'
 import FocusMode from './pages/FocusMode'
+import Quiz from './pages/Quiz'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 
@@ -50,6 +51,7 @@ function App() {
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/habits" element={<Habits />} />
           <Route path="/focus" element={<FocusMode />} />
+          <Route path="/quiz" element={<Quiz />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
