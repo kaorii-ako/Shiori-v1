@@ -10,6 +10,7 @@ import Assignments from './pages/Assignments'
 import Calendar from './pages/Calendar'
 import Grades from './pages/Grades'
 import StudyPlans from './pages/StudyPlans'
+import Notes from './pages/Notes'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -40,6 +41,7 @@ function App() {
           <Route path="/grades" element={<Grades />} />
           <Route path="/study" element={<StudyPlans />} />
           <Route path="/study-plans" element={<StudyPlans />} />
+          <Route path="/notes" element={<Notes />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>

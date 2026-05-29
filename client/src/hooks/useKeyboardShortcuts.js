@@ -8,6 +8,7 @@ const SHORTCUTS = [
   { key: 'gc', label: 'Go to Calendar', path: '/calendar' },
   { key: 'gg', label: 'Go to Grades', path: '/grades' },
   { key: 'gs', label: 'Go to Study Plans', path: '/study' },
+  { key: 'gn', label: 'Go to Notes', path: '/notes' },
 ]
 
 export const SHORTCUT_HELP = SHORTCUTS

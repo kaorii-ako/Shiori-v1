@@ -275,6 +275,45 @@ export const useGradesStore = create(
   )
 )
 
+export const useNotesStore = create(
+  persist(
+    (set, get) => ({
+      notes: [],
+
+      addNote: (note) => {
+        const id = `note-${Date.now()}`
+        set((state) => ({
+          notes: [...state.notes, {
+            ...note,
+            id,
+            title: note.title || '',
+            content: note.content || '',
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            pinned: false,
+          }]
+        }))
+        return id
+      },
+
+      updateNote: (id, updates) => set((state) => ({
+        notes: state.notes.map(n =>
+          n.id === id ? { ...n, ...updates, updatedAt: Date.now() } : n
+        )
+      })),
+
+      deleteNote: (id) => set((state) => ({
+        notes: state.notes.filter(n => n.id !== id)
+      })),
+
+      pinNote: (id) => set((state) => ({
+        notes: state.notes.map(n => n.id === id ? { ...n, pinned: !n.pinned } : n)
+      })),
+    }),
+    { name: 'shiori-notes' }
+  )
+)
+
 export const useCalendarStore = create((set, get) => ({
   events: [],
   isLoading: false,
