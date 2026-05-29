@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star, Github, Menu, Sun, Moon } from 'lucide-react'
@@ -8,6 +8,7 @@ import AIChat from './AIChat'
 import PomodoroTimer from './PomodoroTimer'
 import ToastContainer from './ToastContainer'
 import QuickCapture from './QuickCapture'
+import ShortcutModal from './ShortcutModal'
 import { useUIStore, useAuthStore } from '../stores'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 
@@ -81,11 +82,21 @@ const Layout = () => {
   const { isDemo, exitDemoMode } = useAuthStore()
   const navigate = useNavigate()
   const [showStarPrompt, setShowStarPrompt] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false)
   const promptFired = useRef(false)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme || 'dark')
   }, [theme])
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return
+      if (e.key === '?') setShowShortcuts(s => !s)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   useKeyboardShortcuts()
 
@@ -199,6 +210,7 @@ const Layout = () => {
         {showStarPrompt && <StarPrompt onDismiss={dismissStarPrompt} />}
       </AnimatePresence>
       <QuickCapture />
+      <ShortcutModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
       <ToastContainer />
     </div>
   )
