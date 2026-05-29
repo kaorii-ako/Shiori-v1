@@ -23,8 +23,16 @@ import { googleAuth } from '../lib/api'
 
 const Settings = () => {
   const { user, googleConnected, setGoogleConnected, setUser } = useAuthStore()
-  const { addToast } = useUIStore()
+  const { addToast, geminiApiKey, setGeminiApiKey } = useUIStore()
   const [connecting, setConnecting] = useState(false)
+  const [apiKeyInput, setApiKeyInput] = useState(geminiApiKey || '')
+  const [apiKeySaved, setApiKeySaved] = useState(false)
+
+  const handleSaveApiKey = () => {
+    setGeminiApiKey(apiKeyInput.trim())
+    setApiKeySaved(true)
+    setTimeout(() => setApiKeySaved(false), 2000)
+  }
 
   const handleGoogleConnect = async () => {
     setConnecting(true)
@@ -135,6 +143,41 @@ const Settings = () => {
       >
         <h1 className="text-2xl font-heading font-bold">Settings</h1>
         <p className="text-text-secondary mt-1">Manage your preferences and connections</p>
+      </motion.div>
+
+      {/* Gemini API Key */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+        <GlassCard>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <Shield size={16} style={{ color: '#c44dff' }} />
+            <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>GEMINI AI KEY</h2>
+            {geminiApiKey && <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#4dff91', padding: '2px 8px', background: 'rgba(77,255,145,0.1)', borderRadius: 4 }}>Active</span>}
+          </div>
+          <p style={{ fontFamily: 'VT323', fontSize: 15, color: '#8c90a0', marginBottom: 12 }}>
+            Add your free Gemini API key to enable AI study plans and flashcard generation — no server setup needed.
+            Get one free at{' '}
+            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer"
+              style={{ color: '#afc6ff' }}>aistudio.google.com/apikey</a>
+          </p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              type="password"
+              value={apiKeyInput}
+              onChange={e => setApiKeyInput(e.target.value)}
+              placeholder="AIza..."
+              style={{ flex: 1, padding: '10px 12px', background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6,
+                color: '#dfe2eb', fontFamily: 'monospace', fontSize: 13, outline: 'none' }}
+            />
+            <button onClick={handleSaveApiKey}
+              style={{ padding: '10px 18px', borderRadius: 6, cursor: 'pointer', border: 'none',
+                background: apiKeySaved ? 'rgba(77,255,145,0.2)' : 'rgba(196,77,255,0.2)',
+                color: apiKeySaved ? '#4dff91' : '#c44dff',
+                fontFamily: '"Press Start 2P"', fontSize: 9, whiteSpace: 'nowrap' }}>
+              {apiKeySaved ? 'SAVED!' : 'SAVE KEY'}
+            </button>
+          </div>
+        </GlassCard>
       </motion.div>
 
       <div className="space-y-6">

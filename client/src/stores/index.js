@@ -431,12 +431,16 @@ export const usePomodoroStore = create(
   )
 )
 
-export const useUIStore = create((set) => ({
+export const useUIStore = create(
+  persist(
+    (set) => ({
   sidebarCollapsed: false,
   sidebarMobileOpen: false,
   aiChatOpen: false,
   activeModal: null,
   toasts: [],
+  geminiApiKey: '',
+  setGeminiApiKey: (key) => set({ geminiApiKey: key }),
 
   toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   toggleSidebarMobile: () => set((state) => ({ sidebarMobileOpen: !state.sidebarMobileOpen })),
@@ -460,4 +464,7 @@ export const useUIStore = create((set) => ({
   removeToast: (id) => set((state) => ({
     toasts: state.toasts.filter((t) => t.id !== id)
   }))
-}))
+}),
+    { name: 'shiori-ui' }
+  )
+)
