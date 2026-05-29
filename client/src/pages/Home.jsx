@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Calendar,
@@ -15,12 +15,124 @@ import {
   Trophy,
   AlertTriangle,
   BookOpen,
+  RefreshCw,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAssignmentsStore, useGradesStore, useAuthStore, useEventStore, useUIStore } from '../stores'
+import { callGeminiClient, hasClientKey } from '../utils/gemini'
+
+const BRIEFING_CACHE_KEY = 'shiori-daily-briefing'
+
+function getCachedBriefing() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(BRIEFING_CACHE_KEY) || 'null')
+    if (!cached) return null
+    const today = new Date().toISOString().split('T')[0]
+    return cached.date === today ? cached.text : null
+  } catch { return null }
+}
+
+function cacheBriefing(text) {
+  const today = new Date().toISOString().split('T')[0]
+  localStorage.setItem(BRIEFING_CACHE_KEY, JSON.stringify({ date: today, text }))
+}
+
+const DailyBriefing = ({ assignments, gpaData, userName }) => {
+  const [briefing, setBriefing] = useState(() => getCachedBriefing())
+  const [loading, setLoading] = useState(false)
+
+  const generate = async (force = false) => {
+    if (!hasClientKey()) return
+    if (!force && briefing) return
+    setLoading(true)
+    const today = new Date()
+    const due = assignments
+      .filter(a => a.status !== 'graded' && a.status !== 'completed' && a.dueDate)
+      .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+      .slice(0, 5)
+      .map(a => `- "${a.title}" due ${new Date(a.dueDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} (${a.priority || 'medium'} priority)`)
+      .join('\n')
+
+    const prompt = `You are Shiori, an AI study companion. Write a short (2-3 sentences) personalized morning briefing for a student named ${userName || 'Student'}.
+
+Today is ${today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}.
+Their current GPA: ${gpaData?.overall ? `${gpaData.overall}%` : 'not yet tracked'}.
+
+Upcoming assignments:
+${due || 'No upcoming assignments.'}
+
+Be warm, specific, and motivating. Mention 1-2 specific assignments by name. Keep it under 60 words. Do NOT include "Good morning" or their name — just the message.`
+
+    const text = await callGeminiClient(prompt)
+    setLoading(false)
+    if (text) {
+      setBriefing(text)
+      cacheBriefing(text)
+    }
+  }
+
+  useEffect(() => { generate() }, [])
+
+  if (!hasClientKey() && !briefing) return null
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+      <GlassCard style={{
+        background: 'linear-gradient(135deg, rgba(196,77,255,0.07) 0%, rgba(82,141,255,0.05) 100%)',
+        border: '1px solid rgba(196,77,255,0.25)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+          <div style={{
+            width: 36, height: 36, flexShrink: 0,
+            background: 'rgba(196,77,255,0.15)',
+            border: '1px solid rgba(196,77,255,0.3)',
+            borderRadius: 8,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Sparkles size={18} style={{ color: '#c44dff' }} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 11, fontWeight: 700, color: '#e5b5ff',
+              letterSpacing: '0.06em', marginBottom: 6,
+            }}>SHIORI AI · DAILY BRIEFING</div>
+            {loading ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#8c90a0', fontFamily: "'Manrope', sans-serif", fontSize: 13 }}>
+                <RefreshCw size={13} style={{ animation: 'spin 1s linear infinite' }} />
+                Generating your briefing…
+              </div>
+            ) : briefing ? (
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#c4c8d4', lineHeight: 1.6, margin: 0 }}>
+                {briefing}
+              </p>
+            ) : (
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#8c90a0', margin: 0 }}>
+                Add your Gemini API key in Settings to get a personalized daily briefing.
+              </p>
+            )}
+          </div>
+          {briefing && !loading && (
+            <button
+              onClick={() => generate(true)}
+              title="Regenerate"
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: '#606080', padding: 4, flexShrink: 0,
+              }}
+            >
+              <RefreshCw size={13} />
+            </button>
+          )}
+        </div>
+      </GlassCard>
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+    </motion.div>
+  )
+}
 
 const GRADE_SCALE = [
   { min: 93, letter: 'A', color: '#4dff91' },
@@ -162,6 +274,9 @@ const Home = () => {
             style={{ borderColor: '#c44dff', color: '#c44dff' }}>AI CHAT</Button>
         </div>
       </motion.div>
+
+      {/* Daily AI Briefing */}
+      <DailyBriefing assignments={assignments} gpaData={gpaData} userName={user?.name} />
 
       {/* Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14 }}>
