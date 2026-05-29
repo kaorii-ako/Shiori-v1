@@ -5,14 +5,14 @@ import { useAuthStore } from '../stores'
 import {
   Sparkles, BookOpen, Mail, Calendar, BarChart3, MessageCircle,
   ArrowRight, Star, Github, Zap, Shield, Clock, CheckCircle2,
-  GraduationCap, TrendingUp, Brain, Rocket, Users, ChevronDown,
+  GraduationCap, TrendingUp, Brain, Rocket, Users, ChevronDown, StickyNote,
 } from 'lucide-react'
 
 const FEATURES = [
   {
     icon: Brain,
     title: 'AI Study Plans',
-    desc: 'Gemini builds a real day-by-day schedule from your actual deadlines — not generic advice.',
+    desc: 'Gemini builds a real day-by-day schedule from your actual deadlines. Export as PDF in one click.',
     color: '#afc6ff',
     glow: 'rgba(82,141,255,0.15)',
   },
@@ -24,30 +24,44 @@ const FEATURES = [
     glow: 'rgba(74,215,120,0.15)',
   },
   {
-    icon: Mail,
-    title: 'Gmail Intelligence',
-    desc: 'Surfaces every deadline buried in your inbox. Never miss a last-minute email.',
-    color: '#e5b5ff',
-    glow: 'rgba(196,77,255,0.15)',
-  },
-  {
-    icon: Calendar,
-    title: 'Calendar Integration',
-    desc: 'Slots study blocks automatically around your existing events. Zero manual scheduling.',
-    color: '#ffd6a0',
-    glow: 'rgba(255,170,77,0.15)',
-  },
-  {
     icon: BarChart3,
-    title: 'Grade Calculator',
-    desc: 'Track grades per course with weighted category support. Know exactly where you stand.',
+    title: 'Smart Grade Tracker',
+    desc: 'Weighted categories (Homework 30% / Midterm 35% / Final 35%). Final exam predictor. Shareable GPA card.',
     color: '#ff6b9d',
     glow: 'rgba(255,107,157,0.15)',
   },
   {
+    icon: Zap,
+    title: 'Flashcards + SRS',
+    desc: 'Create flashcard decks per course. Spaced repetition ensures you review cards right before you forget.',
+    color: '#4dff91',
+    glow: 'rgba(77,255,145,0.15)',
+  },
+  {
+    icon: MessageCircle,
+    title: 'Markdown Notes',
+    desc: 'Per-course notes with **bold**, *italic*, `code`, headings, and live preview. Auto-save. Export as .md.',
+    color: '#e5b5ff',
+    glow: 'rgba(196,77,255,0.15)',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Study Analytics',
+    desc: 'Grade breakdown charts, assignment completion rate, Pomodoro focus time, flashcard mastery. All in one dashboard.',
+    color: '#ffd6a0',
+    glow: 'rgba(255,170,77,0.15)',
+  },
+  {
+    icon: Calendar,
+    title: 'Calendar + iCal',
+    desc: 'Deadlines appear as colored dots on your calendar. Export all assignments as .ics — opens in Google Calendar, Outlook, Apple Calendar.',
+    color: '#4daaff',
+    glow: 'rgba(77,170,255,0.15)',
+  },
+  {
     icon: MessageCircle,
     title: 'AI Chat',
-    desc: 'Ask Shiori anything about your schedule. It knows your actual data, not hypotheticals.',
+    desc: 'Ask Shiori anything about your schedule. It knows your actual assignments, grades, and upcoming events.',
     color: '#80ffd4',
     glow: 'rgba(77,255,200,0.15)',
   },
