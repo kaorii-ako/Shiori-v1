@@ -9,12 +9,14 @@ import {
   Calendar,
   Brain,
   AlertTriangle,
+  Download,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 import { useAssignmentsStore, useAuthStore } from '../stores'
 import { ai } from '../lib/api'
+import { exportStudyPlanToPDF } from '../utils/pdfExport'
 
 const COURSE_COLORS = {
   'course-1': '#ff6b9d',
@@ -157,13 +159,18 @@ const StudyPlans = () => {
             AI-powered weekly schedule
           </p>
         </div>
-        <Button
-          icon={Sparkles}
-          onClick={generateStudyPlan}
-          loading={loading}
-        >
-          {generated ? 'REGENERATE' : 'GENERATE PLAN'}
-        </Button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {sessions.length > 0 && (
+            <Button variant="secondary" icon={Download} size="sm"
+              onClick={() => exportStudyPlanToPDF(sessions, assignments)}
+              style={{ borderColor: '#afc6ff', color: '#afc6ff' }}>
+              PDF
+            </Button>
+          )}
+          <Button icon={Sparkles} onClick={generateStudyPlan} loading={loading}>
+            {generated ? 'REGENERATE' : 'GENERATE PLAN'}
+          </Button>
+        </div>
       </motion.div>
 
       {sessions.length > 0 ? (

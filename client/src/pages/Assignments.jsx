@@ -16,6 +16,7 @@ import Modal from '../components/Modal'
 import Input from '../components/Input'
 import { useAssignmentsStore } from '../stores'
 import { exportAssignmentsToICal } from '../utils/icalExport'
+import { exportAssignmentsToPDF } from '../utils/pdfExport'
 
 const Assignments = () => {
   const {

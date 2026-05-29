@@ -11,6 +11,7 @@
     "appwrite": "^16.1.0",
     "axios": "^1.7.9",
     "framer-motion": "^12.6.0",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -163,61 +163,117 @@ export const useAssignmentsStore = create((set, get) => ({
   setError: (error) => set({ error })
 }))
 
-export const useGradesStore = create((set, get) => ({
-  courseGrades: {},
-  isLoading: false,
+const LETTER_GRADE = (pct) => {
+  if (pct >= 93) return 'A'
+  if (pct >= 90) return 'A-'
+  if (pct >= 87) return 'B+'
+  if (pct >= 83) return 'B'
+  if (pct >= 80) return 'B-'
+  if (pct >= 77) return 'C+'
+  if (pct >= 73) return 'C'
+  if (pct >= 70) return 'C-'
+  if (pct >= 67) return 'D+'
+  if (pct >= 63) return 'D'
+  if (pct >= 60) return 'D-'
+  return 'F'
+}
 
-  setCourseGrades: (courseId, grades) => set((state) => ({
-    courseGrades: { ...state.courseGrades, [courseId]: grades }
-  })),
+export const useGradesStore = create(
+  persist(
+    (set, get) => ({
+      courseGrades: {},
+      courseWeights: {},
+      isLoading: false,
 
-  addGrade: (courseId, assignmentId, grade) => set((state) => ({
-    courseGrades: {
-      ...state.courseGrades,
-      [courseId]: {
-        ...state.courseGrades[courseId],
-        [assignmentId]: grade
-      }
-    }
-  })),
+      setCourseGrades: (courseId, grades) => set((state) => ({
+        courseGrades: { ...state.courseGrades, [courseId]: grades }
+      })),
 
-  calculateCourseGrade: (courseId) => {
-    const { courseGrades } = get()
-    const grades = courseGrades[courseId]
-    if (!grades) return null
+      addGrade: (courseId, assignmentId, grade) => set((state) => ({
+        courseGrades: {
+          ...state.courseGrades,
+          [courseId]: {
+            ...state.courseGrades[courseId],
+            [assignmentId]: grade
+          }
+        }
+      })),
 
-    const entries = Object.values(grades)
-    if (entries.length === 0) return null
+      removeGrade: (courseId, assignmentId) => set((state) => {
+        const updated = { ...state.courseGrades[courseId] }
+        delete updated[assignmentId]
+        return { courseGrades: { ...state.courseGrades, [courseId]: updated } }
+      }),
 
-    const totalEarned = entries.reduce((sum, g) => sum + (g.pointsEarned || 0), 0)
-    const totalPossible = entries.reduce((sum, g) => sum + (g.pointsPossible || 0), 0)
+      setCourseWeights: (courseId, categories) => set((state) => ({
+        courseWeights: { ...state.courseWeights, [courseId]: categories }
+      })),
 
-    if (totalPossible === 0) return null
+      calculateCourseGrade: (courseId) => {
+        const { courseGrades, courseWeights } = get()
+        const grades = courseGrades[courseId]
+        if (!grades) return null
 
-    const percentage = (totalEarned / totalPossible) * 100
-    let letterGrade = 'F'
-    if (percentage >= 93) letterGrade = 'A'
-    else if (percentage >= 90) letterGrade = 'A-'
-    else if (percentage >= 87) letterGrade = 'B+'
-    else if (percentage >= 83) letterGrade = 'B'
-    else if (percentage >= 80) letterGrade = 'B-'
-    else if (percentage >= 77) letterGrade = 'C+'
-    else if (percentage >= 73) letterGrade = 'C'
-    else if (percentage >= 70) letterGrade = 'C-'
-    else if (percentage >= 67) letterGrade = 'D+'
-    else if (percentage >= 63) letterGrade = 'D'
-    else if (percentage >= 60) letterGrade = 'D-'
+        const entries = Object.values(grades)
+        if (entries.length === 0) return null
 
-    return {
-      percentage: percentage.toFixed(1),
-      letterGrade,
-      totalEarned,
-      totalPossible
-    }
-  },
+        const weights = courseWeights[courseId]
 
-  setLoading: (loading) => set({ isLoading: loading })
-}))
+        if (weights && weights.length > 0) {
+          const totalWeight = weights.reduce((s, w) => s + w.weight, 0)
+          if (totalWeight === 0) return null
+
+          let weightedSum = 0
+          let weightedTotal = 0
+
+          weights.forEach(cat => {
+            const catGrades = entries.filter(g => g.categoryId === cat.id)
+            if (catGrades.length === 0) return
+            const earned = catGrades.reduce((s, g) => s + (g.pointsEarned || 0), 0)
+            const possible = catGrades.reduce((s, g) => s + (g.pointsPossible || 0), 0)
+            if (possible === 0) return
+            const catPct = (earned / possible) * 100
+            weightedSum += catPct * (cat.weight / totalWeight)
+            weightedTotal += cat.weight / totalWeight
+          })
+
+          const uncategorized = entries.filter(g => !g.categoryId || !weights.find(w => w.id === g.categoryId))
+          if (uncategorized.length > 0) {
+            const earned = uncategorized.reduce((s, g) => s + (g.pointsEarned || 0), 0)
+            const possible = uncategorized.reduce((s, g) => s + (g.pointsPossible || 0), 0)
+            if (possible > 0) {
+              weightedSum += (earned / possible) * 100 * (1 - weightedTotal)
+              weightedTotal = 1
+            }
+          }
+
+          if (weightedTotal === 0) return null
+          const percentage = weightedSum / weightedTotal
+          return {
+            percentage: percentage.toFixed(1),
+            letterGrade: LETTER_GRADE(percentage),
+            isWeighted: true,
+          }
+        }
+
+        const totalEarned = entries.reduce((sum, g) => sum + (g.pointsEarned || 0), 0)
+        const totalPossible = entries.reduce((sum, g) => sum + (g.pointsPossible || 0), 0)
+        if (totalPossible === 0) return null
+        const percentage = (totalEarned / totalPossible) * 100
+        return {
+          percentage: percentage.toFixed(1),
+          letterGrade: LETTER_GRADE(percentage),
+          totalEarned,
+          totalPossible,
+          isWeighted: false,
+        }
+      },
+
+      setLoading: (loading) => set({ isLoading: loading })
+    }),
+    { name: 'shiori-grades' }
+  )
+)
 
 export const useCalendarStore = create((set, get) => ({
   events: [],

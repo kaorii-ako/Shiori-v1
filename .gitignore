@@ -44,3 +44,5 @@ coverage/
 .cache/
 qodana.yaml
 new_file.txt
+.vercel
+nul

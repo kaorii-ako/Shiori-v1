@@ -1,0 +1,236 @@
+import { jsPDF } from 'jspdf'
+
+const COLORS = {
+  bg: [16, 20, 26],
+  primary: [175, 198, 255],
+  purple: [196, 77, 255],
+  pink: [255, 107, 157],
+  green: [77, 255, 145],
+  orange: [255, 214, 160],
+  text: [223, 226, 235],
+  muted: [96, 96, 128],
+  border: [42, 47, 60],
+  white: [255, 255, 255],
+}
+
+const addRect = (doc, x, y, w, h, color, alpha = 1) => {
+  doc.setFillColor(...color)
+  doc.setGState(doc.GState ? new doc.GState({ opacity: alpha }) : undefined)
+  doc.rect(x, y, w, h, 'F')
+}
+
+const priorityColor = { high: COLORS.pink, medium: COLORS.orange, low: COLORS.green }
+
+export const exportStudyPlanToPDF = (sessions, assignments) => {
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+  const W = 210, H = 297
+  const margin = 14
+  const contentW = W - margin * 2
+  let y = 0
+
+  // Background
+  addRect(doc, 0, 0, W, H, COLORS.bg)
+
+  // Header bar
+  addRect(doc, 0, 0, W, 28, [24, 28, 40])
+  doc.setTextColor(...COLORS.primary)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(18)
+  doc.text('栞 Shiori', margin, 12)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(...COLORS.muted)
+  doc.text('AI Study Companion · Study Plan Export', margin, 20)
+  doc.setTextColor(...COLORS.muted)
+  doc.text(`Generated ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`, W - margin, 20, { align: 'right' })
+  doc.setTextColor(...COLORS.purple)
+  doc.text('shiori-v1.vercel.app', W - margin, 12, { align: 'right' })
+
+  y = 36
+
+  // Stats row
+  const stats = [
+    { label: 'TOTAL SESSIONS', value: sessions.length.toString() },
+    { label: 'STUDY TIME', value: `${Math.floor(sessions.reduce((s, ss) => s + ss.duration, 0) / 60)}h ${sessions.reduce((s, ss) => s + ss.duration, 0) % 60}m` },
+    { label: 'ASSIGNMENTS', value: sessions.reduce((s, ss) => new Set([...Array.from(s), ss.title]), new Set()).size.toString() },
+  ]
+  const statW = contentW / 3
+  stats.forEach((st, i) => {
+    const sx = margin + i * statW
+    addRect(doc, sx, y, statW - 2, 14, [30, 35, 48])
+    doc.setTextColor(...COLORS.muted)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(6)
+    doc.text(st.label, sx + 4, y + 5)
+    doc.setTextColor(...COLORS.primary)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(12)
+    doc.text(st.value, sx + 4, y + 12)
+  })
+  y += 20
+
+  // Group sessions by date
+  const grouped = {}
+  sessions.forEach(s => {
+    const key = new Date(s.date).toDateString()
+    if (!grouped[key]) grouped[key] = []
+    grouped[key].push(s)
+  })
+  const today = new Date()
+
+  for (const [dateKey, daySessions] of Object.entries(grouped)) {
+    if (y > H - 40) {
+      doc.addPage()
+      addRect(doc, 0, 0, W, H, COLORS.bg)
+      y = 14
+    }
+
+    const date = new Date(dateKey)
+    const isToday = date.toDateString() === today.toDateString()
+    const dayLabel = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
+    const totalMins = daySessions.reduce((s, ss) => s + ss.duration, 0)
+
+    // Day header
+    addRect(doc, margin, y, contentW, 8, isToday ? [40, 55, 80] : [28, 32, 44])
+    if (isToday) {
+      addRect(doc, margin, y, 2, 8, COLORS.primary)
+    }
+    doc.setTextColor(...(isToday ? COLORS.primary : COLORS.text))
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(9)
+    doc.text(dayLabel.toUpperCase(), margin + 5, y + 5.5)
+    doc.setTextColor(...COLORS.muted)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(7)
+    doc.text(`${daySessions.length} sessions · ${totalMins} min`, W - margin - 2, y + 5.5, { align: 'right' })
+    y += 10
+
+    daySessions.forEach(session => {
+      if (y > H - 20) {
+        doc.addPage()
+        addRect(doc, 0, 0, W, H, COLORS.bg)
+        y = 14
+      }
+
+      const pColor = priorityColor[session.priority] || COLORS.primary
+      addRect(doc, margin, y, contentW, 9, [22, 26, 36])
+      // priority dot
+      doc.setFillColor(...pColor)
+      doc.circle(margin + 4, y + 4.5, 1.5, 'F')
+      // title
+      doc.setTextColor(...COLORS.text)
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8)
+      const title = session.title.length > 45 ? session.title.slice(0, 42) + '…' : session.title
+      doc.text(title, margin + 9, y + 4)
+      // course + duration
+      doc.setTextColor(...COLORS.muted)
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(6.5)
+      doc.text(`${session.courseName} · ${session.duration} min`, margin + 9, y + 7.5)
+      // checkbox
+      doc.setDrawColor(...COLORS.border)
+      doc.rect(W - margin - 6, y + 2, 4, 4)
+      y += 11
+    })
+    y += 4
+  }
+
+  // Footer
+  const footerY = H - 10
+  doc.setFillColor(...[24, 28, 40])
+  doc.rect(0, footerY - 4, W, 14, 'F')
+  doc.setTextColor(...COLORS.muted)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7)
+  doc.text('Generated by Shiori (栞) — Your AI Study Companion · shiori-v1.vercel.app', margin, footerY + 2)
+  doc.text(`Page ${doc.internal.getNumberOfPages()}`, W - margin, footerY + 2, { align: 'right' })
+
+  doc.save(`shiori-study-plan-${new Date().toISOString().split('T')[0]}.pdf`)
+}
+
+export const exportAssignmentsToPDF = (assignments) => {
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+  const W = 210, H = 297
+  const margin = 14
+  const contentW = W - margin * 2
+  let y = 0
+
+  addRect(doc, 0, 0, W, H, COLORS.bg)
+
+  // Header
+  addRect(doc, 0, 0, W, 28, [24, 28, 40])
+  doc.setTextColor(...COLORS.primary)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(18)
+  doc.text('栞 Shiori', margin, 12)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(...COLORS.muted)
+  doc.text('Assignment List Export', margin, 20)
+  doc.text(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), W - margin, 20, { align: 'right' })
+  y = 36
+
+  // Column headers
+  addRect(doc, margin, y, contentW, 7, [30, 35, 48])
+  const cols = [
+    { label: 'ASSIGNMENT', x: margin + 3, w: 70 },
+    { label: 'COURSE', x: margin + 76, w: 40 },
+    { label: 'DUE DATE', x: margin + 120, w: 30 },
+    { label: 'STATUS', x: margin + 153, w: 25 },
+    { label: 'PRIORITY', x: margin + 180, w: 16 },
+  ]
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(6.5)
+  cols.forEach(col => {
+    doc.setTextColor(...COLORS.muted)
+    doc.text(col.label, col.x, y + 4.5)
+  })
+  y += 9
+
+  const pending = assignments.filter(a => a.status !== 'graded').sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+  const completed = assignments.filter(a => a.status === 'graded' || a.status === 'completed')
+  const all = [...pending, ...completed]
+
+  all.forEach((a, i) => {
+    if (y > H - 20) {
+      doc.addPage()
+      addRect(doc, 0, 0, W, H, COLORS.bg)
+      y = 14
+    }
+    const rowBg = i % 2 === 0 ? [20, 24, 32] : [24, 28, 38]
+    addRect(doc, margin, y, contentW, 8, rowBg)
+
+    const statusColor = a.status === 'graded' ? COLORS.green : a.status === 'submitted' ? COLORS.primary : COLORS.orange
+    const pColor = priorityColor[a.priority] || COLORS.muted
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(7.5)
+    doc.setTextColor(...(a.status === 'graded' ? COLORS.muted : COLORS.text))
+    doc.text((a.title || '').slice(0, 38), margin + 3, y + 5)
+
+    doc.setFontSize(7)
+    doc.setTextColor(...COLORS.muted)
+    doc.text((a.courseName || '').slice(0, 20), margin + 76, y + 5)
+    doc.text(a.dueDate ? new Date(a.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—', margin + 120, y + 5)
+
+    doc.setTextColor(...statusColor)
+    doc.text((a.status || 'pending').toUpperCase(), margin + 153, y + 5)
+
+    doc.setTextColor(...pColor)
+    doc.text((a.priority || '—').toUpperCase(), margin + 180, y + 5)
+
+    y += 9
+  })
+
+  // Footer
+  doc.setFillColor(24, 28, 40)
+  doc.rect(0, H - 14, W, 14, 'F')
+  doc.setTextColor(...COLORS.muted)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7)
+  doc.text('Shiori (栞) · shiori-v1.vercel.app', margin, H - 6)
+  doc.text(`${all.length} assignments · ${pending.length} pending`, W - margin, H - 6, { align: 'right' })
+
+  doc.save(`shiori-assignments-${new Date().toISOString().split('T')[0]}.pdf`)
+}
