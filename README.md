@@ -94,6 +94,8 @@ Zero accounts required. Try the full app in 10 seconds with demo mode.
 | **3D Card Flip** | Tap to reveal answer with a smooth 3D perspective animation |
 | **Spaced Repetition (SRS)** | Cards you miss come back sooner; mastered cards push to 1d → 2d → 5d intervals |
 | **Streak Tracking** | 3+ correct in a row = mastered 🏆; session stats shown after each study session |
+| **AI Card Generation** | Click "AI CARDS" in Notes editor — Gemini reads your notes and creates Q&A flashcards instantly |
+| **CSV Import** | Paste any tab/comma-separated text — works with Quizlet export, Anki CSV, or plain text |
 | **Due-Now Counter** | Dashboard shows how many cards are ready for review |
 
 ### ⏱️ Focus & Productivity
