@@ -275,6 +275,55 @@ export const useGradesStore = create(
   )
 )
 
+export const useFlashcardsStore = create(
+  persist(
+    (set) => ({
+      decks: [],
+
+      addDeck: (deck) => {
+        const id = `deck-${Date.now()}`
+        set((state) => ({
+          decks: [...state.decks, { ...deck, id, cards: [], createdAt: Date.now() }]
+        }))
+        return id
+      },
+
+      loadDeck: (deck) => set((state) => ({
+        decks: [...state.decks, deck]
+      })),
+
+      deleteDeck: (id) => set((state) => ({
+        decks: state.decks.filter(d => d.id !== id)
+      })),
+
+      addCard: (deckId, card) => set((state) => ({
+        decks: state.decks.map(d =>
+          d.id === deckId
+            ? { ...d, cards: [...d.cards, { ...card, id: `card-${Date.now()}`, streak: 0, nextReview: null }] }
+            : d
+        )
+      })),
+
+      removeCard: (deckId, cardId) => set((state) => ({
+        decks: state.decks.map(d =>
+          d.id === deckId
+            ? { ...d, cards: d.cards.filter(c => c.id !== cardId) }
+            : d
+        )
+      })),
+
+      updateCard: (deckId, cardId, updates) => set((state) => ({
+        decks: state.decks.map(d =>
+          d.id === deckId
+            ? { ...d, cards: d.cards.map(c => c.id === cardId ? { ...c, ...updates } : c) }
+            : d
+        )
+      })),
+    }),
+    { name: 'shiori-flashcards' }
+  )
+)
+
 export const useNotesStore = create(
   persist(
     (set, get) => ({

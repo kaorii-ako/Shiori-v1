@@ -5,9 +5,9 @@ import { Mail, Lock, AlertCircle, Sparkles } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore, useNotesStore } from '../stores'
+import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore, useNotesStore, useFlashcardsStore } from '../stores'
 import { validateLoginForm } from '../utils/authValidation'
-import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, DEMO_COURSE_WEIGHTS } from '../utils/demoData'
+import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, DEMO_COURSE_WEIGHTS, DEMO_DECKS } from '../utils/demoData'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -16,6 +16,7 @@ const Login = () => {
   const { setEvents } = useEventStore()
   const { setCourseGrades, setCourseWeights } = useGradesStore()
   const { addNote } = useNotesStore()
+  const { loadDeck } = useFlashcardsStore()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -66,6 +67,7 @@ const Login = () => {
       setCourseWeights(courseId, weights)
     })
     DEMO_NOTES.forEach(note => addNote(note))
+    DEMO_DECKS.forEach(deck => loadDeck(deck))
     navigate('/home')
   }
 

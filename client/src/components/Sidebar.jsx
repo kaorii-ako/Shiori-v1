@@ -8,6 +8,7 @@ import {
   Target,
   BarChart3,
   StickyNote,
+  Layers,
   Settings,
   Menu,
   X,
@@ -24,6 +25,7 @@ const navItems = [
   { icon: Target, label: 'Grades', path: '/grades' },
   { icon: BarChart3, label: 'Study Plans', path: '/study-plans' },
   { icon: StickyNote, label: 'Notes', path: '/notes' },
+  { icon: Layers, label: 'Flashcards', path: '/flashcards' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ]
 

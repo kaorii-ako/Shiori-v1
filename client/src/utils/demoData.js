@@ -257,6 +257,34 @@ export const DEMO_COURSE_WEIGHTS = {
   ],
 }
 
+export const DEMO_DECKS = [
+  {
+    id: 'deck-demo-1',
+    name: 'Integration Techniques',
+    courseId: 'course-1',
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
+    cards: [
+      { id: 'c1', front: 'What is the formula for Integration by Parts?', back: '∫u dv = uv − ∫v du\n\nRemember LIATE for choosing u.', streak: 3, nextReview: Date.now() + 86400000 },
+      { id: 'c2', front: 'When do you use u-substitution?', back: 'When the integrand contains a composite function f(g(x))·g\'(x). Let u = g(x), du = g\'(x)dx.', streak: 2, nextReview: Date.now() - 1000 },
+      { id: 'c3', front: 'What substitution is used for √(a²−x²)?', back: 'x = a·sin(θ)\nThis converts the square root to a·cos(θ).', streak: 0, nextReview: null },
+      { id: 'c4', front: 'What does LIATE stand for?', back: 'Logarithms → Inverse trig → Algebraic → Trig → Exponential\nChoose u as whichever comes first in this list.', streak: 1, nextReview: Date.now() - 1000 },
+      { id: 'c5', front: '∫ sin²(x) dx = ?', back: 'Use half-angle identity: sin²(x) = (1 − cos(2x))/2\nResult: x/2 − sin(2x)/4 + C', streak: 0, nextReview: null },
+    ]
+  },
+  {
+    id: 'deck-demo-2',
+    name: 'Data Structures — Key Concepts',
+    courseId: 'course-2',
+    createdAt: Date.now() - 1000 * 60 * 60 * 12,
+    cards: [
+      { id: 'c6', front: 'Time complexity of BST search (average case)?', back: 'O(log n) average\nO(n) worst case (degenerate/unbalanced tree)', streak: 2, nextReview: Date.now() - 1000 },
+      { id: 'c7', front: 'What traversal gives a BST in sorted order?', back: 'Inorder traversal (Left → Root → Right)\nAlways produces ascending sorted output.', streak: 3, nextReview: Date.now() + 172800000 },
+      { id: 'c8', front: 'Difference between BFS and DFS?', back: 'BFS: queue, explores level by level, finds shortest path\nDFS: stack/recursion, goes deep first, good for cycle detection', streak: 1, nextReview: Date.now() - 1000 },
+      { id: 'c9', front: 'What is amortized O(1) for dynamic arrays?', back: 'Each append is O(1) amortized because doubling the array rarely occurs. Total cost of n operations is O(n), so average per-op cost is O(1).', streak: 0, nextReview: null },
+    ]
+  }
+]
+
 export const DEMO_GRADES = {
   'course-1': {
     'hw1': { name: 'HW 1 — U-Substitution', pointsEarned: 48, pointsPossible: 50 },
