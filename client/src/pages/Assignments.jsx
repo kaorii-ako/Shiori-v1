@@ -74,8 +74,11 @@ const Assignments = () => {
 
   const statusConfig = {
     pending: { icon: Clock, color: '#ffaa4d', label: 'PENDING', variant: 'warning' },
+    'in-progress': { icon: AlertCircle, color: '#4d9fff', label: 'IN PROGRESS', variant: 'info' },
     submitted: { icon: AlertCircle, color: '#4d9fff', label: 'SUBMITTED', variant: 'info' },
-    graded: { icon: CheckCircle, color: '#4dff91', label: 'GRADED', variant: 'success' }
+    complete: { icon: CheckCircle, color: '#4dff91', label: 'DONE', variant: 'success' },
+    completed: { icon: CheckCircle, color: '#4dff91', label: 'DONE', variant: 'success' },
+    graded: { icon: CheckCircle, color: '#4dff91', label: 'GRADED', variant: 'success' },
   }
 
   return (
