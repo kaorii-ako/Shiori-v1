@@ -9,6 +9,7 @@ import Button from '../components/Button'
 import Badge from '../components/Badge'
 import { useNotesStore, useAssignmentsStore, useFlashcardsStore } from '../stores'
 import { ai } from '../lib/api'
+import { callGeminiClient, hasClientKey } from '../utils/gemini'
 
 const NOTE_COLORS = [
   '#ff6b9d', '#c44dff', '#afc6ff', '#4dff91',
@@ -130,6 +131,8 @@ const Notes = () => {
   const [saved, setSaved] = useState(true)
   const [generatingCards, setGeneratingCards] = useState(false)
   const [genSuccess, setGenSuccess] = useState(null)
+  const [summarizing, setSummarizing] = useState(false)
+  const [summary, setSummary] = useState(null)
   const saveTimer = useRef(null)
 
   const selected = notes.find(n => n.id === selectedId)
@@ -238,6 +241,21 @@ const Notes = () => {
       setGeneratingCards(false)
       setTimeout(() => setGenSuccess(null), 4000)
     }
+  }
+
+  const handleSummarize = async () => {
+    if (!selected?.content.trim() || summarizing) return
+    setSummarizing(true)
+    setSummary(null)
+    const prompt = `Summarize the following study notes into 5-7 concise bullet points. Each bullet must be one sentence. Focus on key concepts and facts a student needs to remember.
+
+Notes:
+${selected.content.slice(0, 3000)}
+
+Return ONLY the bullet points, one per line, each starting with "• ". No intro, no outro.`
+    const result = await callGeminiClient(prompt)
+    setSummarizing(false)
+    setSummary(result || 'Could not generate summary. Check your Gemini API key in Settings.')
   }
 
   const wordCount = selected?.content
@@ -401,6 +419,19 @@ const Notes = () => {
                         </>
                     }
                   </button>
+                  <button
+                    onClick={handleSummarize}
+                    disabled={summarizing || !selected?.content?.trim()}
+                    title="Summarize this note into bullet points using AI"
+                    style={{ padding: '4px 10px', background: 'rgba(175,198,255,0.08)',
+                      border: '1px solid rgba(175,198,255,0.25)',
+                      borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5,
+                      opacity: (!selected?.content?.trim() || summarizing) ? 0.5 : 1 }}>
+                    {summarizing
+                      ? <span style={{ fontFamily: 'VT323', fontSize: 13, color: '#afc6ff' }}>thinking…</span>
+                      : <><Sparkles size={12} color="#afc6ff" /><span style={{ fontFamily: 'VT323', fontSize: 13, color: '#afc6ff' }}>SUMMARIZE</span></>
+                    }
+                  </button>
                   <button onClick={handleExport}
                     style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.05)',
                       border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, cursor: 'pointer' }}>
@@ -446,6 +477,43 @@ const Notes = () => {
                   <span key={label} style={{ fontFamily: 'monospace', fontSize: 11, color: '#424754' }}>{md}</span>
                 ))}
               </div>
+
+              {/* AI Summary panel */}
+              <AnimatePresence>
+                {summary && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    style={{ overflow: 'hidden', marginTop: 16 }}
+                  >
+                    <div style={{
+                      padding: '14px 16px', borderRadius: 10,
+                      background: 'rgba(175,198,255,0.07)',
+                      border: '1px solid rgba(175,198,255,0.20)',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                        <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#afc6ff', letterSpacing: '0.06em' }}>
+                          ✦ AI SUMMARY
+                        </span>
+                        <button
+                          onClick={() => setSummary(null)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#606080', fontSize: 16, lineHeight: 1 }}
+                        >×</button>
+                      </div>
+                      {summary.split('\n').filter(l => l.trim()).map((line, i) => (
+                        <div key={i} style={{
+                          fontFamily: 'Manrope, sans-serif', fontSize: 13,
+                          color: '#c4c8d4', lineHeight: 1.6,
+                          padding: '3px 0',
+                          borderBottom: i < summary.split('\n').filter(l => l.trim()).length - 1
+                            ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                        }}>{line}</div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </GlassCard>
           ) : (
             <GlassCard>

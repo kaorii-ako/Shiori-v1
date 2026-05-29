@@ -6,13 +6,12 @@
 
 > **Shiori** (栞) means *bookmark* in Japanese — because every deadline deserves to be remembered.
 
-[![Status](https://img.shields.io/badge/status-active-brightgreen?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1)
 [![MIT License](https://img.shields.io/badge/license-MIT-orange?style=for-the-badge)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![Gemini](https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
+[![Gemini AI](https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-afc6ff?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1/blob/master/.github/CONTRIBUTING.md)
 [![Stars](https://img.shields.io/github/stars/kaorii-ako/Shiori-v1?style=for-the-badge&color=e5b5ff)](https://github.com/kaorii-ako/Shiori-v1/stargazers)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/kaorii-ako/Shiori-v1)
 
 <br/>
 
@@ -20,11 +19,11 @@
 
 <br/>
 
-![Shiori App Preview](demo/preview.png)
+> **15 pages · AI quiz generator · SRS flashcards · GPA predictor · Pomodoro · Leaderboard · PWA**
 
 <br/>
 
-**[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try the Demo](https://shiori-v1.vercel.app)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[Report a Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
+**[⭐ Star on GitHub](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try Demo](https://shiori-v1.vercel.app)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues)** &nbsp;·&nbsp; **[💬 Discussions](https://github.com/kaorii-ako/Shiori-v1/discussions)**
 
 </div>
 
