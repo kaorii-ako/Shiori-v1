@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import confetti from 'canvas-confetti'
 import {
   Search,
   Clock,
@@ -25,8 +26,19 @@ const Assignments = () => {
     filter,
     setFilter,
     getFilteredAssignments,
-    setGrade
+    setGrade,
+    updateAssignment,
   } = useAssignmentsStore()
+
+  const handleToggleComplete = (e, assignment) => {
+    e.stopPropagation()
+    const isCompleting = assignment.status === 'pending'
+    updateAssignment(assignment.id, { status: isCompleting ? 'complete' : 'pending' })
+    if (isCompleting) {
+      const remaining = assignments.filter(a => a.status === 'pending' && a.id !== assignment.id).length
+      if (remaining === 0) confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } })
+    }
+  }
 
   const [selectedAssignment, setSelectedAssignment] = useState(null)
   const [gradeModalOpen, setGradeModalOpen] = useState(false)
@@ -62,8 +74,11 @@ const Assignments = () => {
 
   const statusConfig = {
     pending: { icon: Clock, color: '#ffaa4d', label: 'PENDING', variant: 'warning' },
+    'in-progress': { icon: AlertCircle, color: '#4d9fff', label: 'IN PROGRESS', variant: 'info' },
     submitted: { icon: AlertCircle, color: '#4d9fff', label: 'SUBMITTED', variant: 'info' },
-    graded: { icon: CheckCircle, color: '#4dff91', label: 'GRADED', variant: 'success' }
+    complete: { icon: CheckCircle, color: '#4dff91', label: 'DONE', variant: 'success' },
+    completed: { icon: CheckCircle, color: '#4dff91', label: 'DONE', variant: 'success' },
+    graded: { icon: CheckCircle, color: '#4dff91', label: 'GRADED', variant: 'success' },
   }
 
   return (
@@ -193,6 +208,23 @@ const Assignments = () => {
                   </span>
 
                   <Badge variant={status.variant}>{status.label}</Badge>
+
+                  {(assignment.status === 'pending' || assignment.status === 'complete') && (
+                    <button
+                      onClick={(e) => handleToggleComplete(e, assignment)}
+                      title={assignment.status === 'complete' ? 'Mark pending' : 'Mark complete'}
+                      style={{
+                        background: assignment.status === 'complete' ? 'rgba(77,255,145,0.15)' : 'rgba(255,255,255,0.05)',
+                        border: `1px solid ${assignment.status === 'complete' ? 'rgba(77,255,145,0.5)' : 'rgba(255,255,255,0.15)'}`,
+                        borderRadius: 6, padding: '3px 8px', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', gap: 4,
+                      }}>
+                      <CheckCircle size={12} color={assignment.status === 'complete' ? '#4dff91' : '#606080'} />
+                      <span style={{ fontFamily: 'VT323', fontSize: 13, color: assignment.status === 'complete' ? '#4dff91' : '#606080' }}>
+                        {assignment.status === 'complete' ? 'DONE' : 'DONE?'}
+                      </span>
+                    </button>
+                  )}
 
                   {assignment.grade ? (
                     <span

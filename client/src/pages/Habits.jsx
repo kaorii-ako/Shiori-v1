@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Flame, Plus, Check, Trash2, Trophy, Calendar, Target } from 'lucide-react'
+import { Flame, Plus, Check, Trash2, Trophy, Calendar, Target, Snowflake } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import GlassCard from '../components/GlassCard'
 
@@ -17,13 +17,19 @@ function getLast7Days() {
   return days
 }
 
-function getStreak(completions) {
+function getWeekKey() {
+  const d = new Date()
+  const jan1 = new Date(d.getFullYear(), 0, 1)
+  return `${d.getFullYear()}-W${Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7)}`
+}
+
+function getStreak(completions, freezes = {}) {
   const today = new Date()
   let streak = 0
   let d = new Date(today)
   while (true) {
     const key = d.toISOString().split('T')[0]
-    if (completions[key]) {
+    if (completions[key] || freezes[key]) {
       streak++
       d.setDate(d.getDate() - 1)
     } else {
@@ -45,9 +51,35 @@ export default function Habits() {
       return JSON.parse(localStorage.getItem('shiori-habits') || 'null') || defaultHabits
     } catch { return defaultHabits }
   })
+  const [freezeTokens, setFreezeTokens] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('shiori-freeze-tokens') || 'null')
+      if (stored?.week === getWeekKey()) return stored.count
+      return 1
+    } catch { return 1 }
+  })
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState(COLORS[0])
   const [adding, setAdding] = useState(false)
+
+  const saveFreeze = (count) => {
+    setFreezeTokens(count)
+    localStorage.setItem('shiori-freeze-tokens', JSON.stringify({ week: getWeekKey(), count }))
+  }
+
+  const applyFreeze = (habitId) => {
+    if (freezeTokens < 1) return
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const key = yesterday.toISOString().split('T')[0]
+    const updated = habits.map(h => {
+      if (h.id !== habitId) return h
+      const freezes = { ...(h.freezes || {}), [key]: true }
+      return { ...h, freezes }
+    })
+    save(updated)
+    saveFreeze(freezeTokens - 1)
+  }
 
   const save = (updated) => {
     setHabits(updated)
@@ -55,6 +87,7 @@ export default function Habits() {
   }
 
   const confettiFiredRef = useRef(false)
+  const [showShareCard, setShowShareCard] = useState(false)
 
   const toggleDay = (habitId, dateKey) => {
     const updated = habits.map(h => {
@@ -72,6 +105,7 @@ export default function Habits() {
       if (allDone && !confettiFiredRef.current) {
         confettiFiredRef.current = true
         confetti({ particleCount: 140, spread: 90, origin: { y: 0.55 }, colors: ['#c44dff', '#528dff', '#4dff91', '#ff6b9d', '#ffd6a0'] })
+        setShowShareCard(true)
         setTimeout(() => { confettiFiredRef.current = false }, 3000)
       }
     }
@@ -90,7 +124,7 @@ export default function Habits() {
   const last7 = getLast7Days()
   const todayKey = new Date().toISOString().split('T')[0]
 
-  const totalStreak = habits.reduce((sum, h) => sum + getStreak(h.completions), 0)
+  const totalStreak = habits.reduce((sum, h) => sum + getStreak(h.completions, h.freezes), 0)
   const completedToday = habits.filter(h => h.completions[todayKey]).length
 
   return (
@@ -143,7 +177,10 @@ export default function Habits() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <AnimatePresence>
             {habits.map(habit => {
-              const streak = getStreak(habit.completions)
+              const streak = getStreak(habit.completions, habit.freezes)
+              const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1)
+              const yesterdayKey = yesterday.toISOString().split('T')[0]
+              const canFreeze = freezeTokens > 0 && streak > 0 && !habit.completions[todayKey] && !habit.completions[yesterdayKey] && !(habit.freezes || {})[yesterdayKey]
               return (
                 <motion.div
                   key={habit.id}
@@ -158,12 +195,21 @@ export default function Habits() {
                     {streak > 0 && (
                       <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#ff6b9d', flexShrink: 0 }}>🔥{streak}</span>
                     )}
+                    {canFreeze && (
+                      <button onClick={() => applyFreeze(habit.id)}
+                        title={`Use freeze (${freezeTokens} left this week)`}
+                        style={{ background: 'rgba(77,170,255,0.1)', border: '1px solid rgba(77,170,255,0.3)', borderRadius: 6, cursor: 'pointer', padding: '1px 5px', display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0 }}>
+                        <Snowflake size={10} color="#4daaff" />
+                        <span style={{ fontFamily: 'VT323', fontSize: 12, color: '#4daaff' }}>{freezeTokens}</span>
+                      </button>
+                    )}
                     <button onClick={() => deleteHabit(habit.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#424754', padding: 2, flexShrink: 0, opacity: 0.5 }}>
                       <Trash2 size={11} />
                     </button>
                   </div>
                   {last7.map(dateKey => {
                     const done = !!habit.completions[dateKey]
+                    const frozen = !!(habit.freezes || {})[dateKey]
                     const isToday = dateKey === todayKey
                     return (
                       <button
@@ -171,14 +217,14 @@ export default function Habits() {
                         onClick={() => toggleDay(habit.id, dateKey)}
                         style={{
                           width: 32, height: 32, borderRadius: 8,
-                          background: done ? `${habit.color}25` : 'rgba(66,71,84,0.15)',
-                          border: `1.5px solid ${done ? habit.color : isToday ? 'rgba(175,198,255,0.25)' : 'rgba(66,71,84,0.20)'}`,
+                          background: frozen ? 'rgba(77,170,255,0.1)' : done ? `${habit.color}25` : 'rgba(66,71,84,0.15)',
+                          border: `1.5px solid ${frozen ? 'rgba(77,170,255,0.4)' : done ? habit.color : isToday ? 'rgba(175,198,255,0.25)' : 'rgba(66,71,84,0.20)'}`,
                           cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                           transition: 'all 0.15s ease',
                           boxShadow: done ? `0 0 8px ${habit.color}40` : 'none',
                         }}
                       >
-                        {done && <Check size={13} style={{ color: habit.color }} />}
+                        {frozen ? <Snowflake size={13} color="#4daaff" /> : done && <Check size={13} style={{ color: habit.color }} />}
                       </button>
                     )
                   })}
@@ -222,6 +268,50 @@ export default function Habits() {
           </AnimatePresence>
         </div>
       </GlassCard>
+
+      {/* Share card after all habits done */}
+      <AnimatePresence>
+        {showShareCard && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            style={{
+              position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+              zIndex: 200, width: 'min(380px, 90vw)',
+              background: 'rgba(16,20,26,0.97)',
+              border: '1px solid rgba(77,255,145,0.40)',
+              borderRadius: 14, padding: '16px 20px',
+              boxShadow: '0 0 32px rgba(77,255,145,0.15), 0 16px 32px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(20px)',
+            }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ fontSize: 28 }}>🎉</span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color: '#4dff91', marginBottom: 4 }}>ALL HABITS DONE!</p>
+                <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#8c90a0' }}>Share your streak with the world</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+              <button
+                onClick={() => {
+                  const top = habits.reduce((best, h) => getStreak(h.completions, h.freezes) > getStreak(best.completions, best.freezes) ? h : best, habits[0])
+                  const streak = getStreak(top?.completions || {}, top?.freezes || {})
+                  const text = `🔥 ${streak}-day streak on "${top?.name || 'my habits'}"! Just completed all my daily habits with Shiori — free AI study companion → https://shiori-v1.vercel.app #StudyWithAI`
+                  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
+                  setShowShareCard(false)
+                }}
+                style={{ flex: 1, padding: '8px 12px', borderRadius: 8, cursor: 'pointer', border: 'none', background: 'rgba(77,255,145,0.15)', color: '#4dff91', fontFamily: 'VT323', fontSize: 16 }}>
+                Share on X 🐦
+              </button>
+              <button onClick={() => setShowShareCard(false)}
+                style={{ padding: '8px 12px', borderRadius: 8, cursor: 'pointer', border: 'none', background: 'rgba(66,71,84,0.3)', color: '#606080', fontFamily: 'VT323', fontSize: 16 }}>
+                Later
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Trophy section */}
       {totalStreak >= 7 && (

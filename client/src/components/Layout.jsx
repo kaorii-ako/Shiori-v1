@@ -41,10 +41,10 @@ const StarPrompt = ({ onDismiss }) => (
     </div>
     <div style={{ flex: 1, minWidth: 0 }}>
       <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 13, color: '#dfe2eb', marginBottom: 2 }}>
-        Like what you see?
+        Finding this useful?
       </p>
       <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#606080' }}>
-        Shiori is free &amp; open source. A ⭐ helps other students find it.
+        Shiori is 100% free &amp; open source. ⭐ helps other students discover it — takes 2 seconds.
       </p>
     </div>
     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
@@ -111,7 +111,7 @@ const Layout = () => {
     const timer = setTimeout(() => {
       promptFired.current = true
       setShowStarPrompt(true)
-    }, 90000)
+    }, 40000)
     return () => clearTimeout(timer)
   }, [isDemo])
 

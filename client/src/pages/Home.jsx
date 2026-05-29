@@ -76,7 +76,11 @@ Be warm, specific, and motivating. Mention 1-2 specific assignments by name. Kee
 
   useEffect(() => { generate() }, [])
 
-  if (!hasClientKey() && !briefing) return null
+  const { isDemo } = useAuthStore()
+
+  const demoBriefing = "Your Calculus II problem set is due in 2 days — start with integration by parts tonight (est. 1.5h). The BST implementation for CS 301 is your biggest time sink this week; block 3h on Wednesday. Good news: you've completed 60% of this week's assignments. Keep the streak going 🔥"
+
+  if (!hasClientKey() && !briefing && !isDemo) return null
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
@@ -105,9 +109,9 @@ Be warm, specific, and motivating. Mention 1-2 specific assignments by name. Kee
                 <RefreshCw size={13} style={{ animation: 'spin 1s linear infinite' }} />
                 Generating your briefing…
               </div>
-            ) : briefing ? (
+            ) : (briefing || (isDemo && demoBriefing)) ? (
               <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#c4c8d4', lineHeight: 1.6, margin: 0 }}>
-                {briefing}
+                {briefing || demoBriefing}
               </p>
             ) : (
               <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#8c90a0', margin: 0 }}>
