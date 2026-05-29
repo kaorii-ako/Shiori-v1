@@ -1,0 +1,40 @@
+{
+  "name": "Shiori — AI Study Companion",
+  "short_name": "Shiori",
+  "description": "AI-powered study companion: Google Classroom sync, flashcards, grade tracking, and spaced repetition.",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#10141a",
+  "theme_color": "#10141a",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "My Assignments",
+      "short_name": "Assignments",
+      "url": "/assignments",
+      "description": "View upcoming assignments and deadlines"
+    },
+    {
+      "name": "Study Flashcards",
+      "short_name": "Flashcards",
+      "url": "/flashcards",
+      "description": "Review flashcards with spaced repetition"
+    },
+    {
+      "name": "Grades",
+      "short_name": "Grades",
+      "url": "/grades",
+      "description": "Check your GPA and course grades"
+    }
+  ]
+}
