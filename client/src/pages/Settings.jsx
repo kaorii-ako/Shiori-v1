@@ -270,10 +270,45 @@ const Settings = () => {
           </motion.div>
         ))}
 
+        {/* MCP Data Export */}
+        <GlassCard>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <Database size={16} style={{ color: '#afc6ff' }} />
+            <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>EXPORT DATA (MCP)</h2>
+          </div>
+          <p style={{ fontFamily: 'VT323', fontSize: 15, color: '#8c90a0', marginBottom: 14 }}>
+            Export your Shiori data as JSON for use with the Shiori MCP server in Claude Code or Claude Desktop.
+            See <code style={{ color: '#afc6ff', fontSize: 13 }}>mcp/README.md</code> for setup.
+          </p>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => {
+              const keys = ['shiori-assignments', 'shiori-grades', 'shiori-notes', 'shiori-flashcards', 'shiori-auth']
+              const data = { exportedAt: new Date().toISOString() }
+              keys.forEach(k => {
+                try {
+                  const raw = localStorage.getItem(k)
+                  if (raw) {
+                    const parsed = JSON.parse(raw)
+                    const state = parsed?.state || parsed
+                    Object.assign(data, state)
+                  }
+                } catch {}
+              })
+              const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+              const a = document.createElement('a'); a.href = URL.createObjectURL(blob)
+              a.download = 'shiori-data.json'; a.click()
+            }}
+          >
+            Export shiori-data.json
+          </Button>
+        </GlassCard>
+
         <GlassCard>
           <div className="text-center py-4">
             <p className="text-text-muted text-sm">
-              Shiori v1.0.0 • Made with
+              Shiori v2.1.0 • Made with
               <span className="text-accent-tertiary mx-1">♥</span>
               for students everywhere
             </p>

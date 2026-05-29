@@ -23,7 +23,9 @@
 
 <br/>
 
-**[⭐ Star on GitHub](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try Demo](https://shiori-v1.vercel.app)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues)** &nbsp;·&nbsp; **[💬 Discussions](https://github.com/kaorii-ako/Shiori-v1/discussions)**
+**[⭐ Star on GitHub](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try Demo](https://shiori-v1.vercel.app)** &nbsp;·&nbsp; **[🤖 MCP Server](mcp/)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues)** &nbsp;·&nbsp; **[💬 Discussions](https://github.com/kaorii-ako/Shiori-v1/discussions)**
+
+> 🤖 **New:** [Shiori MCP Server](mcp/) — use your study data directly in Claude Code. `"What's due this week?"` `"Show my grades"` `"Add assignment: essay due Friday"`
 
 </div>
 
