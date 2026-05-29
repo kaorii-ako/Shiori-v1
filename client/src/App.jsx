@@ -12,6 +12,7 @@ import Grades from './pages/Grades'
 import StudyPlans from './pages/StudyPlans'
 import Notes from './pages/Notes'
 import Flashcards from './pages/Flashcards'
+import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -44,6 +45,7 @@ function App() {
           <Route path="/study-plans" element={<StudyPlans />} />
           <Route path="/notes" element={<Notes />} />
           <Route path="/flashcards" element={<Flashcards />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>

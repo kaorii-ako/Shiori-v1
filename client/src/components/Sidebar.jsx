@@ -7,6 +7,7 @@ import {
   Calendar,
   Target,
   BarChart3,
+  TrendingUp,
   StickyNote,
   Layers,
   Settings,
@@ -26,6 +27,7 @@ const navItems = [
   { icon: BarChart3, label: 'Study Plans', path: '/study-plans' },
   { icon: StickyNote, label: 'Notes', path: '/notes' },
   { icon: Layers, label: 'Flashcards', path: '/flashcards' },
+  { icon: TrendingUp, label: 'Analytics', path: '/analytics' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ]
 

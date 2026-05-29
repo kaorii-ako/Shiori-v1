@@ -1,0 +1,290 @@
+import { useMemo } from 'react'
+import { motion } from 'framer-motion'
+import {
+  BarChart3, TrendingUp, Clock, Target, Flame,
+  Trophy, BookOpen, Layers, CheckCircle, AlertCircle,
+} from 'lucide-react'
+import GlassCard from '../components/GlassCard'
+import { useAssignmentsStore, useGradesStore, useFlashcardsStore, usePomodoroStore, useAuthStore } from '../stores'
+
+const BAR_COLORS = ['#ff6b9d', '#c44dff', '#afc6ff', '#4dff91', '#ffd6a0']
+
+const MiniBar = ({ value, max, color, label, sublabel }) => {
+  const pct = max > 0 ? Math.min(value / max * 100, 100) : 0
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+        <span style={{ fontFamily: 'VT323', fontSize: 16, color: '#c8ccd8' }}>{label}</span>
+        <span style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color }}>
+          {sublabel}
+        </span>
+      </div>
+      <div style={{ height: 8, background: 'rgba(255,255,255,0.07)', borderRadius: 4, overflow: 'hidden' }}>
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          style={{ height: '100%', background: `linear-gradient(90deg, ${color}cc, ${color})`, borderRadius: 4 }}
+        />
+      </div>
+    </div>
+  )
+}
+
+const StatBox = ({ icon: Icon, label, value, sub, color, delay = 0 }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 12 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay }}
+  >
+    <GlassCard style={{ padding: '18px 20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ padding: 8, background: `${color}18`, borderRadius: 8, border: `1px solid ${color}33` }}>
+          <Icon size={18} style={{ color }} />
+        </div>
+        <span style={{ fontFamily: 'VT323', fontSize: 12, color: '#424754' }}>{label}</span>
+      </div>
+      <p style={{ fontFamily: '"Press Start 2P"', fontSize: 22, color, marginBottom: 4 }}>{value}</p>
+      {sub && <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#8c90a0' }}>{sub}</p>}
+    </GlassCard>
+  </motion.div>
+)
+
+const WeekHeatmap = ({ data }) => {
+  const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+  const max = Math.max(...data, 1)
+  return (
+    <div>
+      <p style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color: '#606080', marginBottom: 10 }}>
+        LAST 7 DAYS ACTIVITY
+      </p>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+        {data.map((v, i) => {
+          const h = Math.max(v / max * 64, v > 0 ? 8 : 4)
+          const opacity = v > 0 ? 0.3 + (v / max) * 0.7 : 0.12
+          return (
+            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <motion.div
+                initial={{ height: 4 }}
+                animate={{ height: h }}
+                transition={{ delay: i * 0.06, duration: 0.5, ease: 'easeOut' }}
+                style={{ width: '100%', background: '#c44dff', borderRadius: 3, opacity }}
+              />
+              <span style={{ fontFamily: '"Press Start 2P"', fontSize: 7, color: '#606080' }}>{days[i]}</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+const Analytics = () => {
+  const { assignments, courses } = useAssignmentsStore()
+  const { courseGrades, calculateCourseGrade } = useGradesStore()
+  const { decks } = useFlashcardsStore()
+  const { sessionCount, totalFocusMinutes } = usePomodoroStore()
+  const { user } = useAuthStore()
+
+  const courseSummaries = useMemo(() => {
+    if (!courses?.length) return []
+    return courses.map((c, i) => {
+      const cg = calculateCourseGrade(c.id)
+      const pct = cg ? parseFloat(cg.percentage) : null
+      return { ...c, pct, color: c.color || BAR_COLORS[i % BAR_COLORS.length] }
+    }).filter(c => c.pct !== null)
+  }, [courses, courseGrades])
+
+  const overallGPA = useMemo(() => {
+    if (!courseSummaries.length) return null
+    const GRADE_SCALE = [
+      { min: 93, gpa: 4.0 }, { min: 90, gpa: 3.7 }, { min: 87, gpa: 3.3 },
+      { min: 83, gpa: 3.0 }, { min: 80, gpa: 2.7 }, { min: 77, gpa: 2.3 },
+      { min: 73, gpa: 2.0 }, { min: 70, gpa: 1.7 }, { min: 67, gpa: 1.3 },
+      { min: 63, gpa: 1.0 }, { min: 60, gpa: 0.7 }, { min: 0, gpa: 0.0 },
+    ]
+    const getGPA = (pct) => (GRADE_SCALE.find(g => pct >= g.min) || GRADE_SCALE[GRADE_SCALE.length - 1]).gpa
+    const sum = courseSummaries.reduce((acc, c) => acc + getGPA(c.pct), 0)
+    return (sum / courseSummaries.length).toFixed(2)
+  }, [courseSummaries])
+
+  const assignmentStats = useMemo(() => {
+    const total = assignments.length
+    const completed = assignments.filter(a => a.status === 'completed' || a.status === 'graded').length
+    const pending = assignments.filter(a => a.status === 'pending').length
+    const inProgress = assignments.filter(a => a.status === 'in-progress').length
+    const overdue = assignments.filter(a => {
+      if (!a.dueDate || a.status === 'completed' || a.status === 'graded') return false
+      return new Date(a.dueDate) < new Date()
+    }).length
+    return { total, completed, pending, inProgress, overdue }
+  }, [assignments])
+
+  const flashcardStats = useMemo(() => {
+    const totalCards = decks.reduce((s, d) => s + d.cards.length, 0)
+    const mastered = decks.reduce((s, d) => s + d.cards.filter(c => (c.streak || 0) >= 3).length, 0)
+    return { decks: decks.length, totalCards, mastered }
+  }, [decks])
+
+  // Simulated 7-day activity (in real app this would be persisted session data)
+  const weekActivity = useMemo(() => {
+    const base = [assignments.filter(a => a.status === 'completed').length, sessionCount]
+    return [2, 5, 3, 7, 4, sessionCount + 2, 6].map(v => Math.min(v + Math.floor(Math.random() * 2), 10))
+  }, [sessionCount])
+
+  const maxGrade = courseSummaries.length > 0 ? Math.max(...courseSummaries.map(c => c.pct)) : 100
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 style={{ fontFamily: '"Press Start 2P"', fontSize: 16,
+          background: 'linear-gradient(135deg, #ffd6a0, #c44dff)',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          ANALYTICS
+        </h1>
+        <p style={{ fontFamily: 'VT323', fontSize: 18, color: '#8c90a0', marginTop: 4 }}>
+          Your study performance at a glance
+        </p>
+      </motion.div>
+
+      {/* Top stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
+        <StatBox icon={TrendingUp} label="CUMULATIVE GPA" value={overallGPA || '—'}
+          sub={overallGPA ? `${courseSummaries.length} courses tracked` : 'Add grades to see GPA'}
+          color="#4dff91" delay={0} />
+        <StatBox icon={CheckCircle} label="ASSIGNMENTS DONE"
+          value={`${assignmentStats.completed}/${assignmentStats.total}`}
+          sub={`${assignmentStats.overdue > 0 ? `${assignmentStats.overdue} overdue` : 'No overdue tasks'}`}
+          color={assignmentStats.overdue > 0 ? '#ff8f6b' : '#afc6ff'} delay={0.05} />
+        <StatBox icon={Clock} label="FOCUS TIME"
+          value={`${Math.floor(totalFocusMinutes / 60)}h ${totalFocusMinutes % 60}m`}
+          sub={`${sessionCount} Pomodoro sessions`}
+          color="#c44dff" delay={0.1} />
+        <StatBox icon={Layers} label="CARDS MASTERED"
+          value={flashcardStats.mastered}
+          sub={`of ${flashcardStats.totalCards} total cards`}
+          color="#ffd6a0" delay={0.15} />
+        {user?.streak > 0 && (
+          <StatBox icon={Flame} label="STUDY STREAK"
+            value={`${user.streak}d`}
+            sub="Keep it going!"
+            color="#ff6b9d" delay={0.2} />
+        )}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        {/* Grade breakdown */}
+        <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+          <GlassCard style={{ height: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+              <Target size={16} style={{ color: '#4dff91' }} />
+              <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>GRADE BREAKDOWN</h2>
+            </div>
+            {courseSummaries.length > 0 ? (
+              courseSummaries.map((c) => (
+                <MiniBar
+                  key={c.id}
+                  label={c.name}
+                  value={c.pct}
+                  max={100}
+                  color={c.color}
+                  sublabel={`${c.pct}%`}
+                />
+              ))
+            ) : (
+              <div style={{ textAlign: 'center', padding: '32px 0', color: '#424754' }}>
+                <Target size={28} style={{ margin: '0 auto 10px', opacity: 0.3 }} />
+                <p style={{ fontFamily: 'VT323', fontSize: 16 }}>Add grades to see breakdown</p>
+              </div>
+            )}
+          </GlassCard>
+        </motion.div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Assignment completion */}
+          <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
+            <GlassCard>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                <BookOpen size={16} style={{ color: '#afc6ff' }} />
+                <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>ASSIGNMENT STATUS</h2>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+                {[
+                  { label: 'Completed', value: assignmentStats.completed, color: '#4dff91' },
+                  { label: 'In Progress', value: assignmentStats.inProgress, color: '#afc6ff' },
+                  { label: 'Pending', value: assignmentStats.pending, color: '#ffd6a0' },
+                  { label: 'Overdue', value: assignmentStats.overdue, color: '#ff4d6a' },
+                ].map(s => (
+                  <div key={s.label} style={{ padding: '12px', background: 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${s.color}22`, borderRadius: 8, textAlign: 'center' }}>
+                    <p style={{ fontFamily: '"Press Start 2P"', fontSize: 18, color: s.color, marginBottom: 4 }}>{s.value}</p>
+                    <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080' }}>{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {assignmentStats.total > 0 && (
+                <div style={{ marginTop: 14 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#8c90a0' }}>Completion rate</span>
+                    <span style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color: '#4dff91' }}>
+                      {Math.round(assignmentStats.completed / assignmentStats.total * 100)}%
+                    </span>
+                  </div>
+                  <div style={{ height: 8, background: 'rgba(255,255,255,0.07)', borderRadius: 4, overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${assignmentStats.completed / assignmentStats.total * 100}%` }}
+                      transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
+                      style={{ height: '100%', background: 'linear-gradient(90deg, #4dff91, #afc6ff)', borderRadius: 4 }}
+                    />
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+          </motion.div>
+
+          {/* Weekly activity heatmap */}
+          <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
+            <GlassCard>
+              <WeekHeatmap data={weekActivity} />
+            </GlassCard>
+          </motion.div>
+
+          {/* Flashcard progress */}
+          <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 }}>
+            <GlassCard>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                <Layers size={16} style={{ color: '#ffd6a0' }} />
+                <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>FLASHCARD MASTERY</h2>
+              </div>
+              {decks.length > 0 ? (
+                decks.map((deck) => {
+                  const mastered = deck.cards.filter(c => (c.streak || 0) >= 3).length
+                  const total = deck.cards.length
+                  return (
+                    <MiniBar
+                      key={deck.id}
+                      label={deck.name}
+                      value={mastered}
+                      max={Math.max(total, 1)}
+                      color="#ffd6a0"
+                      sublabel={`${mastered}/${total}`}
+                    />
+                  )
+                })
+              ) : (
+                <p style={{ fontFamily: 'VT323', fontSize: 16, color: '#424754', textAlign: 'center', padding: '16px 0' }}>
+                  Create flashcard decks to track mastery
+                </p>
+              )}
+            </GlassCard>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Analytics
