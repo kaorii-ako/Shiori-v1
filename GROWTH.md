@@ -5,7 +5,31 @@ Time estimates are realistic — these are not vague suggestions.
 
 ---
 
-## 🆕 NEW HIGHEST-PRIORITY: Post to Claude Code community
+## 🚨 #1 PRIORITY — Submit to awesome-mcp-servers (87k stars repo)
+
+`punkpeye/awesome-mcp-servers` has **87,873 stars** and accepts PRs. One accepted PR here
+can drive hundreds of stars. Do this FIRST.
+
+**Step 1** — Fork: https://github.com/punkpeye/awesome-mcp-servers
+**Step 2** — Add to `README.md` under "Education" section (or create it):
+```markdown
+- [Shiori](https://github.com/kaorii-ako/Shiori-v1) - Student productivity MCP server. Access assignments, grades, notes, and flashcards from Claude Code. Google Classroom sync + Gemini AI. ![MIT](badge) ![JavaScript](badge)
+```
+**Step 3** — Open PR titled: `Add Shiori — student productivity MCP server`
+
+**Also submit to `appcypher/awesome-mcp-servers` (5,568 stars):**
+Fork: https://github.com/appcypher/awesome-mcp-servers
+Same text, under "Education" or "Productivity".
+
+**Also submit to glama.ai MCP directory (free, instant):**
+URL: https://glama.ai/mcp/servers/submit
+Name: Shiori MCP Server
+GitHub: https://github.com/kaorii-ako/Shiori-v1
+Description: Access your study assignments, grades, notes, and flashcards from Claude Code. Google Classroom sync + Gemini AI.
+
+---
+
+## 🆕 NEW HIGH-PRIORITY: Post to Claude Code community
 
 Shiori now has a **MCP server** (see `mcp/`). This is the angle that gets stars from developers.
 
