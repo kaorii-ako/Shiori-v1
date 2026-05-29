@@ -433,11 +433,14 @@ export const usePomodoroStore = create(
 
 export const useUIStore = create((set) => ({
   sidebarCollapsed: false,
+  sidebarMobileOpen: false,
   aiChatOpen: false,
   activeModal: null,
   toasts: [],
 
   toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+  toggleSidebarMobile: () => set((state) => ({ sidebarMobileOpen: !state.sidebarMobileOpen })),
+  closeSidebarMobile: () => set({ sidebarMobileOpen: false }),
   toggleAIChat: () => set((state) => ({ aiChatOpen: !state.aiChatOpen })),
   setActiveModal: (modal) => set({ activeModal: modal }),
   closeModal: () => set({ activeModal: null }),

@@ -16,8 +16,7 @@ import {
   Sparkles
 } from 'lucide-react'
 import Button from '../components/Button'
-import AIChat from '../components/AIChat'
-import { useAuthStore } from '../stores'
+import { useAuthStore, useUIStore } from '../stores'
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/home' },
@@ -35,13 +34,12 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user } = useAuthStore()
+  const { sidebarMobileOpen, closeSidebarMobile } = useUIStore()
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const [showChat, setShowChat] = useState(false)
 
   // Collapse on mobile
   useEffect(() => {
-    const handleResize = () => setIsCollapsed(window.innerWidth < 768)
+    const handleResize = () => setIsCollapsed(window.innerWidth < 1024)
     handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -54,20 +52,20 @@ const Sidebar = () => {
 
   const handleNav = (path) => {
     navigate(path)
-    setIsMobileOpen(false)
+    closeSidebarMobile()
   }
 
   return (
     <>
       {/* Mobile overlay */}
       <AnimatePresence>
-        {isMobileOpen && (
+        {sidebarMobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            onClick={() => setIsMobileOpen(false)}
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            onClick={closeSidebarMobile}
           />
         )}
       </AnimatePresence>
@@ -81,8 +79,8 @@ const Sidebar = () => {
           fixed top-0 left-0 h-full z-50 flex flex-col
           ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-[260px]'}
           lg:relative
-          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          transition-sa
+          ${sidebarMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          transition-transform duration-250
         `}
         style={{
           background: 'linear-gradient(180deg, #14181e 0%, #10141a 100%)',
@@ -124,9 +122,9 @@ const Sidebar = () => {
               </motion.div>
             )}
           </AnimatePresence>
-          {isMobileOpen && (
+          {sidebarMobileOpen && (
             <button
-              onClick={() => setIsMobileOpen(false)}
+              onClick={closeSidebarMobile}
               className="ml-auto lg:hidden p-1"
               style={{ color: '#8c90a0' }}
             >

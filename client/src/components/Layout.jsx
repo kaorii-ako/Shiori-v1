@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Star, Github } from 'lucide-react'
+import { Star, Github, Menu } from 'lucide-react'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import AIChat from './AIChat'
@@ -76,7 +76,7 @@ const StarPrompt = ({ onDismiss }) => (
 )
 
 const Layout = () => {
-  const { sidebarCollapsed, aiChatOpen } = useUIStore()
+  const { sidebarCollapsed, aiChatOpen, toggleSidebarMobile } = useUIStore()
   const { isDemo, exitDemoMode } = useAuthStore()
   const navigate = useNavigate()
   const [showStarPrompt, setShowStarPrompt] = useState(false)
@@ -116,8 +116,8 @@ const Layout = () => {
 
       <main
         className={`transition-all duration-200 min-h-screen relative z-10 ${
-          sidebarCollapsed ? 'ml-[72px]' : 'ml-[240px]'
-        }`}
+          sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[240px]'
+        } ml-0`}
       >
         {isDemo && (
           <div
@@ -155,6 +155,14 @@ const Layout = () => {
             </button>
           </div>
         )}
+        {/* Mobile hamburger */}
+        <button
+          className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-lg"
+          style={{ background: 'rgba(16,20,26,0.9)', border: '1px solid rgba(66,71,84,0.4)', backdropFilter: 'blur(8px)' }}
+          onClick={toggleSidebarMobile}
+        >
+          <Menu size={20} color="#afc6ff" />
+        </button>
         <Header />
         <div className="p-6">
           <Outlet />
