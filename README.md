@@ -24,7 +24,7 @@
 
 <br/>
 
-**[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try the Demo](https://shiori-v1.vercel.app)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[Report a Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
+**[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try the Demo](https://shiori-v1.vercel.app)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[Report a Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
 
 </div>
 
@@ -218,7 +218,8 @@ Shiori-v1/
 - [x] **v1.6** — Flashcards with spaced repetition (SRS) · 3D card flip · AI card generation from notes
 - [x] **v1.7** — Habit tracker · Analytics dashboard · Progress share card · Dark/light theme toggle
 - [x] **v1.8** — Keyboard shortcut modal (?) · Pomodoro sounds · Client-side Gemini API key
-- [ ] **v1.9** — Browser extension (Chrome/Firefox) for quick task capture
+- [x] **v1.9** — Chrome extension: Pomodoro + quick-add + Google Classroom import
+- [ ] **v2.0** — Firefox extension + Chrome Web Store release
 - [ ] **v2.0** — Shiori Cloud (fully hosted, zero-setup)
 - [ ] **v2.1** — Mobile app (React Native / Expo)
 
