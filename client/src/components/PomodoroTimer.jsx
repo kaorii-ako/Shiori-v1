@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, RotateCcw, X, Coffee, Brain, ChevronUp, ChevronDown, Volume2, VolumeX } from 'lucide-react'
+import { Play, Pause, RotateCcw, X, Coffee, Brain, ChevronUp, ChevronDown, Volume2, VolumeX, Maximize2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { usePomodoroStore, useAssignmentsStore, useUIStore } from '../stores'
 import { playDing } from '../utils/sounds'
 

@@ -15,6 +15,7 @@ import Flashcards from './pages/Flashcards'
 import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
 import Habits from './pages/Habits'
+import FocusMode from './pages/FocusMode'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/habits" element={<Habits />} />
+          <Route path="/focus" element={<FocusMode />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
