@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Star, Github, Menu } from 'lucide-react'
+import { Star, Github, Menu, Sun, Moon } from 'lucide-react'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import AIChat from './AIChat'
@@ -77,11 +77,15 @@ const StarPrompt = ({ onDismiss }) => (
 )
 
 const Layout = () => {
-  const { sidebarCollapsed, aiChatOpen, toggleSidebarMobile } = useUIStore()
+  const { sidebarCollapsed, aiChatOpen, toggleSidebarMobile, theme, toggleTheme } = useUIStore()
   const { isDemo, exitDemoMode } = useAuthStore()
   const navigate = useNavigate()
   const [showStarPrompt, setShowStarPrompt] = useState(false)
   const promptFired = useRef(false)
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme || 'dark')
+  }, [theme])
 
   useKeyboardShortcuts()
 
@@ -163,6 +167,23 @@ const Layout = () => {
           onClick={toggleSidebarMobile}
         >
           <Menu size={20} color="#afc6ff" />
+        </button>
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          style={{
+            position: 'fixed', top: 16, right: 16, zIndex: 40,
+            width: 36, height: 36, borderRadius: 10, border: 'none',
+            background: 'rgba(175,198,255,0.10)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          {theme === 'dark'
+            ? <Sun size={16} color="#ffd6a0" />
+            : <Moon size={16} color="#528dff" />
+          }
         </button>
         <Header />
         <div className="p-6">

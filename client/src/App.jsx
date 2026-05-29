@@ -14,6 +14,7 @@ import Notes from './pages/Notes'
 import Flashcards from './pages/Flashcards'
 import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
+import Habits from './pages/Habits'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 
@@ -46,6 +47,7 @@ function App() {
           <Route path="/notes" element={<Notes />} />
           <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/habits" element={<Habits />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>

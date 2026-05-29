@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== Theme tokens ===== */
+:root, [data-theme="dark"] {
+  --bg-primary: #10141a;
+  --bg-card: rgba(49,53,60,0.40);
+  --text-primary: #dfe2eb;
+  --text-secondary: #8c90a0;
+  --text-muted: #606080;
+  --border-color: rgba(66,71,84,0.35);
+  --sidebar-bg: #14181e;
+  --surface-low: #14181e;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f0f2f7;
+  --bg-card: rgba(255,255,255,0.80);
+  --text-primary: #1a1d26;
+  --text-secondary: #4a4e60;
+  --text-muted: #7a7e90;
+  --border-color: rgba(0,0,0,0.10);
+  --sidebar-bg: #ffffff;
+  --surface-low: #f8f9fc;
+}
+
+[data-theme="light"] body {
+  background-color: #f0f2f7;
+  color: #1a1d26;
+  scrollbar-color: #c0c4d0 #f0f2f7;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track { background: #f0f2f7; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #c0c4d0; }
+
 /* ===== Syntactic Architect — Design Tokens ===== */
 
 @layer base {

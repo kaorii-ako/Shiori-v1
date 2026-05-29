@@ -13,9 +13,9 @@ import {
   Settings,
   Menu,
   X,
-  Sparkles
+  Sparkles,
+  Flame
 } from 'lucide-react'
-import Button from '../components/Button'
 import { useAuthStore, useUIStore } from '../stores'
 
 const navItems = [
@@ -27,6 +27,7 @@ const navItems = [
   { icon: StickyNote, label: 'Notes', path: '/notes' },
   { icon: Layers, label: 'Flashcards', path: '/flashcards' },
   { icon: TrendingUp, label: 'Analytics', path: '/analytics' },
+  { icon: Flame, label: 'Habits', path: '/habits' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ]
 
@@ -34,7 +35,7 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user } = useAuthStore()
-  const { sidebarMobileOpen, closeSidebarMobile } = useUIStore()
+  const { sidebarMobileOpen, closeSidebarMobile, toggleAIChat } = useUIStore()
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   // Collapse on mobile
@@ -228,9 +229,9 @@ const Sidebar = () => {
         </div>
       </motion.aside>
 
-      {/* Chat toggle button */}
+      {/* AI Chat toggle */}
       <button
-        onClick={() => setShowChat(!showChat)}
+        onClick={toggleAIChat}
         className="fixed bottom-6 right-6 z-50 p-3 rounded-full lg:hidden"
         style={{
           background: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)',
@@ -239,34 +240,6 @@ const Sidebar = () => {
       >
         <Sparkles className="w-6 h-6" style={{ color: '#10141a' }} />
       </button>
-
-      {/* Mobile menu toggle */}
-      {!isCollapsed && (
-        <button
-          onClick={() => setIsMobileOpen(true)}
-          className="fixed top-4 left-4 z-50 p-2 rounded-lg lg:hidden"
-          style={{ background: 'rgba(24,28,34,0.80)', border: '1px solid rgba(66,71,84,0.40)' }}
-        >
-          <Menu className="w-5 h-5" style={{ color: '#dfe2eb' }} />
-        </button>
-      )}
-
-      {/* AI Chat panel */}
-      <AnimatePresence>
-        {showChat && (
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween' }}
-            className="fixed top-0 right-0 z-50 w-80 lg:w-96 h-full"
-          >
-            <div style={{ background: '#14181e', height: '100%' }}>
-              <AIChat onClose={() => setShowChat(false)} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   )
 }
