@@ -33,21 +33,38 @@
 
 **Shiori is what Google Classroom should have been.**
 
-It syncs your assignments from Google Classroom, hunts deadline emails in Gmail, blocks study sessions into your calendar — then hands you a personalized AI study plan powered by Gemini. Track grades with weighted categories, predict your final exam score, take course notes, export everything as beautiful PDFs, and share your GPA card with one click.
+It syncs your assignments from Google Classroom, hunts deadline emails in Gmail, and hands you an AI study plan powered by Gemini. Track grades with weighted categories, predict your final exam score, generate quizzes from your notes, import an entire semester from your syllabus in one paste, and share your GPA card in one click.
 
-Zero accounts required. Try the full app in 10 seconds with demo mode.
+**Zero accounts required. Try the full app in 10 seconds with demo mode.**
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  Google Classroom  +  Gmail  +  Google Calendar                  │
-│         ↓                ↓              ↓                        │
-│                  Shiori AI (Gemini)                              │
-│                         ↓                                        │
-│  Study plan · GPA tracker · Notes · Pomodoro · AI chat · PDF     │
-└──────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────┐
+│  Google Classroom  +  Gmail  +  Google Calendar                   │
+│         ↓                ↓              ↓                         │
+│                   Shiori AI (Gemini)                              │
+│                          ↓                                        │
+│  16 pages · AI quiz · SRS flashcards · GPA predictor · PWA       │
+└───────────────────────────────────────────────────────────────────┘
 ```
 
-> **Your credentials stay local. No data harvesting. No mandatory subscriptions.**
+### At a glance
+
+| | Feature | What it does |
+|---|---|---|
+| 🤖 | **AI Study Plans** | Gemini builds a real day-by-day schedule from your deadlines |
+| 📋 | **Syllabus Import** | Paste your syllabus → AI extracts every assignment instantly |
+| 🧠 | **AI Quiz Generator** | Open a note → MCQ quiz with explanations in one click |
+| 🃏 | **SRS Flashcards** | Anki-style spaced repetition, CSV/Quizlet import, AI card gen |
+| 📊 | **GPA Predictor** | Weighted categories + "What score do I need on the final?" |
+| 📝 | **Markdown Notes** | Per-course notes, AI summarizer, auto-save, export .md |
+| 🏆 | **Leaderboard** | Compare study streaks with friends via shareable codes |
+| ⏱ | **Focus Mode** | Fullscreen Pomodoro with ambient orbs + motivational quotes |
+| 🔥 | **Habit Tracker** | Daily grid, streak tracking, confetti on full completion |
+| 🧩 | **Chrome Extension** | Quick-add, Pomodoro, and Classroom import from any tab |
+| 📱 | **PWA** | Install on mobile, works offline |
+| 🎨 | **Dark / Light Mode** | Midnight study room or clean light mode |
+
+> Your credentials stay local. No data harvesting. No mandatory subscriptions. MIT licensed.
 
 ---
 
