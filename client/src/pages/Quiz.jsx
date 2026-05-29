@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Brain, Sparkles, CheckCircle2, XCircle, RefreshCw,
-  Trophy, ChevronRight, FileText, Type, AlertCircle,
+  Trophy, ChevronRight, FileText, Type, AlertCircle, Share2,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
@@ -547,6 +547,28 @@ export default function Quiz() {
                 >
                   Retry Same Quiz
                 </Button>
+              </div>
+
+              <div style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }}>
+                <button
+                  onClick={() => {
+                    const pct = Math.round((score / questions.length) * 100)
+                    const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '📚' : '💪'
+                    const text = `${emoji} Just scored ${pct}% on an AI-generated quiz from my study notes!\n\nUsing Shiori — free AI study companion for students.\nTry it: https://shiori-v1.vercel.app\n\n#Shiori #StudyWithAI #OpenSource`
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
+                  }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '8px 18px', borderRadius: 8,
+                    background: 'rgba(29,161,242,0.12)',
+                    border: '1px solid rgba(29,161,242,0.30)',
+                    color: '#1da1f2', cursor: 'pointer',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: 13, fontWeight: 600,
+                  }}
+                >
+                  <Share2 size={14} /> Share Score on X
+                </button>
               </div>
             </GlassCard>
           </motion.div>
