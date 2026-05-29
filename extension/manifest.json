@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Shiori — AI Study Companion",
+  "version": "1.0.0",
+  "description": "Quick access to your Shiori dashboard: upcoming assignments, Pomodoro timer, and quick task capture.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Shiori Study Companion"
+  },
+  "permissions": ["storage", "alarms", "notifications"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://classroom.google.com/*"],
+      "js": ["content-classroom.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": [
+    "https://classroom.google.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

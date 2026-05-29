@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shiori</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 340px;
+      min-height: 480px;
+      background: #10141a;
+      color: #dfe2eb;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid rgba(66,71,84,0.35);
+      background: linear-gradient(135deg, #14181e, #10141a);
+    }
+    .logo { display: flex; align-items: center; gap: 8px; }
+    .logo-icon {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, #afc6ff, #528dff);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: bold; color: #10141a;
+    }
+    .logo-text { font-size: 13px; font-weight: 700; color: #afc6ff; letter-spacing: 0.05em; }
+    .open-btn {
+      padding: 5px 10px; border-radius: 6px; border: none; cursor: pointer;
+      background: rgba(175,198,255,0.12);
+      color: #afc6ff; font-size: 11px; font-weight: 600;
+      text-decoration: none; display: inline-block;
+    }
+    .open-btn:hover { background: rgba(175,198,255,0.2); }
+
+    /* Sections */
+    .section { padding: 12px 16px; }
+    .section-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+      color: #606080; margin-bottom: 8px; text-transform: uppercase;
+    }
+
+    /* Quick add */
+    .quick-add { display: flex; gap: 6px; margin-bottom: 4px; }
+    .quick-input {
+      flex: 1; padding: 8px 10px; border-radius: 7px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(66,71,84,0.35);
+      color: #dfe2eb; font-size: 12px; outline: none;
+    }
+    .quick-input:focus { border-color: rgba(175,198,255,0.4); }
+    .quick-input::placeholder { color: #424754; }
+    .quick-due {
+      width: 110px; padding: 8px 8px; border-radius: 7px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(66,71,84,0.35);
+      color: #8c90a0; font-size: 11px; outline: none;
+    }
+    .add-btn {
+      padding: 8px 12px; border-radius: 7px; border: none; cursor: pointer;
+      background: rgba(196,77,255,0.2);
+      border: 1px solid rgba(196,77,255,0.3);
+      color: #e5b5ff; font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .add-btn:hover { background: rgba(196,77,255,0.3); }
+
+    /* Assignment list */
+    .assignment-list { display: flex; flex-direction: column; gap: 5px; }
+    .assignment-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 7px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(66,71,84,0.2);
+    }
+    .assignment-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .assignment-title { flex: 1; font-size: 12px; color: #c8ccd8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .assignment-due { font-size: 10px; color: #606080; flex-shrink: 0; }
+    .due-soon { color: #ff6b9d; }
+    .due-today { color: #ffd6a0; }
+
+    /* Pomodoro mini */
+    .pomodoro-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-radius: 8px;
+      background: rgba(196,77,255,0.08);
+      border: 1px solid rgba(196,77,255,0.2);
+    }
+    .pomo-label { font-size: 10px; color: #e5b5ff; font-weight: 600; }
+    .pomo-time { font-size: 18px; font-weight: 700; color: #dfe2eb; font-family: monospace; }
+    .pomo-btns { display: flex; gap: 5px; }
+    .pomo-btn {
+      padding: 5px 9px; border-radius: 5px; border: none; cursor: pointer; font-size: 11px;
+    }
+    .pomo-btn-start { background: rgba(196,77,255,0.2); color: #e5b5ff; }
+    .pomo-btn-pause { background: rgba(255,107,157,0.2); color: #ff6b9d; }
+    .pomo-btn-reset { background: rgba(66,71,84,0.2); color: #606080; }
+
+    /* Stats row */
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .stat-box {
+      padding: 8px; border-radius: 7px; text-align: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(66,71,84,0.2);
+    }
+    .stat-value { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+    .stat-label { font-size: 9px; color: #606080; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* Empty state */
+    .empty { text-align: center; padding: 16px 0; color: #424754; font-size: 12px; }
+
+    /* Divider */
+    .divider { height: 1px; background: rgba(66,71,84,0.25); margin: 0 16px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      padding: 7px 14px; border-radius: 7px;
+      background: rgba(77,255,145,0.15); border: 1px solid rgba(77,255,145,0.3);
+      color: #4dff91; font-size: 11px; font-weight: 600;
+      opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">栞</div>
+      <span class="logo-text">SHIORI</span>
+    </div>
+    <a href="https://shiori-v1.vercel.app/home" target="_blank" class="open-btn">Open App →</a>
+  </div>
+
+  <!-- Pomodoro -->
+  <div class="section">
+    <div class="section-label">⏱ Focus Timer</div>
+    <div class="pomodoro-row">
+      <div>
+        <div class="pomo-label" id="pomoMode">FOCUS</div>
+        <div class="pomo-time" id="pomoTime">25:00</div>
+      </div>
+      <div class="pomo-btns">
+        <button class="pomo-btn pomo-btn-start" id="pomoStart">▶</button>
+        <button class="pomo-btn pomo-btn-reset" id="pomoReset">↺</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Quick add -->
+  <div class="section">
+    <div class="section-label">+ Quick Add Assignment</div>
+    <div class="quick-add">
+      <input class="quick-input" id="taskTitle" placeholder="Assignment title..." />
+      <input class="quick-due" id="taskDue" type="date" />
+    </div>
+    <button class="add-btn" id="addBtn" style="width:100%;margin-top:4px">Add to Shiori</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Upcoming assignments -->
+  <div class="section">
+    <div class="section-label">📚 Upcoming</div>
+    <div class="assignment-list" id="assignmentList">
+      <div class="empty">No assignments saved yet</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Stats -->
+  <div class="section">
+    <div class="section-label">📊 Stats</div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value" id="statSessions" style="color:#c44dff">0</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statFocus" style="color:#afc6ff">0m</div>
+        <div class="stat-label">Focus</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statDone" style="color:#4dff91">0</div>
+        <div class="stat-label">Done</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Added!</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
