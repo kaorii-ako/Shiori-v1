@@ -297,6 +297,7 @@ What it does:
 - Spaced repetition flashcards with 3D card flip (Anki-style SRS)
 - AI generates flashcards from your notes automatically
 - Markdown notes per course with auto-save + live preview
+- AI Quiz Generator: paste any text or open a note → Gemini makes MCQ quiz in seconds
 - Study analytics: grade breakdown, activity heatmap, mastery tracking
 - Shareable GPA report card (Canvas PNG download)
 - PWA — installable on phone
