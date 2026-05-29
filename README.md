@@ -231,8 +231,9 @@ Shiori-v1/
 - [x] **v1.8** — Keyboard shortcut modal (?) · Pomodoro sounds · Client-side Gemini API key
 - [x] **v1.9** — Chrome extension: Pomodoro + quick-add + Google Classroom import
 - [x] **v2.0** — AI Quiz Generator · PWA service worker · Student testimonials · Email waitlist · Confetti on habit completion
-- [ ] **v2.1** — Firefox extension + Chrome Web Store release · Shiori Cloud (fully hosted)
-- [ ] **v2.2** — Mobile app (React Native / Expo) · Student leaderboard
+- [x] **v2.1** — Syllabus Import (paste syllabus → AI extracts all assignments) · AI Note Summarizer · SEO overhaul
+- [ ] **v2.2** — Firefox extension · Chrome Web Store release · Shiori Cloud (fully hosted)
+- [ ] **v2.3** — Mobile app (React Native / Expo)
 
 **Have an idea?** [Open a feature request →](https://github.com/kaorii-ako/Shiori-v1/issues/new?template=feature_request.md)
 
