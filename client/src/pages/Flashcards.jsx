@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Layers, Plus, Trash2, ChevronLeft, ChevronRight,
   Check, X, RotateCcw, BookOpen, Zap, Trophy,
-  Edit3, ArrowLeft, BarChart3,
+  Edit3, ArrowLeft, BarChart3, Upload,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
@@ -333,8 +333,23 @@ const DeckEditor = ({ deck, onClose, onAddCard, onRemoveCard }) => {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
+const parseCSV = (text) => {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
+  const cards = []
+  for (const line of lines) {
+    // Support: tab, comma, semicolon separators
+    const parts = line.split(/\t|,(?=(?:[^"]*"[^"]*")*[^"]*$)|;/)
+    if (parts.length >= 2) {
+      const front = parts[0].replace(/^"|"$/g, '').trim()
+      const back = parts[1].replace(/^"|"$/g, '').trim()
+      if (front && back) cards.push({ front, back })
+    }
+  }
+  return cards
+}
+
 const Flashcards = () => {
-  const { decks, addDeck, deleteDeck, addCard, removeCard, updateCard } = useFlashcardsStore()
+  const { decks, addDeck, deleteDeck, addCard, removeCard, updateCard, loadDeck } = useFlashcardsStore()
   const { courses } = useAssignmentsStore()
 
   const [studyDeck, setStudyDeck] = useState(null)
@@ -342,10 +357,31 @@ const Flashcards = () => {
   const [newDeckModal, setNewDeckModal] = useState(false)
   const [newDeckName, setNewDeckName] = useState('')
   const [newDeckCourse, setNewDeckCourse] = useState('')
+  const [importModal, setImportModal] = useState(false)
+  const [importText, setImportText] = useState('')
+  const [importName, setImportName] = useState('')
+  const [importPreview, setImportPreview] = useState([])
 
   const totalCards = decks.reduce((s, d) => s + d.cards.length, 0)
   const totalMastered = decks.reduce((s, d) => s + d.cards.filter(c => (c.streak || 0) >= 3).length, 0)
   const dueNow = decks.reduce((s, d) => s + d.cards.filter(c => !c.nextReview || c.nextReview <= Date.now()).length, 0)
+
+  const handleImport = () => {
+    const cards = parseCSV(importText)
+    if (cards.length === 0 || !importName.trim()) return
+    const deckId = `deck-${Date.now()}`
+    loadDeck({
+      id: deckId,
+      name: importName.trim(),
+      courseId: null,
+      createdAt: Date.now(),
+      cards: cards.map((c, i) => ({ id: `card-${deckId}-${i}`, front: c.front, back: c.back, streak: 0, nextReview: null })),
+    })
+    setImportModal(false)
+    setImportText('')
+    setImportName('')
+    setImportPreview([])
+  }
 
   const handleCreateDeck = () => {
     if (!newDeckName.trim()) return
@@ -386,7 +422,14 @@ const Flashcards = () => {
             Spaced repetition — study smarter, not longer
           </p>
         </div>
-        <Button icon={Plus} onClick={() => setNewDeckModal(true)}>NEW DECK</Button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Button variant="secondary" icon={Upload} size="sm"
+            onClick={() => setImportModal(true)}
+            style={{ borderColor: '#ffd6a0', color: '#ffd6a0' }}>
+            IMPORT CSV
+          </Button>
+          <Button icon={Plus} onClick={() => setNewDeckModal(true)}>NEW DECK</Button>
+        </div>
       </motion.div>
 
       {/* Stats bar */}
@@ -466,6 +509,57 @@ const Flashcards = () => {
               {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
+        </div>
+      </Modal>
+
+      {/* Import CSV Modal */}
+      <Modal isOpen={importModal} onClose={() => { setImportModal(false); setImportText(''); setImportPreview([]) }}
+        title="Import Flashcards (CSV / Quizlet)" size="md"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setImportModal(false)}>Cancel</Button>
+            <Button onClick={handleImport} disabled={importPreview.length === 0 || !importName.trim()}>
+              Import {importPreview.length > 0 ? `${importPreview.length} Cards` : ''}
+            </Button>
+          </>
+        }>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Input label="Deck Name" value={importName}
+            onChange={e => setImportName(e.target.value)} placeholder="My Imported Deck" />
+          <div>
+            <label style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#606080', display: 'block', marginBottom: 6 }}>
+              PASTE CSV (FRONT TAB/COMMA BACK)
+            </label>
+            <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080', marginBottom: 8 }}>
+              Works with Quizlet export, Anki CSV, or any tab/comma-separated front↔back format.
+            </p>
+            <textarea
+              value={importText}
+              onChange={e => {
+                setImportText(e.target.value)
+                setImportPreview(parseCSV(e.target.value).slice(0, 5))
+              }}
+              placeholder={'What is photosynthesis?\tConversion of light to chemical energy\nMitosis vs Meiosis\tMitosis: 2 identical cells; Meiosis: 4 sex cells'}
+              rows={6}
+              style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6, color: '#dfe2eb',
+                fontFamily: 'monospace', fontSize: 12, resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+            />
+          </div>
+          {importPreview.length > 0 && (
+            <div style={{ padding: '10px 12px', background: 'rgba(77,255,145,0.06)',
+              border: '1px solid rgba(77,255,145,0.2)', borderRadius: 8 }}>
+              <p style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#4dff91', marginBottom: 8 }}>
+                PREVIEW ({parseCSV(importText).length} cards detected)
+              </p>
+              {importPreview.map((c, i) => (
+                <div key={i} style={{ fontFamily: 'VT323', fontSize: 14, color: '#8c90a0', marginBottom: 3 }}>
+                  <span style={{ color: '#afc6ff' }}>Q:</span> {c.front.slice(0, 40)}{c.front.length > 40 ? '…' : ''}&nbsp;&nbsp;
+                  <span style={{ color: '#4dff91' }}>A:</span> {c.back.slice(0, 40)}{c.back.length > 40 ? '…' : ''}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </Modal>
 
