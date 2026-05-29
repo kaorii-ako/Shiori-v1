@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, RotateCcw, X, Coffee, Brain, ChevronUp, ChevronDown } from 'lucide-react'
-import { usePomodoroStore, useAssignmentsStore } from '../stores'
+import { Play, Pause, RotateCcw, X, Coffee, Brain, ChevronUp, ChevronDown, Volume2, VolumeX } from 'lucide-react'
+import { usePomodoroStore, useAssignmentsStore, useUIStore } from '../stores'
+import { playDing } from '../utils/sounds'
 
 const fmt = (secs) => {
   const m = Math.floor(secs / 60)
@@ -20,9 +21,11 @@ const PomodoroTimer = () => {
   } = usePomodoroStore()
 
   const { assignments } = useAssignmentsStore()
+  const { pomodoroSound, setPomodoroSound } = useUIStore()
   const [expanded, setExpanded] = useState(false)
   const [visible, setVisible] = useState(false)
   const intervalRef = useRef(null)
+  const prevIsBreak = useRef(isBreak)
 
   useEffect(() => {
     if (isRunning) {
@@ -32,6 +35,14 @@ const PomodoroTimer = () => {
     }
     return () => clearInterval(intervalRef.current)
   }, [isRunning, tick])
+
+  // Play ding when session flips
+  useEffect(() => {
+    if (prevIsBreak.current !== isBreak) {
+      prevIsBreak.current = isBreak
+      if (pomodoroSound !== false) playDing(isBreak ? 'break' : 'focus')
+    }
+  }, [isBreak, pomodoroSound])
 
   const total = isBreak ? breakSeconds : workSeconds
   const progress = 1 - secondsLeft / total
@@ -110,6 +121,13 @@ const PomodoroTimer = () => {
           )}
         </div>
         <div style={{ display: 'flex', gap: 4 }}>
+          <button
+            onClick={() => setPomodoroSound(pomodoroSound === false ? true : false)}
+            title={pomodoroSound === false ? 'Enable sounds' : 'Mute sounds'}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#424754', padding: 4 }}
+          >
+            {pomodoroSound === false ? <VolumeX size={13} /> : <Volume2 size={13} />}
+          </button>
           <button
             onClick={() => setExpanded(e => !e)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#424754', padding: 4 }}

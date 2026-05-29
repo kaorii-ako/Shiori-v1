@@ -441,7 +441,9 @@ export const useUIStore = create(
   toasts: [],
   geminiApiKey: '',
   theme: 'dark',
+  pomodoroSound: true,
   setGeminiApiKey: (key) => set({ geminiApiKey: key }),
+  setPomodoroSound: (val) => set({ pomodoroSound: val }),
   toggleTheme: () => set((state) => {
     const next = state.theme === 'dark' ? 'light' : 'dark'
     document.documentElement.setAttribute('data-theme', next)
