@@ -85,34 +85,52 @@ If this would've helped you in school, please ⭐ — it helps other students fi
 
 ## Hacker News — Show HN
 
-**Title:**
+**Title (MCP angle — best for HN developer audience):**
 ```
-Show HN: Shiori – open-source AI study planner that syncs Google Classroom, Gmail, and Calendar
+Show HN: Shiori – MCP server for student productivity (assignments, grades, notes from Claude Code)
 ```
 
 **Body:**
 ```
-I'm a student and I built Shiori because I kept missing assignments that were scattered across Google Classroom, emails from teachers, and my calendar.
+I'm a student who built Shiori — an open-source study companion with a built-in MCP server so Claude Code and Claude Desktop can read your academic data directly.
 
-What it does:
-- Pulls assignments from Google Classroom API automatically
-- Scans Gmail for deadline-related emails
-- Reads Google Calendar to find free study blocks
-- Gemini AI generates a personalized day-by-day study schedule
-- AI chat that answers questions using your actual academic data
-- Grade calculator with weighted categories
-- Pomodoro timer that tracks which assignment you're working on
+The MCP server (6 tools):
+- get_study_summary — full snapshot: overdue work, this week's deadlines, GPA
+- get_assignments — filter by course, status, days until due
+- get_grades — per-course breakdown and cumulative GPA
+- get_notes — list and read markdown notes per course
+- add_assignment — create assignments from Claude
+- get_flashcard_decks — SRS review status
 
-There's a demo mode that loads with sample data — no Google login or API keys needed to try it:
-https://shiori-v1.vercel.app
+Config (4 lines in ~/.claude.json):
+{
+  "mcpServers": {
+    "shiori": {
+      "command": "node",
+      "args": ["/path/to/Shiori-v1/mcp/index.js"],
+      "env": { "SHIORI_DATA_FILE": "/path/to/shiori-data.json" }
+    }
+  }
+}
 
-Tech stack: React 18, Vite, Express, Zustand, Framer Motion, Google Gemini 1.5 Flash, Appwrite auth, Tailwind CSS. Deployed on Vercel.
+Beyond MCP, the web app (React + Gemini) has:
+- Google Classroom sync — assignments pulled automatically
+- AI study plans, AI quiz generator, AI note summarizer
+- Paste your syllabus → Gemini extracts all assignments instantly
+- Spaced repetition flashcards (SRS)
+- Weighted GPA calculator + final exam predictor
+- Pomodoro, habit tracker, student leaderboard, PWA
 
+Demo (no login): https://shiori-v1.vercel.app
+MCP server: https://github.com/kaorii-ako/Shiori-v1/tree/master/mcp
 GitHub: https://github.com/kaorii-ako/Shiori-v1
 
-Self-hosting takes about 5 minutes with your own keys. MIT licensed.
+MIT licensed, self-hosting takes ~5 min.
+```
 
-Happy to answer any questions about the architecture or the Google API integration.
+**Alternative title (broader appeal):**
+```
+Show HN: Shiori – open-source AI study companion with MCP server (React + Gemini, MIT)
 ```
 
 ---
