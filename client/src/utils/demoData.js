@@ -317,3 +317,16 @@ export const DEMO_GRADES = {
     'hw2': { name: 'Grammar Workshop 2', pointsEarned: 23, pointsPossible: 25 }
   }
 }
+
+// Pre-seeded quiz history for demo mode
+export const DEMO_QUIZ_HISTORY = [
+  { date: Date.now() - 86400000 * 2, score: 4, total: 5, title: 'Calculus II — Integrals' },
+  { date: Date.now() - 86400000 * 5, score: 7, total: 8, title: 'Data Structures — Trees' },
+  { date: Date.now() - 86400000 * 9, score: 3, total: 5, title: 'World History — WWI' },
+]
+
+// Pre-seeded leaderboard data for demo mode
+export const DEMO_LEADERBOARD = [
+  { id: 'friend-1', name: 'Ploy S.', avatar: 'P', streak: 12, completionRate: 94, gpa: '91.2', score: 214, isMe: false },
+  { id: 'friend-2', name: 'Nat K.', avatar: 'N', streak: 5, completionRate: 78, gpa: '85.0', score: 120, isMe: false },
+]

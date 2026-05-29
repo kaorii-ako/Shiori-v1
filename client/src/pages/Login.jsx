@@ -7,7 +7,7 @@ import Button from '../components/Button'
 import Input from '../components/Input'
 import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore, useNotesStore, useFlashcardsStore } from '../stores'
 import { validateLoginForm } from '../utils/authValidation'
-import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, DEMO_COURSE_WEIGHTS, DEMO_DECKS } from '../utils/demoData'
+import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, DEMO_COURSE_WEIGHTS, DEMO_DECKS, DEMO_QUIZ_HISTORY, DEMO_LEADERBOARD } from '../utils/demoData'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -68,6 +68,9 @@ const Login = () => {
     })
     DEMO_NOTES.forEach(note => addNote(note))
     DEMO_DECKS.forEach(deck => loadDeck(deck))
+    // Seed quiz history and leaderboard for demo
+    localStorage.setItem('shiori-quiz-history', JSON.stringify(DEMO_QUIZ_HISTORY))
+    localStorage.setItem('shiori-leaderboard', JSON.stringify(DEMO_LEADERBOARD))
     navigate('/home')
   }
 
