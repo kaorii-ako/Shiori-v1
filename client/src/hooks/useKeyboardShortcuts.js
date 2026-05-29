@@ -13,6 +13,7 @@ const SHORTCUTS = [
   { key: 'gr', label: 'Go to Analytics', path: '/analytics' },
   { key: 'gb', label: 'Go to Habits', path: '/habits' },
   { key: 'gq', label: 'Go to AI Quiz', path: '/quiz' },
+  { key: 'gl', label: 'Go to Leaderboard', path: '/leaderboard' },
 ]
 
 export const SHORTCUT_HELP = SHORTCUTS
