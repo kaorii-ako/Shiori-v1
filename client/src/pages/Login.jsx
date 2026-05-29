@@ -5,16 +5,17 @@ import { Mail, Lock, AlertCircle, Sparkles } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore } from '../stores'
+import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore, useNotesStore } from '../stores'
 import { validateLoginForm } from '../utils/authValidation'
-import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES } from '../utils/demoData'
+import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, DEMO_COURSE_WEIGHTS } from '../utils/demoData'
 
 const Login = () => {
   const navigate = useNavigate()
   const { loginWithEmail, isLoading, error, clearError, enterDemoMode } = useAuthStore()
   const { setAssignments, setCourses } = useAssignmentsStore()
   const { setEvents } = useEventStore()
-  const { setCourseGrades } = useGradesStore()
+  const { setCourseGrades, setCourseWeights } = useGradesStore()
+  const { addNote } = useNotesStore()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -61,6 +62,10 @@ const Login = () => {
     Object.entries(DEMO_GRADES).forEach(([courseId, grades]) => {
       setCourseGrades(courseId, grades)
     })
+    Object.entries(DEMO_COURSE_WEIGHTS).forEach(([courseId, weights]) => {
+      setCourseWeights(courseId, weights)
+    })
+    DEMO_NOTES.forEach(note => addNote(note))
     navigate('/home')
   }
 

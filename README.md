@@ -2,23 +2,29 @@
 
 <h1>栞 Shiori</h1>
 
-### *Your AI-powered study companion*
+### *The open-source AI study companion students actually use*
 
 > **Shiori** (栞) means *bookmark* in Japanese — because every deadline deserves to be remembered.
 
-[![Status](https://img.shields.io/badge/status-active%20development-brightgreen?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1)
+[![Status](https://img.shields.io/badge/status-active-brightgreen?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1)
 [![MIT License](https://img.shields.io/badge/license-MIT-orange?style=for-the-badge)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-v18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Gemini](https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-afc6ff?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1/blob/master/.github/CONTRIBUTING.md)
 [![Stars](https://img.shields.io/github/stars/kaorii-ako/Shiori-v1?style=for-the-badge&color=e5b5ff)](https://github.com/kaorii-ako/Shiori-v1/stargazers)
 
 <br/>
 
-**[🚀 Live Demo →](https://shiori-v1.vercel.app)**
+**[🚀 Live Demo — no signup required →](https://shiori-v1.vercel.app)**
 
 <br/>
 
-![Shiori App Preview](demo/preview.png) &nbsp;|&nbsp; **[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;|&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)**
+![Shiori App Preview](demo/preview.png)
+
+<br/>
+
+**[⭐ Star this project](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try the Demo](https://shiori-v1.vercel.app)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[Report a Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
 
 </div>
 
@@ -26,101 +32,118 @@
 
 ## 🌸 What is Shiori?
 
-Shiori is a **free, open-source AI productivity app** that connects to your Google ecosystem — Classroom, Gmail, and Calendar — and eliminates the mental overhead of academic planning. It reads your assignments, hunts down buried deadlines, and hands you a personalized study plan powered by **Google Gemini AI**.
+**Shiori is what Google Classroom should have been.**
 
-No more manually tracking due dates across five different tabs. Shiori handles it.
+It syncs your assignments from Google Classroom, hunts deadline emails in Gmail, blocks study sessions into your calendar — then hands you a personalized AI study plan powered by Gemini. Track grades with weighted categories, predict your final exam score, take course notes, export everything as beautiful PDFs, and share your GPA card with one click.
+
+Zero accounts required. Try the full app in 10 seconds with demo mode.
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Google Classroom  +  Gmail  +  Calendar                │
-│         ↓                ↓           ↓                  │
-│              Shiori AI (Gemini)                         │
-│                     ↓                                   │
-│    Personalized study plan · AI chat · Grade tracker    │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  Google Classroom  +  Gmail  +  Google Calendar                  │
+│         ↓                ↓              ↓                        │
+│                  Shiori AI (Gemini)                              │
+│                         ↓                                        │
+│  Study plan · GPA tracker · Notes · Pomodoro · AI chat · PDF     │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-> **Your credentials stay local. No subscriptions to self-host. No data harvesting.**
+> **Your credentials stay local. No data harvesting. No mandatory subscriptions.**
 
 ---
 
 ## ✨ Features
 
-| | Feature | What it does |
-|---|---|---|
-| 🤖 | **AI Study Plans** | Gemini generates a real day-by-day schedule based on your actual deadlines |
-| 📚 | **Google Classroom Sync** | Pulls in assignments and due dates the moment they're posted |
-| 📧 | **Gmail Intelligence** | Scans your inbox and surfaces anything with a deadline |
-| 📅 | **Calendar Integration** | Slots study blocks into your schedule automatically — assignments show as deadline dots |
-| 📊 | **Live GPA Dashboard** | Track per-course grades, letter grades, and cumulative GPA in real time |
-| 🎯 | **Final Exam Predictor** | "What score do I need on the final to get an A?" — Shiori calculates it instantly |
-| ⏱️ | **Pomodoro Timer** | Focus sessions tied to specific assignments, with session history |
-| 💬 | **AI Chat** | Ask Shiori anything about your schedule — it knows your actual data |
-| 🔥 | **Study Streak** | Track consecutive study days to stay motivated |
-| 🎨 | **Midnight Study Room UI** | Dark glassmorphism aesthetic built for late-night studying |
-| 🔓 | **Demo Mode** | Try everything with sample data — zero setup, runs in your browser |
+### 📚 Assignment & Schedule Intelligence
+| Feature | Description |
+|---------|-------------|
+| **Google Classroom Sync** | Pulls assignments and due dates the moment they're posted |
+| **Gmail Intelligence** | Scans your inbox and surfaces buried deadline emails |
+| **Calendar Integration** | Shows assignment deadlines as colored dots alongside your events |
+| **iCal Export** | Export your assignments as `.ics` — opens in Google Calendar, Outlook, Apple Calendar |
+
+### 🤖 AI-Powered Planning
+| Feature | Description |
+|---------|-------------|
+| **AI Study Plans** | Gemini generates a real day-by-day schedule from your actual deadlines |
+| **AI Chat** | Ask anything — Shiori knows your real assignments and schedule |
+| **PDF Study Plan Export** | Export your AI-generated schedule as a branded PDF |
+| **Smart Prioritization** | High/medium/low priority auto-assigned based on due date and estimated hours |
+
+### 📊 Grade Tracking
+| Feature | Description |
+|---------|-------------|
+| **Live GPA Dashboard** | Per-course grades, letter grades, and cumulative GPA calculated live |
+| **Weighted Categories** | Set Homework 30% / Midterm 35% / Final 35% — GPA recalculates automatically |
+| **Final Exam Predictor** | "What score do I need on the final to get an A?" — answered instantly |
+| **Shareable GPA Card** | Generate a beautiful 900×520 PNG report card to share anywhere |
+
+### 📝 Notes
+| Feature | Description |
+|---------|-------------|
+| **Per-Course Notes** | Color-coded notes linked to each course |
+| **Markdown Editor** | `**bold**`, `*italic*`, `` `code` ``, headings, lists — with live preview |
+| **Auto-Save** | Notes save automatically 600ms after you stop typing |
+| **Export as Markdown** | Download any note as a `.md` file |
+| **Pin Notes** | Keep important notes at the top of your list |
+
+### ⏱️ Focus & Productivity
+| Feature | Description |
+|---------|-------------|
+| **Pomodoro Timer** | Focus sessions tied to specific assignments, with session history |
+| **Study Streak** | Track consecutive study days — don't break the chain |
+| **Keyboard Shortcuts** | `gh/ga/gc/gg/gs/gn` to navigate, `Ctrl+K` for AI chat |
+
+### 🎨 Design
+- **Midnight Study Room aesthetic** — dark glassmorphism built for late-night sessions
+- **Framer Motion animations** — smooth, purposeful transitions throughout
+- **Custom fonts** — Space Grotesk headings, Manrope body, Press Start 2P for that retro-academic feel
+- **Demo Mode** — full app with 5 courses, 10 assignments, grades, events — zero setup
 
 ---
 
-## 🚀 Getting Started
+## ⚡ Try it in 10 seconds
+
+```
+1. Visit https://shiori-v1.vercel.app
+2. Click "TRY DEMO"
+3. You're in — no account, no API keys, no Appwrite
+```
+
+Demo mode loads: 5 courses · 10 assignments · grades with GPA calc · upcoming events · AI-generated study plan
+
+---
+
+## 🚀 Self-Host
 
 ### Prerequisites
 - Node.js v18+
 - npm v9+
-- A Google Cloud project with Classroom + Gmail + Calendar APIs enabled
-- A [Google Gemini API key](https://aistudio.google.com/app/apikey) (free)
-- An [Appwrite](https://appwrite.io) instance (free cloud tier works)
+- Google Cloud project with Classroom + Gmail + Calendar APIs enabled
+- [Google Gemini API key](https://aistudio.google.com/app/apikey) (free)
+- [Appwrite](https://appwrite.io) instance (free cloud tier works)
 
-### 1. Clone & install
+### Setup
+
 ```bash
 git clone https://github.com/kaorii-ako/Shiori-v1.git
 cd Shiori-v1
 npm install
-```
-
-### 2. Set up your environment
-```bash
 cp .env.example .env
-# Fill in your keys — see .env.example for full guide
+# Fill in your keys — see .env.example for the full guide
+npm run dev
+# Frontend: http://localhost:5173  |  Backend: http://localhost:3001
 ```
 
-Required variables:
+### Required environment variables
+
 ```env
-GEMINI_API_KEY=          # Google AI Studio
+GEMINI_API_KEY=          # Google AI Studio (free)
 GOOGLE_CLIENT_ID=        # Google OAuth 2.0
 GOOGLE_CLIENT_SECRET=    # Google OAuth 2.0
 APPWRITE_ENDPOINT=       # Your Appwrite URL
 APPWRITE_PROJECT_ID=     # Your Appwrite project
 SESSION_SECRET=          # Any random string
-```
-
-### 3. Run
-```bash
-npm run dev
-# Frontend: http://localhost:5173
-# Backend:  http://localhost:3001
-```
-
-### ⚡ Try without any setup
-Hit **"TRY DEMO"** on the login page — loads sample assignments, grades, and events instantly.
-No Google account. No API keys. No Appwrite. See the full app in 10 seconds.
-
----
-
-## ⚙️ How It Works
-
-```
-Student logs in via Google OAuth
-        ↓
-Shiori fetches from Google Classroom API (assignments, due dates)
-Shiori fetches from Gmail API (deadline emails)
-Shiori fetches from Google Calendar API (existing events)
-        ↓
-All data stored locally in Zustand state (never leaves your machine)
-        ↓
-Gemini AI processes → generates study plan + answers AI chat
-        ↓
-Dashboard shows: stats, upcoming tasks, AI suggestions
 ```
 
 ---
@@ -130,13 +153,13 @@ Dashboard shows: stats, upcoming tasks, AI suggestions
 | Layer | Technology |
 |-------|------------|
 | **Frontend** | React 18, Vite, Framer Motion, Tailwind CSS |
-| **State** | Zustand with persistence |
+| **State** | Zustand + zustand/persist |
 | **Backend** | Express.js (Node.js) |
 | **AI** | Google Gemini 1.5 Flash |
 | **Auth** | Appwrite + Google OAuth 2.0 |
-| **Google APIs** | Classroom, Gmail, Calendar (`googleapis`) |
+| **Google APIs** | Classroom, Gmail, Calendar |
+| **PDF** | jsPDF (client-side, no server needed) |
 | **Icons** | Lucide React |
-| **Fonts** | Space Grotesk, Manrope, Press Start 2P |
 
 ---
 
@@ -146,15 +169,16 @@ Dashboard shows: stats, upcoming tasks, AI suggestions
 Shiori-v1/
 ├── client/                    # React frontend (Vite)
 │   └── src/
-│       ├── components/        # GlassCard, Button, Sidebar, AIChat...
-│       ├── pages/             # Landing, Home, Assignments, Calendar, Grades, StudyPlans
-│       ├── stores/            # Zustand state (auth, assignments, events, grades)
-│       └── lib/               # Axios API client
+│       ├── components/        # GlassCard, Button, Sidebar, AIChat, PomodoroTimer...
+│       ├── pages/             # Landing, Home, Assignments, Calendar, Grades, StudyPlans, Notes
+│       ├── stores/            # Zustand (auth, assignments, grades, notes, pomodoro, ui)
+│       ├── hooks/             # useKeyboardShortcuts
+│       └── utils/             # pdfExport, icalExport, demoData
 ├── server/                    # Express backend
-│   ├── routes/                # ai, auth, classroom, gmail, calendar, grades
-│   └── services/              # Google OAuth & API wrapper
-├── .env.example               # Environment template — copy to .env
-└── package.json               # Workspace root (npm workspaces)
+│   ├── routes/                # ai, auth, classroom, gmail, calendar, stripe
+│   └── services/              # Google OAuth & API wrappers
+├── .env.example               # Environment template
+└── package.json               # npm workspaces root
 ```
 
 ---
@@ -162,16 +186,15 @@ Shiori-v1/
 ## 🗺 Roadmap
 
 - [x] **v1.0** — Core app: Classroom sync, Gmail, Calendar, AI plans, Grade tracker
-- [x] **v1.0** — Core app: Classroom sync, Gmail, Calendar, AI plans, Grade tracker
-- [x] **v1.1** — Demo mode (try Shiori without any setup)
-- [x] **v1.1** — Public landing page + Pro pricing
-- [x] **v1.2** — Pomodoro timer, study streak, live GPA dashboard
-- [x] **v1.3** — Final exam predictor, calendar assignment overlay
-- [ ] **v1.4** — PDF export + iCal sync
-- [ ] **v1.5** — Electron desktop app wrapper
-- [ ] **v2.0** — Shiori Cloud (hosted, zero setup)
-- [ ] **v2.1** — Mobile app (React Native)
-- [ ] Browser extension for quick task capture
+- [x] **v1.1** — Demo mode · Public landing page · Pro pricing
+- [x] **v1.2** — Pomodoro timer · Study streak · Live GPA dashboard
+- [x] **v1.3** — Final exam predictor · Calendar assignment overlay
+- [x] **v1.4** — iCal export · PDF export (study plan + assignments) · Keyboard shortcuts
+- [x] **v1.5** — Weighted grade categories · Shareable GPA card · Notes with markdown
+- [ ] **v1.6** — Habit tracker · Spaced repetition flashcards
+- [ ] **v1.7** — Browser extension (Chrome/Firefox) for quick task capture
+- [ ] **v2.0** — Shiori Cloud (fully hosted, zero-setup)
+- [ ] **v2.1** — Mobile app (React Native / Expo)
 
 **Have an idea?** [Open a feature request →](https://github.com/kaorii-ako/Shiori-v1/issues/new?template=feature_request.md)
 
@@ -179,7 +202,7 @@ Shiori-v1/
 
 ## 💜 Shiori Pro
 
-Want the hosted version with no setup, unlimited AI, and premium features?
+Want the hosted version — no setup, unlimited AI, and premium features?
 
 **[→ shiori-v1.vercel.app/pro](https://shiori-v1.vercel.app/pro)**
 
@@ -188,16 +211,18 @@ Want the hosted version with no setup, unlimited AI, and premium features?
 | Google Classroom sync | ✓ | ✓ |
 | AI Study Plans | 5/month | Unlimited |
 | AI Chat | 10/day | Unlimited |
-| PDF Export | — | ✓ |
+| PDF Export | ✓ | ✓ |
+| GPA Share Card | ✓ | ✓ |
+| Notes (Markdown) | ✓ | ✓ |
 | Email Reminders | — | ✓ |
-| Grade Predictions | — | ✓ |
+| Priority support | — | ✓ |
 | Price | Free forever | ฿199/month |
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how:
+Contributions are very welcome!
 
 ```bash
 # Fork, then:
@@ -207,17 +232,15 @@ git push origin feature/your-feature-name
 # Open a PR!
 ```
 
-Please open an issue first if you're planning something big. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for full guidelines.
+Open an issue first for big changes. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines.
 
-Look for [`good first issue`](https://github.com/kaorii-ako/Shiori-v1/issues?q=label%3A%22good+first+issue%22) if you're new here.
+Good first issues: [`good first issue`](https://github.com/kaorii-ako/Shiori-v1/issues?q=label%3A%22good+first+issue%22)
 
 ---
 
 ## 👤 Author
 
-Built with care by **[@kaorii-ako](https://github.com/kaorii-ako)**
-
-Got questions? Found a bug? [Open an issue](https://github.com/kaorii-ako/Shiori-v1/issues)
+Built by **[@kaorii-ako](https://github.com/kaorii-ako)**
 
 ---
 
@@ -225,7 +248,7 @@ Got questions? Found a bug? [Open an issue](https://github.com/kaorii-ako/Shiori
 
 *栞 — bookmark the things that matter.*
 
-**If Shiori helps you study better, please give it a ⭐**
+**If Shiori saves you even one all-nighter, please give it a ⭐**
 
 [![Star History Chart](https://api.star-history.com/svg?repos=kaorii-ako/Shiori-v1&type=Date)](https://star-history.com/#kaorii-ako/Shiori-v1)
 

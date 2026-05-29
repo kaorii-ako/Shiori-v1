@@ -210,6 +210,53 @@ export const DEMO_EVENTS = [
   }
 ]
 
+export const DEMO_NOTES = [
+  {
+    id: 'note-demo-1',
+    title: 'Integration Techniques',
+    content: '# Integration Techniques\n\n## U-Substitution\nUse when you see f(g(x)) · g\'(x)\n- Let u = g(x)\n- Then du = g\'(x)dx\n\n## Integration by Parts\n**Formula:** ∫u dv = uv - ∫v du\n\n**LIATE rule** for choosing u:\n- **L**ogarithms\n- **I**nverse trig\n- **A**lgebraic\n- **T**rig\n- **E**xponential\n\n## Trigonometric Substitution\n- √(a²-x²) → x = a·sin(θ)\n- √(a²+x²) → x = a·tan(θ)\n- √(x²-a²) → x = a·sec(θ)\n\n## Partial Fractions\nFor rational functions — factor denominator first.',
+    courseId: 'course-1',
+    color: '#ff6b9d',
+    pinned: true,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 3,
+    updatedAt: Date.now() - 1000 * 60 * 30,
+  },
+  {
+    id: 'note-demo-2',
+    title: 'BST Operations — Exam Notes',
+    content: '# Binary Search Tree\n\n## Time Complexity\n| Operation | Average | Worst |\n|-----------|---------|-------|\n| Search    | O(log n)| O(n)  |\n| Insert    | O(log n)| O(n)  |\n| Delete    | O(log n)| O(n)  |\n\n## Traversal Types\n- **Inorder** (L-Root-R): gives sorted order\n- **Preorder** (Root-L-R): used for copying tree\n- **Postorder** (L-R-Root): used for deletion\n\n## Key Interview Points\n- BST invariant: left < node < right\n- Balanced BST: AVL, Red-Black\n- Successor = leftmost node in right subtree\n\n`TODO: Review deletion of nodes with 2 children`',
+    courseId: 'course-2',
+    color: '#c44dff',
+    pinned: false,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 1,
+    updatedAt: Date.now() - 1000 * 60 * 45,
+  },
+  {
+    id: 'note-demo-3',
+    title: 'WWI Essay Outline',
+    content: '# Essay: Causes of WWI\n\n## Thesis\nWhile the assassination of Archduke Franz Ferdinand was the spark, WWI was made inevitable by decades of militarism, imperial rivalry, and entangled alliances.\n\n## Body Paragraphs\n1. **Militarism** — arms race, especially Germany vs Britain naval competition\n2. **Alliance System** — Triple Entente vs Triple Alliance, chain-reaction trigger\n3. **Imperial Rivalries** — Moroccan Crises, Balkans instability\n4. **Nationalism** — Pan-Slavism, German nationalism, Austro-Hungarian tensions\n\n## Sources to cite\n- MacMillan, *The War That Ended Peace* (2013)\n- Clark, *The Sleepwalkers* (2012)\n\n**Due in 6 days — start writing tonight!**',
+    courseId: 'course-3',
+    color: '#4daaff',
+    pinned: false,
+    createdAt: Date.now() - 1000 * 60 * 60 * 2,
+    updatedAt: Date.now() - 1000 * 60 * 10,
+  },
+]
+
+export const DEMO_COURSE_WEIGHTS = {
+  'course-1': [
+    { id: 'cat-calc-hw', name: 'Homework', weight: 25 },
+    { id: 'cat-calc-quiz', name: 'Quizzes', weight: 25 },
+    { id: 'cat-calc-mid', name: 'Midterm', weight: 25 },
+    { id: 'cat-calc-fin', name: 'Final Exam', weight: 25 },
+  ],
+  'course-2': [
+    { id: 'cat-cs-hw', name: 'Assignments', weight: 40 },
+    { id: 'cat-cs-quiz', name: 'Quizzes', weight: 20 },
+    { id: 'cat-cs-proj', name: 'Projects', weight: 40 },
+  ],
+}
+
 export const DEMO_GRADES = {
   'course-1': {
     'hw1': { name: 'HW 1 — U-Substitution', pointsEarned: 48, pointsPossible: 50 },
