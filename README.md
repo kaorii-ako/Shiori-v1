@@ -87,12 +87,21 @@ Zero accounts required. Try the full app in 10 seconds with demo mode.
 | **Export as Markdown** | Download any note as a `.md` file |
 | **Pin Notes** | Keep important notes at the top of your list |
 
+### 🃏 Flashcards & Spaced Repetition
+| Feature | Description |
+|---------|-------------|
+| **Flashcard Decks** | Create decks per course, add unlimited Q&A cards |
+| **3D Card Flip** | Tap to reveal answer with a smooth 3D perspective animation |
+| **Spaced Repetition (SRS)** | Cards you miss come back sooner; mastered cards push to 1d → 2d → 5d intervals |
+| **Streak Tracking** | 3+ correct in a row = mastered 🏆; session stats shown after each study session |
+| **Due-Now Counter** | Dashboard shows how many cards are ready for review |
+
 ### ⏱️ Focus & Productivity
 | Feature | Description |
 |---------|-------------|
 | **Pomodoro Timer** | Focus sessions tied to specific assignments, with session history |
 | **Study Streak** | Track consecutive study days — don't break the chain |
-| **Keyboard Shortcuts** | `gh/ga/gc/gg/gs/gn` to navigate, `Ctrl+K` for AI chat |
+| **Keyboard Shortcuts** | `gh/ga/gc/gg/gs/gn/gf` to navigate, `Ctrl+K` for AI chat |
 
 ### 🎨 Design
 - **Midnight Study Room aesthetic** — dark glassmorphism built for late-night sessions
@@ -191,8 +200,9 @@ Shiori-v1/
 - [x] **v1.3** — Final exam predictor · Calendar assignment overlay
 - [x] **v1.4** — iCal export · PDF export (study plan + assignments) · Keyboard shortcuts
 - [x] **v1.5** — Weighted grade categories · Shareable GPA card · Notes with markdown
-- [ ] **v1.6** — Habit tracker · Spaced repetition flashcards
-- [ ] **v1.7** — Browser extension (Chrome/Firefox) for quick task capture
+- [x] **v1.6** — Flashcards with spaced repetition (SRS) · 3D card flip
+- [ ] **v1.7** — Habit tracker · Study analytics dashboard
+- [ ] **v1.8** — Browser extension (Chrome/Firefox) for quick task capture
 - [ ] **v2.0** — Shiori Cloud (fully hosted, zero-setup)
 - [ ] **v2.1** — Mobile app (React Native / Expo)
 
