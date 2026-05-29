@@ -7,6 +7,7 @@ import Header from './Header'
 import AIChat from './AIChat'
 import PomodoroTimer from './PomodoroTimer'
 import ToastContainer from './ToastContainer'
+import QuickCapture from './QuickCapture'
 import { useUIStore, useAuthStore } from '../stores'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 
@@ -176,6 +177,7 @@ const Layout = () => {
       <AnimatePresence>
         {showStarPrompt && <StarPrompt onDismiss={dismissStarPrompt} />}
       </AnimatePresence>
+      <QuickCapture />
       <ToastContainer />
     </div>
   )
