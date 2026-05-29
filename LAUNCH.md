@@ -1,8 +1,26 @@
-# Shiori Launch Kit
+# Shiori — Launch Playbook
 
-## CRITICAL: Do these 3 things RIGHT NOW (< 10 min each)
+Ready-to-post content. Do these in order. Each takes < 10 minutes.
 
-**1. Add GitHub topics** (2 min) → github.com/kaorii-ako/Shiori-v1 → gear ⚙️ → Topics:
+---
+
+## 🔴 BEFORE POSTING — Do these first
+
+### 1. Set Vercel env vars
+Go to vercel.com/dashboard → Shiori → Settings → Environment Variables:
+```
+GEMINI_API_KEY        ← aistudio.google.com/apikey (free)
+GOOGLE_CLIENT_ID      ← Google Cloud Console
+GOOGLE_CLIENT_SECRET  ← Google Cloud Console
+STRIPE_SECRET_KEY     ← dashboard.stripe.com/apikeys (use test key first)
+STRIPE_PRICE_MONTHLY  ← create ฿199/month product in Stripe, copy price_* ID
+STRIPE_WEBHOOK_SECRET ← Stripe webhook settings
+SESSION_SECRET        ← any random 32-char string
+```
+After setting → click **Redeploy** on Vercel.
+
+### 2. Add GitHub topics (2 min)
+github.com/kaorii-ako/Shiori-v1 → ⚙️ gear → Topics:
 `google-classroom ai-study-planner gemini react student open-source productivity pomodoro edtech`
 
 **2. Post the Twitter/X thread below** (5 min)
@@ -258,3 +276,72 @@ Code: github.com/kaorii-ako/Shiori-v1
 Star them + open a Discussion: "Built Shiori — an open-source student study companion that complements ClassroomIO"
 Link: https://github.com/classroomio/classroomio/discussions
 They have 1500+ stars and an active community of educators and students.
+
+---
+
+## 📣 Reddit Posts (highest impact)
+
+### r/reactjs title:
+"I built an open-source AI study companion with React + Gemini — flashcards, GPA tracking, spaced repetition"
+
+### r/reactjs body:
+```
+Hey r/reactjs!
+
+Built Shiori (栞) — open-source AI study companion that replaces the chaos of managing deadlines across 5 tabs.
+
+What it does:
+- Google Classroom sync (assignments + due dates pulled automatically)
+- Gemini AI generates personalized day-by-day study plans
+- Weighted grade calculator + "what score do I need on the final?" predictor
+- Spaced repetition flashcards with 3D card flip (Anki-style SRS)
+- AI generates flashcards from your notes automatically
+- Markdown notes per course with auto-save + live preview
+- Study analytics: grade breakdown, activity heatmap, mastery tracking
+- Shareable GPA report card (Canvas PNG download)
+- PWA — installable on phone
+- Full demo mode, no account needed
+
+Stack: React 18, Vite, Framer Motion, Zustand, Express, Google Gemini AI
+
+Try it (no signup): https://shiori-v1.vercel.app
+GitHub: https://github.com/kaorii-ako/Shiori-v1
+```
+
+Post same body to: r/webdev, r/learnprogramming, r/students
+
+---
+
+## 🐦 Twitter/X Thread
+
+Tweet 1: "I built Shiori (栞) — open-source AI study companion that connects to your Google Classroom. No more juggling 5 tabs. Try free (no signup): shiori-v1.vercel.app — GitHub: github.com/kaorii-ako/Shiori-v1 🧵"
+
+Tweet 2: "📚 Google Classroom sync → 🤖 Gemini AI study plans → 📊 Weighted grade calculator → 🎯 Final exam predictor ('What score do I need to get an A?')"
+
+Tweet 3: "🃏 Spaced repetition flashcards with 3D flip. AI reads your notes → creates flashcards automatically. Import from Quizlet/Anki via CSV."
+
+Tweet 4: "Also: Shareable GPA card • iCal export • PDF export • PWA • Markdown notes • Study analytics • Keyboard shortcuts. All free. All open source. ⭐ github.com/kaorii-ako/Shiori-v1"
+
+---
+
+## 🚀 Product Hunt
+
+Tagline: "The AI study companion that actually reads your Google Classroom"
+
+Description: "Shiori connects to Google Classroom + Gmail, Gemini AI builds a personalized study plan, spaced repetition flashcards + AI card generation from notes, weighted grade calculator, shareable GPA card. Full demo — no signup needed. Open source."
+
+Maker comment: "Built this because I kept missing deadlines while managing 5 tabs. Most magical feature: click 'AI CARDS' in the Notes editor — Gemini reads your notes and creates flashcard Q&A pairs automatically. Looking for contributors! github.com/kaorii-ako/Shiori-v1"
+
+---
+
+## 💰 Stripe Setup (฿199/month Pro)
+
+1. dashboard.stripe.com/products → New product → "Shiori Pro" → ฿199/month (THB)
+2. Copy price_* ID → STRIPE_PRICE_MONTHLY in Vercel
+3. dashboard.stripe.com/webhooks → Add endpoint: https://shiori-v1.vercel.app/api/webhook
+4. Events: checkout.session.completed + customer.subscription.deleted
+5. Copy webhook secret → STRIPE_WEBHOOK_SECRET in Vercel
+6. Redeploy on Vercel
+
+At ฿199/month: need 4,196 subscribers for 10M THB/year
+At ฿3,990/month school tier: need 209 schools/year
