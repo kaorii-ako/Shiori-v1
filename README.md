@@ -98,12 +98,24 @@ Zero accounts required. Try the full app in 10 seconds with demo mode.
 | **CSV Import** | Paste any tab/comma-separated text — works with Quizlet export, Anki CSV, or plain text |
 | **Due-Now Counter** | Dashboard shows how many cards are ready for review |
 
+### 🧠 AI Quiz Generator
+| Feature | Description |
+|---------|-------------|
+| **Generate from Notes** | Open any note → click "Generate Quiz" — Gemini creates MCQ questions from your study material |
+| **Paste Custom Text** | Paste any text and get a quiz in seconds |
+| **5 / 8 / 10 questions** | Choose difficulty length |
+| **MCQ with Explanations** | 4 options per question + AI explains why each answer is right or wrong |
+| **Keyboard-driven** | Press 1–4 to select, Enter to confirm/advance |
+| **Score History** | Quiz results saved locally — track improvement over time |
+| **Score Ring Animation** | Animated circular progress ring on results screen |
+
 ### 🔥 Habit Tracker
 | Feature | Description |
 |---------|-------------|
 | **Daily Habit Grid** | 7-day completion grid for any habit you want to build |
 | **Streak Counter** | Per-habit fire emoji streak — don't break the chain |
 | **Color-coded habits** | Pick a color per habit, add/delete freely |
+| **Confetti celebration** | Complete all habits for the day → confetti burst 🎉 |
 
 ### ⏱️ Focus & Productivity
 | Feature | Description |
@@ -112,7 +124,7 @@ Zero accounts required. Try the full app in 10 seconds with demo mode.
 | **Sound Notifications** | Distinct tones for focus→break and break→focus transitions (Web Audio, no downloads) |
 | **Progress Share Card** | Canvas-rendered 900×500 PNG with your GPA, focus time, and completion rate — download and share |
 | **Keyboard Shortcut Modal** | Press `?` anywhere for a full shortcut reference |
-| **Keyboard Shortcuts** | `gh/ga/gc/gg/gs/gn/gf/gb` to navigate, `Ctrl+K` for AI chat, `Ctrl+Shift+A` quick capture |
+| **Keyboard Shortcuts** | `gh/ga/gc/gg/gs/gn/gf/gb/gq` to navigate, `Ctrl+K` for AI chat, `Ctrl+Shift+A` quick capture |
 
 ### 🎨 Design
 | Feature | Description |
@@ -219,9 +231,9 @@ Shiori-v1/
 - [x] **v1.7** — Habit tracker · Analytics dashboard · Progress share card · Dark/light theme toggle
 - [x] **v1.8** — Keyboard shortcut modal (?) · Pomodoro sounds · Client-side Gemini API key
 - [x] **v1.9** — Chrome extension: Pomodoro + quick-add + Google Classroom import
-- [ ] **v2.0** — Firefox extension + Chrome Web Store release
-- [ ] **v2.0** — Shiori Cloud (fully hosted, zero-setup)
-- [ ] **v2.1** — Mobile app (React Native / Expo)
+- [x] **v2.0** — AI Quiz Generator · PWA service worker · Student testimonials · Email waitlist · Confetti on habit completion
+- [ ] **v2.1** — Firefox extension + Chrome Web Store release · Shiori Cloud (fully hosted)
+- [ ] **v2.2** — Mobile app (React Native / Expo) · Student leaderboard
 
 **Have an idea?** [Open a feature request →](https://github.com/kaorii-ako/Shiori-v1/issues/new?template=feature_request.md)
 

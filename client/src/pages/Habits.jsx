@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Flame, Plus, Check, Trash2, Trophy, Calendar, Target } from 'lucide-react'
+import confetti from 'canvas-confetti'
 import GlassCard from '../components/GlassCard'
 
 const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -53,17 +54,27 @@ export default function Habits() {
     localStorage.setItem('shiori-habits', JSON.stringify(updated))
   }
 
+  const confettiFiredRef = useRef(false)
+
   const toggleDay = (habitId, dateKey) => {
-    save(habits.map(h => {
+    const updated = habits.map(h => {
       if (h.id !== habitId) return h
       const completions = { ...h.completions }
-      if (completions[dateKey]) {
-        delete completions[dateKey]
-      } else {
-        completions[dateKey] = true
-      }
+      if (completions[dateKey]) { delete completions[dateKey] }
+      else { completions[dateKey] = true }
       return { ...h, completions }
-    }))
+    })
+    save(updated)
+
+    // Fire confetti when ALL habits completed today
+    if (dateKey === new Date().toISOString().split('T')[0]) {
+      const allDone = updated.length > 0 && updated.every(h => h.completions[dateKey])
+      if (allDone && !confettiFiredRef.current) {
+        confettiFiredRef.current = true
+        confetti({ particleCount: 140, spread: 90, origin: { y: 0.55 }, colors: ['#c44dff', '#528dff', '#4dff91', '#ff6b9d', '#ffd6a0'] })
+        setTimeout(() => { confettiFiredRef.current = false }, 3000)
+      }
+    }
   }
 
   const addHabit = () => {
