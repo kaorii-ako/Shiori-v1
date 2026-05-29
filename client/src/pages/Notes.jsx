@@ -390,7 +390,7 @@ Return ONLY the bullet points, one per line, each starting with "• ". No intro
                     {saved ? '✓ saved' : '● saving…'}
                   </span>
                   <span style={{ fontFamily: 'VT323', fontSize: 13, color: '#424754' }}>
-                    {wordCount} words
+                    {wordCount} words · {Math.ceil(wordCount / 200)} min read
                   </span>
                   <button
                     onClick={() => setPreview(p => !p)}
