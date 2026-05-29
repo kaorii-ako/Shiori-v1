@@ -2,12 +2,13 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   StickyNote, Plus, Trash2, BookOpen, Save, Clock,
-  Download, Search, Pin, PinOff, Tag, FileText,
+  Download, Search, Pin, PinOff, Tag, FileText, Layers, Sparkles,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
 import Badge from '../components/Badge'
-import { useNotesStore, useAssignmentsStore } from '../stores'
+import { useNotesStore, useAssignmentsStore, useFlashcardsStore } from '../stores'
+import { ai } from '../lib/api'
 
 const NOTE_COLORS = [
   '#ff6b9d', '#c44dff', '#afc6ff', '#4dff91',
@@ -120,12 +121,15 @@ const NoteCard = ({ note, isSelected, onClick, onDelete, onPin, courses }) => {
 const Notes = () => {
   const { notes, addNote, updateNote, deleteNote, pinNote } = useNotesStore()
   const { courses } = useAssignmentsStore()
+  const { addDeck, loadDeck } = useFlashcardsStore()
 
   const [selectedId, setSelectedId] = useState(null)
   const [search, setSearch] = useState('')
   const [filterCourse, setFilterCourse] = useState('all')
   const [preview, setPreview] = useState(false)
   const [saved, setSaved] = useState(true)
+  const [generatingCards, setGeneratingCards] = useState(false)
+  const [genSuccess, setGenSuccess] = useState(null)
   const saveTimer = useRef(null)
 
   const selected = notes.find(n => n.id === selectedId)
@@ -178,6 +182,62 @@ const Notes = () => {
     a.download = `shiori-note-${(selected.title || 'untitled').replace(/\s+/g, '-')}.md`
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  const handleGenerateFlashcards = async () => {
+    if (!selected || !selected.content.trim() || generatingCards) return
+    setGeneratingCards(true)
+    setGenSuccess(null)
+    try {
+      const res = await ai.generateFlashcards(selected.content, selected.title)
+      const cards = res.data?.cards || []
+      if (cards.length === 0) throw new Error('No cards generated')
+      const deckId = `deck-${Date.now()}`
+      loadDeck({
+        id: deckId,
+        name: selected.title || 'Note Flashcards',
+        courseId: selected.courseId || null,
+        createdAt: Date.now(),
+        cards: cards.map((c, i) => ({
+          id: `card-${deckId}-${i}`,
+          front: c.front,
+          back: c.back,
+          streak: 0,
+          nextReview: null,
+        })),
+      })
+      setGenSuccess(cards.length)
+    } catch {
+      // Fallback: create deck from note headings manually
+      const lines = selected.content.split('\n')
+      const cards = []
+      let lastHeading = null
+      lines.forEach(line => {
+        if (/^#{1,3}\s/.test(line)) lastHeading = line.replace(/^#{1,3}\s/, '').trim()
+        else if (/^[-*]\s/.test(line) && lastHeading) {
+          const pt = line.replace(/^[-*]\s/, '').trim()
+          if (pt.length > 6) cards.push({ front: `What is "${lastHeading}"?`, back: pt })
+        }
+      })
+      if (cards.length > 0) {
+        const deckId = `deck-${Date.now()}`
+        loadDeck({
+          id: deckId,
+          name: selected.title || 'Note Flashcards',
+          courseId: selected.courseId || null,
+          createdAt: Date.now(),
+          cards: cards.slice(0, 10).map((c, i) => ({
+            id: `card-${deckId}-${i}`, front: c.front, back: c.back, streak: 0, nextReview: null,
+          })),
+        })
+        setGenSuccess(cards.length)
+      } else {
+        setGenSuccess(0)
+      }
+    } finally {
+      setGeneratingCards(false)
+      setTimeout(() => setGenSuccess(null), 4000)
+    }
   }
 
   const wordCount = selected?.content
@@ -320,6 +380,26 @@ const Notes = () => {
                       border: `1px solid ${preview ? 'rgba(196,77,255,0.4)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 6,
                       color: preview ? '#c44dff' : '#8c90a0', fontFamily: 'VT323', fontSize: 14, cursor: 'pointer' }}>
                     {preview ? 'EDIT' : 'PREVIEW'}
+                  </button>
+                  <button
+                    onClick={handleGenerateFlashcards}
+                    disabled={generatingCards || !selected?.content?.trim()}
+                    title="Generate flashcards from this note using AI"
+                    style={{ padding: '4px 10px', background: generatingCards ? 'rgba(77,255,145,0.05)' : 'rgba(77,255,145,0.08)',
+                      border: `1px solid ${genSuccess !== null ? (genSuccess > 0 ? 'rgba(77,255,145,0.5)' : 'rgba(255,77,106,0.4)') : 'rgba(77,255,145,0.25)'}`,
+                      borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5,
+                      opacity: (!selected?.content?.trim() || generatingCards) ? 0.5 : 1 }}>
+                    {generatingCards
+                      ? <span style={{ fontFamily: 'VT323', fontSize: 13, color: '#4dff91' }}>generating…</span>
+                      : genSuccess !== null
+                      ? <span style={{ fontFamily: 'VT323', fontSize: 13, color: genSuccess > 0 ? '#4dff91' : '#ff8f6b' }}>
+                          {genSuccess > 0 ? `✓ ${genSuccess} cards!` : 'no content found'}
+                        </span>
+                      : <>
+                          <Layers size={12} color="#4dff91" />
+                          <span style={{ fontFamily: 'VT323', fontSize: 13, color: '#4dff91' }}>AI CARDS</span>
+                        </>
+                    }
                   </button>
                   <button onClick={handleExport}
                     style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.05)',

@@ -204,4 +204,56 @@ router.post('/study-plan', async (req, res) => {
   }
 })
 
+// AI Flashcard Generation from notes
+router.post('/flashcards', async (req, res) => {
+  try {
+    const { content, title } = req.body
+    if (!content || content.trim().length < 20) {
+      return res.status(400).json({ error: 'Note content too short to generate flashcards' })
+    }
+
+    const model = await getGemini()
+    if (model) {
+      const prompt = `From the following study notes, generate 5-10 high-quality flashcard question-answer pairs. Focus on key concepts, definitions, formulas, and important facts.
+
+Notes title: ${title || 'Study Notes'}
+Notes content:
+${content.slice(0, 3000)}
+
+Respond ONLY with a JSON array, no explanation. Format:
+[{"front": "question here", "back": "answer here"}, ...]`
+
+      try {
+        const raw = await callGemini(model, 'You are a study flashcard generator. Output only valid JSON arrays.', prompt)
+        const match = raw.match(/\[[\s\S]*\]/)
+        if (!match) throw new Error('No JSON array in response')
+        const cards = JSON.parse(match[0])
+        if (!Array.isArray(cards) || cards.length === 0) throw new Error('Empty cards array')
+        return res.json({ cards: cards.slice(0, 12) })
+      } catch (e) {
+        console.warn('Gemini flashcard parse error:', e.message)
+      }
+    }
+
+    // Fallback: extract headings + bullet points as cards
+    const lines = content.split('\n').filter(l => l.trim())
+    const cards = []
+    let lastHeading = null
+    lines.forEach(line => {
+      if (/^#{1,3}\s/.test(line)) {
+        lastHeading = line.replace(/^#{1,3}\s/, '').trim()
+      } else if (/^[-*]\s/.test(line) && lastHeading) {
+        const point = line.replace(/^[-*]\s/, '').trim()
+        if (point.length > 8) {
+          cards.push({ front: `What is "${lastHeading}"?`, back: point })
+        }
+      }
+    })
+    res.json({ cards: cards.slice(0, 10) })
+  } catch (error) {
+    console.error('Flashcard generation error:', error)
+    res.status(500).json({ error: 'Failed to generate flashcards' })
+  }
+})
+
 export default router

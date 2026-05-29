@@ -71,7 +71,8 @@ export const grades = {
 
 export const ai = {
   chat: (message, context) => api.post('/ai/chat', { message, context }),
-  generateStudyPlan: (assignments, preferences) => api.post('/ai/study-plan', { assignments, preferences })
+  generateStudyPlan: (assignments, preferences) => api.post('/ai/study-plan', { assignments, preferences }),
+  generateFlashcards: (content, title) => api.post('/ai/flashcards', { content, title })
 }
 
 // Appwrite sync endpoints
