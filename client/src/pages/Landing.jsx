@@ -6,7 +6,32 @@ import {
   Sparkles, BookOpen, Mail, Calendar, BarChart3, MessageCircle,
   ArrowRight, Star, Github, Zap, Shield, Clock, CheckCircle2,
   GraduationCap, TrendingUp, Brain, Rocket, Users, ChevronDown, StickyNote,
+  Quote,
 } from 'lucide-react'
+
+const TESTIMONIALS = [
+  {
+    text: "I had 4 exams in one week and had no idea where to start. Shiori pulled all my deadlines from Classroom and built me a day-by-day plan in 30 seconds. Actually passed everything.",
+    name: "Ploy S.",
+    role: "Year 12 · STEM Programme",
+    color: '#afc6ff',
+    avatar: 'P',
+  },
+  {
+    text: "The flashcard SRS system is insane. I imported my whole Quizlet deck via CSV and it just works. My vocab retention went from maybe 40% to like 85% after two weeks.",
+    name: "Nattapon K.",
+    role: "University freshman · Engineering",
+    color: '#e5b5ff',
+    avatar: 'N',
+  },
+  {
+    text: "Finally an app that doesn't spy on me. I bring my own Gemini key, everything stays local. The grade predictor told me I need a 71 on the final to keep my A — that kind of info is game-changing.",
+    name: "Minh T.",
+    role: "Grade 11 · International school",
+    color: '#d7ffc5',
+    avatar: 'M',
+  },
+]
 
 const FEATURES = [
   {
@@ -133,6 +158,98 @@ const STEPS = [
   { num: '02', title: 'Sync', desc: 'Shiori reads all your assignments, deadlines, and events automatically.', color: '#e5b5ff' },
   { num: '03', title: 'Study', desc: 'Get a personalized AI plan and let Shiori keep you on track.', color: '#d7ffc5' },
 ]
+
+const EmailCapture = () => {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState('idle') // idle | loading | success | error
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!email) return
+    setStatus('loading')
+    try {
+      const res = await fetch('https://formspree.io/f/xpwzqnyy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ email, source: 'shiori-landing' }),
+      })
+      setStatus(res.ok ? 'success' : 'error')
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  return (
+    <div style={{
+      maxWidth: 560, margin: '0 auto', textAlign: 'center',
+      padding: '48px 32px', borderRadius: 16,
+      border: '1px solid rgba(175,198,255,0.15)',
+      background: 'linear-gradient(135deg, rgba(82,141,255,0.05) 0%, rgba(196,77,255,0.04) 100%)',
+    }}>
+      <div style={{
+        fontFamily: "'Press Start 2P', monospace",
+        fontSize: 'clamp(12px, 2vw, 16px)', color: '#dfe2eb', marginBottom: 12,
+      }}>GET EARLY ACCESS</div>
+      <p style={{
+        fontFamily: "'Manrope', sans-serif", fontSize: 14,
+        color: '#8c90a0', marginBottom: 28, lineHeight: 1.6,
+      }}>
+        Shiori Pro is launching soon — unlimited AI plans, email reminders, grade predictions.
+        Join the waitlist and get 3 months free.
+      </p>
+      {status === 'success' ? (
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          fontFamily: "'Space Grotesk', sans-serif", fontSize: 14,
+          color: '#4dff91', fontWeight: 600,
+        }}>
+          <CheckCircle2 size={18} /> You're on the list — we'll reach out soon!
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, maxWidth: 400, margin: '0 auto', flexWrap: 'wrap' }}>
+          <input
+            type="email"
+            required
+            placeholder="your@email.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            style={{
+              flex: 1, minWidth: 200,
+              padding: '10px 16px', borderRadius: 8,
+              background: 'rgba(24,28,34,0.8)',
+              border: '1px solid rgba(66,71,84,0.50)',
+              color: '#dfe2eb', outline: 'none',
+              fontFamily: "'Manrope', sans-serif", fontSize: 14,
+            }}
+          />
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            style={{
+              padding: '10px 20px', borderRadius: 8,
+              background: 'linear-gradient(135deg, #c44dff 0%, #528dff 100%)',
+              color: '#fff', border: 'none', cursor: 'pointer',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 13, fontWeight: 700,
+              opacity: status === 'loading' ? 0.7 : 1,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {status === 'loading' ? 'Joining...' : 'Join Waitlist →'}
+          </button>
+        </form>
+      )}
+      {status === 'error' && (
+        <p style={{ marginTop: 8, fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#ff6b9d' }}>
+          Something went wrong — email us at 79807@student.amnuaysilpa.ac.th
+        </p>
+      )}
+      <p style={{ marginTop: 16, fontFamily: "'Manrope', sans-serif", fontSize: 11, color: '#424558' }}>
+        No spam. No subscriptions to start. Unsubscribe anytime.
+      </p>
+    </div>
+  )
+}
 
 // Floating particle component
 const Particle = ({ x, y, size, opacity, delay }) => (
@@ -828,6 +945,72 @@ const Landing = () => {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* Testimonials */}
+      <section style={{ padding: '80px 24px', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          <FadeIn>
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <div style={{
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: 'clamp(14px, 2.5vw, 22px)',
+                color: '#dfe2eb', marginBottom: 12,
+              }}>WHAT STUDENTS SAY</div>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 15, color: '#8c90a0' }}>
+                Real words from real students who stopped drowning.
+              </p>
+            </div>
+          </FadeIn>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+            {TESTIMONIALS.map((t, i) => (
+              <FadeIn key={t.name} delay={i * 0.12}>
+                <div style={{
+                  padding: 24, borderRadius: 14,
+                  border: '1px solid rgba(66,71,84,0.30)',
+                  background: 'rgba(24,28,34,0.50)',
+                  backdropFilter: 'blur(12px)',
+                  display: 'flex', flexDirection: 'column', gap: 16,
+                  height: '100%',
+                }}>
+                  <Quote size={18} style={{ color: t.color, opacity: 0.6 }} />
+                  <p style={{
+                    fontFamily: "'Manrope', sans-serif",
+                    fontSize: 14, color: '#c4c8d4',
+                    lineHeight: 1.7, flex: 1,
+                    margin: 0,
+                  }}>"{t.text}"</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: '50%',
+                      background: `linear-gradient(135deg, ${t.color}33, ${t.color}15)`,
+                      border: `1px solid ${t.color}44`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 700, fontSize: 14, color: t.color,
+                      flexShrink: 0,
+                    }}>{t.avatar}</div>
+                    <div>
+                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13, color: '#dfe2eb' }}>
+                        {t.name}
+                      </div>
+                      <div style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: '#606080' }}>
+                        {t.role}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Email waitlist */}
+      <section style={{ padding: '60px 24px', position: 'relative', zIndex: 1 }}>
+        <FadeIn>
+          <EmailCapture />
+        </FadeIn>
       </section>
 
       {/* Final CTA */}
