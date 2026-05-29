@@ -98,17 +98,30 @@ Zero accounts required. Try the full app in 10 seconds with demo mode.
 | **CSV Import** | Paste any tab/comma-separated text — works with Quizlet export, Anki CSV, or plain text |
 | **Due-Now Counter** | Dashboard shows how many cards are ready for review |
 
+### 🔥 Habit Tracker
+| Feature | Description |
+|---------|-------------|
+| **Daily Habit Grid** | 7-day completion grid for any habit you want to build |
+| **Streak Counter** | Per-habit fire emoji streak — don't break the chain |
+| **Color-coded habits** | Pick a color per habit, add/delete freely |
+
 ### ⏱️ Focus & Productivity
 | Feature | Description |
 |---------|-------------|
 | **Pomodoro Timer** | Focus sessions tied to specific assignments, with session history |
-| **Study Streak** | Track consecutive study days — don't break the chain |
-| **Keyboard Shortcuts** | `gh/ga/gc/gg/gs/gn/gf` to navigate, `Ctrl+K` for AI chat |
+| **Sound Notifications** | Distinct tones for focus→break and break→focus transitions (Web Audio, no downloads) |
+| **Progress Share Card** | Canvas-rendered 900×500 PNG with your GPA, focus time, and completion rate — download and share |
+| **Keyboard Shortcut Modal** | Press `?` anywhere for a full shortcut reference |
+| **Keyboard Shortcuts** | `gh/ga/gc/gg/gs/gn/gf/gb` to navigate, `Ctrl+K` for AI chat, `Ctrl+Shift+A` quick capture |
 
 ### 🎨 Design
-- **Midnight Study Room aesthetic** — dark glassmorphism built for late-night sessions
-- **Framer Motion animations** — smooth, purposeful transitions throughout
-- **Custom fonts** — Space Grotesk headings, Manrope body, Press Start 2P for that retro-academic feel
+| Feature | Description |
+|---------|-------------|
+| **Dark / Light Theme** | Toggle between midnight study room and clean light mode |
+| **Midnight Study Room** | Dark glassmorphism with floating orbs — built for late-night sessions |
+| **Framer Motion** | Smooth, purposeful animations throughout |
+| **Custom fonts** | Space Grotesk headings · Manrope body · Press Start 2P retro accents |
+
 - **Demo Mode** — full app with 5 courses, 10 assignments, grades, events — zero setup
 
 ---
@@ -202,9 +215,10 @@ Shiori-v1/
 - [x] **v1.3** — Final exam predictor · Calendar assignment overlay
 - [x] **v1.4** — iCal export · PDF export (study plan + assignments) · Keyboard shortcuts
 - [x] **v1.5** — Weighted grade categories · Shareable GPA card · Notes with markdown
-- [x] **v1.6** — Flashcards with spaced repetition (SRS) · 3D card flip
-- [ ] **v1.7** — Habit tracker · Study analytics dashboard
-- [ ] **v1.8** — Browser extension (Chrome/Firefox) for quick task capture
+- [x] **v1.6** — Flashcards with spaced repetition (SRS) · 3D card flip · AI card generation from notes
+- [x] **v1.7** — Habit tracker · Analytics dashboard · Progress share card · Dark/light theme toggle
+- [x] **v1.8** — Keyboard shortcut modal (?) · Pomodoro sounds · Client-side Gemini API key
+- [ ] **v1.9** — Browser extension (Chrome/Firefox) for quick task capture
 - [ ] **v2.0** — Shiori Cloud (fully hosted, zero-setup)
 - [ ] **v2.1** — Mobile app (React Native / Expo)
 
@@ -244,7 +258,7 @@ git push origin feature/your-feature-name
 # Open a PR!
 ```
 
-Open an issue first for big changes. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines.
+Open an issue first for big changes. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 Good first issues: [`good first issue`](https://github.com/kaorii-ako/Shiori-v1/issues?q=label%3A%22good+first+issue%22)
 
