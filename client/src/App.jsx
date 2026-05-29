@@ -18,6 +18,7 @@ import Habits from './pages/Habits'
 import FocusMode from './pages/FocusMode'
 import Quiz from './pages/Quiz'
 import Leaderboard from './pages/Leaderboard'
+import SyllabusImport from './pages/SyllabusImport'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 
@@ -54,6 +55,7 @@ function App() {
           <Route path="/focus" element={<FocusMode />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/import" element={<SyllabusImport />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>

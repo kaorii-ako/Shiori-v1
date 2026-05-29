@@ -17,6 +17,7 @@ import {
   Flame,
   Brain,
   Trophy,
+  Upload,
 } from 'lucide-react'
 import { useAuthStore, useUIStore } from '../stores'
 
@@ -32,6 +33,7 @@ const navItems = [
   { icon: Flame, label: 'Habits', path: '/habits' },
   { icon: Brain, label: 'AI Quiz', path: '/quiz' },
   { icon: Trophy, label: 'Leaderboard', path: '/leaderboard' },
+  { icon: Upload, label: 'Import Syllabus', path: '/import' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ]
 
