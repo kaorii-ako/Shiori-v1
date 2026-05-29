@@ -1,0 +1,17 @@
+{
+  "name": "shiori-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Shiori — access your assignments, grades, notes, and flashcards from Claude Code",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["mcp", "claude", "study", "education", "assignments"],
+  "author": "kaorii-ako",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.4.3"
+  }
+}
