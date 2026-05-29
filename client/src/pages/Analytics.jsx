@@ -1,11 +1,116 @@
-import { useMemo } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   BarChart3, TrendingUp, Clock, Target, Flame,
-  Trophy, BookOpen, Layers, CheckCircle, AlertCircle,
+  Trophy, BookOpen, Layers, CheckCircle, AlertCircle, Share2, Download,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import { useAssignmentsStore, useGradesStore, useFlashcardsStore, usePomodoroStore, useAuthStore } from '../stores'
+
+function generateShareCard({ gpa, focusMinutes, sessionCount, completed, total, mastered, totalCards, username }) {
+  const canvas = document.createElement('canvas')
+  canvas.width = 900
+  canvas.height = 500
+  const ctx = canvas.getContext('2d')
+
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, 900, 500)
+  grad.addColorStop(0, '#10141a')
+  grad.addColorStop(1, '#14181e')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, 900, 500)
+
+  // Decorative orbs
+  const orb = (x, y, r, color) => {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r)
+    g.addColorStop(0, color)
+    g.addColorStop(1, 'transparent')
+    ctx.fillStyle = g
+    ctx.beginPath()
+    ctx.arc(x, y, r, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  orb(100, 100, 200, 'rgba(196,77,255,0.12)')
+  orb(800, 400, 180, 'rgba(82,141,255,0.10)')
+  orb(450, 480, 150, 'rgba(77,255,145,0.07)')
+
+  // Logo + title
+  ctx.fillStyle = '#afc6ff'
+  ctx.font = 'bold 18px "Arial"'
+  ctx.fillText('栞 SHIORI', 50, 58)
+
+  ctx.fillStyle = '#424754'
+  ctx.font = '13px Arial'
+  ctx.fillText('Weekly Progress Report', 50, 78)
+
+  const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  ctx.fillStyle = '#424754'
+  ctx.font = '12px monospace'
+  ctx.fillText(date, 900 - 50 - ctx.measureText(date).width, 58)
+
+  // Stats grid
+  const stats = [
+    { label: 'GPA', value: gpa || '—', color: '#4dff91' },
+    { label: 'FOCUS', value: `${Math.floor(focusMinutes / 60)}h ${focusMinutes % 60}m`, color: '#c44dff' },
+    { label: 'SESSIONS', value: String(sessionCount), color: '#afc6ff' },
+    { label: 'DONE', value: `${completed}/${total}`, color: '#ffd6a0' },
+    { label: 'MASTERED', value: `${mastered}/${totalCards}`, color: '#ff6b9d' },
+  ]
+
+  stats.forEach((s, i) => {
+    const x = 50 + i * 166
+    const y = 140
+
+    // Card bg
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'
+    roundRect(ctx, x, y, 150, 120, 12)
+    ctx.fill()
+    ctx.strokeStyle = `${s.color}33`
+    ctx.lineWidth = 1
+    roundRect(ctx, x, y, 150, 120, 12)
+    ctx.stroke()
+
+    // Value
+    ctx.fillStyle = s.color
+    ctx.font = 'bold 28px "Arial"'
+    const vw = ctx.measureText(s.value).width
+    ctx.fillText(s.value, x + 75 - vw / 2, y + 62)
+
+    // Label
+    ctx.fillStyle = '#606080'
+    ctx.font = '11px monospace'
+    const lw = ctx.measureText(s.label).width
+    ctx.fillText(s.label, x + 75 - lw / 2, y + 88)
+  })
+
+  // Bottom tagline
+  ctx.fillStyle = '#424754'
+  ctx.font = '13px Arial'
+  ctx.fillText('shiori-v1.vercel.app — free, open-source AI study companion', 50, 460)
+
+  if (username) {
+    ctx.fillStyle = '#8c90a0'
+    ctx.font = '13px Arial'
+    const uw = ctx.measureText(`@${username}`).width
+    ctx.fillText(`@${username}`, 900 - 50 - uw, 460)
+  }
+
+  return canvas
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.lineTo(x + w - r, y)
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r)
+  ctx.lineTo(x + w, y + h - r)
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+  ctx.lineTo(x + r, y + h)
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r)
+  ctx.lineTo(x, y + r)
+  ctx.quadraticCurveTo(x, y, x + r, y)
+  ctx.closePath()
+}
 
 const BAR_COLORS = ['#ff6b9d', '#c44dff', '#afc6ff', '#4dff91', '#ffd6a0']
 
@@ -85,6 +190,8 @@ const Analytics = () => {
   const { decks } = useFlashcardsStore()
   const { sessionCount, totalFocusMinutes } = usePomodoroStore()
   const { user } = useAuthStore()
+  const [sharePreview, setSharePreview] = useState(null)
+  const [shareDownloading, setShareDownloading] = useState(false)
 
   const courseSummaries = useMemo(() => {
     if (!courses?.length) return []
@@ -283,6 +390,63 @@ const Analytics = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Share progress card */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+        <GlassCard>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Share2 size={16} style={{ color: '#afc6ff' }} />
+              <div>
+                <p style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color: '#afc6ff' }}>SHARE PROGRESS</p>
+                <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#8c90a0', marginTop: 2 }}>Generate a shareable progress card</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setShareDownloading(true)
+                try {
+                  const canvas = generateShareCard({
+                    gpa: overallGPA,
+                    focusMinutes: totalFocusMinutes,
+                    sessionCount,
+                    completed: assignmentStats.completed,
+                    total: assignmentStats.total,
+                    mastered: flashcardStats.mastered,
+                    totalCards: flashcardStats.totalCards,
+                    username: user?.username || user?.firstName,
+                  })
+                  const url = canvas.toDataURL('image/png')
+                  setSharePreview(url)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = `shiori-progress-${new Date().toISOString().split('T')[0]}.png`
+                  a.click()
+                } finally {
+                  setShareDownloading(false)
+                }
+              }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                background: 'linear-gradient(135deg, rgba(175,198,255,0.2), rgba(82,141,255,0.15))',
+                border: '1px solid rgba(175,198,255,0.25)',
+                color: '#afc6ff', fontFamily: '"Press Start 2P"', fontSize: 8,
+              }}
+            >
+              <Download size={13} /> DOWNLOAD CARD
+            </button>
+          </div>
+          {sharePreview && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ marginTop: 14, overflow: 'hidden' }}>
+              <img src={sharePreview} alt="Progress card" style={{ width: '100%', borderRadius: 8, border: '1px solid rgba(66,71,84,0.3)' }} />
+              <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080', marginTop: 8, textAlign: 'center' }}>
+                Share on Twitter/X with #Shiori 🎓
+              </p>
+            </motion.div>
+          )}
+        </GlassCard>
+      </motion.div>
     </div>
   )
 }
