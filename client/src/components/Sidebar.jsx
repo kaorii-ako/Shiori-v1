@@ -20,6 +20,7 @@ import {
   Upload,
 } from 'lucide-react'
 import { useAuthStore, useUIStore } from '../stores'
+import XPBar from './XPBar'
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/home' },
@@ -187,6 +188,9 @@ const Sidebar = () => {
           })}
         </nav>
 
+        {/* XP bar */}
+        <XPBar collapsed={isCollapsed} />
+
         {/* User section */}
         <div className="p-3 border-t" style={{ borderTop: '1px solid rgba(66,71,84,0.30)' }}>
           <div
@@ -204,7 +208,7 @@ const Sidebar = () => {
                 fontFamily: "'Space Grotesk', sans-serif"
               }}
             >
-              {user?.firstName ? user.firstName[0].toUpperCase() : 'U'}
+              {user?.firstName ? user.firstName[0].toUpperCase() : user?.name ? user.name[0].toUpperCase() : 'U'}
             </div>
             <AnimatePresence>
               {!isCollapsed && (
@@ -220,7 +224,7 @@ const Sidebar = () => {
                   >
                     {user?.firstName && user?.lastName
                       ? `${user.firstName} ${user.lastName}`
-                      : user?.username || 'User'}
+                      : user?.name || user?.username || 'User'}
                   </p>
                   <p
                     className="text-xs on-surface-secondary truncate"

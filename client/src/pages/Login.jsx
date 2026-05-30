@@ -5,13 +5,14 @@ import { Mail, Lock, AlertCircle, Sparkles } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore, useNotesStore, useFlashcardsStore } from '../stores'
+import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore, useNotesStore, useFlashcardsStore, useXPStore } from '../stores'
 import { validateLoginForm } from '../utils/authValidation'
 import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, DEMO_COURSE_WEIGHTS, DEMO_DECKS, DEMO_QUIZ_HISTORY, DEMO_LEADERBOARD } from '../utils/demoData'
 
 const Login = () => {
   const navigate = useNavigate()
   const { loginWithEmail, loginWithGitHub, isLoading, error, clearError, enterDemoMode } = useAuthStore()
+  const { addXP } = useXPStore()
   const { setAssignments, setCourses } = useAssignmentsStore()
   const { setEvents } = useEventStore()
   const { setCourseGrades, setCourseWeights } = useGradesStore()
@@ -71,6 +72,7 @@ const Login = () => {
     // Seed quiz history and leaderboard for demo
     localStorage.setItem('shiori-quiz-history', JSON.stringify(DEMO_QUIZ_HISTORY))
     localStorage.setItem('shiori-leaderboard', JSON.stringify(DEMO_LEADERBOARD))
+    localStorage.setItem('shiori-xp', JSON.stringify({ state: { xp: 620, levelUpPending: null }, version: 0 }))
     navigate('/home')
   }
 

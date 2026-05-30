@@ -15,7 +15,7 @@ import Badge from '../components/Badge'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import Input from '../components/Input'
-import { useAssignmentsStore } from '../stores'
+import { useAssignmentsStore, useXPStore } from '../stores'
 import { exportAssignmentsToICal } from '../utils/icalExport'
 import { exportAssignmentsToPDF } from '../utils/pdfExport'
 
@@ -29,12 +29,14 @@ const Assignments = () => {
     setGrade,
     updateAssignment,
   } = useAssignmentsStore()
+  const { addXP } = useXPStore()
 
   const handleToggleComplete = (e, assignment) => {
     e.stopPropagation()
     const isCompleting = assignment.status === 'pending'
     updateAssignment(assignment.id, { status: isCompleting ? 'complete' : 'pending' })
     if (isCompleting) {
+      addXP(50, 'assignment_complete')
       const remaining = assignments.filter(a => a.status === 'pending' && a.id !== assignment.id).length
       if (remaining === 0) confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } })
     }

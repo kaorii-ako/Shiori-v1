@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Play, Pause, RotateCcw, X, Brain, Coffee, SkipForward, Music, Volume2, VolumeX } from 'lucide-react'
-import { usePomodoroStore, useAssignmentsStore } from '../stores'
+import { usePomodoroStore, useAssignmentsStore, useXPStore } from '../stores'
 import { playDing } from '../utils/sounds'
 
 const fmt = (secs) => {
@@ -29,6 +29,7 @@ export default function FocusMode() {
     start, pause, reset, tick, close,
   } = usePomodoroStore()
   const { assignments } = useAssignmentsStore()
+  const { addXP } = useXPStore()
 
   const [muted, setMuted] = useState(false)
   const intervalRef = useRef(null)
@@ -61,9 +62,11 @@ export default function FocusMode() {
 
   useEffect(() => {
     if (prevBreak.current !== isBreak) {
+      const wasWork = !prevBreak.current
       prevBreak.current = isBreak
       if (!muted) playDing(isBreak ? 'break' : 'focus')
       setQuote(q => (q + 1) % QUOTES.length)
+      if (wasWork && isBreak) addXP(25, 'pomodoro_complete')
     }
   }, [isBreak, muted])
 

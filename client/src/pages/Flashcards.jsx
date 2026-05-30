@@ -10,7 +10,7 @@ import Button from '../components/Button'
 import Badge from '../components/Badge'
 import Modal from '../components/Modal'
 import Input from '../components/Input'
-import { useFlashcardsStore, useAssignmentsStore } from '../stores'
+import { useFlashcardsStore, useAssignmentsStore, useXPStore } from '../stores'
 
 const COURSE_COLORS = ['#ff6b9d', '#c44dff', '#afc6ff', '#4dff91', '#ffd6a0', '#4daaff']
 
@@ -116,6 +116,7 @@ const StudyMode = ({ deck, onExit, onUpdateCard }) => {
       .sort(() => Math.random() - 0.5)
   }, [deck.id])
 
+  const { addXP } = useXPStore()
   const [idx, setIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [sessionStats, setSessionStats] = useState({ correct: 0, incorrect: 0, total: 0 })
@@ -163,6 +164,7 @@ const StudyMode = ({ deck, onExit, onUpdateCard }) => {
     const intervals = [3600000, 7200000, 86400000, 172800000, 432000000]
     const interval = correct ? (intervals[Math.min(streak - 1, intervals.length - 1)] || intervals[0]) : 600000
     onUpdateCard(deck.id, card.id, { streak, nextReview: now + interval })
+    if (correct) addXP(5, 'flashcard_correct')
 
     setSessionStats(p => ({
       correct: p.correct + (correct ? 1 : 0),

@@ -505,3 +505,61 @@ export const useUIStore = create(
     { name: 'shiori-ui' }
   )
 )
+
+const XP_LEVELS = [
+  { level: 1, title: 'Freshman',  min: 0,    color: '#8c90a0' },
+  { level: 2, title: 'Sophomore', min: 200,  color: '#afc6ff' },
+  { level: 3, title: 'Junior',    min: 500,  color: '#e5b5ff' },
+  { level: 4, title: 'Senior',    min: 1000, color: '#4dff91' },
+  { level: 5, title: 'Scholar',   min: 2500, color: '#ffd6a0' },
+  { level: 6, title: 'Graduate',  min: 5000, color: '#ff6b9d' },
+]
+
+const getLevel = (xp) => {
+  for (let i = XP_LEVELS.length - 1; i >= 0; i--) {
+    if (xp >= XP_LEVELS[i].min) return XP_LEVELS[i]
+  }
+  return XP_LEVELS[0]
+}
+
+const getNextLevel = (xp) => {
+  const cur = getLevel(xp)
+  return XP_LEVELS.find(l => l.level === cur.level + 1) || null
+}
+
+export { XP_LEVELS, getLevel, getNextLevel }
+
+export const useXPStore = create(
+  persist(
+    (set, get) => ({
+      xp: 0,
+      levelUpPending: null,
+
+      addXP: (amount, reason) => {
+        const { xp } = get()
+        const oldLevel = getLevel(xp)
+        const newXP = xp + amount
+        const newLevel = getLevel(newXP)
+        const leveled = newLevel.level > oldLevel.level
+        set({
+          xp: newXP,
+          levelUpPending: leveled ? newLevel : get().levelUpPending,
+        })
+        return { newXP, leveled, newLevel: leveled ? newLevel : null }
+      },
+
+      clearLevelUp: () => set({ levelUpPending: null }),
+
+      getProgress: () => {
+        const { xp } = get()
+        const cur = getLevel(xp)
+        const next = getNextLevel(xp)
+        if (!next) return { pct: 100, cur, next: null, xpInLevel: xp - cur.min, xpToNext: 0 }
+        const xpInLevel = xp - cur.min
+        const xpToNext = next.min - cur.min
+        return { pct: Math.round((xpInLevel / xpToNext) * 100), cur, next, xpInLevel, xpToNext }
+      },
+    }),
+    { name: 'shiori-xp' }
+  )
+)
