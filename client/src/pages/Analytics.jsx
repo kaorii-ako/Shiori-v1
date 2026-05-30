@@ -5,6 +5,7 @@ import {
   Trophy, BookOpen, Layers, CheckCircle, AlertCircle, Share2, Download,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
+import StudyHeatmap from '../components/StudyHeatmap'
 import { useAssignmentsStore, useGradesStore, useFlashcardsStore, usePomodoroStore, useAuthStore } from '../stores'
 
 function generateShareCard({ gpa, focusMinutes, sessionCount, completed, total, mastered, totalCards, username }) {
@@ -239,6 +240,34 @@ const Analytics = () => {
     return [2, 5, 3, 7, 4, sessionCount + 2, 6].map(v => Math.min(v + Math.floor(Math.random() * 2), 10))
   }, [sessionCount])
 
+  // Annual activity heatmap — from persisted sessions or demo data
+  const { activityMap, totalHeatmapMinutes } = useMemo(() => {
+    const stored = localStorage.getItem('shiori-activity-map')
+    if (stored) {
+      try {
+        const map = JSON.parse(stored)
+        const total = Object.values(map).reduce((s, v) => s + v, 0)
+        return { activityMap: map, totalHeatmapMinutes: total }
+      } catch {}
+    }
+    // Demo: generate plausible past-year activity
+    const map = {}
+    const today = new Date()
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(today)
+      d.setDate(today.getDate() - i)
+      const ds = d.toISOString().split('T')[0]
+      const dow = d.getDay()
+      const isWeekend = dow === 0 || dow === 6
+      const rand = Math.random()
+      if (rand < (isWeekend ? 0.35 : 0.70)) {
+        map[ds] = Math.floor(Math.random() * 150) + (rand < 0.15 ? 120 : 20)
+      }
+    }
+    const total = Object.values(map).reduce((s, v) => s + v, 0)
+    return { activityMap: map, totalHeatmapMinutes: total }
+  }, [sessionCount])
+
   const maxGrade = courseSummaries.length > 0 ? Math.max(...courseSummaries.map(c => c.pct)) : 100
 
   return (
@@ -390,6 +419,13 @@ const Analytics = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Annual study heatmap */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
+        <GlassCard>
+          <StudyHeatmap activityMap={activityMap} totalMinutes={totalHeatmapMinutes} />
+        </GlassCard>
+      </motion.div>
 
       {/* Share progress card */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
