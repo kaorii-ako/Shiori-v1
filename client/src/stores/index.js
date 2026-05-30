@@ -39,12 +39,8 @@ export const useAuthStore = create(
       },
 
       loginWithGitHub: () => {
-        const origin = window.location.origin
-        account.createOAuth2Session(
-          'github',
-          `${origin}/auth/callback?provider=github`,
-          `${origin}/login?error=github_failed`
-        )
+        // Server-side GitHub OAuth (keeps client_secret secure)
+        window.location.href = '/api/auth/github'
       },
 
       loginWithAppwriteSession: async () => {
