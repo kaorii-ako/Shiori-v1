@@ -10,6 +10,7 @@ import {
   Brain,
   AlertTriangle,
   Download,
+  GripVertical,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Badge from '../components/Badge'
@@ -82,6 +83,8 @@ const StudyPlans = () => {
   const [sessions, setSessions] = useState([])
   const [aiInsight, setAiInsight] = useState(null)
   const [generated, setGenerated] = useState(false)
+  const [draggedId, setDraggedId] = useState(null)
+  const [dragOverId, setDragOverId] = useState(null)
 
   // Auto-generate for demo mode
   useEffect(() => {
@@ -118,6 +121,38 @@ const StudyPlans = () => {
     setSessions(prev =>
       prev.map(s => s.id === sessionId ? { ...s, completed: !s.completed } : s)
     )
+  }
+
+  const handleDragStart = (e, id) => {
+    setDraggedId(id)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleDragOver = (e, id) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    if (id !== draggedId) setDragOverId(id)
+  }
+
+  const handleDrop = (e, targetId) => {
+    e.preventDefault()
+    if (!draggedId || draggedId === targetId) return
+    setSessions(prev => {
+      const arr = [...prev]
+      const fromIdx = arr.findIndex(s => s.id === draggedId)
+      const toIdx = arr.findIndex(s => s.id === targetId)
+      if (fromIdx === -1 || toIdx === -1) return prev
+      const [item] = arr.splice(fromIdx, 1)
+      arr.splice(toIdx, 0, item)
+      return arr
+    })
+    setDraggedId(null)
+    setDragOverId(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedId(null)
+    setDragOverId(null)
   }
 
   const groupSessionsByDate = () => {
@@ -244,7 +279,7 @@ const StudyPlans = () => {
               <div className="flex items-center gap-2">
                 <Sparkles size={13} style={{ color: '#e5b5ff' }} />
                 <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#606080' }}>
-                  AI-generated · click to mark complete
+                  AI-generated · drag to reorder · click to complete
                 </span>
               </div>
             </div>
@@ -293,16 +328,22 @@ const StudyPlans = () => {
                         <motion.div
                           key={session.id}
                           whileHover={{ x: 2 }}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, session.id)}
+                          onDragOver={(e) => handleDragOver(e, session.id)}
+                          onDrop={(e) => handleDrop(e, session.id)}
+                          onDragEnd={handleDragEnd}
                           className="flex items-center gap-3 p-3 cursor-pointer"
                           style={{
                             borderRadius: 8,
                             background: session.completed ? 'rgba(74,215,120,0.06)' : 'rgba(24,28,34,0.50)',
-                            border: `1px solid ${session.completed ? 'rgba(74,215,120,0.2)' : 'rgba(66,71,84,0.20)'}`,
-                            opacity: session.completed ? 0.65 : 1,
+                            opacity: draggedId === session.id ? 0.35 : session.completed ? 0.65 : 1,
+                            border: dragOverId === session.id ? '1px solid rgba(196,77,255,0.5)' : `1px solid ${session.completed ? 'rgba(74,215,120,0.2)' : 'rgba(66,71,84,0.20)'}`,
                             transition: 'all 0.15s',
                           }}
                           onClick={() => toggleSession(session.id)}
                         >
+                          <GripVertical size={14} style={{ color: '#424754', flexShrink: 0, cursor: 'grab' }} />
                           {session.completed
                             ? <CheckCircle size={18} style={{ color: '#4dff91', flexShrink: 0 }} />
                             : <Circle size={18} style={{ color: '#424754', flexShrink: 0 }} />
