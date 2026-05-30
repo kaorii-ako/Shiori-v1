@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Layers, Plus, Trash2, ChevronLeft, ChevronRight,
   Check, X, RotateCcw, BookOpen, Zap, Trophy,
-  Edit3, ArrowLeft, BarChart3, Upload, Download,
+  Edit3, ArrowLeft, BarChart3, Upload, Download, Search,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
@@ -278,6 +278,7 @@ const StudyMode = ({ deck, onExit, onUpdateCard }) => {
 const DeckEditor = ({ deck, onClose, onAddCard, onRemoveCard }) => {
   const [front, setFront] = useState('')
   const [back, setBack] = useState('')
+  const [search, setSearch] = useState('')
 
   const handleAdd = () => {
     if (!front.trim() || !back.trim()) return
@@ -285,6 +286,11 @@ const DeckEditor = ({ deck, onClose, onAddCard, onRemoveCard }) => {
     setFront('')
     setBack('')
   }
+
+  const q = search.toLowerCase().trim()
+  const filteredCards = q
+    ? deck.cards.filter(c => c.front.toLowerCase().includes(q) || c.back.toLowerCase().includes(q))
+    : deck.cards
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '60vh', overflow: 'hidden' }}>
@@ -317,10 +323,23 @@ const DeckEditor = ({ deck, onClose, onAddCard, onRemoveCard }) => {
 
       {deck.cards.length > 0 && (
         <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <p style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#606080', marginBottom: 6 }}>
-            {deck.cards.length} CARD{deck.cards.length !== 1 ? 'S' : ''}
+          {/* Search */}
+          <div style={{ position: 'relative', marginBottom: 4 }}>
+            <Search size={12} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#606080', pointerEvents: 'none' }} />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search cards..."
+              style={{ width: '100%', padding: '8px 10px 8px 30px', background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.10)', borderRadius: 6,
+                color: '#dfe2eb', fontFamily: 'Manrope, sans-serif', fontSize: 13,
+                outline: 'none', boxSizing: 'border-box' }}
+            />
+          </div>
+          <p style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#606080', marginBottom: 4 }}>
+            {q ? `${filteredCards.length} / ${deck.cards.length} CARDS` : `${deck.cards.length} CARD${deck.cards.length !== 1 ? 'S' : ''}`}
           </p>
-          {deck.cards.map((card, i) => (
+          {filteredCards.map((card) => (
             <div key={card.id}
               style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
                 background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 6 }}>
@@ -343,6 +362,11 @@ const DeckEditor = ({ deck, onClose, onAddCard, onRemoveCard }) => {
               </button>
             </div>
           ))}
+          {filteredCards.length === 0 && q && (
+            <p style={{ fontFamily: 'VT323', fontSize: 16, color: '#424754', textAlign: 'center', padding: '16px 0' }}>
+              No cards match "{search}"
+            </p>
+          )}
         </div>
       )}
     </div>

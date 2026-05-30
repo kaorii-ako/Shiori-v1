@@ -9,6 +9,7 @@ import PomodoroTimer from './PomodoroTimer'
 import ToastContainer from './ToastContainer'
 import QuickCapture from './QuickCapture'
 import ShortcutModal from './ShortcutModal'
+import InstallBanner from './InstallBanner'
 import { useUIStore, useAuthStore } from '../stores'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 
@@ -211,6 +212,7 @@ const Layout = () => {
       </AnimatePresence>
       <QuickCapture />
       <ShortcutModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
+      <InstallBanner />
       <ToastContainer />
     </div>
   )
