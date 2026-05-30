@@ -21,7 +21,7 @@ export const SHORTCUT_HELP = SHORTCUTS
 
 export const useKeyboardShortcuts = () => {
   const navigate = useNavigate()
-  const { toggleAIChat } = useUIStore()
+  const { toggleAIChat, toggleTheme } = useUIStore()
   const sequenceRef = useRef('')
   const timerRef = useRef(null)
 
@@ -30,6 +30,12 @@ export const useKeyboardShortcuts = () => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return
       if (e.metaKey || e.ctrlKey) {
         if (e.key === 'k') { e.preventDefault(); toggleAIChat() }
+        return
+      }
+
+      // Shift+T toggle theme
+      if (e.shiftKey && e.key.toLowerCase() === 't') {
+        toggleTheme()
         return
       }
 
