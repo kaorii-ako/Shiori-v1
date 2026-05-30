@@ -4,6 +4,10 @@
   "outputDirectory": "client/dist",
   "installCommand": "npm install",
   "rewrites": [
+    { "source": "/api/auth/github", "destination": "/api/auth/github" },
+    { "source": "/api/auth/github-callback", "destination": "/api/auth/github-callback" },
+    { "source": "/api/auth/google", "destination": "/api/auth/google" },
+    { "source": "/api/auth/callback", "destination": "/api/auth/callback" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],

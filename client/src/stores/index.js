@@ -39,7 +39,6 @@ export const useAuthStore = create(
       },
 
       loginWithGitHub: () => {
-        // Server-side GitHub OAuth (keeps client_secret secure)
         window.location.href = '/api/auth/github'
       },
 
