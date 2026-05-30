@@ -3,8 +3,8 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Install client deps and build
-COPY client/package*.json ./client/
-RUN cd client && npm ci --prefer-offline
+COPY client/package.json ./client/
+RUN cd client && npm install --prefer-offline
 
 COPY client/ ./client/
 ARG VITE_SUPABASE_URL
