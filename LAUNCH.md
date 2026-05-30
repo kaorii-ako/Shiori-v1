@@ -42,7 +42,7 @@ I built an AI study companion that connects to Google Classroom, Gmail, and Cale
 
 No more manually tracking deadlines across 5 tabs.
 
-Try it with zero setup → shiori-v1.vercel.app
+Try it with zero setup → shiori-v1.vercel.app/demo (no login, 1 click)
 
 Open source. MIT license. 🧵
 ```
@@ -157,7 +157,7 @@ Shiori (栞 = "bookmark" in Japanese) connects to your Google ecosystem and elim
 📊 Grade calculator with weighted category support
 ⏱ Pomodoro timer integrated with your active assignment
 
-**Try it in 10 seconds** — click "Try Demo" at shiori-v1.vercel.app. No login. No setup. Full app with sample data.
+**Try it in 10 seconds** — one click at shiori-v1.vercel.app/demo. No login. No setup. Full app with sample data.
 
 **Self-host free forever** with your own Google + Gemini API keys. MIT licensed. Full source on GitHub.
 
@@ -172,7 +172,7 @@ I'm Tawin, a student who built Shiori because I kept missing assignments.
 
 The thing I'm most proud of is the AI chat — it actually knows your data. When you ask "what should I work on first?" it looks at your deadlines, the weights of assignments, and your estimated study hours. Not generic advice.
 
-Try the demo at shiori-v1.vercel.app (no login needed) and let me know what you think. What feature would make you actually use this daily?
+Try the demo at shiori-v1.vercel.app/demo (1 click, no login) and let me know what you think. What feature would make you actually use this daily?
 ```
 
 ---
@@ -190,7 +190,7 @@ It uses Google Classroom API, Gmail API, and Calendar API to pull all your deadl
 Demo (no login): shiori-v1.vercel.app
 GitHub: github.com/kaorii-ako/Shiori-v1
 
-Tech: React + Vite + Express + Google Gemini + Appwrite. MIT licensed.
+Tech: React + Vite + Express + Google Gemini + Supabase (PostgreSQL). MIT licensed.
 
 Happy to answer questions about the Google API integration — that part was trickier than expected.
 ```
@@ -285,7 +285,7 @@ Just shipped Shiori — an open source AI study companion for students.
 
 It connects to your Google Classroom, Gmail, and Calendar. Gemini AI builds your study plan.
 
-Try it with zero setup → shiori-v1.vercel.app (click "Try Demo", no Google login)
+Try it with zero setup → shiori-v1.vercel.app/demo (1 click, no login)
 
 Code: github.com/kaorii-ako/Shiori-v1
 ```
