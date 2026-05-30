@@ -366,3 +366,63 @@ Maker comment: "Built this because I kept missing deadlines while managing 5 tab
 
 At ฿199/month: need 4,196 subscribers for 10M THB/year
 At ฿3,990/month school tier: need 209 schools/year
+
+---
+
+## NEW POSTS — Supabase + Docker angle (2026-05-30 update)
+
+### r/selfhosted (HIGHEST PRIORITY — this audience stars repos)
+```
+Title: Shiori – self-hosted AI study companion with Docker, Supabase auth, and Google Classroom sync
+
+Just added Docker support to my open-source student productivity app.
+
+docker compose up -d
+# Done. Running at http://localhost
+
+Stack:
+- React 18 + Vite frontend (nginx)
+- Express backend
+- Supabase for auth (GitHub OAuth, Google OAuth, email/password) + PostgreSQL
+- Gemini AI for study plans, quiz generation, flashcard creation
+
+Features:
+- Google Classroom sync (pulls assignments automatically)
+- Weighted GPA calculator + final exam score predictor
+- Spaced repetition flashcards (SRS like Anki)
+- AI study plan generator + AI chat
+- Pomodoro timer, habit tracker, leaderboard
+- PWA (works offline on mobile)
+
+All data stays on your Supabase instance. MIT licensed.
+
+GitHub: https://github.com/kaorii-ako/Shiori-v1
+Live demo (no login): https://shiori-v1.vercel.app
+```
+
+### r/webdev (Docker + Supabase angle)
+```
+Title: Migrated my React app from Appwrite to Supabase and added Docker — here's what changed
+
+Just shipped a big update to my open-source student productivity app (Shiori):
+
+- Replaced Appwrite with Supabase (PostgreSQL + Auth + RLS)
+- GitHub OAuth / Google OAuth now via supabase.auth.signInWithOAuth()
+- Full schema with Row Level Security — users only see their own data
+- Docker compose for self-hosting (nginx + Express containers)
+- Stripe webhook now updates is_pro in Supabase profiles table
+
+The Supabase migration was ~200 lines changed. The RLS policies make auth really clean.
+
+If you're on Appwrite and considering switching, happy to share what tripped me up.
+
+GitHub: https://github.com/kaorii-ako/Shiori-v1
+```
+
+### awesome-selfhosted PR text
+Fork: https://github.com/awesome-selfhosted/awesome-selfhosted
+Add under **Education and Science** section:
+```
+- [Shiori](https://github.com/kaorii-ako/Shiori-v1) - AI study companion with Google Classroom sync, GPA calculator, spaced repetition flashcards, and AI study plan generator. `MIT` `Docker` `JavaScript`
+```
+
