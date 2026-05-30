@@ -49,6 +49,7 @@ nul
 
 # Playwright test artifacts
 .playwright-mcp/
+client/package-lock.json
 
 # Temp screenshots
 demo-home*.png
