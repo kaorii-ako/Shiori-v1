@@ -11,13 +11,11 @@ import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, D
 
 const Login = () => {
   const navigate = useNavigate()
-  const { loginWithEmail, loginWithGitHub, isLoading, error, clearError, enterDemoMode } = useAuthStore()
-  const { addXP } = useXPStore()
+  const { loginWithEmail, loginWithGitHub, loginWithGoogle, isLoading, error, clearError, enterDemoMode } = useAuthStore()
+  const { setXP } = useXPStore()
   const { setAssignments, setCourses } = useAssignmentsStore()
   const { setEvents } = useEventStore()
   const { setCourseGrades, setCourseWeights } = useGradesStore()
-  const { addNote } = useNotesStore()
-  const { loadDeck } = useFlashcardsStore()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -53,7 +51,7 @@ const Login = () => {
   }
 
   const handleGoogleLogin = () => {
-    window.location.href = '/api/auth/google'
+    loginWithGoogle()
   }
 
   const handleDemoClick = () => {
@@ -67,12 +65,12 @@ const Login = () => {
     Object.entries(DEMO_COURSE_WEIGHTS).forEach(([courseId, weights]) => {
       setCourseWeights(courseId, weights)
     })
-    DEMO_NOTES.forEach(note => addNote(note))
-    DEMO_DECKS.forEach(deck => loadDeck(deck))
+    useNotesStore.getState().replaceNotes(DEMO_NOTES)
+    useFlashcardsStore.getState().replaceDecks(DEMO_DECKS)
     // Seed quiz history and leaderboard for demo
     localStorage.setItem('shiori-quiz-history', JSON.stringify(DEMO_QUIZ_HISTORY))
     localStorage.setItem('shiori-leaderboard', JSON.stringify(DEMO_LEADERBOARD))
-    localStorage.setItem('shiori-xp', JSON.stringify({ state: { xp: 620, levelUpPending: null }, version: 0 }))
+    setXP(620)
     navigate('/home')
   }
 

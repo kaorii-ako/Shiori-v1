@@ -1,8 +1,17 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { auth as authAPI } from '../lib/api'
-import { account } from '../lib/appwrite'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { DEMO_USER } from '../utils/demoData'
+
+function supabaseUserToShiori(sbUser) {
+  return {
+    id: sbUser.id,
+    name: sbUser.user_metadata?.full_name || sbUser.user_metadata?.name || sbUser.email?.split('@')[0] || 'Student',
+    email: sbUser.email,
+    picture: sbUser.user_metadata?.avatar_url || null,
+    provider: sbUser.app_metadata?.provider || 'email',
+  }
+}
 
 export const useAuthStore = create(
   persist(
@@ -38,36 +47,56 @@ export const useAuthStore = create(
         set({ user: null, token: null, isAuthenticated: false, isDemo: false, error: null })
       },
 
-      loginWithGitHub: () => {
-        window.location.href = '/api/auth/github'
+      loginWithGitHub: async () => {
+        if (isSupabaseConfigured()) {
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'github',
+            options: { redirectTo: `${window.location.origin}/auth/callback` }
+          })
+          if (error) set({ error: error.message })
+        } else {
+          window.location.href = '/api/auth/github'
+        }
       },
 
-      loginWithAppwriteSession: async () => {
-        try {
-          const appwriteUser = await account.get()
-          const user = {
-            id: appwriteUser.$id,
-            name: appwriteUser.name,
-            email: appwriteUser.email,
-            picture: null,
-            provider: 'github',
-          }
-          set({ user, token: appwriteUser.$id, isAuthenticated: true, isDemo: false, isLoading: false, error: null })
-          return user
-        } catch {
-          set({ isLoading: false, error: 'Session not found' })
-          throw new Error('No active Appwrite session')
+      loginWithGoogle: async () => {
+        if (isSupabaseConfigured()) {
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: `${window.location.origin}/auth/callback` }
+          })
+          if (error) set({ error: error.message })
+        } else {
+          window.location.href = '/api/auth/google'
         }
+      },
+
+      restoreSession: async () => {
+        if (!isSupabaseConfigured()) return
+        set({ isLoading: true })
+        try {
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session?.user) {
+            const user = supabaseUserToShiori(session.user)
+            set({ user, token: session.access_token, isAuthenticated: true, isLoading: false, isDemo: false })
+            return user
+          }
+        } catch {}
+        set({ isLoading: false })
+        return null
       },
 
       loginWithEmail: async (email, password) => {
         set({ isLoading: true, error: null })
         try {
-          await account.createEmailPasswordSession(email, password)
-          const appwriteUser = await account.get()
-          const user = { id: appwriteUser.$id, name: appwriteUser.name, email: appwriteUser.email, picture: null }
-          set({ user, token: appwriteUser.$id, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
-          return user
+          if (isSupabaseConfigured()) {
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+            if (error) throw error
+            const user = supabaseUserToShiori(data.user)
+            set({ user, token: data.session.access_token, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
+            return user
+          }
+          throw new Error('Database not configured. Use demo mode or set up Supabase.')
         } catch (err) {
           const message = err?.message || 'Login failed. Check email and password.'
           set({ isLoading: false, error: message })
@@ -78,13 +107,23 @@ export const useAuthStore = create(
       register: async (userData) => {
         set({ isLoading: true, error: null })
         try {
-          const name = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.username || 'User'
-          await account.create(ID.unique(), userData.email, userData.password, name)
-          await account.createEmailPasswordSession(userData.email, userData.password)
-          const appwriteUser = await account.get()
-          const user = { id: appwriteUser.$id, name: appwriteUser.name, email: appwriteUser.email, picture: null }
-          set({ user, token: appwriteUser.$id, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
-          return user
+          if (isSupabaseConfigured()) {
+            const name = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.username || 'Student'
+            const { data, error } = await supabase.auth.signUp({
+              email: userData.email,
+              password: userData.password,
+              options: { data: { full_name: name } }
+            })
+            if (error) throw error
+            if (data.user && data.session) {
+              const user = supabaseUserToShiori(data.user)
+              set({ user, token: data.session.access_token, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
+              return user
+            }
+            set({ isLoading: false, error: 'Check your email to confirm your account.' })
+            return null
+          }
+          throw new Error('Database not configured. Set up Supabase in .env.')
         } catch (err) {
           const message = err?.message || 'Registration failed. Email may already be in use.'
           set({ isLoading: false, error: message })
@@ -94,8 +133,8 @@ export const useAuthStore = create(
 
       logout: async () => {
         const { isDemo } = get()
-        if (!isDemo) {
-          try { await account.deleteSession('current') } catch {}
+        if (!isDemo && isSupabaseConfigured()) {
+          try { await supabase.auth.signOut() } catch {}
         }
         set({ user: null, token: null, isAuthenticated: false, googleConnected: false, error: null, isDemo: false })
       }
@@ -112,6 +151,7 @@ export const useEventStore = create((set, get) => ({
   error: null,
 
   setEvents: (events) => set({ events }),
+  clearEvents: () => set({ events: [] }),
 
   addEvent: (event) => set((state) => ({
     events: [...state.events, { ...event, id: Date.now().toString() }]
@@ -157,6 +197,7 @@ export const useAssignmentsStore = create((set, get) => ({
 
   setAssignments: (assignments) => set({ assignments }),
   setCourses: (courses) => set({ courses }),
+  clearAssignments: () => set({ assignments: [], courses: [] }),
 
   addAssignment: (assignment) => set((state) => ({
     assignments: [...state.assignments, assignment]
@@ -320,6 +361,7 @@ export const useFlashcardsStore = create(
       loadDeck: (deck) => set((state) => ({
         decks: [...state.decks, deck]
       })),
+      replaceDecks: (decks) => set({ decks }),
 
       deleteDeck: (id) => set((state) => ({
         decks: state.decks.filter(d => d.id !== id)
@@ -373,6 +415,7 @@ export const useNotesStore = create(
         }))
         return id
       },
+      replaceNotes: (notes) => set({ notes }),
 
       updateNote: (id, updates) => set((state) => ({
         notes: state.notes.map(n =>
@@ -534,6 +577,7 @@ export const useXPStore = create(
     (set, get) => ({
       xp: 0,
       levelUpPending: null,
+      setXP: (xp) => set({ xp, levelUpPending: null }),
 
       addXP: (amount, reason) => {
         const { xp } = get()
