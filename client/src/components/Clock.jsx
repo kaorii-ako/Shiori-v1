@@ -11,7 +11,7 @@ const Clock = () => {
   }, [])
 
   const getTimezoneOffset = () => {
-    if (!user?.country) return 0
+    if (!user?.country) return time.toLocaleString('en-US', { timeZone: 'UTC' })
     const timezoneMap = {
       'United States': 'America/New_York',
       'United Kingdom': 'Europe/London',
