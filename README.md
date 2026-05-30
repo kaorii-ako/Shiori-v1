@@ -181,9 +181,8 @@ It syncs your assignments from Google Classroom, hunts deadline emails in Gmail,
 ## ⚡ Try it in 10 seconds
 
 ```
-1. Visit https://shiori-v1.vercel.app
-2. Click "TRY DEMO"
-3. You're in — no account, no API keys, no setup
+Visit https://shiori-v1.vercel.app/demo
+→ You're in. No click. No account. No API keys. No setup.
 ```
 
 Demo mode loads: 5 courses · 10 assignments · grades with GPA calc · upcoming events · AI-generated study plan
