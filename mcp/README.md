@@ -19,6 +19,8 @@ Use your Shiori study data directly inside **Claude Code**, **Claude Desktop**, 
 | `get_notes` | List and read course notes |
 | `add_assignment` | Add an assignment from Claude |
 | `get_flashcard_decks` | List decks and cards due for review |
+| `predict_grade` | "What score do I need on the final to get an A?" — calculates required score on remaining work |
+| `get_study_plan` | Auto-prioritized study plan for the next N days based on deadlines + estimated hours |
 
 ## Setup (2 min)
 

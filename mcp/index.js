@@ -44,8 +44,8 @@ function saveData(data) {
 
 const server = new McpServer({
   name: 'shiori',
-  version: '1.0.0',
-  description: 'Access and manage your Shiori study data — assignments, grades, notes, and flashcards.',
+  version: '1.1.0',
+  description: 'Access and manage your Shiori study data — assignments, grades, notes, flashcards, grade predictions, and study plans.',
 })
 
 // ─── Tools ────────────────────────────────────────────────────────────────────
@@ -269,6 +269,119 @@ server.tool(
     })
 
     return { content: [{ type: 'text', text: lines.join('\n') }] }
+  }
+)
+
+server.tool(
+  'predict_grade',
+  'Calculate the score you need on your final exam to achieve a target grade in a course.',
+  {
+    course: z.string().describe('Course name (partial match, e.g. "Calculus" or "CS 301")'),
+    target_grade: z.number().min(0).max(100).default(90).describe('Target final grade percentage (e.g. 90 for an A-)'),
+  },
+  async ({ course, target_grade }) => {
+    const data = loadData()
+    const courses = data.courses || []
+    const match = courses.find(c => c.name.toLowerCase().includes(course.toLowerCase()) || (c.code || '').toLowerCase().includes(course.toLowerCase()))
+    if (!match) return { content: [{ type: 'text', text: `Course "${course}" not found. Available courses: ${courses.map(c => c.name).join(', ')}` }] }
+
+    const grades = (data.courseGrades || {})[match.id] || {}
+    const weights = (data.courseWeights || {})[match.id] || {}
+
+    const entries = Object.values(grades)
+    if (entries.length === 0) return { content: [{ type: 'text', text: `No grades recorded for ${match.name} yet.` }] }
+
+    let totalPts = 0, totalPoss = 0
+    entries.forEach(g => { totalPts += g.pointsEarned || 0; totalPoss += g.pointsPossible || 0 })
+    const currentPct = totalPoss > 0 ? (totalPts / totalPoss) * 100 : 0
+
+    const pendingAssignments = (data.assignments || []).filter(a => a.courseId === match.id && a.status === 'pending' && a.pointsPossible)
+    const pendingPts = pendingAssignments.reduce((s, a) => s + (a.pointsPossible || 0), 0)
+
+    if (totalPoss === 0 && pendingPts === 0) {
+      return { content: [{ type: 'text', text: `No grade data available for ${match.name}.` }] }
+    }
+
+    const grandTotal = totalPoss + pendingPts
+    const neededTotal = (target_grade / 100) * grandTotal
+    const neededOnRemaining = neededTotal - totalPts
+    const neededPct = pendingPts > 0 ? (neededOnRemaining / pendingPts) * 100 : null
+
+    let result = `📊 **${match.name}** — Grade Predictor\n\n`
+    result += `Current: ${currentPct.toFixed(1)}% (${totalPts}/${totalPoss} points)\n`
+    result += `Target: ${target_grade}%\n`
+    if (neededPct !== null) {
+      if (neededPct > 100) {
+        result += `\n❌ You need ${neededPct.toFixed(1)}% on remaining work to reach ${target_grade}% — mathematically very difficult.\n`
+        result += `Realistic target with 100% on remaining: ${((totalPts + pendingPts) / grandTotal * 100).toFixed(1)}%`
+      } else if (neededPct < 0) {
+        result += `\n✅ You've already secured ${target_grade}%! You need 0% on remaining work to keep it.`
+      } else {
+        result += `\nTo reach ${target_grade}%: score at least **${neededPct.toFixed(1)}%** on the remaining ${pendingAssignments.length} assignment(s) (${pendingPts} points).`
+      }
+    } else {
+      result += currentPct >= target_grade
+        ? `\n✅ Already at ${currentPct.toFixed(1)}% — target achieved!`
+        : `\n⚠️ Currently at ${currentPct.toFixed(1)}% — below target. No pending assignments tracked.`
+    }
+
+    return { content: [{ type: 'text', text: result }] }
+  }
+)
+
+server.tool(
+  'get_study_plan',
+  'Generate a prioritized study plan for today or the next N days based on upcoming deadlines.',
+  {
+    days: z.number().min(1).max(14).default(3).describe('How many days to plan for'),
+    hours_per_day: z.number().min(0.5).max(12).default(4).describe('Available study hours per day'),
+  },
+  async ({ days, hours_per_day }) => {
+    const data = loadData()
+    const assignments = data.assignments || []
+    const now = new Date()
+    const cutoff = new Date(now.getTime() + days * 86400000)
+
+    const pending = assignments
+      .filter(a => a.status === 'pending' || a.status === 'in-progress')
+      .filter(a => a.dueDate && new Date(a.dueDate) <= cutoff)
+      .sort((a, b) => {
+        const daysUntilA = (new Date(a.dueDate) - now) / 86400000
+        const daysUntilB = (new Date(b.dueDate) - now) / 86400000
+        const priorityScore = (x) => x.priority === 'high' ? 3 : x.priority === 'medium' ? 2 : 1
+        return (daysUntilA / priorityScore(a)) - (daysUntilB / priorityScore(b))
+      })
+
+    if (pending.length === 0) {
+      return { content: [{ type: 'text', text: `No pending assignments due in the next ${days} days. Great job staying on top of things! 🎉` }] }
+    }
+
+    const totalHours = days * hours_per_day
+    const totalEstimated = pending.reduce((s, a) => s + (a.estimatedHours || 1.5), 0)
+
+    let plan = `📅 **Study Plan — Next ${days} Days** (${hours_per_day}h/day = ${totalHours}h total)\n`
+    plan += totalEstimated > totalHours
+      ? `⚠️ You have ~${totalEstimated.toFixed(1)}h of work for ${totalHours}h available — prioritizing by urgency.\n\n`
+      : `✅ You have ~${totalEstimated.toFixed(1)}h of work — well within your ${totalHours}h budget.\n\n`
+
+    let remainingHours = totalHours
+    pending.forEach((a, i) => {
+      const course = (data.courses || []).find(c => c.id === a.courseId)?.name || 'Unknown'
+      const dueDate = new Date(a.dueDate)
+      const daysLeft = Math.ceil((dueDate - now) / 86400000)
+      const est = a.estimatedHours || 1.5
+      const alloc = Math.min(est, remainingHours)
+      remainingHours -= alloc
+      const urgency = daysLeft <= 1 ? '🔴' : daysLeft <= 3 ? '🟡' : '🟢'
+      plan += `${i + 1}. ${urgency} **${a.title}** [${course}]\n`
+      plan += `   Due: ${dueDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} (${daysLeft}d) · Est: ${est}h · Alloc: ${alloc.toFixed(1)}h\n`
+    })
+
+    if (remainingHours > 0) {
+      plan += `\n💡 ${remainingHours.toFixed(1)}h remaining — use for review or getting ahead.`
+    }
+
+    return { content: [{ type: 'text', text: plan }] }
   }
 )
 
