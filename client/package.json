@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
     "appwrite": "^16.1.0",
     "axios": "^1.7.9",
     "canvas-confetti": "^1.9.4",

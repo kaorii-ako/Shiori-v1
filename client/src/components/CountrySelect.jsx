@@ -70,7 +70,10 @@ const CountrySelect = forwardRef(({
         style={{
           fontFamily: 'VT323',
           fontSize: '18px',
-          paddingRight: '2rem'
+          paddingRight: '2rem',
+          background: 'rgba(24,28,36,0.9)',
+          color: '#dfe2eb',
+          colorScheme: 'dark',
         }}
         {...props}
       >

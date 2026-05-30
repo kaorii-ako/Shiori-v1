@@ -46,3 +46,25 @@ qodana.yaml
 new_file.txt
 .vercel
 nul
+
+# Playwright test artifacts
+.playwright-mcp/
+
+# Temp screenshots
+demo-home*.png
+demo-final.png
+landing*.png
+login-page.png
+signup.png
+
+# Session scratch files
+body-area.md
+btns.md
+flair.md
+full-form.md
+post-btn.md
+reddit-form.md
+reddit-snapshot.md
+rj.md
+wd2.md
+webdev-form.md

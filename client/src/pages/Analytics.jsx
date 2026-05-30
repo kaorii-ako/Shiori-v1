@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   BarChart3, TrendingUp, Clock, Target, Flame,
   Trophy, BookOpen, Layers, CheckCircle, AlertCircle, Share2, Download,
@@ -7,6 +7,7 @@ import {
 import GlassCard from '../components/GlassCard'
 import StudyHeatmap from '../components/StudyHeatmap'
 import GradeTrendChart from '../components/GradeTrendChart'
+import SemesterCard from '../components/SemesterCard'
 import { useAssignmentsStore, useGradesStore, useFlashcardsStore, usePomodoroStore, useAuthStore } from '../stores'
 
 function generateShareCard({ gpa, focusMinutes, sessionCount, completed, total, mastered, totalCards, username }) {
@@ -194,6 +195,7 @@ const Analytics = () => {
   const { user } = useAuthStore()
   const [sharePreview, setSharePreview] = useState(null)
   const [shareDownloading, setShareDownloading] = useState(false)
+  const [showSemesterCard, setShowSemesterCard] = useState(false)
 
   const courseSummaries = useMemo(() => {
     if (!courses?.length) return []
@@ -529,6 +531,31 @@ const Analytics = () => {
           )}
         </GlassCard>
       </motion.div>
+
+      {/* Semester Report Card trigger */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+        <button
+          onClick={() => setShowSemesterCard(true)}
+          style={{
+            width: '100%', padding: '16px', borderRadius: 12, cursor: 'pointer',
+            background: 'linear-gradient(135deg, rgba(255,215,160,0.1), rgba(196,77,255,0.08))',
+            border: '1px solid rgba(255,215,160,0.25)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+          }}
+        >
+          <Trophy size={16} style={{ color: '#ffd6a0' }} />
+          <span style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color: '#ffd6a0' }}>
+            GENERATE SEMESTER REPORT CARD
+          </span>
+          <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080' }}>
+            — shareable PNG with all your stats
+          </span>
+        </button>
+      </motion.div>
+
+      <AnimatePresence>
+        {showSemesterCard && <SemesterCard onClose={() => setShowSemesterCard(false)} />}
+      </AnimatePresence>
     </div>
   )
 }
