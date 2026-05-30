@@ -19,6 +19,10 @@
 
 <br/>
 
+[![Shiori Demo](demo/preview.png)](https://shiori-v1.vercel.app)
+
+<br/>
+
 > **15 pages · AI quiz generator · SRS flashcards · GPA predictor · Pomodoro · Leaderboard · PWA**
 
 <br/>
