@@ -1,6 +1,36 @@
 {
   "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "name": "Shiori MCP Server",
+  "description": "MCP server for Shiori — open-source AI study companion. Access assignments, grades, notes, and flashcards from Claude Code or Claude Desktop. Ask Claude what's due, calculate the grade you need, or summarize your notes.",
+  "license": "MIT",
+  "homepage": "https://github.com/kaorii-ako/Shiori-v1",
   "maintainers": [
     "kaorii-ako"
+  ],
+  "tools": [
+    {
+      "name": "get_study_summary",
+      "description": "Full academic snapshot — overdue work, current GPA, upcoming deadlines, and active flashcard decks"
+    },
+    {
+      "name": "get_assignments",
+      "description": "List and filter assignments by course, status (pending/overdue/completed), and days until due"
+    },
+    {
+      "name": "get_grades",
+      "description": "Per-course grade breakdown with letter grades, percentages, and cumulative GPA"
+    },
+    {
+      "name": "get_notes",
+      "description": "List and read markdown notes organized by course"
+    },
+    {
+      "name": "add_assignment",
+      "description": "Create a new assignment with title, course, due date, and priority from Claude"
+    },
+    {
+      "name": "get_flashcard_decks",
+      "description": "Spaced repetition review status per deck — cards due, total cards, last reviewed"
+    }
   ]
 }
