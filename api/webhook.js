@@ -1,6 +1,12 @@
 import Stripe from 'stripe'
+import { createClient } from '@supabase/supabase-js'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+
+// Service role key bypasses RLS — only for server-side use
+const supabaseAdmin = process.env.SUPABASE_SERVICE_ROLE_KEY
+  ? createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+  : null
 
 export const config = { api: { bodyParser: false } }
 
@@ -10,6 +16,24 @@ async function buffer(readable) {
     chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk)
   }
   return Buffer.concat(chunks)
+}
+
+async function setProStatus(userId, email, isPro, expiresAt = null) {
+  if (!supabaseAdmin) {
+    console.warn('[webhook] Supabase admin not configured — skipping pro status update')
+    return
+  }
+  const update = { is_pro: isPro, pro_expires_at: expiresAt }
+  // Try by user_id first, fall back to email match
+  if (userId) {
+    await supabaseAdmin.from('profiles').update(update).eq('id', userId)
+  } else if (email) {
+    const { data: users } = await supabaseAdmin.auth.admin.listUsers()
+    const match = users?.users?.find(u => u.email === email)
+    if (match) {
+      await supabaseAdmin.from('profiles').update(update).eq('id', match.id)
+    }
+  }
 }
 
 export default async function handler(req, res) {
@@ -32,24 +56,54 @@ export default async function handler(req, res) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object
-      console.log('New Pro subscription:', session.customer_email, session.metadata?.billing)
-      // TODO: store subscription in Appwrite / DB, send welcome email
+      const userId = session.metadata?.supabase_user_id
+      const email = session.customer_email
+      console.log('[webhook] New Pro subscription:', email)
+      // Set pro = true, expires in 1 year (or subscription handles it)
+      await setProStatus(userId, email, true, null)
       break
     }
+
+    case 'customer.subscription.updated': {
+      const sub = event.data.object
+      const isPro = sub.status === 'active' || sub.status === 'trialing'
+      const userId = sub.metadata?.supabase_user_id
+      const cusId = sub.customer
+      // Lookup email from customer if no userId
+      let email = null
+      if (!userId) {
+        try {
+          const customer = await stripe.customers.retrieve(cusId)
+          email = customer.email
+        } catch {}
+      }
+      await setProStatus(userId, email, isPro, null)
+      break
+    }
+
     case 'customer.subscription.deleted': {
       const sub = event.data.object
-      console.log('Subscription cancelled:', sub.customer)
-      // TODO: downgrade user to free tier
+      const userId = sub.metadata?.supabase_user_id
+      let email = null
+      if (!userId) {
+        try {
+          const customer = await stripe.customers.retrieve(sub.customer)
+          email = customer.email
+        } catch {}
+      }
+      console.log('[webhook] Subscription cancelled:', email || sub.customer)
+      await setProStatus(userId, email, false, null)
       break
     }
+
     case 'invoice.payment_failed': {
       const invoice = event.data.object
-      console.log('Payment failed:', invoice.customer_email)
-      // TODO: send payment failed email
+      console.log('[webhook] Payment failed:', invoice.customer_email)
       break
     }
+
     default:
-      console.log(`Unhandled event type: ${event.type}`)
+      console.log(`[webhook] Unhandled: ${event.type}`)
   }
 
   res.status(200).json({ received: true })

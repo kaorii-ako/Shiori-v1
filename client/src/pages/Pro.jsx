@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuthStore } from '../stores'
 import { motion, useInView } from 'framer-motion'
 import {
   Sparkles, CheckCircle2, Zap, Shield, Star, ArrowLeft,
@@ -62,6 +63,7 @@ const Pro = () => {
   const [openFaq, setOpenFaq] = useState(null)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState(null)
+  const { user } = useAuthStore()
 
   const handleCheckout = async () => {
     setCheckoutLoading(true)
@@ -70,7 +72,11 @@ const Pro = () => {
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ billing: billingAnnual ? 'annual' : 'monthly' }),
+        body: JSON.stringify({
+          billing: billingAnnual ? 'annual' : 'monthly',
+          email: user?.email || undefined,
+          supabaseUserId: user?.id || undefined,
+        }),
       })
       const data = await res.json()
       if (data.url) {
