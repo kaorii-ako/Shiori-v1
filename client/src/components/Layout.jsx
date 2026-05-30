@@ -10,6 +10,7 @@ import ToastContainer from './ToastContainer'
 import QuickCapture from './QuickCapture'
 import ShortcutModal from './ShortcutModal'
 import InstallBanner from './InstallBanner'
+import DemoTour from './DemoTour'
 import { useUIStore, useAuthStore } from '../stores'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 
@@ -213,6 +214,7 @@ const Layout = () => {
       <QuickCapture />
       <ShortcutModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
       <InstallBanner />
+      {isDemo && <DemoTour />}
       <ToastContainer />
     </div>
   )
