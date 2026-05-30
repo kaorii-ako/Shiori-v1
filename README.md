@@ -181,7 +181,18 @@ Demo mode loads: 5 courses · 10 assignments · grades with GPA calc · upcoming
 - [Google Gemini API key](https://aistudio.google.com/app/apikey) (free) — for AI features
 - Google Cloud project (optional) — for Classroom/Gmail/Calendar sync
 
-### Setup
+### Option A — Docker (recommended for self-hosters)
+
+```bash
+git clone https://github.com/kaorii-ako/Shiori-v1.git
+cd Shiori-v1
+cp .env.example .env
+# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, and optionally GEMINI_API_KEY
+docker compose up -d
+# App running at http://localhost
+```
+
+### Option B — Node.js dev
 
 ```bash
 git clone https://github.com/kaorii-ako/Shiori-v1.git
