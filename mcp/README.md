@@ -82,6 +82,30 @@ What score do I need on the Physics final to keep my B+?
 Show me my Data Structures notes
 Add an assignment: "Essay draft" for English, due next Monday
 Which flashcard decks have cards due for review?
+Build me a study plan for the next 3 days — I have 4 hours each day
+```
+
+## Example output
+
+**`predict_grade` — "What score do I need on my Calculus final?"**
+```
+📊 Calculus II — Grade Predictor
+
+Current: 82.3% (247/300 points)
+Target: 90%
+
+To reach 90%: score at least 94.2% on the remaining 2 assignment(s) (60 points).
+```
+
+**`get_study_plan` — "Make me a 2-day plan with 3h each day"**
+```
+📅 Study Plan — Next 2 Days (3h/day = 6h total)
+⚠️ You have ~7.5h of work for 6h available — prioritizing by urgency.
+
+1. 🔴 Integration by Parts Problem Set [Calculus II]
+   Due: Mon, Jun 2 (1d) · Est: 3h · Alloc: 3h
+2. 🟡 Binary Search Tree Implementation [Data Structures]
+   Due: Wed, Jun 4 (3d) · Est: 5h · Alloc: 3h
 ```
 
 ## Data stays local
