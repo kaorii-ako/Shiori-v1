@@ -8,7 +8,9 @@
 
 [![MIT License](https://img.shields.io/badge/license-MIT-orange?style=for-the-badge)](LICENSE)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Gemini AI](https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/kaorii-ako/Shiori-v1/blob/master/docker-compose.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-afc6ff?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1/blob/master/.github/CONTRIBUTING.md)
 [![Stars](https://img.shields.io/github/stars/kaorii-ako/Shiori-v1?style=for-the-badge&color=e5b5ff)](https://github.com/kaorii-ako/Shiori-v1/stargazers)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/kaorii-ako/Shiori-v1)
@@ -20,6 +22,21 @@
 <br/>
 
 [![Shiori Demo](demo/preview.png)](https://shiori-v1.vercel.app)
+
+<br/>
+
+<table>
+  <tr>
+    <td><img src="demo/grades.png" alt="GPA Tracker" width="280"/></td>
+    <td><img src="demo/flashcards.png" alt="SRS Flashcards" width="280"/></td>
+    <td><img src="demo/analytics.png" alt="Analytics" width="280"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>GPA Tracker</b></td>
+    <td align="center"><b>SRS Flashcards</b></td>
+    <td align="center"><b>Analytics</b></td>
+  </tr>
+</table>
 
 <br/>
 
