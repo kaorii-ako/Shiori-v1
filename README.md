@@ -165,7 +165,7 @@ It syncs your assignments from Google Classroom, hunts deadline emails in Gmail,
 ```
 1. Visit https://shiori-v1.vercel.app
 2. Click "TRY DEMO"
-3. You're in — no account, no API keys, no Appwrite
+3. You're in — no account, no API keys, no setup
 ```
 
 Demo mode loads: 5 courses · 10 assignments · grades with GPA calc · upcoming events · AI-generated study plan
@@ -177,9 +177,9 @@ Demo mode loads: 5 courses · 10 assignments · grades with GPA calc · upcoming
 ### Prerequisites
 - Node.js v18+
 - npm v9+
-- Google Cloud project with Classroom + Gmail + Calendar APIs enabled
-- [Google Gemini API key](https://aistudio.google.com/app/apikey) (free)
-- [Appwrite](https://appwrite.io) instance (free cloud tier works)
+- [Supabase](https://supabase.com) project (free tier) — for auth + database
+- [Google Gemini API key](https://aistudio.google.com/app/apikey) (free) — for AI features
+- Google Cloud project (optional) — for Classroom/Gmail/Calendar sync
 
 ### Setup
 
@@ -196,13 +196,21 @@ npm run dev
 ### Required environment variables
 
 ```env
-GEMINI_API_KEY=          # Google AI Studio (free)
-GOOGLE_CLIENT_ID=        # Google OAuth 2.0
-GOOGLE_CLIENT_SECRET=    # Google OAuth 2.0
-APPWRITE_ENDPOINT=       # Your Appwrite URL
-APPWRITE_PROJECT_ID=     # Your Appwrite project
-SESSION_SECRET=          # Any random string
+VITE_SUPABASE_URL=       # From Supabase project Settings → API
+VITE_SUPABASE_ANON_KEY=  # From Supabase project Settings → API
+GEMINI_API_KEY=          # Google AI Studio (free) — or set in-app
+GOOGLE_CLIENT_ID=        # Google OAuth 2.0 (optional, for Classroom sync)
+GOOGLE_CLIENT_SECRET=
+SESSION_SECRET=          # Any random 32+ char string
 ```
+
+### Supabase setup (5 min)
+
+1. Create a free project at [supabase.com](https://supabase.com)
+2. Open **SQL Editor** → paste contents of [`supabase/schema.sql`](supabase/schema.sql) → **Run**
+3. Go to **Auth → Providers** → enable **GitHub** and/or **Google**
+4. Copy **Project URL** + **anon/public key** from **Settings → API** into `.env`
+5. Done — auth + database ready
 
 ---
 
@@ -213,9 +221,10 @@ SESSION_SECRET=          # Any random string
 | **Frontend** | React 18, Vite, Framer Motion, Tailwind CSS |
 | **State** | Zustand + zustand/persist |
 | **Backend** | Express.js (Node.js) |
+| **Database** | Supabase (PostgreSQL + Auth + Row Level Security) |
 | **AI** | Google Gemini 1.5 Flash |
-| **Auth** | Appwrite + Google OAuth 2.0 |
-| **Google APIs** | Classroom, Gmail, Calendar |
+| **Auth** | Supabase Auth — GitHub OAuth, Google OAuth, Email/Password |
+| **Google APIs** | Classroom, Gmail, Calendar (optional) |
 | **PDF** | jsPDF (client-side, no server needed) |
 | **Icons** | Lucide React |
 
@@ -255,7 +264,8 @@ Shiori-v1/
 - [x] **v1.9** — Chrome extension: Pomodoro + quick-add + Google Classroom import
 - [x] **v2.0** — AI Quiz Generator · PWA service worker · Student testimonials · Email waitlist · Confetti on habit completion
 - [x] **v2.1** — Syllabus Import (paste syllabus → AI extracts all assignments) · AI Note Summarizer · SEO overhaul
-- [ ] **v2.2** — Firefox extension · Chrome Web Store release · Shiori Cloud (fully hosted)
+- [x] **v2.2** — Supabase migration (PostgreSQL + Auth + RLS) · GitHub/Google OAuth via Supabase
+- [ ] **v2.3** — Firefox extension · Chrome Web Store release · Shiori Cloud (fully hosted)
 - [ ] **v2.3** — Mobile app (React Native / Expo)
 
 **Have an idea?** [Open a feature request →](https://github.com/kaorii-ako/Shiori-v1/issues/new?template=feature_request.md)
