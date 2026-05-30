@@ -15,6 +15,7 @@ import calendarRoutes from './routes/calendar.js'
 import gradesRoutes from './routes/grades.js'
 import aiRoutes from './routes/ai.js'
 import appwriteRoutes from './routes/appwrite.js'
+import stripeRoutes from './routes/stripe.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -34,6 +35,7 @@ app.use('/api/calendar', calendarRoutes)
 app.use('/api/grades', gradesRoutes)
 app.use('/api/ai', aiRoutes)
 app.use('/api/appwrite', appwriteRoutes)
+app.use('/api', stripeRoutes)
 
 // Health check
 app.get('/api/health', (req, res) => {
