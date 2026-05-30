@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import { loadAllUserData } from '../lib/db'
 import { DEMO_USER } from '../utils/demoData'
 
 function supabaseUserToShiori(sbUser) {
@@ -84,6 +85,11 @@ export const useAuthStore = create(
         } catch {}
         set({ isLoading: false })
         return null
+      },
+
+      loadData: async (userId) => {
+        const data = await loadAllUserData(userId)
+        return data
       },
 
       loginWithEmail: async (email, password) => {
@@ -199,21 +205,41 @@ export const useAssignmentsStore = create((set, get) => ({
   setCourses: (courses) => set({ courses }),
   clearAssignments: () => set({ assignments: [], courses: [] }),
 
-  addAssignment: (assignment) => set((state) => ({
-    assignments: [...state.assignments, assignment]
-  })),
+  addAssignment: (assignment) => {
+    set((state) => ({ assignments: [...state.assignments, assignment] }))
+    import('../lib/db').then(({ saveAssignment }) => {
+      const uid = useAuthStore.getState().user?.id
+      if (uid && !useAuthStore.getState().isDemo) saveAssignment(uid, assignment)
+    })
+  },
 
-  updateAssignment: (id, updates) => set((state) => ({
-    assignments: state.assignments.map((a) =>
-      a.id === id ? { ...a, ...updates } : a
-    )
-  })),
+  updateAssignment: (id, updates) => {
+    set((state) => ({
+      assignments: state.assignments.map((a) => a.id === id ? { ...a, ...updates } : a)
+    }))
+    const updated = get().assignments.find(a => a.id === id)
+    if (updated) {
+      import('../lib/db').then(({ saveAssignment }) => {
+        const uid = useAuthStore.getState().user?.id
+        if (uid && !useAuthStore.getState().isDemo) saveAssignment(uid, { ...updated, ...updates })
+      })
+    }
+  },
 
-  setGrade: (assignmentId, grade) => set((state) => ({
-    assignments: state.assignments.map((a) =>
-      a.id === assignmentId ? { ...a, grade, status: 'graded' } : a
-    )
-  })),
+  deleteAssignment: (id) => {
+    set((state) => ({ assignments: state.assignments.filter(a => a.id !== id) }))
+    import('../lib/db').then(({ deleteAssignment }) => {
+      if (!useAuthStore.getState().isDemo) deleteAssignment(id)
+    })
+  },
+
+  setGrade: (assignmentId, grade) => {
+    set((state) => ({
+      assignments: state.assignments.map((a) =>
+        a.id === assignmentId ? { ...a, grade, status: 'graded' } : a
+      )
+    }))
+  },
 
   setFilter: (filterUpdates) => set((state) => ({
     filter: { ...state.filter, ...filterUpdates }
