@@ -4,6 +4,7 @@ import { X, Keyboard } from 'lucide-react'
 import { SHORTCUT_HELP } from '../hooks/useKeyboardShortcuts'
 
 const extra = [
+  { key: 'Shift+T', label: 'Toggle theme' },
   { key: 'Ctrl+K', label: 'Open AI Chat' },
   { key: 'Ctrl+Shift+A', label: 'Quick add assignment' },
   { key: '?', label: 'Show this help' },
