@@ -121,7 +121,7 @@ const Login = () => {
           <button
             type="button"
             onClick={handleDemoClick}
-            className="w-full mb-6 p-4 relative overflow-hidden group cursor-pointer"
+            className="w-full mb-3 p-4 relative overflow-hidden group cursor-pointer"
             style={{
               background: 'linear-gradient(135deg, rgba(196,77,255,0.15) 0%, rgba(255,107,157,0.15) 100%)',
               border: '2px solid rgba(196,77,255,0.6)',
@@ -139,6 +139,22 @@ const Login = () => {
                 </p>
               </div>
             </div>
+          </button>
+
+          {/* Demo account quick-fill */}
+          <button
+            type="button"
+            onClick={() => {
+              setFormData({ email: 'demo@shiori-student.edu', password: 'Shiori2026!' })
+            }}
+            className="w-full mb-6"
+            style={{
+              padding: '8px 16px', borderRadius: 6, border: '1px dashed rgba(175,198,255,0.25)',
+              background: 'rgba(175,198,255,0.04)', cursor: 'pointer',
+              fontFamily: 'VT323', fontSize: 14, color: '#424754', letterSpacing: '0.02em',
+            }}
+          >
+            📋 Auto-fill demo account — demo@shiori-student.edu / Shiori2026!
           </button>
 
           {error && (
