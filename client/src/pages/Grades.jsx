@@ -30,7 +30,7 @@ const GRADE_SCALE = [
 
 const getGradeInfo = (pct) => GRADE_SCALE.find(g => pct >= g.min) || GRADE_SCALE[GRADE_SCALE.length - 1]
 
-const CourseCard = ({ course, pct, gradeInfo, isSelected, onClick }) => (
+const CourseCard = ({ course, pct, gradeInfo, isSelected, onClick, completed, total }) => (
   <motion.div
     whileHover={{ translateY: -2 }}
     onClick={onClick}
@@ -51,6 +51,16 @@ const CourseCard = ({ course, pct, gradeInfo, isSelected, onClick }) => (
         {pct !== null ? `${pct}%` : '—'} {pct !== null ? gradeInfo.letter : ''}
       </span>
     </div>
+    {total > 0 && (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+        <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2 }}>
+          <div style={{ height: '100%', width: `${Math.round((completed / total) * 100)}%`, background: '#4dff91', borderRadius: 2, transition: 'width 0.3s' }} />
+        </div>
+        <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: '#8c90a0', whiteSpace: 'nowrap' }}>
+          {completed}/{total}
+        </span>
+      </div>
+    )}
     {pct !== null && (
       <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2 }}>
         <div style={{ height: '100%', width: `${Math.min(pct, 100)}%`, background: course.color, borderRadius: 2 }} />
@@ -257,11 +267,14 @@ const Grades = () => {
     if (!courses?.length) return []
     return courses.map(c => {
       const cg = calculateCourseGrade(c.id)
-      if (!cg) return { ...c, pct: null, gradeInfo: { letter: '—', gpa: 0, color: '#606080' } }
+      // Count assignment completion for this course
+      const courseAssignments = assignments.filter(a => a.courseId === c.id)
+      const completed = courseAssignments.filter(a => a.status === 'completed' || a.status === 'graded').length
+      if (!cg) return { ...c, pct: null, gradeInfo: { letter: '—', gpa: 0, color: '#606080' }, completed, total: courseAssignments.length }
       const pct = parseFloat(cg.percentage)
-      return { ...c, pct, gradeInfo: getGradeInfo(pct) }
+      return { ...c, pct, gradeInfo: getGradeInfo(pct), completed, total: courseAssignments.length }
     })
-  }, [courses, courseGrades, courseWeights])
+  }, [courses, courseGrades, courseWeights, assignments])
 
   const overallGPA = useMemo(() => {
     const withGrades = courseSummaries.filter(c => c.pct !== null)
@@ -370,6 +383,7 @@ const Grades = () => {
               {courseSummaries.length > 0 ? courseSummaries.map(c => (
                 <CourseCard key={c.id} course={c} pct={c.pct} gradeInfo={c.gradeInfo}
                   isSelected={selectedCourse?.id === c.id}
+                  completed={c.completed} total={c.total}
                   onClick={() => { setSelectedCourse(c); setPredResult(null) }} />
               )) : (
                 <div style={{ textAlign: 'center', padding: '32px 0', color: '#606080' }}>
