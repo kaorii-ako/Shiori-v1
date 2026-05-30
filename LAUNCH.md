@@ -375,31 +375,35 @@ At ฿3,990/month school tier: need 209 schools/year
 
 ### r/selfhosted (HIGHEST PRIORITY — this audience stars repos)
 ```
-Title: Shiori – self-hosted AI study companion with Docker, Supabase auth, and Google Classroom sync
+Title: Shiori – self-hosted AI study planner with Docker + Supabase auth (Google Classroom sync, MCP server, MIT)
 
-Just added Docker support to my open-source student productivity app.
+I'm a student and built Shiori — an open-source study companion that connects to Google Classroom, Gmail, and Calendar. Ships with Docker and Supabase auth out of the box.
 
+Quick start:
+git clone https://github.com/kaorii-ako/Shiori-v1
+cp .env.example .env  # fill in VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY
 docker compose up -d
-# Done. Running at http://localhost
+# Running at http://localhost
 
-Stack:
-- React 18 + Vite frontend (nginx)
-- Express backend
-- Supabase for auth (GitHub OAuth, Google OAuth, email/password) + PostgreSQL
-- Gemini AI for study plans, quiz generation, flashcard creation
+Stack: React 18 · Vite · Express · Supabase (PostgreSQL + RLS) · Gemini AI · nginx
 
 Features:
-- Google Classroom sync (pulls assignments automatically)
-- Weighted GPA calculator + final exam score predictor
-- Spaced repetition flashcards (SRS like Anki)
-- AI study plan generator + AI chat
-- Pomodoro timer, habit tracker, leaderboard
-- PWA (works offline on mobile)
+→ Google Classroom sync — assignments pulled automatically when teachers post
+→ AI study plan generator — Gemini builds a day-by-day schedule from your deadlines
+→ Weighted GPA calculator + "what score do I need on the final?" predictor
+→ Spaced repetition flashcards (SRS like Anki) + AI card generation from notes
+→ AI Quiz Generator — generates MCQ quiz from any note in one click
+→ Syllabus Import — paste your course syllabus, Gemini extracts all assignments
+→ Pomodoro timer, habit tracker, leaderboard, analytics dashboard
+→ PWA — installs on mobile, works offline
+→ Chrome extension (quick-add from any tab)
+→ MCP Server — use your study data directly in Claude Code:
+   "What's due this week?" · "What score do I need on my Calculus final?" · "Build a study plan for tomorrow"
 
-All data stays on your Supabase instance. MIT licensed.
+All your data lives in your own Supabase instance. Bring-your-own Gemini API key (free tier).
 
-GitHub: https://github.com/kaorii-ako/Shiori-v1
-Live demo (no login): https://shiori-v1.vercel.app
+Demo (no login, 1 click): https://shiori-v1.vercel.app/demo
+GitHub (MIT): https://github.com/kaorii-ako/Shiori-v1
 ```
 
 ### r/webdev (Docker + Supabase angle)
