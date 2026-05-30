@@ -482,7 +482,7 @@ const Analytics = () => {
               }}
               style={{
                 display: 'flex', alignItems: 'center', gap: 6,
-                padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                padding: '10px 18px', borderRadius: 8, cursor: 'pointer',
                 background: 'linear-gradient(135deg, rgba(175,198,255,0.2), rgba(82,141,255,0.15))',
                 border: '1px solid rgba(175,198,255,0.25)',
                 color: '#afc6ff', fontFamily: '"Press Start 2P"', fontSize: 8,
@@ -494,9 +494,37 @@ const Analytics = () => {
           {sharePreview && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ marginTop: 14, overflow: 'hidden' }}>
               <img src={sharePreview} alt="Progress card" style={{ width: '100%', borderRadius: 8, border: '1px solid rgba(66,71,84,0.3)' }} />
-              <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080', marginTop: 8, textAlign: 'center' }}>
-                Share on Twitter/X with #Shiori 🎓
-              </p>
+              <div style={{ display: 'flex', gap: 8, marginTop: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Just checked my study stats on Shiori 📚\n\nGPA: ${overallGPA || '—'} | ${assignmentStats.completed}/${assignmentStats.total} assignments done\n\nFree AI study companion for students 👇\nhttps://github.com/kaorii-ako/Shiori-v1\n\n#Shiori #StudyTips #OpenSource`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '8px 16px', borderRadius: 8, textDecoration: 'none',
+                    background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.15)',
+                    color: '#fff', fontFamily: '"Press Start 2P"', fontSize: 8,
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  TWEET THIS
+                </a>
+                <a
+                  href="https://github.com/kaorii-ako/Shiori-v1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '8px 16px', borderRadius: 8, textDecoration: 'none',
+                    background: 'rgba(175,198,255,0.08)', border: '1px solid rgba(175,198,255,0.2)',
+                    color: '#afc6ff', fontFamily: '"Press Start 2P"', fontSize: 8,
+                  }}
+                >
+                  ⭐ STAR ON GITHUB
+                </a>
+              </div>
             </motion.div>
           )}
         </GlassCard>

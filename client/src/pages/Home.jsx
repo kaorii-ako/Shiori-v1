@@ -473,6 +473,44 @@ const Home = () => {
           </div>
         </GlassCard>
       </motion.div>
+
+      {/* GitHub star nudge */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12,
+          padding: '14px 18px', borderRadius: 10,
+          background: 'linear-gradient(135deg, rgba(196,77,255,0.07), rgba(82,141,255,0.05))',
+          border: '1px solid rgba(196,77,255,0.18)',
+        }}>
+          <p style={{ fontFamily: 'VT323', fontSize: 17, color: '#8c90a0', margin: 0 }}>
+            Shiori is 100% free &amp; open source. If it's helping you study, a ⭐ takes 2 seconds and helps other students find it.
+          </p>
+          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+            <a
+              href="https://github.com/kaorii-ako/Shiori-v1"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '7px 14px', borderRadius: 7, textDecoration: 'none',
+                background: 'linear-gradient(135deg, #c44dff, #7b3fa8)',
+                color: '#fff', fontFamily: '"Press Start 2P"', fontSize: 8, fontWeight: 700,
+              }}
+            >⭐ STAR</a>
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('Just discovered Shiori — free AI study companion that syncs Google Classroom, tracks GPA, and generates study plans with Gemini 🤖📚\n\nhttps://github.com/kaorii-ako/Shiori-v1\n\n#OpenSource #StudyTips')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '7px 14px', borderRadius: 7, textDecoration: 'none',
+                background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.12)',
+                color: '#fff', fontFamily: '"Press Start 2P"', fontSize: 8,
+              }}
+            >SHARE</a>
+          </div>
+        </div>
+      </motion.div>
     </div>
   )
 }
