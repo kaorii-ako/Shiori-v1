@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import StudyHeatmap from '../components/StudyHeatmap'
+import GradeTrendChart from '../components/GradeTrendChart'
 import { useAssignmentsStore, useGradesStore, useFlashcardsStore, usePomodoroStore, useAuthStore } from '../stores'
 
 function generateShareCard({ gpa, focusMinutes, sessionCount, completed, total, mastered, totalCards, username }) {
@@ -419,6 +420,23 @@ const Analytics = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Grade trend chart */}
+      {courseSummaries.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36 }}>
+          <GlassCard>
+            <GradeTrendChart
+              courses={courseSummaries.map(c => ({
+                ...c,
+                grades: Object.values(courseGrades[c.id] || {}).map(g => ({
+                  percentage: typeof g === 'object' ? (g.earned / g.possible * 100) : g,
+                  date: g.date || new Date().toISOString(),
+                })),
+              }))}
+            />
+          </GlassCard>
+        </motion.div>
+      )}
 
       {/* Annual study heatmap */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
