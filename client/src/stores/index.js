@@ -68,34 +68,41 @@ export const useAuthStore = create(
       loginWithEmail: async (email, password) => {
         set({ isLoading: true, error: null })
         try {
-          const response = await authAPI.login(email, password)
-          const { user, token } = response.data
-          set({ user, token, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
+          await account.createEmailPasswordSession(email, password)
+          const appwriteUser = await account.get()
+          const user = { id: appwriteUser.$id, name: appwriteUser.name, email: appwriteUser.email, picture: null }
+          set({ user, token: appwriteUser.$id, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
           return user
-        } catch (error) {
-          const message = error.response?.data?.error || 'Login failed'
+        } catch (err) {
+          const message = err?.message || 'Login failed. Check email and password.'
           set({ isLoading: false, error: message })
-          throw error
+          throw err
         }
       },
 
       register: async (userData) => {
         set({ isLoading: true, error: null })
         try {
-          const response = await authAPI.register(userData)
-          const { user, token } = response.data
-          set({ user, token, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
+          const { ID } = await import('../lib/appwrite')
+          const name = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.username || 'User'
+          await account.create(ID.unique(), userData.email, userData.password, name)
+          await account.createEmailPasswordSession(userData.email, userData.password)
+          const appwriteUser = await account.get()
+          const user = { id: appwriteUser.$id, name: appwriteUser.name, email: appwriteUser.email, picture: null }
+          set({ user, token: appwriteUser.$id, isAuthenticated: true, isLoading: false, error: null, isDemo: false })
           return user
-        } catch (error) {
-          const message = error.response?.data?.error || 'Registration failed'
+        } catch (err) {
+          const message = err?.message || 'Registration failed. Email may already be in use.'
           set({ isLoading: false, error: message })
-          throw error
+          throw err
         }
       },
 
-      logout: () => {
+      logout: async () => {
         const { isDemo } = get()
-        if (!isDemo) authAPI.logout().catch(() => {})
+        if (!isDemo) {
+          try { await account.deleteSession('current') } catch {}
+        }
         set({ user: null, token: null, isAuthenticated: false, googleConnected: false, error: null, isDemo: false })
       }
     }),
