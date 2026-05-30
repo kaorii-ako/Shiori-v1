@@ -22,6 +22,7 @@ import Leaderboard from './pages/Leaderboard'
 import SyllabusImport from './pages/SyllabusImport'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import Demo from './pages/Demo'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/demo" element={<Demo />} />
 
           {/* Protected app — Layout renders Outlet for all children */}
           <Route

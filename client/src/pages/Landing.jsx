@@ -108,8 +108,8 @@ const PRICING = [
       'Grade calculator',
       'Demo mode — no login needed',
     ],
-    cta: 'Get Started Free',
-    ctaLink: '/login',
+    cta: 'Try Demo Free',
+    ctaLink: '/demo',
     highlight: false,
   },
   {
@@ -317,7 +317,7 @@ const Landing = () => {
   }, [statsInView])
 
   const handleDemo = () => {
-    navigate('/login')
+    navigate('/demo')
   }
 
   return (
@@ -387,7 +387,7 @@ const Landing = () => {
                 Star
               </a>
               <Link
-                to="/login"
+                to="/demo"
                 style={{
                   padding: '6px 18px', borderRadius: 6,
                   background: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)',
