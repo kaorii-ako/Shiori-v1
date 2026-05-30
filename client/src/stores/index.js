@@ -49,7 +49,7 @@ export const useAuthStore = create(
       },
 
       loginWithGitHub: async () => {
-        if (isSupabaseConfigured()) {
+        if (isSupabaseConfigured() && supabase) {
           const { error } = await supabase.auth.signInWithOAuth({
             provider: 'github',
             options: { redirectTo: `${window.location.origin}/auth/callback` }
@@ -61,7 +61,7 @@ export const useAuthStore = create(
       },
 
       loginWithGoogle: async () => {
-        if (isSupabaseConfigured()) {
+        if (isSupabaseConfigured() && supabase) {
           const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: { redirectTo: `${window.location.origin}/auth/callback` }
@@ -73,7 +73,7 @@ export const useAuthStore = create(
       },
 
       restoreSession: async () => {
-        if (!isSupabaseConfigured()) return
+        if (!isSupabaseConfigured() || !supabase) return
         set({ isLoading: true })
         try {
           const { data: { session } } = await supabase.auth.getSession()
@@ -95,7 +95,7 @@ export const useAuthStore = create(
       loginWithEmail: async (email, password) => {
         set({ isLoading: true, error: null })
         try {
-          if (isSupabaseConfigured()) {
+          if (isSupabaseConfigured() && supabase) {
             const { data, error } = await supabase.auth.signInWithPassword({ email, password })
             if (error) throw error
             const user = supabaseUserToShiori(data.user)
@@ -113,7 +113,7 @@ export const useAuthStore = create(
       register: async (userData) => {
         set({ isLoading: true, error: null })
         try {
-          if (isSupabaseConfigured()) {
+          if (isSupabaseConfigured() && supabase) {
             const name = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.username || 'Student'
             const { data, error } = await supabase.auth.signUp({
               email: userData.email,
@@ -139,7 +139,7 @@ export const useAuthStore = create(
 
       logout: async () => {
         const { isDemo } = get()
-        if (!isDemo && isSupabaseConfigured()) {
+        if (!isDemo && isSupabaseConfigured() && supabase) {
           try { await supabase.auth.signOut() } catch {}
         }
         set({ user: null, token: null, isAuthenticated: false, googleConnected: false, error: null, isDemo: false })

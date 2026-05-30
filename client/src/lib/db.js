@@ -6,7 +6,7 @@
 import { supabase, isSupabaseConfigured } from './supabase'
 
 const guard = (fn) => async (...args) => {
-  if (!isSupabaseConfigured()) return null
+  if (!isSupabaseConfigured() || !supabase) return null
   try { return await fn(...args) } catch (e) { console.warn('[db]', e.message); return null }
 }
 
