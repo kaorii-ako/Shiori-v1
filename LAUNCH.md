@@ -94,13 +94,15 @@ Show HN: Shiori – MCP server for student productivity (assignments, grades, no
 ```
 I'm a student who built Shiori — an open-source study companion with a built-in MCP server so Claude Code and Claude Desktop can read your academic data directly.
 
-The MCP server (6 tools):
+The MCP server (8 tools):
 - get_study_summary — full snapshot: overdue work, this week's deadlines, GPA
 - get_assignments — filter by course, status, days until due
 - get_grades — per-course breakdown and cumulative GPA
 - get_notes — list and read markdown notes per course
 - add_assignment — create assignments from Claude
 - get_flashcard_decks — SRS review status
+- predict_grade — "what score do I need on the final to keep my A?" → calculates exact %
+- get_study_plan — auto-prioritized plan for next N days based on deadlines + estimated hours
 
 Config (4 lines in ~/.claude.json):
 {
@@ -121,7 +123,7 @@ Beyond MCP, the web app (React + Gemini) has:
 - Weighted GPA calculator + final exam predictor
 - Pomodoro, habit tracker, student leaderboard, PWA
 
-Demo (no login): https://shiori-v1.vercel.app
+Demo (1 click, no login): https://shiori-v1.vercel.app/demo
 MCP server: https://github.com/kaorii-ako/Shiori-v1/tree/master/mcp
 GitHub: https://github.com/kaorii-ako/Shiori-v1
 
