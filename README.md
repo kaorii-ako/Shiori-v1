@@ -11,13 +11,14 @@
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Gemini AI](https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/kaorii-ako/Shiori-v1/blob/master/docker-compose.yml)
+[![CI](https://github.com/kaorii-ako/Shiori-v1/actions/workflows/ci.yml/badge.svg)](https://github.com/kaorii-ako/Shiori-v1/actions/workflows/ci.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-afc6ff?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1/blob/master/.github/CONTRIBUTING.md)
 [![Stars](https://img.shields.io/github/stars/kaorii-ako/Shiori-v1?style=for-the-badge&color=e5b5ff)](https://github.com/kaorii-ako/Shiori-v1/stargazers)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/kaorii-ako/Shiori-v1)
 
 <br/>
 
-**[🚀 Live Demo — no signup required →](https://shiori-v1.vercel.app)**
+**[🚀 Live Demo — 1 click, no signup →](https://shiori-v1.vercel.app/demo)**
 
 <br/>
 
@@ -44,7 +45,7 @@
 
 <br/>
 
-**[⭐ Star on GitHub](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try Demo](https://shiori-v1.vercel.app)** &nbsp;·&nbsp; **[🤖 MCP Server](mcp/)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[📝 dev.to Article](https://dev.to/kaoriiako/i-built-an-mcp-server-that-lets-claude-read-my-study-data-heres-how-5070)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
+**[⭐ Star on GitHub](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try Demo](https://shiori-v1.vercel.app/demo)** &nbsp;·&nbsp; **[🤖 MCP Server](mcp/)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[📝 dev.to Article](https://dev.to/kaoriiako/i-built-an-mcp-server-that-lets-claude-read-my-study-data-heres-how-5070)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
 
 > 🤖 **New:** [Shiori MCP Server](mcp/) — use your study data directly in Claude Code. `"What's due this week?"` `"Show my grades"` `"Add assignment: essay due Friday"`
 
