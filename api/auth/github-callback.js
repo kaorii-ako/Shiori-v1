@@ -1,21 +1,30 @@
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://shiori-v1.vercel.app'
+const getAppUrl = (req) => {
+  if (process.env.APP_URL) return process.env.APP_URL
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+
+  const proto = req.headers['x-forwarded-proto'] || 'http'
+  const host = req.headers['x-forwarded-host'] || req.headers.host
+  return host ? `${proto}://${host}` : 'http://localhost:5173'
+}
 
 export default async function handler(req, res) {
+  const appUrl = getAppUrl(req)
   const { code, error: oauthError } = req.query
 
   if (oauthError) {
-    return res.redirect(`${APP_URL}/login?error=github_denied`)
+    return res.redirect(`${appUrl}/login?error=github_denied`)
   }
 
   if (!code) {
-    return res.redirect(`${APP_URL}/login?error=github_no_code`)
+    return res.redirect(`${appUrl}/login?error=github_no_code`)
   }
 
   const clientId = process.env.GITHUB_CLIENT_ID
   const clientSecret = process.env.GITHUB_CLIENT_SECRET
 
   if (!clientId || !clientSecret) {
-    return res.redirect(`${APP_URL}/login?error=github_not_configured`)
+    return res.redirect(`${appUrl}/login?error=github_not_configured`)
   }
 
   try {
@@ -27,14 +36,14 @@ export default async function handler(req, res) {
         client_id: clientId,
         client_secret: clientSecret,
         code,
-        redirect_uri: `${APP_URL}/api/auth/github-callback`,
+        redirect_uri: `${appUrl}/api/auth/github-callback`,
       }),
     })
 
     const tokenData = await tokenRes.json()
     if (!tokenData.access_token) {
       console.error('GitHub token exchange failed:', tokenData)
-      return res.redirect(`${APP_URL}/login?error=github_token_failed`)
+      return res.redirect(`${appUrl}/login?error=github_token_failed`)
     }
 
     // Fetch user profile
@@ -77,9 +86,9 @@ export default async function handler(req, res) {
       },
     })).toString('base64url')
 
-    res.redirect(`${APP_URL}/auth/callback?data=${payload}`)
+    res.redirect(`${appUrl}/auth/callback?data=${payload}`)
   } catch (err) {
     console.error('GitHub OAuth callback error:', err.message)
-    res.redirect(`${APP_URL}/login?error=github_failed`)
+    res.redirect(`${appUrl}/login?error=github_failed`)
   }
 }

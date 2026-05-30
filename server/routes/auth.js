@@ -49,13 +49,14 @@ router.get('/github', (req, res) => {
 
 router.get('/github/callback', async (req, res) => {
   const { code, error: oauthError } = req.query
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173'
 
   if (oauthError) {
-    return res.redirect(`${process.env.CLIENT_URL || ''}/login?error=github_denied`)
+    return res.redirect(`${clientUrl}/login?error=github_denied`)
   }
 
   if (!code) {
-    return res.redirect(`${process.env.CLIENT_URL || ''}/login?error=github_no_code`)
+    return res.redirect(`${clientUrl}/login?error=github_no_code`)
   }
 
   try {
@@ -74,7 +75,7 @@ router.get('/github/callback', async (req, res) => {
     const tokenData = await tokenRes.json()
     if (!tokenData.access_token) {
       console.error('GitHub token exchange failed:', tokenData)
-      return res.redirect(`${process.env.CLIENT_URL || ''}/login?error=github_token_failed`)
+      return res.redirect(`${clientUrl}/login?error=github_token_failed`)
     }
 
     // Fetch user profile
@@ -104,11 +105,11 @@ router.get('/github/callback', async (req, res) => {
     }
 
     // Encode user + token in base64 for client callback
-    const payload = Buffer.from(JSON.stringify({ user, tokens: { access_token: tokenData.access_token } })).toString('base64')
-    res.redirect(`${process.env.CLIENT_URL || ''}/auth/callback?data=${payload}`)
+    const payload = Buffer.from(JSON.stringify({ user, tokens: { access_token: tokenData.access_token } })).toString('base64url')
+    res.redirect(`${clientUrl}/auth/callback?data=${payload}`)
   } catch (error) {
     console.error('GitHub OAuth callback error:', error)
-    res.redirect(`${process.env.CLIENT_URL || ''}/login?error=github_failed`)
+    res.redirect(`${clientUrl}/login?error=github_failed`)
   }
 })
 
