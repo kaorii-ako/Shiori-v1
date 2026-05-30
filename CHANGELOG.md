@@ -9,12 +9,61 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Planned
-- Electron desktop app wrapper (v1.2)
-- Pomodoro timer with session tracking (v1.3)
-- PDF + iCal export for study plans (v1.4)
-- Shiori Cloud hosted version (v2.0)
-- Mobile app — React Native (v2.1)
-- Browser extension for quick task capture
+- Firefox extension + Chrome Web Store release
+- Shiori Cloud — fully hosted, no setup
+- Mobile app — React Native / Expo
+
+---
+
+## [2.3.0] — 2026-05-30
+
+### Added
+- `/demo` route — 1-click demo mode, no extra click needed
+- `Demo.jsx` — auto-loads sample data + navigates to `/home` instantly
+- CI badge in README
+
+### Changed
+- Vercel `buildCommand` → `npm install --prefix client && npm run build --prefix client` (fixes silent build failure since Supabase migration)
+- All demo CTAs updated to `/demo` for 1-click access
+- `supabase.js` — hardened against missing/whitespace env vars, wrapped in try/catch
+- Vite `resolve.dedupe` for React/ReactDOM — prevents duplicate React crash in dev
+
+### Fixed
+- Live demo blank page (`TypeError: r.split is not a function`) — Vercel was serving stale Appwrite-era build
+- Removed unused Appwrite import from `main.jsx` — ~13KB bundle reduction
+- Dynamic `APP_URL` in OAuth callbacks — works on any Vercel preview URL
+
+---
+
+## [2.2.0] — 2026-05-29
+
+### Added
+- **Supabase migration** — replaced Appwrite with Supabase (PostgreSQL + Auth + RLS)
+- GitHub OAuth + Google OAuth via `supabase.auth.signInWithOAuth()`
+- `supabase/schema.sql` — full schema with Row Level Security, auto-profile trigger
+- `client/src/lib/db.js` — CRUD sync layer for assignments, grades, notes, flashcards
+- Docker — `docker compose up -d` launches full stack in < 30s
+- `SemesterCard.jsx` — shareable PNG report card via Canvas API
+- Star/Tweet CTAs on Home and Analytics pages
+- `scripts/setup-github.sh` — sets GitHub topics + description via API
+- `LAUNCH.md` — ready-to-post Reddit/HN/Product Hunt/Twitter copy
+- Stripe webhook updates `profiles.is_pro` on subscribe/cancel
+- Global `ErrorBoundary` — prevents blank-page crashes
+- MCP server (`mcp/`) — 6 tools for Claude Code/Desktop integration
+
+---
+
+## [2.1.0] — 2026-05-28
+
+### Added
+- **Syllabus Import** page — paste any syllabus, Gemini extracts all assignments
+- AI Note Summarizer
+- SEO overhaul — OG tags, schema.org, sitemap.xml, robots.txt
+- Student Leaderboard — compare study streaks via shareable base64 codes
+- Focus Mode — fullscreen distraction-free Pomodoro with ambient orbs
+- Habit Tracker — daily grid, streak, confetti on completion
+- Analytics Dashboard — grade breakdown, heatmap, mastery tracking
+- AI Quiz Generator — MCQ from notes in one click
 
 ---
 
