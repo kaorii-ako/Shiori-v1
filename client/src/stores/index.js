@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { auth as authAPI } from '../lib/api'
+import { account } from '../lib/appwrite'
 import { DEMO_USER } from '../utils/demoData'
 
 export const useAuthStore = create(
@@ -35,6 +36,33 @@ export const useAuthStore = create(
 
       exitDemoMode: () => {
         set({ user: null, token: null, isAuthenticated: false, isDemo: false, error: null })
+      },
+
+      loginWithGitHub: () => {
+        const origin = window.location.origin
+        account.createOAuth2Session(
+          'github',
+          `${origin}/auth/callback?provider=github`,
+          `${origin}/login?error=github_failed`
+        )
+      },
+
+      loginWithAppwriteSession: async () => {
+        try {
+          const appwriteUser = await account.get()
+          const user = {
+            id: appwriteUser.$id,
+            name: appwriteUser.name,
+            email: appwriteUser.email,
+            picture: null,
+            provider: 'github',
+          }
+          set({ user, token: appwriteUser.$id, isAuthenticated: true, isDemo: false, isLoading: false, error: null })
+          return user
+        } catch {
+          set({ isLoading: false, error: 'Session not found' })
+          throw new Error('No active Appwrite session')
+        }
       },
 
       loginWithEmail: async (email, password) => {
