@@ -78,7 +78,6 @@ export const useAuthStore = create(
       register: async (userData) => {
         set({ isLoading: true, error: null })
         try {
-          const { ID } = await import('../lib/appwrite')
           const name = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.username || 'User'
           await account.create(ID.unique(), userData.email, userData.password, name)
           await account.createEmailPasswordSession(userData.email, userData.password)
