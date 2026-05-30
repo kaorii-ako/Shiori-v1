@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
-import { useAuthStore } from '../stores'
+import { useAuthStore, useUIStore } from '../stores'
 import {
   Sparkles, BookOpen, Mail, Calendar, BarChart3, MessageCircle,
   ArrowRight, Star, Github, Zap, Shield, Clock, CheckCircle2,
   GraduationCap, TrendingUp, Brain, Rocket, Users, ChevronDown, StickyNote,
-  Quote,
+  Quote, Sun, Moon,
 } from 'lucide-react'
 
 const TESTIMONIALS = [
@@ -296,6 +296,7 @@ const FadeIn = ({ children, delay = 0, className = '' }) => {
 const Landing = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
+  const { theme, toggleTheme } = useUIStore()
 
   if (isAuthenticated) return <Navigate to="/home" replace />
   const [particles] = useState(() =>
@@ -386,6 +387,22 @@ const Landing = () => {
                 <Github size={15} />
                 Star
               </a>
+              <button
+                onClick={toggleTheme}
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                style={{
+                  width: 36, height: 36, borderRadius: 10, border: 'none',
+                  background: 'rgba(175,198,255,0.10)', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  backdropFilter: 'blur(8px)',
+                  flexShrink: 0,
+                }}
+              >
+                {theme === 'dark'
+                  ? <Sun size={16} color="#ffd6a0" />
+                  : <Moon size={16} color="#528dff" />
+                }
+              </button>
               <Link
                 to="/login"
                 style={{
