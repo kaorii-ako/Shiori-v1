@@ -157,15 +157,68 @@ export const loadEvents = guard(async (userId) => {
   })) || []
 })
 
+// ── Habits ────────────────────────────────────────────────────
+
+export const saveHabit = guard(async (userId, h) => {
+  const { error } = await supabase.from('habits').upsert({
+    id: h.id, user_id: userId,
+    name: h.name, description: h.description,
+    frequency: h.frequency, target_days: h.targetDays,
+    color: h.color, icon: h.icon,
+    streak: h.streak || 0,
+    updated_at: new Date().toISOString(),
+  })
+  if (error) throw error
+})
+
+export const deleteHabit = guard(async (id) => {
+  await supabase.from('habits').delete().eq('id', id)
+})
+
+export const loadHabits = guard(async (userId) => {
+  const { data } = await supabase.from('habits').select('*').eq('user_id', userId).order('created_at')
+  return data?.map(r => ({
+    id: r.id, name: r.name, description: r.description,
+    frequency: r.frequency, targetDays: r.target_days,
+    color: r.color, icon: r.icon, streak: r.streak,
+    completions: r.completions || [],
+    createdAt: new Date(r.created_at).getTime(),
+  })) || []
+})
+
+// ── Study Plans ────────────────────────────────────────────────
+
+export const saveStudyPlan = guard(async (userId, plan) => {
+  const { error } = await supabase.from('study_plans').upsert({
+    id: plan.id, user_id: userId,
+    title: plan.title, course_id: plan.courseId,
+    content: plan.content, generated_at: plan.generatedAt,
+    status: plan.status || 'active',
+  })
+  if (error) throw error
+})
+
+export const loadStudyPlans = guard(async (userId) => {
+  const { data } = await supabase.from('study_plans').select('*').eq('user_id', userId).order('created_at', { ascending: false })
+  return data?.map(r => ({
+    id: r.id, title: r.title, courseId: r.course_id,
+    content: r.content, generatedAt: r.generated_at,
+    status: r.status,
+    createdAt: new Date(r.created_at).getTime(),
+  })) || []
+})
+
 // ── Bulk load all user data (on login) ────────────────────────
 
 export const loadAllUserData = async (userId) => {
-  const [courses, assignments, notes, decks, events] = await Promise.all([
+  const [courses, assignments, notes, decks, events, habits, studyPlans] = await Promise.all([
     loadCourses(userId),
     loadAssignments(userId),
     loadNotes(userId),
     loadDecks(userId),
     loadEvents(userId),
+    loadHabits(userId),
+    loadStudyPlans(userId),
   ])
-  return { courses, assignments, notes, decks, events }
+  return { courses, assignments, notes, decks, events, habits, studyPlans }
 }
