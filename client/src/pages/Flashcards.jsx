@@ -1,20 +1,74 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Layers, Plus, Trash2, ChevronLeft, ChevronRight,
-  Check, X, RotateCcw, BookOpen, Zap, Trophy,
-  Edit3, ArrowLeft, BarChart3, Upload, Download, Search,
+  Layers, Plus, Trash2,
+  Check, X, Zap, Trophy,
+  Edit3, ArrowLeft, Upload, Download, Search,
 } from 'lucide-react'
-import GlassCard from '../components/GlassCard'
-import Button from '../components/Button'
-import Badge from '../components/Badge'
 import Modal from '../components/Modal'
-import Input from '../components/Input'
 import { useFlashcardsStore, useAssignmentsStore, useXPStore } from '../stores'
 
-const COURSE_COLORS = ['#ff6b9d', '#c44dff', '#afc6ff', '#4dff91', '#ffd6a0', '#4daaff']
+// ─── Design tokens ────────────────────────────────────────────────────────────
+const T = {
+  bg: '#0a0d12',
+  surface: 'rgba(13,17,24,0.95)',
+  surfaceBright: 'rgba(20,25,34,0.9)',
+  border: 'rgba(50,55,70,0.4)',
+  borderBright: 'rgba(80,90,110,0.5)',
+  text: '#dfe2eb',
+  muted: '#8c90a0',
+  faint: '#424754',
+  blue: '#afc6ff',
+  blueVibrant: '#528dff',
+  purple: '#e5b5ff',
+  purpleVibrant: '#c44dff',
+  green: '#4dff91',
+  pink: '#ff6b9d',
+  orange: '#ffd6a0',
+  cyan: '#4daaff',
+}
 
-// ─── Deck List ───────────────────────────────────────────────────────────────
+const card = {
+  background: 'rgba(13,17,24,0.95)',
+  border: '1px solid rgba(50,55,70,0.4)',
+  borderRadius: 12,
+  padding: '20px 24px',
+}
+
+const btnPrimary = {
+  padding: '9px 20px', borderRadius: 8,
+  background: 'linear-gradient(135deg, #c44dff, #528dff)',
+  color: '#fff', border: 'none',
+  fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+  fontSize: 13, cursor: 'pointer',
+}
+
+const btnSecondary = {
+  padding: '8px 16px', borderRadius: 8,
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(50,55,70,0.4)',
+  color: '#dfe2eb',
+  fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
+  fontSize: 13, cursor: 'pointer',
+}
+
+const inputStyle = {
+  width: '100%', padding: '10px 14px', borderRadius: 8,
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(50,55,70,0.4)',
+  color: '#dfe2eb', outline: 'none',
+  fontFamily: "'Manrope', sans-serif", fontSize: 14,
+  boxSizing: 'border-box',
+}
+
+const labelSt = {
+  fontFamily: "'Space Grotesk', sans-serif",
+  fontWeight: 600, fontSize: 11,
+  letterSpacing: '0.08em',
+  color: T.muted, display: 'block', marginBottom: 6,
+}
+
+// ─── Export to Anki ───────────────────────────────────────────────────────────
 const exportAnki = (deck) => {
   const tsv = deck.cards.map(c => `${c.front}\t${c.back}`).join('\n')
   const blob = new Blob([tsv], { type: 'text/plain' })
@@ -25,84 +79,138 @@ const exportAnki = (deck) => {
   URL.revokeObjectURL(a.href)
 }
 
-const DeckCard = ({ deck, course, onStudy, onEdit, onDelete }) => {
+// ─── Deck Card ────────────────────────────────────────────────────────────────
+const DeckCard = ({ deck, course, onStudy, onEdit, onDelete, idx }) => {
   const mastered = deck.cards.filter(c => (c.streak || 0) >= 3).length
   const total = deck.cards.length
   const pct = total > 0 ? Math.round(mastered / total * 100) : 0
+  const due = deck.cards.filter(c => !c.nextReview || c.nextReview <= Date.now()).length
+  const accent = course?.color || T.purpleVibrant
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ translateY: -2 }}
+      transition={{ delay: idx * 0.05 }}
+      whileHover={{ y: -2 }}
       style={{
-        padding: '18px 20px', borderRadius: 10,
-        background: 'rgba(255,255,255,0.04)',
-        border: `2px solid ${course?.color ? course.color + '33' : 'rgba(255,255,255,0.08)'}`,
-        cursor: 'pointer', transition: 'all 0.15s',
+        background: 'rgba(13,17,24,0.95)',
+        border: '1px solid rgba(50,55,70,0.4)',
+        borderTop: `2px solid ${accent}55`,
+        borderRadius: 12,
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 14,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-        <div>
-          <h3 style={{ fontFamily: '"Press Start 2P"', fontSize: 11, color: '#dfe2eb', marginBottom: 6 }}>
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+        <div style={{ minWidth: 0 }}>
+          <h3 style={{
+            fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+            fontSize: 15, color: T.text, margin: '0 0 6px',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          }}>
             {deck.name}
           </h3>
           {course && (
-            <span style={{ fontFamily: 'VT323', fontSize: 14, color: course.color,
-              padding: '2px 8px', background: `${course.color}18`, borderRadius: 20 }}>
+            <span style={{
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
+              fontSize: 11, letterSpacing: '0.08em',
+              color: accent, padding: '2px 8px',
+              background: `${accent}18`, borderRadius: 20,
+            }}>
               {course.name}
             </span>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          <button onClick={(e) => { e.stopPropagation(); exportAnki(deck) }}
-            title="Export to Anki (.txt)"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, opacity: 0.5 }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.5}>
-            <Download size={13} color="#ffd6a0" />
-          </button>
-          <button onClick={(e) => { e.stopPropagation(); onEdit() }}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, opacity: 0.5 }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.5}>
-            <Edit3 size={13} color="#afc6ff" />
-          </button>
-          <button onClick={(e) => { e.stopPropagation(); onDelete() }}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, opacity: 0.5 }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.5}>
-            <Trash2 size={13} color="#ff4d6a" />
-          </button>
+        <div style={{ display: 'flex', gap: 2, flexShrink: 0 }}>
+          {[
+            { icon: Download, color: T.orange, label: 'Export to Anki', action: (e) => { e.stopPropagation(); exportAnki(deck) } },
+            { icon: Edit3, color: T.blue, label: 'Edit', action: (e) => { e.stopPropagation(); onEdit() } },
+            { icon: Trash2, color: T.pink, label: 'Delete', action: (e) => { e.stopPropagation(); onDelete() } },
+          ].map(({ icon: Icon, color, label, action }) => (
+            <button
+              key={label}
+              onClick={action}
+              title={label}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 5, opacity: 0.45, display: 'flex', alignItems: 'center' }}
+              onMouseEnter={e => e.currentTarget.style.opacity = 1}
+              onMouseLeave={e => e.currentTarget.style.opacity = 0.45}
+            >
+              <Icon size={13} color={color} />
+            </button>
+          ))}
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 14 }}>
-        {[
-          { label: 'CARDS', value: total, color: '#afc6ff' },
-          { label: 'MASTERED', value: mastered, color: '#4dff91' },
-          { label: 'PROGRESS', value: `${pct}%`, color: pct >= 80 ? '#4dff91' : pct >= 50 ? '#ffd6a0' : '#ff8f6b' },
-        ].map(s => (
-          <div key={s.label} style={{ padding: '8px', background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.06)', borderRadius: 6, textAlign: 'center' }}>
-            <p style={{ fontFamily: 'VT323', fontSize: 12, color: '#606080', marginBottom: 2 }}>{s.label}</p>
-            <p style={{ fontFamily: '"Press Start 2P"', fontSize: 13, color: s.color }}>{s.value}</p>
-          </div>
-        ))}
+      {/* Stats row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.muted }}>
+          <span style={{ color: T.text, fontWeight: 600 }}>{total}</span> cards
+        </span>
+        <span style={{ color: T.faint, fontSize: 11 }}>·</span>
+        <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.muted }}>
+          <span style={{ color: T.green, fontWeight: 600 }}>{mastered}</span> mastered
+        </span>
+        {due > 0 && (
+          <>
+            <span style={{ color: T.faint, fontSize: 11 }}>·</span>
+            <span style={{
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
+              fontSize: 11, letterSpacing: '0.08em',
+              background: 'rgba(196,77,255,0.15)', color: '#c44dff',
+              padding: '2px 8px', borderRadius: 10,
+            }}>
+              {due} due
+            </span>
+          </>
+        )}
       </div>
 
       {/* Progress bar */}
-      <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, marginBottom: 12 }}>
-        <div style={{ height: '100%', width: `${pct}%`, borderRadius: 2,
-          background: `linear-gradient(90deg, ${course?.color || '#c44dff'}, #4dff91)`,
-          transition: 'width 0.4s ease' }} />
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+          <span style={{ ...labelSt, margin: 0, fontSize: 10 }}>MASTERY</span>
+          <span style={{
+            fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 11,
+            color: pct >= 80 ? T.green : T.muted,
+          }}>
+            {pct}%
+          </span>
+        </div>
+        <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 4 }}>
+          <div style={{
+            height: '100%', width: `${pct}%`, borderRadius: 4,
+            background: `linear-gradient(90deg, ${accent}, ${T.green})`,
+            transition: 'width 0.5s ease',
+          }} />
+        </div>
       </div>
 
-      <Button onClick={onStudy} icon={Zap} style={{ width: '100%' }}
-        disabled={total === 0}>
-        {total === 0 ? 'ADD CARDS FIRST' : 'STUDY NOW'}
-      </Button>
+      {/* Action buttons */}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          onClick={onStudy}
+          disabled={total === 0}
+          style={{
+            ...btnPrimary, flex: 1,
+            opacity: total === 0 ? 0.4 : 1,
+            cursor: total === 0 ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          }}
+        >
+          <Zap size={13} /> Study
+        </button>
+        <button
+          onClick={onEdit}
+          style={{ ...btnSecondary, display: 'flex', alignItems: 'center', gap: 6 }}
+        >
+          <Edit3 size={13} /> Edit
+        </button>
+      </div>
     </motion.div>
   )
 }
@@ -121,49 +229,62 @@ const StudyMode = ({ deck, onExit, onUpdateCard }) => {
   const [flipped, setFlipped] = useState(false)
   const [sessionStats, setSessionStats] = useState({ correct: 0, incorrect: 0, total: 0 })
   const [done, setDone] = useState(false)
+  // flipDir kept to preserve existing SRS behaviour reference
   const [flipDir, setFlipDir] = useState(1)
 
   if (due.length === 0 || done) {
     return (
-      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-        <Trophy size={64} style={{ margin: '0 auto 20px', color: '#ffd6a0' }} />
-        <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 16, color: '#4dff91', marginBottom: 12 }}>
-          SESSION COMPLETE!
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{ textAlign: 'center', padding: '80px 24px' }}
+      >
+        <Trophy size={52} style={{ margin: '0 auto 20px', color: T.orange }} />
+        <h2 style={{
+          fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+          fontSize: 22, color: T.green, marginBottom: 8,
+        }}>
+          Session Complete!
         </h2>
-        {sessionStats.total > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, maxWidth: 360, margin: '0 auto 28px' }}>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 15, color: T.muted, marginBottom: 32 }}>
+          {sessionStats.total > 0
+            ? `You scored ${Math.round(sessionStats.correct / sessionStats.total * 100)}% this session`
+            : 'All cards are up to date — come back later!'}
+        </p>
+        {sessionStats.total > 0 && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, maxWidth: 360, margin: '0 auto 32px' }}>
             {[
-              { label: 'STUDIED', value: sessionStats.total, color: '#afc6ff' },
-              { label: 'CORRECT', value: sessionStats.correct, color: '#4dff91' },
-              { label: 'SCORE', value: `${Math.round(sessionStats.correct / sessionStats.total * 100)}%`, color: '#ffd6a0' },
+              { label: 'STUDIED', value: sessionStats.total, color: T.blue },
+              { label: 'CORRECT', value: sessionStats.correct, color: T.green },
+              { label: 'SCORE', value: `${Math.round(sessionStats.correct / sessionStats.total * 100)}%`, color: T.orange },
             ].map(s => (
-              <div key={s.label} style={{ padding: '14px', background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, textAlign: 'center' }}>
-                <p style={{ fontFamily: 'VT323', fontSize: 13, color: '#606080', marginBottom: 4 }}>{s.label}</p>
-                <p style={{ fontFamily: '"Press Start 2P"', fontSize: 18, color: s.color }}>{s.value}</p>
+              <div key={s.label} style={{ ...card, padding: '14px 16px', textAlign: 'center' }}>
+                <p style={{ ...labelSt, marginBottom: 6 }}>{s.label}</p>
+                <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 24, color: s.color, margin: 0 }}>
+                  {s.value}
+                </p>
               </div>
             ))}
           </div>
-        ) : (
-          <p style={{ fontFamily: 'VT323', fontSize: 18, color: '#8c90a0', marginBottom: 28 }}>
-            All cards are up to date — come back later!
-          </p>
         )}
-        <Button onClick={onExit} icon={ArrowLeft}>BACK TO DECKS</Button>
-      </div>
+        <button
+          onClick={onExit}
+          style={{ ...btnSecondary, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        >
+          <ArrowLeft size={14} /> Back to Decks
+        </button>
+      </motion.div>
     )
   }
 
-  const card = due[idx]
-  const progress = `${Math.min(idx + 1, due.length)} / ${due.length}`
+  const currentCard = due[idx]
 
   const answer = (correct) => {
     const now = Date.now()
-    const streak = correct ? (card.streak || 0) + 1 : 0
+    const streak = correct ? (currentCard.streak || 0) + 1 : 0
     // Simple spaced repetition: interval doubles each streak (1h, 2h, 4h, 1d, 2d...)
     const intervals = [3600000, 7200000, 86400000, 172800000, 432000000]
     const interval = correct ? (intervals[Math.min(streak - 1, intervals.length - 1)] || intervals[0]) : 600000
-    onUpdateCard(deck.id, card.id, { streak, nextReview: now + interval })
+    onUpdateCard(deck.id, currentCard.id, { streak, nextReview: now + interval })
     if (correct) addXP(5, 'flashcard_correct')
 
     setSessionStats(p => ({
@@ -182,63 +303,103 @@ const StudyMode = ({ deck, onExit, onUpdateCard }) => {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto' }}>
+    <div style={{ maxWidth: 640, margin: '0 auto', paddingBottom: 40 }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-        <button onClick={onExit}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none',
-            cursor: 'pointer', color: '#8c90a0', fontFamily: 'VT323', fontSize: 16, padding: 0 }}>
-          <ArrowLeft size={16} />
-          Back
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}
+      >
+        <button
+          onClick={onExit}
+          style={{ ...btnSecondary, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px' }}
+        >
+          <ArrowLeft size={14} /> Back
         </button>
-        <span style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>{progress}</span>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <span style={{ fontFamily: 'VT323', fontSize: 16, color: '#4dff91' }}>✓ {sessionStats.correct}</span>
-          <span style={{ fontFamily: 'VT323', fontSize: 16, color: '#ff4d6a' }}>✗ {sessionStats.incorrect}</span>
+
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 13, color: T.text, margin: 0 }}>
+            Card {Math.min(idx + 1, due.length)} of {due.length}
+          </p>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: T.muted, marginTop: 2 }}>
+            {deck.name}
+          </p>
         </div>
-      </div>
+
+        <div style={{ display: 'flex', gap: 14 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.green }}>
+            <Check size={13} /> {sessionStats.correct}
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.pink }}>
+            <X size={13} /> {sessionStats.incorrect}
+          </span>
+        </div>
+      </motion.div>
 
       {/* Progress bar */}
-      <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, marginBottom: 32 }}>
-        <div style={{ height: '100%', width: `${idx / due.length * 100}%`, borderRadius: 2,
-          background: 'linear-gradient(90deg, #afc6ff, #c44dff)', transition: 'width 0.3s' }} />
+      <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 4, marginBottom: 32 }}>
+        <motion.div
+          style={{ height: '100%', borderRadius: 4, background: 'linear-gradient(90deg, #c44dff, #528dff)' }}
+          animate={{ width: `${idx / due.length * 100}%` }}
+          transition={{ duration: 0.3 }}
+        />
       </div>
 
-      {/* Card */}
-      <div style={{ perspective: 1000, marginBottom: 28, cursor: 'pointer' }} onClick={() => setFlipped(f => !f)}>
+      {/* 3D Flip Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+        style={{ perspective: 1200, marginBottom: 24, cursor: 'pointer' }}
+        onClick={() => setFlipped(f => !f)}
+      >
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
           transition={{ duration: 0.4, ease: 'easeInOut' }}
-          style={{ transformStyle: 'preserve-3d', position: 'relative', minHeight: 240 }}
+          style={{ transformStyle: 'preserve-3d', position: 'relative', minHeight: 260 }}
         >
-          {/* Front */}
+          {/* Front face */}
           <div style={{
-            position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
-            padding: '40px 32px', borderRadius: 16, display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-            background: 'linear-gradient(135deg, rgba(175,198,255,0.08), rgba(196,77,255,0.08))',
-            border: '2px solid rgba(175,198,255,0.2)',
+            position: 'absolute', width: '100%', height: '100%',
+            backfaceVisibility: 'hidden',
+            background: 'rgba(13,17,24,0.98)',
+            border: '1px solid rgba(50,55,70,0.4)',
+            borderRadius: 16,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40,
+            flexDirection: 'column', textAlign: 'center', boxSizing: 'border-box',
           }}>
-            <p style={{ fontFamily: 'VT323', fontSize: 12, color: '#606080', marginBottom: 16, letterSpacing: 2 }}>QUESTION</p>
-            <p style={{ fontFamily: 'Manrope, sans-serif', fontSize: 20, color: '#dfe2eb', lineHeight: 1.5 }}>{card.front}</p>
-            <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#424754', marginTop: 24 }}>tap to reveal answer</p>
+            <p style={{ ...labelSt, color: T.faint, marginBottom: 16 }}>QUESTION</p>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+              fontSize: 20, color: T.text, lineHeight: 1.55, margin: 0,
+            }}>
+              {currentCard.front}
+            </p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: T.faint, marginTop: 24 }}>
+              Tap to reveal answer
+            </p>
           </div>
 
-          {/* Back */}
+          {/* Back face */}
           <div style={{
-            position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
-            padding: '40px 32px', borderRadius: 16, display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-            background: 'linear-gradient(135deg, rgba(77,255,145,0.06), rgba(77,170,255,0.06))',
-            border: '2px solid rgba(77,255,145,0.2)',
+            position: 'absolute', width: '100%', height: '100%',
+            backfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+            background: 'rgba(13,17,24,0.98)',
+            border: '1px solid rgba(77,255,145,0.2)',
+            borderRadius: 16,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40,
+            flexDirection: 'column', textAlign: 'center', boxSizing: 'border-box',
           }}>
-            <p style={{ fontFamily: 'VT323', fontSize: 12, color: '#606080', marginBottom: 16, letterSpacing: 2 }}>ANSWER</p>
-            <p style={{ fontFamily: 'Manrope, sans-serif', fontSize: 20, color: '#dfe2eb', lineHeight: 1.5 }}>{card.back}</p>
+            <p style={{ ...labelSt, color: T.faint, marginBottom: 16 }}>ANSWER</p>
+            <p style={{
+              fontFamily: "'Manrope', sans-serif",
+              fontSize: 20, color: T.text, lineHeight: 1.55, margin: 0,
+            }}>
+              {currentCard.back}
+            </p>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
 
-      {/* Answer buttons */}
+      {/* Correct / Incorrect buttons */}
       <AnimatePresence>
         {flipped && (
           <motion.div
@@ -249,38 +410,50 @@ const StudyMode = ({ deck, onExit, onUpdateCard }) => {
           >
             <button
               onClick={() => answer(false)}
-              style={{ padding: '16px', borderRadius: 10, cursor: 'pointer',
-                background: 'rgba(255,77,106,0.1)', border: '2px solid rgba(255,77,106,0.4)',
-                color: '#ff4d6a', fontFamily: '"Press Start 2P"', fontSize: 10,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              <X size={16} /> MISSED IT
+              style={{
+                padding: '14px 20px', borderRadius: 10, cursor: 'pointer',
+                background: 'rgba(255,107,157,0.08)',
+                border: '1px solid rgba(255,107,157,0.3)',
+                color: T.pink,
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 13,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}
+            >
+              <X size={15} /> Incorrect
             </button>
             <button
               onClick={() => answer(true)}
-              style={{ padding: '16px', borderRadius: 10, cursor: 'pointer',
-                background: 'rgba(77,255,145,0.1)', border: '2px solid rgba(77,255,145,0.4)',
-                color: '#4dff91', fontFamily: '"Press Start 2P"', fontSize: 10,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              <Check size={16} /> GOT IT
+              style={{
+                padding: '14px 20px', borderRadius: 10, cursor: 'pointer',
+                background: 'rgba(77,255,145,0.08)',
+                border: '1px solid rgba(77,255,145,0.3)',
+                color: T.green,
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 13,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}
+            >
+              <Check size={15} /> Correct
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {(card.streak || 0) > 0 && (
-        <p style={{ textAlign: 'center', fontFamily: 'VT323', fontSize: 14, color: '#424754', marginTop: 12 }}>
-          Streak: {'🔥'.repeat(Math.min(card.streak || 0, 5))} {card.streak}
+      {(currentCard.streak || 0) > 0 && (
+        <p style={{ textAlign: 'center', fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.faint, marginTop: 16 }}>
+          Streak: {'🔥'.repeat(Math.min(currentCard.streak || 0, 5))} {currentCard.streak}
         </p>
       )}
     </div>
   )
 }
 
-// ─── Card Editor ─────────────────────────────────────────────────────────────
-const DeckEditor = ({ deck, onClose, onAddCard, onRemoveCard }) => {
+// ─── Deck Editor ──────────────────────────────────────────────────────────────
+const DeckEditor = ({ deck, onClose, onAddCard, onRemoveCard, onAIGenerate, aiGenerating, onImportCSV }) => {
   const [front, setFront] = useState('')
   const [back, setBack] = useState('')
   const [search, setSearch] = useState('')
+  const [aiTopic, setAiTopic] = useState('')
+  const [showAI, setShowAI] = useState(false)
 
   const handleAdd = () => {
     if (!front.trim() || !back.trim()) return
@@ -295,87 +468,208 @@ const DeckEditor = ({ deck, onClose, onAddCard, onRemoveCard }) => {
     : deck.cards
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '60vh', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <p style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#8c90a0' }}>ADD NEW CARD</p>
-        <textarea
-          value={front}
-          onChange={e => setFront(e.target.value)}
-          placeholder="Question / Front side..."
-          rows={2}
-          style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6,
-            color: '#dfe2eb', fontFamily: 'Manrope, sans-serif', fontSize: 14,
-            resize: 'vertical', outline: 'none' }}
-        />
-        <textarea
-          value={back}
-          onChange={e => setBack(e.target.value)}
-          placeholder="Answer / Back side..."
-          rows={2}
-          style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6,
-            color: '#dfe2eb', fontFamily: 'Manrope, sans-serif', fontSize: 14,
-            resize: 'vertical', outline: 'none' }}
-        />
-        <Button icon={Plus} onClick={handleAdd} disabled={!front.trim() || !back.trim()}>
-          ADD CARD
-        </Button>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+      style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
+    >
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={onClose}
+            style={{ ...btnSecondary, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px' }}
+          >
+            <ArrowLeft size={14} /> Back
+          </button>
+          <div>
+            <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 18, color: T.text, margin: 0 }}>
+              {deck.name}
+            </h2>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.muted, marginTop: 2 }}>
+              {deck.cards.length} card{deck.cards.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={onImportCSV}
+            style={{ ...btnSecondary, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Upload size={13} /> Import CSV
+          </button>
+          <button
+            onClick={() => setShowAI(v => !v)}
+            style={{
+              ...btnSecondary,
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              borderColor: showAI ? 'rgba(196,77,255,0.4)' : undefined,
+              color: showAI ? T.purpleVibrant : T.text,
+            }}
+          >
+            <Zap size={13} /> AI Generate
+          </button>
+        </div>
       </div>
 
-      {deck.cards.length > 0 && (
-        <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {/* Search */}
-          <div style={{ position: 'relative', marginBottom: 4 }}>
-            <Search size={12} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#606080', pointerEvents: 'none' }} />
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search cards..."
-              style={{ width: '100%', padding: '8px 10px 8px 30px', background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.10)', borderRadius: 6,
-                color: '#dfe2eb', fontFamily: 'Manrope, sans-serif', fontSize: 13,
-                outline: 'none', boxSizing: 'border-box' }}
+      {/* AI Generate panel */}
+      <AnimatePresence>
+        {showAI && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={{ ...card, borderColor: 'rgba(196,77,255,0.3)' }}>
+              <p style={{ ...labelSt, color: T.purpleVibrant, marginBottom: 10 }}>AI GENERATE CARDS</p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  value={aiTopic}
+                  onChange={e => setAiTopic(e.target.value)}
+                  placeholder="Topic or paste notes to generate cards from..."
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+                <button
+                  onClick={() => onAIGenerate(deck.id, aiTopic, () => { setAiTopic(''); setShowAI(false) })}
+                  disabled={!aiTopic.trim() || aiGenerating}
+                  style={{
+                    ...btnPrimary,
+                    opacity: (!aiTopic.trim() || aiGenerating) ? 0.5 : 1,
+                    cursor: (!aiTopic.trim() || aiGenerating) ? 'not-allowed' : 'pointer',
+                    whiteSpace: 'nowrap',
+                    display: 'flex', alignItems: 'center', gap: 6,
+                  }}
+                >
+                  <Zap size={13} />
+                  {aiGenerating ? 'Generating…' : 'Generate'}
+                </button>
+              </div>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: T.faint, marginTop: 8 }}>
+                Generates up to 10 cards using AI
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Add card form */}
+      <div style={{ ...card }}>
+        <p style={{ ...labelSt, marginBottom: 12 }}>ADD NEW CARD</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+          <div>
+            <p style={{ ...labelSt, fontSize: 10, marginBottom: 6 }}>FRONT</p>
+            <textarea
+              value={front}
+              onChange={e => setFront(e.target.value)}
+              placeholder="Question / Front side..."
+              rows={3}
+              style={{ ...inputStyle, resize: 'vertical' }}
             />
           </div>
-          <p style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#606080', marginBottom: 4 }}>
-            {q ? `${filteredCards.length} / ${deck.cards.length} CARDS` : `${deck.cards.length} CARD${deck.cards.length !== 1 ? 'S' : ''}`}
-          </p>
-          {filteredCards.map((card) => (
-            <div key={card.id}
-              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 6 }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontFamily: 'VT323', fontSize: 16, color: '#dfe2eb', marginBottom: 2,
-                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  Q: {card.front}
-                </p>
-                <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#8c90a0',
-                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  A: {card.back}
-                </p>
-              </div>
-              {(card.streak || 0) >= 3 && <span title="Mastered">🏆</span>}
-              <button onClick={() => onRemoveCard(deck.id, card.id)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, opacity: 0.5, flexShrink: 0 }}
-                onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                onMouseLeave={e => e.currentTarget.style.opacity = 0.5}>
-                <Trash2 size={12} color="#ff4d6a" />
-              </button>
-            </div>
-          ))}
-          {filteredCards.length === 0 && q && (
-            <p style={{ fontFamily: 'VT323', fontSize: 16, color: '#424754', textAlign: 'center', padding: '16px 0' }}>
-              No cards match "{search}"
+          <div>
+            <p style={{ ...labelSt, fontSize: 10, marginBottom: 6 }}>BACK</p>
+            <textarea
+              value={back}
+              onChange={e => setBack(e.target.value)}
+              placeholder="Answer / Back side..."
+              rows={3}
+              style={{ ...inputStyle, resize: 'vertical' }}
+            />
+          </div>
+        </div>
+        <button
+          onClick={handleAdd}
+          disabled={!front.trim() || !back.trim()}
+          style={{
+            ...btnPrimary,
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            opacity: (!front.trim() || !back.trim()) ? 0.4 : 1,
+            cursor: (!front.trim() || !back.trim()) ? 'not-allowed' : 'pointer',
+          }}
+        >
+          <Plus size={13} /> Add Card
+        </button>
+      </div>
+
+      {/* Card list */}
+      {deck.cards.length > 0 && (
+        <div style={{ ...card }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, gap: 12 }}>
+            <p style={{ ...labelSt, margin: 0 }}>
+              {q ? `${filteredCards.length} / ${deck.cards.length} CARDS` : `${deck.cards.length} CARD${deck.cards.length !== 1 ? 'S' : ''}`}
             </p>
-          )}
+            <div style={{ position: 'relative', width: 200 }}>
+              <Search size={12} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: T.faint, pointerEvents: 'none' }} />
+              <input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search cards..."
+                style={{ ...inputStyle, padding: '7px 10px 7px 28px', fontSize: 12 }}
+              />
+            </div>
+          </div>
+
+          {/* Column headers */}
+          <div style={{
+            display: 'grid', gridTemplateColumns: '1fr 1fr 36px',
+            gap: 12, padding: '6px 12px',
+            borderBottom: `1px solid ${T.border}`, marginBottom: 6,
+          }}>
+            <span style={{ ...labelSt, margin: 0, fontSize: 10 }}>FRONT</span>
+            <span style={{ ...labelSt, margin: 0, fontSize: 10 }}>BACK</span>
+            <span />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 360, overflowY: 'auto' }}>
+            {filteredCards.map((c, i) => (
+              <motion.div
+                key={c.id}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.03 }}
+                style={{
+                  display: 'grid', gridTemplateColumns: '1fr 1fr 36px',
+                  gap: 12, padding: '10px 12px',
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(50,55,70,0.25)',
+                  borderRadius: 8, alignItems: 'center',
+                }}
+              >
+                <p style={{
+                  fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.text,
+                  margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                }}>
+                  {c.front}
+                  {(c.streak || 0) >= 3 && <span style={{ marginLeft: 6 }} title="Mastered">🏆</span>}
+                </p>
+                <p style={{
+                  fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.muted,
+                  margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                }}>
+                  {c.back}
+                </p>
+                <button
+                  onClick={() => onRemoveCard(deck.id, c.id)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, opacity: 0.4, display: 'flex', alignItems: 'center' }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                  onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+                >
+                  <Trash2 size={13} color={T.pink} />
+                </button>
+              </motion.div>
+            ))}
+            {filteredCards.length === 0 && q && (
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: T.faint, textAlign: 'center', padding: '24px 0' }}>
+                No cards match &ldquo;{search}&rdquo;
+              </p>
+            )}
+          </div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Parse CSV ────────────────────────────────────────────────────────────────
 const parseCSV = (text) => {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
   const cards = []
@@ -391,6 +685,7 @@ const parseCSV = (text) => {
   return cards
 }
 
+// ─── Main Page ────────────────────────────────────────────────────────────────
 const Flashcards = () => {
   const { decks, addDeck, deleteDeck, addCard, removeCard, updateCard, loadDeck } = useFlashcardsStore()
   const { courses } = useAssignmentsStore()
@@ -404,6 +699,7 @@ const Flashcards = () => {
   const [importText, setImportText] = useState('')
   const [importName, setImportName] = useState('')
   const [importPreview, setImportPreview] = useState([])
+  const [aiGenerating, setAiGenerating] = useState(false)
 
   const totalCards = decks.reduce((s, d) => s + d.cards.length, 0)
   const totalMastered = decks.reduce((s, d) => s + d.cards.filter(c => (c.streak || 0) >= 3).length, 0)
@@ -434,78 +730,197 @@ const Flashcards = () => {
     setNewDeckModal(false)
   }
 
+  const handleAIGenerate = async (deckId, topic, onDone) => {
+    if (!topic.trim() || aiGenerating) return
+    setAiGenerating(true)
+    try {
+      const res = await fetch('/api/ai/flashcards', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, deckId }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data.cards)) {
+          data.cards.forEach(c => addCard(deckId, { front: c.front, back: c.back }))
+        }
+      }
+    } finally {
+      setAiGenerating(false)
+      onDone?.()
+    }
+  }
+
+  const closeImportModal = () => {
+    setImportModal(false)
+    setImportText('')
+    setImportPreview([])
+  }
+
+  // ── Study view ──────────────────────────────────────────────────────────────
   if (studyDeck) {
     const deck = decks.find(d => d.id === studyDeck)
     if (!deck) { setStudyDeck(null); return null }
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <GlassCard>
-          <StudyMode
-            deck={deck}
-            onExit={() => setStudyDeck(null)}
-            onUpdateCard={updateCard}
-          />
-        </GlassCard>
+      <div style={{ padding: '24px 0' }}>
+        <StudyMode
+          deck={deck}
+          onExit={() => setStudyDeck(null)}
+          onUpdateCard={updateCard}
+        />
       </div>
     )
   }
 
+  // ── Editor view ─────────────────────────────────────────────────────────────
+  if (editDeck) {
+    const deck = decks.find(d => d.id === editDeck.id) || editDeck
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, paddingBottom: 40 }}>
+        <DeckEditor
+          deck={deck}
+          onClose={() => setEditDeck(null)}
+          onAddCard={addCard}
+          onRemoveCard={removeCard}
+          onAIGenerate={handleAIGenerate}
+          aiGenerating={aiGenerating}
+          onImportCSV={() => setImportModal(true)}
+        />
+
+        {/* Import CSV Modal (reused from deck list) */}
+        <Modal
+          isOpen={importModal}
+          onClose={closeImportModal}
+          title="Import Flashcards"
+          size="md"
+          footer={
+            <>
+              <button onClick={closeImportModal} style={btnSecondary}>Cancel</button>
+              <button
+                onClick={handleImport}
+                disabled={importPreview.length === 0 || !importName.trim()}
+                style={{
+                  ...btnPrimary,
+                  opacity: (importPreview.length === 0 || !importName.trim()) ? 0.5 : 1,
+                  cursor: (importPreview.length === 0 || !importName.trim()) ? 'not-allowed' : 'pointer',
+                }}
+              >
+                Import {importPreview.length > 0 ? `${importPreview.length} Cards` : ''}
+              </button>
+            </>
+          }
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div>
+              <label style={labelSt}>DECK NAME</label>
+              <input value={importName} onChange={e => setImportName(e.target.value)} placeholder="My Imported Deck" style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelSt}>PASTE CSV (FRONT TAB/COMMA BACK)</label>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.faint, marginBottom: 8 }}>
+                Works with Quizlet export, Anki CSV, or any tab/comma-separated front↔back format.
+              </p>
+              <textarea
+                value={importText}
+                onChange={e => { setImportText(e.target.value); setImportPreview(parseCSV(e.target.value).slice(0, 5)) }}
+                placeholder={'What is photosynthesis?\tConversion of light to chemical energy'}
+                rows={6}
+                style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }}
+              />
+            </div>
+            {importPreview.length > 0 && (
+              <div style={{ padding: '12px 14px', background: 'rgba(77,255,145,0.04)', border: '1px solid rgba(77,255,145,0.2)', borderRadius: 8 }}>
+                <p style={{ ...labelSt, color: T.green, marginBottom: 8 }}>
+                  PREVIEW — {parseCSV(importText).length} cards detected
+                </p>
+                {importPreview.map((c, i) => (
+                  <div key={i} style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.muted, marginBottom: 4 }}>
+                    <span style={{ color: T.blue }}>Q:</span> {c.front.slice(0, 40)}{c.front.length > 40 ? '…' : ''}&nbsp;&nbsp;
+                    <span style={{ color: T.green }}>A:</span> {c.back.slice(0, 40)}{c.back.length > 40 ? '…' : ''}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </Modal>
+      </div>
+    )
+  }
+
+  // ── Deck list view ──────────────────────────────────────────────────────────
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+      {/* Page header */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}
+      >
         <div>
-          <h1 style={{ fontFamily: '"Press Start 2P"', fontSize: 16,
+          <h1 style={{
+            fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+            fontSize: 26, margin: 0,
             background: 'linear-gradient(135deg, #4dff91, #afc6ff)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            FLASHCARDS
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          }}>
+            Flashcards
           </h1>
-          <p style={{ fontFamily: 'VT323', fontSize: 18, color: '#8c90a0', marginTop: 4 }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: T.muted, marginTop: 4 }}>
             Spaced repetition — study smarter, not longer
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <Button variant="secondary" icon={Upload} size="sm"
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
             onClick={() => setImportModal(true)}
-            style={{ borderColor: '#ffd6a0', color: '#ffd6a0' }}>
-            IMPORT CSV
-          </Button>
-          <Button icon={Plus} onClick={() => setNewDeckModal(true)}>NEW DECK</Button>
+            style={{ ...btnSecondary, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Upload size={13} /> Import CSV
+          </button>
+          <button
+            onClick={() => setNewDeckModal(true)}
+            style={{ ...btnPrimary, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Plus size={13} /> New Deck
+          </button>
         </div>
       </motion.div>
 
-      {/* Stats bar */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-          {[
-            { label: 'TOTAL CARDS', value: totalCards, color: '#afc6ff', icon: Layers },
-            { label: 'MASTERED', value: totalMastered, color: '#4dff91', icon: Trophy },
-            { label: 'DUE NOW', value: dueNow, color: dueNow > 0 ? '#ffd6a0' : '#4dff91', icon: Zap },
-          ].map(s => (
-            <GlassCard key={s.label} style={{ padding: '16px 20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                  <p style={{ fontFamily: 'VT323', fontSize: 13, color: '#606080', marginBottom: 4 }}>{s.label}</p>
-                  <p style={{ fontFamily: '"Press Start 2P"', fontSize: 22, color: s.color }}>{s.value}</p>
-                </div>
-                <s.icon size={22} style={{ color: s.color, opacity: 0.5 }} />
+      {/* Stats row */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.05 }}
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}
+      >
+        {[
+          { label: 'TOTAL CARDS', value: totalCards, color: T.blue, Icon: Layers },
+          { label: 'MASTERED', value: totalMastered, color: T.green, Icon: Trophy },
+          { label: 'DUE NOW', value: dueNow, color: dueNow > 0 ? T.orange : T.green, Icon: Zap },
+        ].map(({ label, value, color, Icon }) => (
+          <div key={label} style={{ ...card }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <p style={{ ...labelSt }}>{label}</p>
+                <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 28, color, margin: 0 }}>
+                  {value}
+                </p>
               </div>
-            </GlassCard>
-          ))}
-        </div>
+              <Icon size={22} style={{ color, opacity: 0.4 }} />
+            </div>
+          </div>
+        ))}
       </motion.div>
 
       {/* Deck grid */}
       {decks.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
-          {decks.map(deck => {
+          {decks.map((deck, idx) => {
             const course = courses.find(c => c.id === deck.courseId)
             return (
               <DeckCard
                 key={deck.id}
                 deck={deck}
                 course={course}
+                idx={idx}
                 onStudy={() => setStudyDeck(deck.id)}
                 onEdit={() => setEditDeck(deck)}
                 onDelete={() => deleteDeck(deck.id)}
@@ -514,40 +929,64 @@ const Flashcards = () => {
           })}
         </div>
       ) : (
-        <GlassCard>
-          <div style={{ textAlign: 'center', padding: '64px 24px' }}>
-            <Layers size={48} style={{ margin: '0 auto 16px', color: '#424754' }} />
-            <p style={{ fontFamily: '"Press Start 2P"', fontSize: 12, color: '#606080', marginBottom: 10 }}>
-              NO DECKS YET
-            </p>
-            <p style={{ fontFamily: 'VT323', fontSize: 18, color: '#424754', marginBottom: 20 }}>
-              Create a flashcard deck to start studying with spaced repetition
-            </p>
-            <Button icon={Plus} onClick={() => setNewDeckModal(true)}>CREATE YOUR FIRST DECK</Button>
-          </div>
-        </GlassCard>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          style={{ ...card, textAlign: 'center', padding: '64px 24px' }}
+        >
+          <Layers size={48} style={{ margin: '0 auto 16px', color: T.faint }} />
+          <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 16, color: T.muted, marginBottom: 10 }}>
+            No decks yet
+          </h3>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: T.faint, marginBottom: 24 }}>
+            Create a flashcard deck to start studying with spaced repetition
+          </p>
+          <button
+            onClick={() => setNewDeckModal(true)}
+            style={{ ...btnPrimary, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Plus size={13} /> Create Your First Deck
+          </button>
+        </motion.div>
       )}
 
       {/* New Deck Modal */}
-      <Modal isOpen={newDeckModal} onClose={() => setNewDeckModal(false)} title="New Flashcard Deck" size="sm"
+      <Modal
+        isOpen={newDeckModal}
+        onClose={() => setNewDeckModal(false)}
+        title="New Flashcard Deck"
+        size="sm"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setNewDeckModal(false)}>Cancel</Button>
-            <Button onClick={handleCreateDeck} disabled={!newDeckName.trim()}>Create Deck</Button>
+            <button onClick={() => setNewDeckModal(false)} style={btnSecondary}>Cancel</button>
+            <button
+              onClick={handleCreateDeck}
+              disabled={!newDeckName.trim()}
+              style={{ ...btnPrimary, opacity: !newDeckName.trim() ? 0.5 : 1, cursor: !newDeckName.trim() ? 'not-allowed' : 'pointer' }}
+            >
+              Create Deck
+            </button>
           </>
-        }>
+        }
+      >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <Input label="Deck Name" value={newDeckName}
-            onChange={e => setNewDeckName(e.target.value)}
-            placeholder="Integration Techniques, WWI Key Terms..." />
           <div>
-            <label style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#606080', display: 'block', marginBottom: 8 }}>
-              COURSE (OPTIONAL)
-            </label>
-            <select value={newDeckCourse} onChange={e => setNewDeckCourse(e.target.value)}
-              style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6,
-                color: '#dfe2eb', fontFamily: 'VT323', fontSize: 16, cursor: 'pointer' }}>
+            <label style={labelSt}>DECK NAME</label>
+            <input
+              value={newDeckName}
+              onChange={e => setNewDeckName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleCreateDeck()}
+              placeholder="Integration Techniques, WWI Key Terms..."
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <label style={labelSt}>COURSE (OPTIONAL)</label>
+            <select
+              value={newDeckCourse}
+              onChange={e => setNewDeckCourse(e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+            >
               <option value="">No course</option>
               {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
@@ -556,24 +995,36 @@ const Flashcards = () => {
       </Modal>
 
       {/* Import CSV Modal */}
-      <Modal isOpen={importModal} onClose={() => { setImportModal(false); setImportText(''); setImportPreview([]) }}
-        title="Import Flashcards (CSV / Quizlet)" size="md"
+      <Modal
+        isOpen={importModal}
+        onClose={closeImportModal}
+        title="Import Flashcards"
+        size="md"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setImportModal(false)}>Cancel</Button>
-            <Button onClick={handleImport} disabled={importPreview.length === 0 || !importName.trim()}>
+            <button onClick={closeImportModal} style={btnSecondary}>Cancel</button>
+            <button
+              onClick={handleImport}
+              disabled={importPreview.length === 0 || !importName.trim()}
+              style={{
+                ...btnPrimary,
+                opacity: (importPreview.length === 0 || !importName.trim()) ? 0.5 : 1,
+                cursor: (importPreview.length === 0 || !importName.trim()) ? 'not-allowed' : 'pointer',
+              }}
+            >
               Import {importPreview.length > 0 ? `${importPreview.length} Cards` : ''}
-            </Button>
+            </button>
           </>
-        }>
+        }
+      >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <Input label="Deck Name" value={importName}
-            onChange={e => setImportName(e.target.value)} placeholder="My Imported Deck" />
           <div>
-            <label style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#606080', display: 'block', marginBottom: 6 }}>
-              PASTE CSV (FRONT TAB/COMMA BACK)
-            </label>
-            <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080', marginBottom: 8 }}>
+            <label style={labelSt}>DECK NAME</label>
+            <input value={importName} onChange={e => setImportName(e.target.value)} placeholder="My Imported Deck" style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelSt}>PASTE CSV (FRONT TAB/COMMA BACK)</label>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.faint, marginBottom: 8 }}>
               Works with Quizlet export, Anki CSV, or any tab/comma-separated front↔back format.
             </p>
             <textarea
@@ -584,40 +1035,24 @@ const Flashcards = () => {
               }}
               placeholder={'What is photosynthesis?\tConversion of light to chemical energy\nMitosis vs Meiosis\tMitosis: 2 identical cells; Meiosis: 4 sex cells'}
               rows={6}
-              style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6, color: '#dfe2eb',
-                fontFamily: 'monospace', fontSize: 12, resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+              style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }}
             />
           </div>
           {importPreview.length > 0 && (
-            <div style={{ padding: '10px 12px', background: 'rgba(77,255,145,0.06)',
-              border: '1px solid rgba(77,255,145,0.2)', borderRadius: 8 }}>
-              <p style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#4dff91', marginBottom: 8 }}>
-                PREVIEW ({parseCSV(importText).length} cards detected)
+            <div style={{ padding: '12px 14px', background: 'rgba(77,255,145,0.04)', border: '1px solid rgba(77,255,145,0.2)', borderRadius: 8 }}>
+              <p style={{ ...labelSt, color: T.green, marginBottom: 8 }}>
+                PREVIEW — {parseCSV(importText).length} cards detected
               </p>
               {importPreview.map((c, i) => (
-                <div key={i} style={{ fontFamily: 'VT323', fontSize: 14, color: '#8c90a0', marginBottom: 3 }}>
-                  <span style={{ color: '#afc6ff' }}>Q:</span> {c.front.slice(0, 40)}{c.front.length > 40 ? '…' : ''}&nbsp;&nbsp;
-                  <span style={{ color: '#4dff91' }}>A:</span> {c.back.slice(0, 40)}{c.back.length > 40 ? '…' : ''}
+                <div key={i} style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: T.muted, marginBottom: 4 }}>
+                  <span style={{ color: T.blue }}>Q:</span> {c.front.slice(0, 40)}{c.front.length > 40 ? '…' : ''}&nbsp;&nbsp;
+                  <span style={{ color: T.green }}>A:</span> {c.back.slice(0, 40)}{c.back.length > 40 ? '…' : ''}
                 </div>
               ))}
             </div>
           )}
         </div>
       </Modal>
-
-      {/* Edit Deck Modal */}
-      {editDeck && (
-        <Modal isOpen={!!editDeck} onClose={() => setEditDeck(null)}
-          title={`Edit — ${editDeck.name}`} size="md">
-          <DeckEditor
-            deck={decks.find(d => d.id === editDeck.id) || editDeck}
-            onClose={() => setEditDeck(null)}
-            onAddCard={addCard}
-            onRemoveCard={removeCard}
-          />
-        </Modal>
-      )}
     </div>
   )
 }

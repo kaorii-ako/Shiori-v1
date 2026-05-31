@@ -2,10 +2,11 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../stores'
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuthStore()
+  const { isAuthenticated, isLoading, _hasHydrated } = useAuthStore()
   const location = useLocation()
 
-  if (isLoading) {
+  console.log('[ProtectedRoute] isLoading:', isLoading, 'isAuthenticated:', isAuthenticated, 'isDemo:', useAuthStore.getState().isDemo);
+  if (isLoading || !_hasHydrated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse">

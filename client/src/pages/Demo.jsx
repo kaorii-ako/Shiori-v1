@@ -30,7 +30,12 @@ export default function Demo() {
     localStorage.setItem('shiori-quiz-history', JSON.stringify(DEMO_QUIZ_HISTORY))
     localStorage.setItem('shiori-leaderboard', JSON.stringify(DEMO_LEADERBOARD))
     setXP(620)
-    navigate('/home', { replace: true })
+    // Log for debugging
+    console.log('[Demo] Demo data stored, navigating to home')
+    // Navigate after ensuring state is updated (microtask)
+    setTimeout(() => {
+      navigate('/home', { replace: true })
+    }, 0)
   }, [])
 
   return (

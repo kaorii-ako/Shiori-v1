@@ -24,6 +24,7 @@ export const useAuthStore = create(
       error: null,
       isAuthenticated: false,
       isDemo: false,
+      _hasHydrated: false,
 
       setUser: (user) => set({ user, error: null, isAuthenticated: !!user }),
       setToken: (token) => set({ token }),
@@ -31,6 +32,9 @@ export const useAuthStore = create(
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
+      setHasHydrated: (state) => {
+        set({ _hasHydrated: state })
+      },
 
       enterDemoMode: () => {
         set({
@@ -144,6 +148,9 @@ export const useAuthStore = create(
         }
         set({ user: null, token: null, isAuthenticated: false, googleConnected: false, error: null, isDemo: false })
       }
+      onRehydrateStorage: () => (state) => {
+        state.setHasHydrated(true);
+      },
     }),
     {
       name: 'shiori-auth'
