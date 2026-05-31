@@ -15,6 +15,25 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.4.0] — 2026-05-31
+
+### Added
+- **Complete landing page redesign** — cinematic dark-minimal, product-first (huashu-design principles). Replaces 1115-line table-of-features with: animated app preview mockup, feature cards, 3-step onboarding, testimonials, pricing tiers
+- **Custom domain** — live at [shiorii.tech](https://shiorii.tech)
+
+### Fixed
+- **Demo blank screen on refresh** — `Demo.jsx` now always re-initializes demo data regardless of persisted `isAuthenticated:true` in auth store. Guard changed from `if (isAuthenticated)` to `if (isAuthenticated && !isDemo)`. This fixes the root cause: non-persistent stores (assignments, events) were reset by page refresh while auth store persisted demo state
+- **Login + Signup demo clicks** now route to `/demo` (consistent behavior, no duplicate data-loading logic)
+- **URL migration** — all hardcoded `shiori-v1.vercel.app` replaced with `shiorii.tech` across 16 files: index.html, OG tags, sitemap, robots.txt, og-image.svg, FUNDING.yml, Stripe webhook, extension popup, API callbacks, LAUNCH.md
+
+### Changed
+- `client/package.json` — removed dead `appwrite` dependency (tree-shaken but listed as dep)
+- CI workflow — `npm ci` → `npm install` (client lock file is gitignored; `npm ci` was failing silently)
+- Login.jsx — removed 8 unused imports + duplicated demo data loading logic
+- Signup.jsx — removed debug `console.log` from registration handler
+
+---
+
 ## [2.3.0] — 2026-05-30
 
 ### Added
