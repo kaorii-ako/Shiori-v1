@@ -74,7 +74,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Pro pricing page** (`/pro`) — Free vs Pro comparison, FAQ, annual/monthly billing toggle
 - **OG meta tags** — `og:title`, `og:description` for better social sharing
 - **Press Start 2P + VT323 fonts** — complete retro gaming aesthetic
-- **Vercel deployment** — live at [shiori-v1.vercel.app](https://shiori-v1.vercel.app)
+- **Vercel deployment** — live at [shiorii.tech](https://shiorii.tech)
 - **GitHub Actions CI** — automatic build verification on every push and PR
 - **Chunk splitting** — Vite manualChunks for vendor/motion/ui bundles (better load time)
 - **Security headers** — `X-Content-Type-Options`, `X-Frame-Options` via Vercel config

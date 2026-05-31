@@ -1,4 +1,4 @@
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://shiori-v1.vercel.app'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://shiorii.tech'
 
 const SCOPES = [
   'https://www.googleapis.com/auth/classroom.courses.readonly',

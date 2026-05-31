@@ -46,18 +46,7 @@ const Signup = () => {
   }
 
   const handleDemoClick = () => {
-    const demoData = {
-      username: 'demo-user-' + Math.random().toString(36).substr(2, 5),
-      firstName: 'Demo',
-      lastName: 'User',
-      email: 'demo' + Date.now() + '@example.com',
-      password: 'DemoPass123!',
-      passwordConfirm: 'DemoPass123!',
-      country: 'Philippines'
-    }
-    setFormData(demoData)
-    setErrors({})
-    if (error) clearError()
+    navigate('/demo')
   }
 
   const handleSubmit = async (e) => {
@@ -73,15 +62,6 @@ const Signup = () => {
 
     try {
       const timezone = getTimezoneFromCountry(formData.country)
-      console.log('Registering with:', {
-        username: formData.username,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        country: formData.country,
-        timezone
-      })
       
       await register({
         username: formData.username,

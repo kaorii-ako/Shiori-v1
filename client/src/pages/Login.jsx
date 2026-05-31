@@ -5,17 +5,12 @@ import { Mail, Lock, AlertCircle, Sparkles } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { useAuthStore, useAssignmentsStore, useEventStore, useGradesStore, useNotesStore, useFlashcardsStore, useXPStore } from '../stores'
+import { useAuthStore } from '../stores'
 import { validateLoginForm } from '../utils/authValidation'
-import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, DEMO_COURSE_WEIGHTS, DEMO_DECKS, DEMO_QUIZ_HISTORY, DEMO_LEADERBOARD } from '../utils/demoData'
 
 const Login = () => {
   const navigate = useNavigate()
-  const { loginWithEmail, loginWithGitHub, loginWithGoogle, isLoading, error, clearError, enterDemoMode } = useAuthStore()
-  const { setXP } = useXPStore()
-  const { setAssignments, setCourses } = useAssignmentsStore()
-  const { setEvents } = useEventStore()
-  const { setCourseGrades, setCourseWeights } = useGradesStore()
+  const { loginWithEmail, loginWithGitHub, loginWithGoogle, isLoading, error, clearError } = useAuthStore()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -55,23 +50,7 @@ const Login = () => {
   }
 
   const handleDemoClick = () => {
-    enterDemoMode()
-    setCourses(DEMO_COURSES)
-    setAssignments(DEMO_ASSIGNMENTS)
-    setEvents(DEMO_EVENTS)
-    Object.entries(DEMO_GRADES).forEach(([courseId, grades]) => {
-      setCourseGrades(courseId, grades)
-    })
-    Object.entries(DEMO_COURSE_WEIGHTS).forEach(([courseId, weights]) => {
-      setCourseWeights(courseId, weights)
-    })
-    useNotesStore.getState().replaceNotes(DEMO_NOTES)
-    useFlashcardsStore.getState().replaceDecks(DEMO_DECKS)
-    // Seed quiz history and leaderboard for demo
-    localStorage.setItem('shiori-quiz-history', JSON.stringify(DEMO_QUIZ_HISTORY))
-    localStorage.setItem('shiori-leaderboard', JSON.stringify(DEMO_LEADERBOARD))
-    setXP(620)
-    navigate('/home')
+    navigate('/demo')
   }
 
   return (

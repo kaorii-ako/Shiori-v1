@@ -1,6 +1,6 @@
 # Shiori Browser Extension
 
-Quick-access Chrome extension for the [Shiori AI Study Companion](https://shiori-v1.vercel.app).
+Quick-access Chrome extension for the [Shiori AI Study Companion](https://shiorii.tech).
 
 ## Features
 

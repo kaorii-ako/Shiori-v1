@@ -76,7 +76,7 @@
   <text x="607" y="479" font-family="Space Grotesk, sans-serif" font-size="13" fill="#ff6b9d" text-anchor="middle" font-weight="600">Pomodoro Timer</text>
 
   <!-- URL -->
-  <text x="80" y="578" font-family="Space Grotesk, sans-serif" font-size="16" fill="#424754">github.com/kaorii-ako/Shiori-v1 · shiori-v1.vercel.app</text>
+  <text x="80" y="578" font-family="Space Grotesk, sans-serif" font-size="16" fill="#424754">github.com/kaorii-ako/Shiori-v1 · shiorii.tech</text>
 
   <!-- Right side: mini app mockup -->
   <rect x="760" y="60" width="380" height="510" rx="14" fill="rgba(10,14,20,0.9)" stroke="rgba(66,71,84,0.4)" stroke-width="1"/>
@@ -147,5 +147,5 @@
 
   <!-- Bottom border line -->
   <line x1="760" y1="570" x2="1140" y2="570" stroke="rgba(66,71,84,0.25)" stroke-width="1"/>
-  <text x="950" y="590" font-family="Manrope, sans-serif" font-size="12" fill="#424754" text-anchor="middle">Try the demo → shiori-v1.vercel.app</text>
+  <text x="950" y="590" font-family="Manrope, sans-serif" font-size="12" fill="#424754" text-anchor="middle">Try the demo → shiorii.tech</text>
 </svg>

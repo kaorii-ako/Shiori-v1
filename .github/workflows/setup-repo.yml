@@ -49,7 +49,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               description: 'AI study companion — syncs Google Classroom, Gmail & Calendar → personalized study plan via Gemini. Free & open source.',
-              homepage: 'https://shiori-v1.vercel.app',
+              homepage: 'https://shiorii.tech',
               has_issues: true,
               has_projects: false,
               has_wiki: false

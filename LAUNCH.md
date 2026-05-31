@@ -42,7 +42,7 @@ I built an AI study companion that connects to Google Classroom, Gmail, and Cale
 
 No more manually tracking deadlines across 5 tabs.
 
-Try it with zero setup → shiori-v1.vercel.app/demo (no login, 1 click)
+Try it with zero setup → shiorii.tech/demo (no login, 1 click)
 
 Open source. MIT license. 🧵
 ```
@@ -123,7 +123,7 @@ Beyond MCP, the web app (React + Gemini) has:
 - Weighted GPA calculator + final exam predictor
 - Pomodoro, habit tracker, student leaderboard, PWA
 
-Demo (1 click, no login): https://shiori-v1.vercel.app/demo
+Demo (1 click, no login): https://shiorii.tech/demo
 MCP server: https://github.com/kaorii-ako/Shiori-v1/tree/master/mcp
 GitHub: https://github.com/kaorii-ako/Shiori-v1
 
@@ -159,7 +159,7 @@ Shiori (栞 = "bookmark" in Japanese) connects to your Google ecosystem and elim
 📊 Grade calculator with weighted category support
 ⏱ Pomodoro timer integrated with your active assignment
 
-**Try it in 10 seconds** — one click at shiori-v1.vercel.app/demo. No login. No setup. Full app with sample data.
+**Try it in 10 seconds** — one click at shiorii.tech/demo. No login. No setup. Full app with sample data.
 
 **Self-host free forever** with your own Google + Gemini API keys. MIT licensed. Full source on GitHub.
 
@@ -174,7 +174,7 @@ I'm Tawin, a student who built Shiori because I kept missing assignments.
 
 The thing I'm most proud of is the AI chat — it actually knows your data. When you ask "what should I work on first?" it looks at your deadlines, the weights of assignments, and your estimated study hours. Not generic advice.
 
-Try the demo at shiori-v1.vercel.app/demo (1 click, no login) and let me know what you think. What feature would make you actually use this daily?
+Try the demo at shiorii.tech/demo (1 click, no login) and let me know what you think. What feature would make you actually use this daily?
 ```
 
 ---
@@ -189,7 +189,7 @@ I'm a student and built this because I kept missing assignments scattered across
 
 It uses Google Classroom API, Gmail API, and Calendar API to pull all your deadlines automatically, then Gemini AI builds a personalized study schedule.
 
-Demo (no login): shiori-v1.vercel.app
+Demo (no login): shiorii.tech
 GitHub: github.com/kaorii-ako/Shiori-v1
 
 Tech: React + Vite + Express + Google Gemini + Supabase (PostgreSQL). MIT licensed.
@@ -209,7 +209,7 @@ The interesting parts technically:
 - Vercel serverless functions for AI endpoints
 - Framer Motion for the glassmorphism UI animations
 
-Live: shiori-v1.vercel.app | GitHub: github.com/kaorii-ako/Shiori-v1
+Live: shiorii.tech | GitHub: github.com/kaorii-ako/Shiori-v1
 ```
 
 ---
@@ -233,12 +233,12 @@ PR to: https://github.com/awesome-xyz/awesome-productivity
 
 Add under **AI Assistants** section:
 ```
-- [Shiori](https://shiori-v1.vercel.app) – AI study companion that syncs Google Classroom, Gmail, and Calendar to generate personalized day-by-day study plans. Open source, MIT. ([GitHub](https://github.com/kaorii-ako/Shiori-v1))
+- [Shiori](https://shiorii.tech) – AI study companion that syncs Google Classroom, Gmail, and Calendar to generate personalized day-by-day study plans. Open source, MIT. ([GitHub](https://github.com/kaorii-ako/Shiori-v1))
 ```
 
 Also add under **Pomodoro & Timers** section:
 ```
-- [Shiori](https://shiori-v1.vercel.app) – Student productivity app with integrated Pomodoro timer that tracks which assignment you're currently studying. ([GitHub](https://github.com/kaorii-ako/Shiori-v1))
+- [Shiori](https://shiorii.tech) – Student productivity app with integrated Pomodoro timer that tracks which assignment you're currently studying. ([GitHub](https://github.com/kaorii-ako/Shiori-v1))
 ```
 
 ### 2. yantoumu/awesome-ai-tools-4
@@ -246,7 +246,7 @@ PR to: https://github.com/yantoumu/awesome-ai-tools-4
 
 Add under **Educational AI Tools** → Students subsection:
 ```
-| [Shiori](https://github.com/kaorii-ako/Shiori-v1) | Open-source AI study companion — syncs Google Classroom, Gmail & Calendar, generates personalized study plans via Gemini AI. Demo at shiori-v1.vercel.app | 🆓 |
+| [Shiori](https://github.com/kaorii-ako/Shiori-v1) | Open-source AI study companion — syncs Google Classroom, Gmail & Calendar, generates personalized study plans via Gemini AI. Demo at shiorii.tech | 🆓 |
 ```
 
 ### 3. balavenkatesh3322/awesome-AI-toolkit
@@ -274,7 +274,7 @@ Shiori's demo mode qualifies: free, no login needed, education + productivity.
 AI study companion that syncs Google Classroom, Gmail, and Calendar to build personalized study plans.
 Try the full app with demo data — no account, no API keys, no setup.
 ```
-- Link: https://shiori-v1.vercel.app
+- Link: https://shiorii.tech
 
 ### 6. AlternativeTo listing (90+ DA backlink = long-term organic traffic)
 - Go to: https://alternativeto.net/software/add/
@@ -287,7 +287,7 @@ Just shipped Shiori — an open source AI study companion for students.
 
 It connects to your Google Classroom, Gmail, and Calendar. Gemini AI builds your study plan.
 
-Try it with zero setup → shiori-v1.vercel.app/demo (1 click, no login)
+Try it with zero setup → shiorii.tech/demo (1 click, no login)
 
 Code: github.com/kaorii-ako/Shiori-v1
 ```
@@ -327,7 +327,7 @@ What it does:
 
 Stack: React 18, Vite, Framer Motion, Zustand, Express, Google Gemini AI
 
-Try it (no signup): https://shiori-v1.vercel.app
+Try it (no signup): https://shiorii.tech
 GitHub: https://github.com/kaorii-ako/Shiori-v1
 ```
 
@@ -337,7 +337,7 @@ Post same body to: r/webdev, r/learnprogramming, r/students
 
 ## 🐦 Twitter/X Thread
 
-Tweet 1: "I built Shiori (栞) — open-source AI study companion that connects to your Google Classroom. No more juggling 5 tabs. Try free (no signup): shiori-v1.vercel.app — GitHub: github.com/kaorii-ako/Shiori-v1 🧵"
+Tweet 1: "I built Shiori (栞) — open-source AI study companion that connects to your Google Classroom. No more juggling 5 tabs. Try free (no signup): shiorii.tech — GitHub: github.com/kaorii-ako/Shiori-v1 🧵"
 
 Tweet 2: "📚 Google Classroom sync → 🤖 Gemini AI study plans → 📊 Weighted grade calculator → 🎯 Final exam predictor ('What score do I need to get an A?')"
 
@@ -361,7 +361,7 @@ Maker comment: "Built this because I kept missing deadlines while managing 5 tab
 
 1. dashboard.stripe.com/products → New product → "Shiori Pro" → ฿199/month (THB)
 2. Copy price_* ID → STRIPE_PRICE_MONTHLY in Vercel
-3. dashboard.stripe.com/webhooks → Add endpoint: https://shiori-v1.vercel.app/api/webhook
+3. dashboard.stripe.com/webhooks → Add endpoint: https://shiorii.tech/api/webhook
 4. Events: checkout.session.completed + customer.subscription.deleted
 5. Copy webhook secret → STRIPE_WEBHOOK_SECRET in Vercel
 6. Redeploy on Vercel
@@ -402,7 +402,7 @@ Features:
 
 All your data lives in your own Supabase instance. Bring-your-own Gemini API key (free tier).
 
-Demo (no login, 1 click): https://shiori-v1.vercel.app/demo
+Demo (no login, 1 click): https://shiorii.tech/demo
 GitHub (MIT): https://github.com/kaorii-ako/Shiori-v1
 ```
 

@@ -7,7 +7,7 @@ const PRICES = {
   annual: process.env.STRIPE_PRICE_ANNUAL,
 }
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://shiori-v1.vercel.app'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://shiorii.tech'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

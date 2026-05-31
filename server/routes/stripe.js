@@ -30,7 +30,7 @@ router.post('/create-checkout-session', async (req, res) => {
       })
     }
 
-    const origin = req.get('origin') || req.headers.referer?.replace(/\/$/, '') || 'https://shiori-v1.vercel.app'
+    const origin = req.get('origin') || req.headers.referer?.replace(/\/$/, '') || 'https://shiorii.tech'
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
