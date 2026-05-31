@@ -1,188 +1,141 @@
 -- Shiori Supabase Schema
--- Run this in your Supabase SQL editor: https://supabase.com/dashboard
+-- Run in your Supabase SQL Editor (Dashboard → SQL Editor → New Query)
 
--- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
--- Profiles (extends Supabase auth.users)
-create table if not exists public.profiles (
-  id uuid references auth.users(id) on delete cascade primary key,
-  name text,
-  email text,
-  avatar_url text,
-  country text,
-  streak int default 0,
-  xp int default 0,
-  is_pro boolean default false,
-  pro_expires_at timestamptz,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
 -- Courses
-create table if not exists public.courses (
+create table if not exists courses (
   id text primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
   name text not null,
   code text,
   color text default '#afc6ff',
   instructor text,
-  credits int default 3,
+  credits numeric(3,1) default 3,
   created_at timestamptz default now()
 );
+alter table courses enable row level security;
+create policy "Users own courses" on courses for all using (auth.uid() = user_id);
 
 -- Assignments
-create table if not exists public.assignments (
+create table if not exists assignments (
   id text primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
-  course_id text references public.courses(id) on delete cascade,
+  course_id text references courses(id) on delete set null,
   course_name text,
   title text not null,
   description text,
-  due_date timestamptz,
-  status text default 'pending',
-  priority text default 'medium',
+  due_date text,
+  status text default 'pending' check (status in ('pending', 'in_progress', 'completed', 'graded')),
+  priority text default 'medium' check (priority in ('low', 'medium', 'high')),
   estimated_hours numeric(4,1),
   grade numeric(5,2),
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  created_at timestamptz default now()
 );
-
--- Grades
-create table if not exists public.grades (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users(id) on delete cascade not null,
-  course_id text references public.courses(id) on delete cascade not null,
-  assignment_id text,
-  title text not null,
-  points_earned numeric(7,2) not null,
-  points_possible numeric(7,2) not null,
-  category_id text,
-  graded_at timestamptz default now()
-);
-
--- Course grade weight categories
-create table if not exists public.grade_categories (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users(id) on delete cascade not null,
-  course_id text references public.courses(id) on delete cascade not null,
-  name text not null,
-  weight numeric(5,2) not null
-);
+alter table assignments enable row level security;
+create policy "Users own assignments" on assignments for all using (auth.uid() = user_id);
 
 -- Notes
-create table if not exists public.notes (
+create table if not exists notes (
   id text primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
-  course_id text references public.courses(id) on delete set null,
-  title text,
-  content text,
-  tags text[],
+  course_id text references courses(id) on delete set null,
+  title text not null default '',
+  content text default '',
+  tags text[] default '{}',
   pinned boolean default false,
   color text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+alter table notes enable row level security;
+create policy "Users own notes" on notes for all using (auth.uid() = user_id);
 
--- Flashcard decks
-create table if not exists public.flashcard_decks (
+-- Flashcard Decks
+create table if not exists flashcard_decks (
   id text primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
-  course_id text references public.courses(id) on delete set null,
+  course_id text references courses(id) on delete set null,
   name text not null,
   description text,
   color text default '#afc6ff',
   created_at timestamptz default now()
 );
+alter table flashcard_decks enable row level security;
+create policy "Users own decks" on flashcard_decks for all using (auth.uid() = user_id);
 
--- Flashcards
-create table if not exists public.flashcards (
+create table if not exists flashcards (
   id text primary key,
-  deck_id text references public.flashcard_decks(id) on delete cascade not null,
+  deck_id text references flashcard_decks(id) on delete cascade not null,
   user_id uuid references auth.users(id) on delete cascade not null,
   front text not null,
   back text not null,
-  streak int default 0,
+  streak integer default 0,
   next_review timestamptz,
-  last_reviewed timestamptz
+  created_at timestamptz default now()
 );
+alter table flashcards enable row level security;
+create policy "Users own flashcards" on flashcards for all using (auth.uid() = user_id);
 
--- Calendar events
-create table if not exists public.events (
+-- Events
+create table if not exists events (
   id text primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
-  course_id text references public.courses(id) on delete set null,
+  course_id text references courses(id) on delete set null,
   title text not null,
-  type text default 'event',
-  start_at timestamptz,
-  end_at timestamptz,
+  type text default 'event' check (type in ('event', 'exam', 'assignment', 'reminder', 'class')),
+  start_at text,
+  end_at text,
   description text,
   color text,
   created_at timestamptz default now()
 );
+alter table events enable row level security;
+create policy "Users own events" on events for all using (auth.uid() = user_id);
 
--- Study plans
-create table if not exists public.study_plans (
+-- Habits
+create table if not exists habits (
+  id text primary key,
+  user_id uuid references auth.users(id) on delete cascade not null,
+  name text not null,
+  description text,
+  frequency text default 'daily' check (frequency in ('daily', 'weekly')),
+  target_days integer default 7,
+  color text default '#4dff91',
+  icon text default '✓',
+  streak integer default 0,
+  completions text[] default '{}',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+alter table habits enable row level security;
+create policy "Users own habits" on habits for all using (auth.uid() = user_id);
+
+-- Study Plans
+create table if not exists study_plans (
   id text primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
   title text not null,
+  course_id text references courses(id) on delete set null,
   content text,
-  course_id text,
-  estimated_hours numeric(4,1),
-  completed boolean default false,
-  order_index int default 0,
+  generated_at text,
+  status text default 'active' check (status in ('active', 'completed', 'archived')),
   created_at timestamptz default now()
 );
+alter table study_plans enable row level security;
+create policy "Users own study plans" on study_plans for all using (auth.uid() = user_id);
 
--- ============================================================
--- Row Level Security (RLS) — users only see their own data
--- ============================================================
-
-alter table public.profiles enable row level security;
-alter table public.courses enable row level security;
-alter table public.assignments enable row level security;
-alter table public.grades enable row level security;
-alter table public.grade_categories enable row level security;
-alter table public.notes enable row level security;
-alter table public.flashcard_decks enable row level security;
-alter table public.flashcards enable row level security;
-alter table public.events enable row level security;
-alter table public.study_plans enable row level security;
-
--- Profiles
-create policy "Users can view own profile" on public.profiles for select using (auth.uid() = id);
-create policy "Users can update own profile" on public.profiles for update using (auth.uid() = id);
-create policy "Users can insert own profile" on public.profiles for insert with check (auth.uid() = id);
-
--- Generic "own data" policies
-create policy "Own courses" on public.courses for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "Own assignments" on public.assignments for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "Own grades" on public.grades for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "Own grade_categories" on public.grade_categories for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "Own notes" on public.notes for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "Own flashcard_decks" on public.flashcard_decks for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "Own flashcards" on public.flashcards for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "Own events" on public.events for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "Own study_plans" on public.study_plans for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-
--- ============================================================
--- Trigger: auto-create profile on new user signup
--- ============================================================
-
-create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer set search_path = public as $$
-begin
-  insert into public.profiles (id, name, email, avatar_url)
-  values (
-    new.id,
-    coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)),
-    new.email,
-    new.raw_user_meta_data->>'avatar_url'
-  );
-  return new;
-end;
-$$;
-
-create or replace trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function public.handle_new_user();
+-- Pro Subscriptions
+create table if not exists subscriptions (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references auth.users(id) on delete cascade not null unique,
+  stripe_customer_id text,
+  stripe_subscription_id text,
+  status text default 'inactive' check (status in ('active', 'inactive', 'cancelled', 'past_due')),
+  plan text default 'free' check (plan in ('free', 'pro', 'pro_annual')),
+  current_period_end timestamptz,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+alter table subscriptions enable row level security;
+create policy "Users read own subscription" on subscriptions for select using (auth.uid() = user_id);
