@@ -9,6 +9,8 @@ export default {
       colors: {
         // Surface tokens
         surface: '#10141a',
+        'bg-primary': 'var(--bg-primary)',
+        'bg-card': 'var(--bg-card)',
         surface_bright: '#181c22',
         surface_container_lowest: '#0a0e14',
         surface_container_low: '#14181e',
