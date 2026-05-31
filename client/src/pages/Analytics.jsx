@@ -89,7 +89,7 @@ function generateShareCard({ gpa, focusMinutes, sessionCount, completed, total, 
   // Bottom tagline
   ctx.fillStyle = '#424754'
   ctx.font = '13px Arial'
-  ctx.fillText('shiori-v1.vercel.app — free, open-source AI study companion', 50, 460)
+  ctx.fillText('shiorii.tech — free, open-source AI study companion', 50, 460)
 
   if (username) {
     ctx.fillStyle = '#8c90a0'

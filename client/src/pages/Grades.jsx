@@ -158,7 +158,7 @@ const generateGPACard = (courses, overallGPA, userName) => {
   // Footer
   ctx.fillStyle = 'rgba(255,255,255,0.25)'
   ctx.font = '11px monospace'
-  ctx.fillText('shiori-v1.vercel.app  ·  Your AI Study Companion', 48, 490)
+  ctx.fillText('shiorii.tech  ·  Your AI Study Companion', 48, 490)
 
   const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   const dateW = ctx.measureText(date).width

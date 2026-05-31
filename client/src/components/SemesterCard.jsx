@@ -167,7 +167,7 @@ function generateCard({ user, gpa, courses, streak, xp, level, completed, total,
   ctx.fillRect(0, 940, 800, 60)
   ctx.fillStyle = '#c44dff'
   ctx.font = 'bold 13px monospace'
-  ctx.fillText('shiori-v1.vercel.app', 48, 976)
+  ctx.fillText('shiorii.tech', 48, 976)
   ctx.fillStyle = '#424754'
   ctx.font = '12px monospace'
   ctx.fillText('Free AI study companion · Open source · MIT license', 280, 976)

@@ -18,11 +18,11 @@
 
 <br/>
 
-**[🚀 Live Demo — 1 click, no signup →](https://shiori-v1.vercel.app/demo)**
+**[🚀 Live Demo — 1 click, no signup →](https://shiorii.tech/demo)**
 
 <br/>
 
-[![Shiori Demo](demo/preview.png)](https://shiori-v1.vercel.app)
+[![Shiori Demo](demo/preview.png)](https://shiorii.tech)
 
 <br/>
 
@@ -45,7 +45,7 @@
 
 <br/>
 
-**[⭐ Star on GitHub](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try Demo](https://shiori-v1.vercel.app/demo)** &nbsp;·&nbsp; **[🤖 MCP Server](mcp/)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[📝 dev.to Article](https://dev.to/kaoriiako/i-built-an-mcp-server-that-lets-claude-read-my-study-data-heres-how-5070)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiori-v1.vercel.app/pro)** &nbsp;·&nbsp; **[🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
+**[⭐ Star on GitHub](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try Demo](https://shiorii.tech/demo)** &nbsp;·&nbsp; **[🤖 MCP Server](mcp/)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[📝 dev.to Article](https://dev.to/kaoriiako/i-built-an-mcp-server-that-lets-claude-read-my-study-data-heres-how-5070)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiorii.tech/pro)** &nbsp;·&nbsp; **[🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
 
 > 🤖 **New:** [Shiori MCP Server](mcp/) — use your study data directly in Claude Code. `"What's due this week?"` `"Show my grades"` `"Add assignment: essay due Friday"`
 
@@ -181,7 +181,7 @@ It syncs your assignments from Google Classroom, hunts deadline emails in Gmail,
 ## ⚡ Try it in 10 seconds
 
 ```
-Visit https://shiori-v1.vercel.app/demo
+Visit https://shiorii.tech/demo
 → You're in. No click. No account. No API keys. No setup.
 ```
 
@@ -304,7 +304,7 @@ Shiori-v1/
 
 Want the hosted version — no setup, unlimited AI, and premium features?
 
-**[→ shiori-v1.vercel.app/pro](https://shiori-v1.vercel.app/pro)**
+**[→ shiorii.tech/pro](https://shiorii.tech/pro)**
 
 | | Free (Self-hosted) | Pro (Cloud) |
 |---|---|---|

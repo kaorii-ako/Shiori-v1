@@ -95,7 +95,7 @@ export default function Leaderboard() {
 
   const shareToTwitter = () => {
     const rank = myRank
-    const text = `📊 My Shiori study stats:\n🔥 ${myCard.streak}-day streak\n✅ ${myCard.completionRate}% assignments done${myCard.gpa ? `\n📈 ${myCard.gpa}% GPA` : ''}\n\nI'm #${rank} on my leaderboard!\n\nFree AI study companion → https://shiori-v1.vercel.app\n#Shiori #StudyWithAI`
+    const text = `📊 My Shiori study stats:\n🔥 ${myCard.streak}-day streak\n✅ ${myCard.completionRate}% assignments done${myCard.gpa ? `\n📈 ${myCard.gpa}% GPA` : ''}\n\nI'm #${rank} on my leaderboard!\n\nFree AI study companion → https://shiorii.tech\n#Shiori #StudyWithAI`
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
   }
 

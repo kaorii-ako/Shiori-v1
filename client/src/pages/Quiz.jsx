@@ -554,7 +554,7 @@ export default function Quiz() {
                   onClick={() => {
                     const pct = Math.round((score / questions.length) * 100)
                     const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '📚' : '💪'
-                    const text = `${emoji} Just scored ${pct}% on an AI-generated quiz from my study notes!\n\nUsing Shiori — free AI study companion for students.\nTry it: https://shiori-v1.vercel.app\n\n#Shiori #StudyWithAI #OpenSource`
+                    const text = `${emoji} Just scored ${pct}% on an AI-generated quiz from my study notes!\n\nUsing Shiori — free AI study companion for students.\nTry it: https://shiorii.tech\n\n#Shiori #StudyWithAI #OpenSource`
                     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
                   }}
                   style={{

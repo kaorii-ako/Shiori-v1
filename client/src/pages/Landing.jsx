@@ -571,7 +571,7 @@ const Landing = () => {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: '#606080', fontSize: 11, fontFamily: "'Manrope', sans-serif",
                 }}>
-                  shiori-v1.vercel.app
+                  shiorii.tech
                 </div>
               </div>
 

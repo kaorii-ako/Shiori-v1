@@ -5,14 +5,20 @@ import { DEMO_COURSES, DEMO_ASSIGNMENTS, DEMO_EVENTS, DEMO_GRADES, DEMO_NOTES, D
 
 export default function Demo() {
   const navigate = useNavigate()
-  const { enterDemoMode, isAuthenticated } = useAuthStore()
+  const { enterDemoMode, isAuthenticated, isDemo } = useAuthStore()
   const { setXP } = useXPStore()
   const { setAssignments, setCourses } = useAssignmentsStore()
   const { setEvents } = useEventStore()
   const { setCourseGrades, setCourseWeights } = useGradesStore()
 
   useEffect(() => {
-    if (isAuthenticated) { navigate('/home', { replace: true }); return }
+    // Real authenticated user (not demo) → send home
+    if (isAuthenticated && !isDemo) {
+      navigate('/home', { replace: true })
+      return
+    }
+    // (Re-)initialize demo every time — handles page refresh where auth store
+    // persisted isDemo:true but non-persistent stores (assignments, events) reset
     enterDemoMode()
     setCourses(DEMO_COURSES)
     setAssignments(DEMO_ASSIGNMENTS)

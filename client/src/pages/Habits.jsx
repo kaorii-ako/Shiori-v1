@@ -297,7 +297,7 @@ export default function Habits() {
                 onClick={() => {
                   const top = habits.reduce((best, h) => getStreak(h.completions, h.freezes) > getStreak(best.completions, best.freezes) ? h : best, habits[0])
                   const streak = getStreak(top?.completions || {}, top?.freezes || {})
-                  const text = `🔥 ${streak}-day streak on "${top?.name || 'my habits'}"! Just completed all my daily habits with Shiori — free AI study companion → https://shiori-v1.vercel.app #StudyWithAI`
+                  const text = `🔥 ${streak}-day streak on "${top?.name || 'my habits'}"! Just completed all my daily habits with Shiori — free AI study companion → https://shiorii.tech #StudyWithAI`
                   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
                   setShowShareCard(false)
                 }}

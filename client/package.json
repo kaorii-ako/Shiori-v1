@@ -5,11 +5,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "vite build 2>&1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
-    "appwrite": "^16.1.0",
     "axios": "^1.7.9",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.6.0",
