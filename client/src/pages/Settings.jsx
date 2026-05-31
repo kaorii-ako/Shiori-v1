@@ -1,366 +1,134 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
-import {
-  User,
-  Link2,
-  Link2Off,
-  Bell,
-  Palette,
-  Database,
-  Shield,
-  ChevronRight,
-  Check,
-  X,
-  ExternalLink,
-  RefreshCw
-} from 'lucide-react'
-import GlassCard from '../components/GlassCard'
-import Badge from '../components/Badge'
-import Button from '../components/Button'
-import Avatar from '../components/Avatar'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore, useUIStore } from '../stores'
-import { googleAuth } from '../lib/api'
+import { C } from '../utils/theme'
 
-const Settings = () => {
-  const { user, googleConnected, setGoogleConnected, setUser } = useAuthStore()
-  const { addToast, geminiApiKey, setGeminiApiKey } = useUIStore()
-  const [connecting, setConnecting] = useState(false)
-  const [apiKeyInput, setApiKeyInput] = useState(geminiApiKey || '')
-  const [apiKeySaved, setApiKeySaved] = useState(false)
-
-  const handleSaveApiKey = () => {
-    setGeminiApiKey(apiKeyInput.trim())
-    setApiKeySaved(true)
-    setTimeout(() => setApiKeySaved(false), 2000)
-  }
-
-  const handleGoogleConnect = async () => {
-    setConnecting(true)
-    try {
-      const response = await googleAuth.initiate()
-      window.location.href = response.data.url
-    } catch (error) {
-      addToast({
-        type: 'error',
-        message: 'Failed to initiate Google connection'
-      })
-      setConnecting(false)
-    }
-  }
-
-  const handleGoogleDisconnect = async () => {
-    try {
-      await googleAuth.disconnect()
-      setGoogleConnected(false)
-      setUser(null)
-      addToast({
-        type: 'success',
-        message: 'Google account disconnected'
-      })
-    } catch (error) {
-      addToast({
-        type: 'error',
-        message: 'Failed to disconnect Google account'
-      })
-    }
-  }
-
-  const settingsSections = [
-    {
-      icon: User,
-      title: 'Profile',
-      description: 'Manage your account information',
-      items: [
-        { label: 'Name', value: user?.name || 'Not signed in', editable: false },
-        { label: 'Email', value: user?.email || 'Not connected', editable: false }
-      ]
-    },
-    {
-      icon: Link2,
-      title: 'Google Connections',
-      description: 'Connect your Google services',
-      items: [
-        {
-          label: 'Google Classroom',
-          value: googleConnected ? 'Connected' : 'Not connected',
-          status: googleConnected ? 'success' : 'warning',
-          action: googleConnected ? 'Disconnect' : 'Connect',
-          onAction: googleConnected ? handleGoogleDisconnect : handleGoogleConnect,
-          loading: connecting
-        },
-        {
-          label: 'Gmail',
-          value: googleConnected ? 'Connected' : 'Not connected',
-          status: googleConnected ? 'success' : 'warning',
-          action: googleConnected ? 'Disconnect' : 'Connect'
-        },
-        {
-          label: 'Google Calendar',
-          value: googleConnected ? 'Connected' : 'Not connected',
-          status: googleConnected ? 'success' : 'warning',
-          action: googleConnected ? 'Disconnect' : 'Connect'
-        }
-      ]
-    },
-    {
-      icon: Bell,
-      title: 'Notifications',
-      description: 'Configure alerts and reminders',
-      items: [
-        { label: 'Assignment Reminders', enabled: true },
-        { label: 'Grade Updates', enabled: true },
-        { label: 'Email Notifications', enabled: false },
-        { label: 'Study Session Reminders', enabled: true }
-      ]
-    },
-    {
-      icon: Palette,
-      title: 'Appearance',
-      description: 'Customize the look and feel',
-      items: [
-        { label: 'Dark Mode', enabled: true, disabled: true },
-        { label: 'Accent Color', value: 'Purple (Default)' },
-        { label: 'Animations', enabled: true }
-      ]
-    },
-    {
-      icon: Database,
-      title: 'Data & Privacy',
-      description: 'Manage your data',
-      items: [
-        { label: 'Export Data (MCP)', action: 'Export', onAction: () => {
-          const keys = ['shiori-assignments', 'shiori-grades', 'shiori-notes', 'shiori-flashcards', 'shiori-auth']
-          const data = { exportedAt: new Date().toISOString() }
-          keys.forEach(k => { try { const r = localStorage.getItem(k); if (r) Object.assign(data, JSON.parse(r)?.state || JSON.parse(r)) } catch {} })
-          const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = 'shiori-data.json'; a.click()
-        }},
-        { label: 'Clear Local Cache', action: 'Clear', danger: true },
-        { label: 'Delete Account', action: 'Delete', danger: true }
-      ]
-    }
-  ]
-
+function Section({ title, children }) {
   return (
-    <div className="space-y-6 max-w-4xl">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="text-2xl font-heading font-bold">Settings</h1>
-        <p className="text-text-secondary mt-1">Manage your preferences and connections</p>
-      </motion.div>
-
-      {/* Gemini API Key */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-        <GlassCard>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <Shield size={16} style={{ color: '#c44dff' }} />
-            <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>GEMINI AI KEY</h2>
-            {geminiApiKey && <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#4dff91', padding: '2px 8px', background: 'rgba(77,255,145,0.1)', borderRadius: 4 }}>Active</span>}
-          </div>
-          <p style={{ fontFamily: 'VT323', fontSize: 15, color: '#8c90a0', marginBottom: 12 }}>
-            Add your free Gemini API key to enable AI study plans and flashcard generation — no server setup needed.
-            Get one free at{' '}
-            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer"
-              style={{ color: '#afc6ff' }}>aistudio.google.com/apikey</a>
-          </p>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <input
-              type="password"
-              value={apiKeyInput}
-              onChange={e => setApiKeyInput(e.target.value)}
-              placeholder="AIza..."
-              style={{ flex: 1, padding: '10px 12px', background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6,
-                color: '#dfe2eb', fontFamily: 'monospace', fontSize: 13, outline: 'none' }}
-            />
-            <button onClick={handleSaveApiKey}
-              style={{ padding: '10px 18px', borderRadius: 6, cursor: 'pointer', border: 'none',
-                background: apiKeySaved ? 'rgba(77,255,145,0.2)' : 'rgba(196,77,255,0.2)',
-                color: apiKeySaved ? '#4dff91' : '#c44dff',
-                fontFamily: '"Press Start 2P"', fontSize: 9, whiteSpace: 'nowrap' }}>
-              {apiKeySaved ? 'SAVED!' : 'SAVE KEY'}
-            </button>
-          </div>
-        </GlassCard>
-      </motion.div>
-
-      <div className="space-y-6">
-        {settingsSections.map((section, sectionIndex) => (
-          <motion.div
-            key={section.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: sectionIndex * 0.1 }}
-          >
-            <GlassCard>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-lg bg-accent-primary/20">
-                  <section.icon className="w-5 h-5 text-accent-primary" />
-                </div>
-                <div>
-                  <h2 className="font-heading font-semibold">{section.title}</h2>
-                  <p className="text-sm text-text-muted">{section.description}</p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {section.items.map((item, itemIndex) => (
-                  <div
-                    key={itemIndex}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      {item.enabled !== undefined && !item.disabled ? (
-                        <div className="relative">
-                          <input
-                            type="checkbox"
-                            id={item.label}
-                            checked={item.enabled}
-                            onChange={() => {}}
-                            className="sr-only"
-                          />
-                          <label
-                            htmlFor={item.label}
-                            className={`
-                              w-11 h-6 rounded-full cursor-pointer transition-colors
-                              ${item.enabled ? 'bg-accent-primary' : 'bg-white/20'}
-                            `}
-                          >
-                            <div className={`
-                              w-5 h-5 rounded-full bg-white shadow-md
-                              transform transition-transform mt-0.5
-                              ${item.enabled ? 'translate-x-5 ml-0.5' : 'translate-x-0.5'}
-                            `} />
-                          </label>
-                        </div>
-                      ) : null}
-                      <div>
-                        <p className="font-medium text-sm">{item.label}</p>
-                        {item.value && (
-                          <p className="text-xs text-text-muted">{item.value}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {item.status && (
-                        <Badge variant={item.status}>
-                          {item.status === 'success' ? (
-                            <Check className="w-3 h-3 mr-1" />
-                          ) : (
-                            <X className="w-3 h-3 mr-1" />
-                          )}
-                          {item.value}
-                        </Badge>
-                      )}
-
-                      {item.action && (
-                        <Button
-                          variant={item.danger ? 'danger' : 'secondary'}
-                          size="sm"
-                          onClick={item.onAction}
-                          loading={item.loading}
-                        >
-                          {item.action}
-                        </Button>
-                      )}
-
-                      <ChevronRight className="w-4 h-4 text-text-muted" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-          </motion.div>
-        ))}
-
-        {/* Supabase Setup */}
-        <GlassCard>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <Database size={16} style={{ color: '#4dff91' }} />
-            <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>DATABASE SETUP (SUPABASE)</h2>
-            {window.location.hostname !== 'localhost' && !import.meta.env.VITE_SUPABASE_URL && (
-              <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#ff6b9d', padding: '2px 8px', background: 'rgba(255,107,157,0.1)', borderRadius: 4 }}>NOT CONFIGURED</span>
-            )}
-          </div>
-          <p style={{ fontFamily: 'VT323', fontSize: 15, color: '#8c90a0', marginBottom: 10, lineHeight: 1.5 }}>
-            Enable real accounts, Google OAuth, and cross-device sync. Free on Supabase's free tier.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-            {[
-              { num: '1', text: 'Create a free project at supabase.com', href: 'https://supabase.com' },
-              { num: '2', text: 'Open SQL Editor → paste supabase/schema.sql → Run' },
-              { num: '3', text: 'Enable GitHub & Google in Auth → Providers' },
-              { num: '4', text: 'Add VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY in Vercel env vars' },
-            ].map(step => (
-              <div key={step.num} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(77,255,145,0.15)', border: '1px solid rgba(77,255,145,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#4dff91' }}>{step.num}</span>
-                </div>
-                <span style={{ fontFamily: 'VT323', fontSize: 16, color: '#dfe2eb', lineHeight: 1.3 }}>
-                  {step.href ? <a href={step.href} target="_blank" rel="noopener noreferrer" style={{ color: '#4dff91' }}>{step.text}</a> : step.text}
-                </span>
-              </div>
-            ))}
-          </div>
-          <a
-            href="https://github.com/kaorii-ako/Shiori-v1/blob/master/supabase/schema.sql"
-            target="_blank" rel="noopener noreferrer"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 6, background: 'rgba(77,255,145,0.1)', border: '1px solid rgba(77,255,145,0.25)', color: '#4dff91', textDecoration: 'none', fontFamily: '"Press Start 2P"', fontSize: 8 }}
-          >
-            VIEW SCHEMA.SQL →
-          </a>
-        </GlassCard>
-
-        {/* MCP Data Export */}
-        <GlassCard>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <Database size={16} style={{ color: '#afc6ff' }} />
-            <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>EXPORT DATA (MCP)</h2>
-          </div>
-          <p style={{ fontFamily: 'VT323', fontSize: 15, color: '#8c90a0', marginBottom: 14 }}>
-            Export your Shiori data as JSON for use with the Shiori MCP server in Claude Code or Claude Desktop.
-            See <code style={{ color: '#afc6ff', fontSize: 13 }}>mcp/README.md</code> for setup.
-          </p>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => {
-              const keys = ['shiori-assignments', 'shiori-grades', 'shiori-notes', 'shiori-flashcards', 'shiori-auth']
-              const data = { exportedAt: new Date().toISOString() }
-              keys.forEach(k => {
-                try {
-                  const raw = localStorage.getItem(k)
-                  if (raw) {
-                    const parsed = JSON.parse(raw)
-                    const state = parsed?.state || parsed
-                    Object.assign(data, state)
-                  }
-                } catch {}
-              })
-              const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-              const a = document.createElement('a'); a.href = URL.createObjectURL(blob)
-              a.download = 'shiori-data.json'; a.click()
-            }}
-          >
-            Export shiori-data.json
-          </Button>
-        </GlassCard>
-
-        <GlassCard>
-          <div className="text-center py-4">
-            <p className="text-text-muted text-sm">
-              Shiori v2.4.0 · MIT License · Made with
-              <span className="text-accent-tertiary mx-1">♥</span>
-              for students everywhere ·{' '}
-              <a href="https://github.com/kaorii-ako/Shiori-v1" target="_blank" rel="noopener noreferrer" style={{ color: '#afc6ff' }}>Star on GitHub ⭐</a>
-            </p>
-          </div>
-        </GlassCard>
-      </div>
+    <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: '20px 24px', marginBottom: 16 }}>
+      <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 14, fontWeight: 700, color: C.textMuted, letterSpacing: '0.08em', marginBottom: 16, textTransform: 'uppercase' }}>{title}</h2>
+      {children}
     </div>
   )
 }
 
-export default Settings
+export default function Settings() {
+  const navigate = useNavigate()
+  const { user, logout } = useAuthStore()
+  const { geminiApiKey, setGeminiApiKey } = useUIStore()
+  const [keyInput, setKeyInput] = useState(geminiApiKey || '')
+  const [keySaved, setKeySaved] = useState(false)
+  const [showKey, setShowKey] = useState(false)
+
+  const saveKey = () => {
+    setGeminiApiKey(keyInput.trim())
+    setKeySaved(true)
+    setTimeout(() => setKeySaved(false), 2000)
+  }
+
+  const userName = user?.firstName && user?.lastName
+    ? `${user.firstName} ${user.lastName}`
+    : user?.name || 'Student'
+  const userInitial = userName[0]?.toUpperCase() || 'S'
+
+  return (
+    <div style={{ fontFamily: "'Manrope', sans-serif", color: C.text, maxWidth: 640, margin: '0 auto' }}>
+      <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 24, fontWeight: 700, marginBottom: 24 }}>⚙️ Settings</h1>
+
+      {/* Profile */}
+      <Section title="Profile">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+          <div style={{ width: 56, height: 56, borderRadius: 12, background: 'linear-gradient(135deg,#afc6ff,#528dff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 22, color: '#10141a' }}>
+            {userInitial}
+          </div>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: C.text }}>{userName}</div>
+            <div style={{ fontSize: 13, color: C.textMuted }}>{user?.email || 'Demo User'}</div>
+          </div>
+        </div>
+      </Section>
+
+      {/* API Keys */}
+      <Section title="API Keys">
+        <div style={{ marginBottom: 8 }}>
+          <label style={{ display: 'block', fontSize: 13, color: C.text, marginBottom: 8, fontWeight: 600 }}>
+            Gemini API Key
+          </label>
+          <p style={{ fontSize: 12, color: C.textMuted, marginBottom: 10 }}>
+            Required for AI features (flashcard generation, quiz, study plans).{' '}
+            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" style={{ color: C.blue }}>Get a free key →</a>
+          </p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              type={showKey ? 'text' : 'password'}
+              value={keyInput}
+              onChange={e => setKeyInput(e.target.value)}
+              placeholder="AIza..."
+              style={{
+                flex: 1, padding: '9px 12px', borderRadius: 8,
+                background: C.bg, border: `1px solid ${C.border}`,
+                color: C.text, fontSize: 13, fontFamily: "'Manrope', sans-serif",
+              }}
+            />
+            <button onClick={() => setShowKey(s => !s)} style={{ padding: '9px 12px', borderRadius: 8, border: `1px solid ${C.border}`, background: 'transparent', color: C.textMuted, cursor: 'pointer', fontSize: 13 }}>
+              {showKey ? '🙈' : '👁'}
+            </button>
+            <button onClick={saveKey} style={{
+              padding: '9px 16px', borderRadius: 8, border: 'none',
+              background: keySaved ? C.greenDark : 'linear-gradient(135deg,#afc6ff,#528dff)',
+              color: '#10141a', cursor: 'pointer',
+              fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700,
+            }}>{keySaved ? '✓ Saved' : 'Save'}</button>
+          </div>
+        </div>
+      </Section>
+
+      {/* Appearance */}
+      <Section title="Appearance">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: C.text }}>Theme</div>
+            <div style={{ fontSize: 12, color: C.textMuted }}>Dark mode only (more themes coming soon)</div>
+          </div>
+          <div style={{ padding: '6px 14px', borderRadius: 20, background: 'rgba(175,198,255,0.12)', border: `1px solid ${C.blue}`, fontSize: 12, color: C.blue, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600 }}>Dark</div>
+        </div>
+      </Section>
+
+      {/* About */}
+      <Section title="About">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+            <span style={{ color: C.textMuted }}>Version</span>
+            <span style={{ color: C.text }}>1.0.0</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+            <span style={{ color: C.textMuted }}>License</span>
+            <span style={{ color: C.text }}>MIT</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+            <span style={{ color: C.textMuted }}>Source</span>
+            <a href="https://github.com/kaorii-ako/Shiori-v1" target="_blank" rel="noopener noreferrer" style={{ color: C.blue }}>GitHub ↗</a>
+          </div>
+        </div>
+      </Section>
+
+      {/* Account */}
+      <Section title="Account">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <button onClick={() => { logout?.(); navigate('/login') }} style={{
+            padding: '10px 16px', borderRadius: 8,
+            border: `1px solid ${C.border}`, background: 'transparent',
+            color: C.text, cursor: 'pointer', textAlign: 'left',
+            fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+          }}>Sign Out</button>
+          <button style={{
+            padding: '10px 16px', borderRadius: 8,
+            border: '1px solid rgba(255,107,157,0.4)', background: 'rgba(255,107,157,0.08)',
+            color: C.pink, cursor: 'pointer', textAlign: 'left',
+            fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+          }}>Delete Account</button>
+        </div>
+      </Section>
+    </div>
+  )
+}

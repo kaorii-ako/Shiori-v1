@@ -23,6 +23,7 @@ import SyllabusImport from './pages/SyllabusImport'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Demo from './pages/Demo'
+import Profile from './pages/Profile'
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/import" element={<SyllabusImport />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,53 +1,35 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Home,
-  BookOpen,
-  Calendar,
-  Target,
-  BarChart3,
-  TrendingUp,
-  StickyNote,
-  Layers,
-  Settings,
-  Menu,
-  X,
-  Sparkles,
-  Flame,
-  Brain,
-  Trophy,
-  Upload,
-} from 'lucide-react'
 import { useAuthStore, useUIStore } from '../stores'
-import XPBar from './XPBar'
+import { C } from '../utils/theme'
 
 const navItems = [
-  { icon: Home, label: 'Home', path: '/home' },
-  { icon: BookOpen, label: 'Assignments', path: '/assignments' },
-  { icon: Calendar, label: 'Calendar', path: '/calendar' },
-  { icon: Target, label: 'Grades', path: '/grades' },
-  { icon: BarChart3, label: 'Study Plans', path: '/study-plans' },
-  { icon: StickyNote, label: 'Notes', path: '/notes' },
-  { icon: Layers, label: 'Flashcards', path: '/flashcards' },
-  { icon: TrendingUp, label: 'Analytics', path: '/analytics' },
-  { icon: Flame, label: 'Habits', path: '/habits' },
-  { icon: Brain, label: 'AI Quiz', path: '/quiz' },
-  { icon: Trophy, label: 'Leaderboard', path: '/leaderboard' },
-  { icon: Upload, label: 'Import Syllabus', path: '/import' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+  { icon: '🏠', label: 'Home', path: '/home' },
+  { icon: '📋', label: 'Assignments', path: '/assignments' },
+  { icon: '📅', label: 'Calendar', path: '/calendar' },
+  { icon: '📊', label: 'Grades', path: '/grades' },
+  { icon: '📝', label: 'Notes', path: '/notes' },
+  { icon: '🃏', label: 'Flashcards', path: '/flashcards' },
+  { icon: '🧩', label: 'Quiz', path: '/quiz' },
+  { icon: '✅', label: 'Habits', path: '/habits' },
+  { icon: '📈', label: 'Analytics', path: '/analytics' },
+  { icon: '📚', label: 'Study Plans', path: '/study-plans' },
+  { icon: '🏆', label: 'Leaderboard', path: '/leaderboard' },
+  { icon: '🎯', label: 'Focus Mode', path: '/focus' },
+  { icon: '📤', label: 'Import', path: '/import' },
+  { icon: '👤', label: 'Profile', path: '/profile' },
+  { icon: '⚙️', label: 'Settings', path: '/settings' },
 ]
 
 const Sidebar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user } = useAuthStore()
-  const { sidebarMobileOpen, closeSidebarMobile, toggleAIChat } = useUIStore()
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const { sidebarMobileOpen, closeSidebarMobile } = useUIStore()
+  const [collapsed, setCollapsed] = useState(false)
 
-  // Collapse on mobile
   useEffect(() => {
-    const handleResize = () => setIsCollapsed(window.innerWidth < 1024)
+    const handleResize = () => setCollapsed(window.innerWidth < 1024)
     handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -63,193 +45,173 @@ const Sidebar = () => {
     closeSidebarMobile()
   }
 
+  const userName = user?.firstName && user?.lastName
+    ? `${user.firstName} ${user.lastName}`
+    : user?.name || user?.username || 'Student'
+  const userInitial = userName[0]?.toUpperCase() || 'S'
+
+  const sidebarWidth = collapsed ? 72 : 240
+
   return (
     <>
       {/* Mobile overlay */}
-      <AnimatePresence>
-        {sidebarMobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
-            onClick={closeSidebarMobile}
-          />
-        )}
-      </AnimatePresence>
+      {sidebarMobileOpen && (
+        <div
+          onClick={closeSidebarMobile}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+            zIndex: 40, display: 'block',
+          }}
+        />
+      )}
 
-      {/* Sidebar panel */}
-      <motion.aside
-        initial={false}
-        animate={{ width: isCollapsed ? 72 : 260 }}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
-        className={`
-          fixed top-0 left-0 h-full z-50 flex flex-col
-          ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-[260px]'}
-          lg:relative
-          ${sidebarMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          transition-transform duration-250
-        `}
+      {/* Sidebar */}
+      <aside
         style={{
-          background: 'linear-gradient(180deg, #14181e 0%, #10141a 100%)',
-          borderRight: '1px solid rgba(66, 71, 84, 0.30)'
+          position: 'fixed',
+          top: 0,
+          left: sidebarMobileOpen ? 0 : (collapsed ? 0 : 0),
+          height: '100%',
+          width: sidebarWidth,
+          zIndex: 50,
+          display: 'flex',
+          flexDirection: 'column',
+          background: C.bg,
+          borderRight: `1px solid ${C.border}`,
+          transition: 'width 0.25s ease',
+          transform: !sidebarMobileOpen && window.innerWidth < 1024 ? 'translateX(-100%)' : 'translateX(0)',
         }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 pt-5 pb-6 flex-shrink-0">
-          <div
-            className="w-10 h-10 flex items-center justify-center flex-shrink-0 transition-all"
-            style={{
-              background: 'linear-gradient(135deg, #afc6ff 0%, #528dff 100%)',
-              borderRadius: '8px',
-              boxShadow: '0 8px 32px rgba(82, 141, 255, 0.20)'
-            }}
-          >
-            <span className="text-[#10141a] font-bold text-lg" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>栞</span>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '20px 16px 20px',
+          borderBottom: `1px solid ${C.border}`,
+          flexShrink: 0,
+        }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 8, flexShrink: 0,
+            background: 'linear-gradient(135deg, #afc6ff 0%, #528dff 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 16px rgba(82,141,255,0.3)',
+          }}>
+            <span style={{
+              color: '#10141a', fontWeight: 700, fontSize: 16,
+              fontFamily: "'Space Grotesk', sans-serif",
+            }}>栞</span>
           </div>
-          <AnimatePresence>
-            {!isCollapsed && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex-1 min-w-0"
-              >
-                <h1
-                  className="text-lg font-bold gradient-text-primary"
-                  style={{ fontFamily: '"Space Grotesk", sans-serif' }}
-                >
-                  SHIORI
-                </h1>
-                <p
-                  className="text-xs on-surface-secondary leading-tight"
-                  style={{ fontFamily: "'Manrope', sans-serif" }}
-                >
-                  AI Study Buddy
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {!collapsed && (
+            <div>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: 15,
+                color: C.blue,
+                letterSpacing: '0.05em',
+              }}>SHIORI</div>
+              <div style={{
+                fontFamily: "'Manrope', sans-serif",
+                fontSize: 11, color: C.textMuted,
+              }}>AI Study Buddy</div>
+            </div>
+          )}
           {sidebarMobileOpen && (
             <button
               onClick={closeSidebarMobile}
-              className="ml-auto lg:hidden p-1"
-              style={{ color: '#8c90a0' }}
-            >
-              <X className="w-5 h-5" />
-            </button>
+              style={{
+                marginLeft: 'auto', background: 'none', border: 'none',
+                color: C.textMuted, cursor: 'pointer', fontSize: 18, lineHeight: 1,
+              }}
+            >✕</button>
           )}
         </div>
 
-        {/* Nav items */}
-        <nav className="flex-1 px-3 space-y-1">
+        {/* Nav */}
+        <nav style={{ flex: 1, overflowY: 'auto', padding: '8px 8px' }}>
           {navItems.map((item) => {
             const active = isActive(item.path)
-            const Icon = item.icon
             return (
               <button
                 key={item.path}
                 onClick={() => handleNav(item.path)}
-                className={`
-                  w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
-                  ${isCollapsed ? 'justify-center' : ''}
-                `}
+                title={collapsed ? item.label : undefined}
                 style={{
-                  background: active
-                    ? 'linear-gradient(45deg, rgba(175,198,255,0.15) 0%, rgba(82,141,255,0.08) 100%)'
-                    : 'transparent',
-                  borderLeft: active
-                    ? '2px solid #afc6ff'
-                    : '2px solid transparent',
-                  color: active ? '#afc6ff' : '#8c90a0'
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  padding: collapsed ? '10px 0' : '9px 12px',
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  borderRadius: 8,
+                  border: 'none',
+                  cursor: 'pointer',
+                  marginBottom: 2,
+                  background: active ? C.cardHover : 'transparent',
+                  borderLeft: active ? `3px solid ${C.blue}` : '3px solid transparent',
+                  color: active ? C.blue : C.textMuted,
+                  transition: 'all 0.15s ease',
+                  fontFamily: "'Manrope', sans-serif",
+                  fontSize: 13,
+                  fontWeight: active ? 600 : 400,
                 }}
                 onMouseEnter={(e) => {
-                  if (!active) e.currentTarget.style.color = '#dfe2eb'
+                  if (!active) {
+                    e.currentTarget.style.background = C.card
+                    e.currentTarget.style.color = C.text
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  if (!active) e.currentTarget.style.color = '#8c90a0'
+                  if (!active) {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = C.textMuted
+                  }
                 }}
               >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                <AnimatePresence>
-                  {!isCollapsed && (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="text-sm label-strong whitespace-nowrap"
-                    >
-                      {item.label}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+                <span style={{ fontSize: 16, flexShrink: 0 }}>{item.icon}</span>
+                {!collapsed && <span>{item.label}</span>}
               </button>
             )
           })}
         </nav>
 
-        {/* XP bar */}
-        <XPBar collapsed={isCollapsed} />
-
         {/* User section */}
-        <div className="p-3 border-t" style={{ borderTop: '1px solid rgba(66,71,84,0.30)' }}>
-          <div
-            className={`flex items-center gap-3 px-3 py-2 ${isCollapsed ? 'justify-center' : ''}`}
-            style={{ borderRadius: '8px', background: 'rgba(18,24,32,0.5)' }}
-          >
-            {/* Avatar */}
-            <div
-              className="w-8 h-8 flex items-center justify-center flex-shrink-0 rounded-lg"
-              style={{
-                background: 'linear-gradient(135deg, #afc6ff 0%, #528dff 100%)',
-                color: '#10141a',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                fontFamily: "'Space Grotesk', sans-serif"
-              }}
-            >
-              {user?.firstName ? user.firstName[0].toUpperCase() : user?.name ? user.name[0].toUpperCase() : 'U'}
+        <div style={{
+          padding: '12px 8px',
+          borderTop: `1px solid ${C.border}`,
+          flexShrink: 0,
+        }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: collapsed ? '8px 0' : '8px 10px',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            borderRadius: 8,
+            background: C.card,
+          }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+              background: 'linear-gradient(135deg, #afc6ff 0%, #528dff 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#10141a', fontWeight: 700, fontSize: 12,
+              fontFamily: "'Space Grotesk', sans-serif",
+            }}>
+              {userInitial}
             </div>
-            <AnimatePresence>
-              {!isCollapsed && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 min-w-0"
-                >
-                  <p
-                    className="text-sm on-surface-primary truncate"
-                    style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 600 }}
-                  >
-                    {user?.firstName && user?.lastName
-                      ? `${user.firstName} ${user.lastName}`
-                      : user?.name || user?.username || 'User'}
-                  </p>
-                  <p
-                    className="text-xs on-surface-secondary truncate"
-                    style={{ fontFamily: "'Manrope', sans-serif" }}
-                  >
-                    {user?.email || 'Not signed in'}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {!collapsed && (
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: "'Manrope', sans-serif",
+                  fontSize: 12, fontWeight: 600, color: C.text,
+                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                }}>{userName}</div>
+                <div style={{
+                  fontFamily: "'Manrope', sans-serif",
+                  fontSize: 11, color: C.textMuted,
+                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                }}>{user?.email || 'Demo User'}</div>
+              </div>
+            )}
           </div>
         </div>
-      </motion.aside>
-
-      {/* AI Chat toggle */}
-      <button
-        onClick={toggleAIChat}
-        className="fixed bottom-6 right-6 z-50 p-3 rounded-full lg:hidden"
-        style={{
-          background: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)',
-          boxShadow: '0 8px 32px rgba(82, 141, 255, 0.20)'
-        }}
-      >
-        <Sparkles className="w-6 h-6" style={{ color: '#10141a' }} />
-      </button>
+      </aside>
     </>
   )
 }
