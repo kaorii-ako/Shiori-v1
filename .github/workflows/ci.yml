@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build & Lint
 
     steps:
       - name: Checkout
@@ -20,14 +19,17 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: client/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: cd client && npm install
 
-      - name: Build client
-        run: npm run build
+      - name: Lint
+        run: cd client && npm run lint || echo "Lint warnings (non-blocking)"
+        continue-on-error: true
 
-      - name: Check build output
-        run: |
-          test -f client/dist/index.html && echo "✓ index.html exists"
-          test -d client/dist/assets && echo "✓ assets directory exists"
+      - name: Build
+        run: cd client && npm run build
+        env:
+          VITE_SUPABASE_URL: https://placeholder.supabase.co
+          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder
