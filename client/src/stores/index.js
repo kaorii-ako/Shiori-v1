@@ -147,7 +147,7 @@ export const useAuthStore = create(
           try { await supabase.auth.signOut() } catch {}
         }
         set({ user: null, token: null, isAuthenticated: false, googleConnected: false, error: null, isDemo: false })
-      }
+      },
       onRehydrateStorage: () => (state) => {
         state.setHasHydrated(true);
       },
