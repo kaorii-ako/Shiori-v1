@@ -1,260 +1,117 @@
 <div align="center">
 
-<h1>栞 Shiori</h1>
+# 栞 Shiori
 
-### *The open-source AI study companion students actually use*
+**The AI-powered study companion for serious students.**
 
-> **Shiori** (栞) means *bookmark* in Japanese — because every deadline deserves to be remembered.
+[![GitHub stars](https://img.shields.io/github/stars/kaorii-ako/Shiori-v1?style=flat-square&color=afc6ff)](https://github.com/kaorii-ako/Shiori-v1/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-shiori--v1.vercel.app-ff6b9d?style=flat-square)](https://shiori-v1.vercel.app)
+[![CI](https://img.shields.io/github/actions/workflow/status/kaorii-ako/Shiori-v1/ci.yml?style=flat-square&label=build)](https://github.com/kaorii-ako/Shiori-v1/actions)
 
-[![MIT License](https://img.shields.io/badge/license-MIT-orange?style=for-the-badge)](LICENSE)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
-[![Gemini AI](https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
-[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/kaorii-ako/Shiori-v1/blob/master/docker-compose.yml)
-[![CI](https://github.com/kaorii-ako/Shiori-v1/actions/workflows/ci.yml/badge.svg)](https://github.com/kaorii-ako/Shiori-v1/actions/workflows/ci.yml)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-afc6ff?style=for-the-badge)](https://github.com/kaorii-ako/Shiori-v1/blob/master/.github/CONTRIBUTING.md)
-[![Stars](https://img.shields.io/github/stars/kaorii-ako/Shiori-v1?style=for-the-badge&color=e5b5ff)](https://github.com/kaorii-ako/Shiori-v1/stargazers)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/kaorii-ako/Shiori-v1)
-
-<br/>
-
-**[🚀 Live Demo — 1 click, no signup →](https://shiorii.tech/demo)**
-
-<br/>
-
-[![Shiori Demo](demo/preview.png)](https://shiorii.tech)
-
-<br/>
-
-<table>
-  <tr>
-    <td><img src="demo/grades.png" alt="GPA Tracker" width="280"/></td>
-    <td><img src="demo/flashcards.png" alt="SRS Flashcards" width="280"/></td>
-    <td><img src="demo/analytics.png" alt="Analytics" width="280"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>GPA Tracker</b></td>
-    <td align="center"><b>SRS Flashcards</b></td>
-    <td align="center"><b>Analytics</b></td>
-  </tr>
-</table>
-
-<br/>
-
-> **15 pages · AI quiz generator · SRS flashcards · GPA predictor · Pomodoro · Leaderboard · PWA**
-
-<br/>
-
-**[⭐ Star on GitHub](https://github.com/kaorii-ako/Shiori-v1)** &nbsp;·&nbsp; **[🚀 Try Demo](https://shiorii.tech/demo)** &nbsp;·&nbsp; **[🤖 MCP Server](mcp/)** &nbsp;·&nbsp; **[🧩 Chrome Extension](extension/)** &nbsp;·&nbsp; **[📝 dev.to Article](https://dev.to/kaoriiako/i-built-an-mcp-server-that-lets-claude-read-my-study-data-heres-how-5070)** &nbsp;·&nbsp; **[💜 Get Pro](https://shiorii.tech/pro)** &nbsp;·&nbsp; **[🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues)**
-
-> 🤖 **New:** [Shiori MCP Server](mcp/) — use your study data directly in Claude Code. `"What's due this week?"` `"Show my grades"` `"Add assignment: essay due Friday"`
+[**🎮 Try Demo**](https://shiori-v1.vercel.app/demo) · [📖 Docs](#-quick-start) · [🐛 Report Bug](https://github.com/kaorii-ako/Shiori-v1/issues/new?template=bug_report.md) · [💡 Request Feature](https://github.com/kaorii-ako/Shiori-v1/issues/new?template=feature_request.md)
 
 </div>
 
 ---
 
-## 🌸 What is Shiori?
+## What is Shiori?
 
-**Shiori is what Google Classroom should have been.**
+Shiori (栞, *bookmark* in Japanese) is an **open-source AI study companion** built for students who take their grades seriously. It combines AI-powered study tools, gamification, and productivity features into one beautiful dark-mode app.
 
-It syncs your assignments from Google Classroom, hunts deadline emails in Gmail, and hands you an AI study plan powered by Gemini. Track grades with weighted categories, predict your final exam score, generate quizzes from your notes, import an entire semester from your syllabus in one paste, and share your GPA card in one click.
+**No subscription required for core features.** Bring your own free [Gemini API key](https://aistudio.google.com/apikey). Self-hostable in 5 minutes.
 
-**Zero accounts required. Try the full app in 10 seconds with demo mode.**
-
-```
-┌───────────────────────────────────────────────────────────────────┐
-│  Google Classroom  +  Gmail  +  Google Calendar                   │
-│         ↓                ↓              ↓                         │
-│                   Shiori AI (Gemini)                              │
-│                          ↓                                        │
-│  16 pages · AI quiz · SRS flashcards · GPA predictor · PWA       │
-└───────────────────────────────────────────────────────────────────┘
-```
-
-### At a glance
-
-| | Feature | What it does |
-|---|---|---|
-| 🤖 | **AI Study Plans** | Gemini builds a real day-by-day schedule from your deadlines |
-| 📋 | **Syllabus Import** | Paste your syllabus → AI extracts every assignment instantly |
-| 🧠 | **AI Quiz Generator** | Open a note → MCQ quiz with explanations in one click |
-| 🃏 | **SRS Flashcards** | Anki-style spaced repetition, CSV/Quizlet import, AI card gen |
-| 📊 | **GPA Predictor** | Weighted categories + "What score do I need on the final?" |
-| 📝 | **Markdown Notes** | Per-course notes, AI summarizer, auto-save, export .md |
-| 🏆 | **Leaderboard** | Compare study streaks with friends via shareable codes |
-| ⏱ | **Focus Mode** | Fullscreen Pomodoro with ambient orbs + motivational quotes |
-| 🔥 | **Habit Tracker** | Daily grid, streak tracking, confetti on full completion |
-| 🧩 | **Chrome Extension** | Quick-add, Pomodoro, and Classroom import from any tab |
-| 📱 | **PWA** | Install on mobile, works offline |
-| 🎨 | **Dark / Light Mode** | Midnight study room or clean light mode |
-
-> Your credentials stay local. No data harvesting. No mandatory subscriptions. MIT licensed.
+> 🎮 **[Try the live demo](https://shiori-v1.vercel.app/demo)** — no account, no API key needed.
 
 ---
 
 ## ✨ Features
 
-### 📚 Assignment & Schedule Intelligence
 | Feature | Description |
 |---------|-------------|
-| **Google Classroom Sync** | Pulls assignments and due dates the moment they're posted |
-| **Gmail Intelligence** | Scans your inbox and surfaces buried deadline emails |
-| **Calendar Integration** | Shows assignment deadlines as colored dots alongside your events |
-| **iCal Export** | Export your assignments as `.ics` — opens in Google Calendar, Outlook, Apple Calendar |
-
-### 🤖 AI-Powered Planning
-| Feature | Description |
-|---------|-------------|
-| **AI Study Plans** | Gemini generates a real day-by-day schedule from your actual deadlines |
-| **AI Chat** | Ask anything — Shiori knows your real assignments and schedule |
-| **PDF Study Plan Export** | Export your AI-generated schedule as a branded PDF |
-| **Smart Prioritization** | High/medium/low priority auto-assigned based on due date and estimated hours |
-
-### 📊 Grade Tracking
-| Feature | Description |
-|---------|-------------|
-| **Live GPA Dashboard** | Per-course grades, letter grades, and cumulative GPA calculated live |
-| **Weighted Categories** | Set Homework 30% / Midterm 35% / Final 35% — GPA recalculates automatically |
-| **Final Exam Predictor** | "What score do I need on the final to get an A?" — answered instantly |
-| **Shareable GPA Card** | Generate a beautiful 900×520 PNG report card to share anywhere |
-
-### 📝 Notes
-| Feature | Description |
-|---------|-------------|
-| **Per-Course Notes** | Color-coded notes linked to each course |
-| **Markdown Editor** | `**bold**`, `*italic*`, `` `code` ``, headings, lists — with live preview |
-| **Auto-Save** | Notes save automatically 600ms after you stop typing |
-| **Export as Markdown** | Download any note as a `.md` file |
-| **Pin Notes** | Keep important notes at the top of your list |
-
-### 🃏 Flashcards & Spaced Repetition
-| Feature | Description |
-|---------|-------------|
-| **Flashcard Decks** | Create decks per course, add unlimited Q&A cards |
-| **3D Card Flip** | Tap to reveal answer with a smooth 3D perspective animation |
-| **Spaced Repetition (SRS)** | Cards you miss come back sooner; mastered cards push to 1d → 2d → 5d intervals |
-| **Streak Tracking** | 3+ correct in a row = mastered 🏆; session stats shown after each study session |
-| **AI Card Generation** | Click "AI CARDS" in Notes editor — Gemini reads your notes and creates Q&A flashcards instantly |
-| **CSV Import** | Paste any tab/comma-separated text — works with Quizlet export, Anki CSV, or plain text |
-| **Due-Now Counter** | Dashboard shows how many cards are ready for review |
-
-### 🧠 AI Quiz Generator
-| Feature | Description |
-|---------|-------------|
-| **Generate from Notes** | Open any note → click "Generate Quiz" — Gemini creates MCQ questions from your study material |
-| **Paste Custom Text** | Paste any text and get a quiz in seconds |
-| **5 / 8 / 10 questions** | Choose difficulty length |
-| **MCQ with Explanations** | 4 options per question + AI explains why each answer is right or wrong |
-| **Keyboard-driven** | Press 1–4 to select, Enter to confirm/advance |
-| **Score History** | Quiz results saved locally — track improvement over time |
-| **Score Ring Animation** | Animated circular progress ring on results screen |
-
-### 🔥 Habit Tracker
-| Feature | Description |
-|---------|-------------|
-| **Daily Habit Grid** | 7-day completion grid for any habit you want to build |
-| **Streak Counter** | Per-habit fire emoji streak — don't break the chain |
-| **Color-coded habits** | Pick a color per habit, add/delete freely |
-| **Confetti celebration** | Complete all habits for the day → confetti burst 🎉 |
-
-### ⏱️ Focus & Productivity
-| Feature | Description |
-|---------|-------------|
-| **Pomodoro Timer** | Focus sessions tied to specific assignments, with session history |
-| **Sound Notifications** | Distinct tones for focus→break and break→focus transitions (Web Audio, no downloads) |
-| **Progress Share Card** | Canvas-rendered 900×500 PNG with your GPA, focus time, and completion rate — download and share |
-| **Keyboard Shortcut Modal** | Press `?` anywhere for a full shortcut reference |
-| **Keyboard Shortcuts** | `gh/ga/gc/gg/gs/gn/gf/gb/gq` to navigate, `Ctrl+K` for AI chat, `Ctrl+Shift+A` quick capture |
-
-### 🎨 Design
-| Feature | Description |
-|---------|-------------|
-| **Dark / Light Theme** | Toggle between midnight study room and clean light mode |
-| **Midnight Study Room** | Dark glassmorphism with floating orbs — built for late-night sessions |
-| **Framer Motion** | Smooth, purposeful animations throughout |
-| **Custom fonts** | Space Grotesk headings · Manrope body · Press Start 2P retro accents |
-
-- **Demo Mode** — full app with 5 courses, 10 assignments, grades, events — zero setup
+| 🤖 **AI Quiz Generator** | Generate MCQ quizzes from your notes with Gemini AI |
+| 🃏 **AI Flashcards** | Auto-generate spaced repetition flashcard decks |
+| 📊 **Grade Tracker** | Weighted grade calculator with GPA predictor |
+| 📅 **Assignment Manager** | Due dates, priorities, completion tracking |
+| 📝 **Markdown Notes** | Two-panel editor with live preview |
+| 🎯 **Focus Mode** | Pomodoro timer with task linking |
+| 🏆 **Leaderboard** | Compare XP and streaks with friends |
+| 📈 **Analytics** | Study time, grade trends, completion rates |
+| 🌱 **Habit Tracker** | Daily habit streaks with completion heatmap |
+| 🗓 **Study Plans** | AI-generated day-by-day study schedules |
+| 📚 **Syllabus Import** | Parse syllabi to auto-create assignments |
+| ⌨️ **Keyboard Shortcuts** | Power-user navigation (gh, ga, gn, gq...) |
+| 🎮 **Gamification** | XP system, levels (Freshman → Graduate), achievements |
 
 ---
 
-## ⚡ Try it in 10 seconds
+## 🚀 Quick Start
 
-```
-Visit https://shiorii.tech/demo
-→ You're in. No click. No account. No API keys. No setup.
-```
+### Option 1: Live demo (no setup)
 
-Demo mode loads: 5 courses · 10 assignments · grades with GPA calc · upcoming events · AI-generated study plan
+👉 **[shiori-v1.vercel.app/demo](https://shiori-v1.vercel.app/demo)**
 
----
+No account. No API key. Full experience.
 
-## 🚀 Self-Host
+### Option 2: Deploy to Vercel (1 click)
 
-### Prerequisites
-- Node.js v18+
-- npm v9+
-- [Supabase](https://supabase.com) project (free tier) — for auth + database
-- [Google Gemini API key](https://aistudio.google.com/app/apikey) (free) — for AI features
-- Google Cloud project (optional) — for Classroom/Gmail/Calendar sync
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fkaorii-ako%2FShiori-v1&env=VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY&envDescription=Required%20for%20user%20accounts&project-name=shiori&repository-name=Shiori-v1)
 
-### Option A — Docker (recommended for self-hosters)
+### Option 3: Self-host locally
+
+**Prerequisites:** Node.js 18+, free [Supabase](https://supabase.com) account, free [Gemini API key](https://aistudio.google.com/apikey)
 
 ```bash
+# Clone
 git clone https://github.com/kaorii-ako/Shiori-v1.git
 cd Shiori-v1
+
+# Configure
 cp .env.example .env
-# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, and optionally GEMINI_API_KEY
-docker compose up -d
-# App running at http://localhost
-```
+# Edit .env with your Supabase URL + anon key
 
-### Option B — Node.js dev
+# Run Supabase schema
+# → Open supabase/schema.sql in your Supabase SQL Editor and run it
 
-```bash
-git clone https://github.com/kaorii-ako/Shiori-v1.git
-cd Shiori-v1
+# Install + start
 npm install
-cp .env.example .env
-# Fill in your keys — see .env.example for the full guide
 npm run dev
-# Frontend: http://localhost:5173  |  Backend: http://localhost:3001
 ```
 
-### Required environment variables
+Open [http://localhost:5173](http://localhost:5173) → click **Try Demo** or sign up.
 
-```env
-VITE_SUPABASE_URL=       # From Supabase project Settings → API
-VITE_SUPABASE_ANON_KEY=  # From Supabase project Settings → API
-GEMINI_API_KEY=          # Google AI Studio (free) — or set in-app
-GOOGLE_CLIENT_ID=        # Google OAuth 2.0 (optional, for Classroom sync)
-GOOGLE_CLIENT_SECRET=
-SESSION_SECRET=          # Any random 32+ char string
-```
+### Environment Variables
 
-### Supabase setup (5 min)
-
-1. Create a free project at [supabase.com](https://supabase.com)
-2. Open **SQL Editor** → paste contents of [`supabase/schema.sql`](supabase/schema.sql) → **Run**
-3. Go to **Auth → Providers** → enable **GitHub** and/or **Google**
-4. Copy **Project URL** + **anon/public key** from **Settings → API** into `.env`
-5. Done — auth + database ready
+| Variable | Required | Where to get |
+|----------|----------|--------------|
+| `VITE_SUPABASE_URL` | ✅ Yes | [supabase.com](https://supabase.com) → Settings → API |
+| `VITE_SUPABASE_ANON_KEY` | ✅ Yes | [supabase.com](https://supabase.com) → Settings → API |
+| `VITE_GEMINI_API_KEY` | Optional | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (free) |
 
 ---
 
-## 🛠 Tech Stack
+## 🏗 Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Frontend** | React 18, Vite, Framer Motion, Tailwind CSS |
-| **State** | Zustand + zustand/persist |
-| **Backend** | Express.js (Node.js) |
-| **Database** | Supabase (PostgreSQL + Auth + Row Level Security) |
-| **AI** | Google Gemini 1.5 Flash |
-| **Auth** | Supabase Auth — GitHub OAuth, Google OAuth, Email/Password |
-| **Google APIs** | Classroom, Gmail, Calendar (optional) |
-| **PDF** | jsPDF (client-side, no server needed) |
-| **Icons** | Lucide React |
+```
+Frontend:   React 18 + Vite + Zustand
+Database:   Supabase (PostgreSQL + Auth)
+AI:         Google Gemini 1.5 Flash (client-side, BYOK)
+Deployment: Vercel
+```
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `g h` | Go to Home |
+| `g a` | Go to Assignments |
+| `g n` | Go to Notes |
+| `g f` | Go to Flashcards |
+| `g q` | Go to Quiz |
+| `g g` | Go to Grades |
+| `?` | Show all shortcuts |
 
 ---
 
@@ -262,94 +119,41 @@ SESSION_SECRET=          # Any random 32+ char string
 
 ```
 Shiori-v1/
-├── client/                    # React frontend (Vite)
+├── client/               # React + Vite frontend
 │   └── src/
-│       ├── components/        # GlassCard, Button, Sidebar, AIChat, PomodoroTimer...
-│       ├── pages/             # Landing, Home, Assignments, Calendar, Grades, StudyPlans, Notes
-│       ├── stores/            # Zustand (auth, assignments, grades, notes, pomodoro, ui)
-│       ├── hooks/             # useKeyboardShortcuts
-│       └── utils/             # pdfExport, icalExport, demoData
-├── server/                    # Express backend
-│   ├── routes/                # ai, auth, classroom, gmail, calendar, stripe
-│   └── services/              # Google OAuth & API wrappers
-├── .env.example               # Environment template
-└── package.json               # npm workspaces root
+│       ├── pages/        # 16 pages (Home, Assignments, Grades, Notes...)
+│       ├── components/   # Shared components (Sidebar, GlassCard, AIChat...)
+│       ├── stores/       # Zustand state management
+│       ├── utils/        # theme.js, gemini.js, demoData.js
+│       └── lib/          # supabase.js, db.js
+├── server/               # Express.js backend (optional, for Stripe webhooks)
+├── extension/            # Chrome MV3 extension
+├── supabase/             # Database schema + setup guide
+└── docs/                 # Screenshots, specs
 ```
-
----
-
-## 🗺 Roadmap
-
-- [x] **v1.0** — Core app: Classroom sync, Gmail, Calendar, AI plans, Grade tracker
-- [x] **v1.1** — Demo mode · Public landing page · Pro pricing
-- [x] **v1.2** — Pomodoro timer · Study streak · Live GPA dashboard
-- [x] **v1.3** — Final exam predictor · Calendar assignment overlay
-- [x] **v1.4** — iCal export · PDF export (study plan + assignments) · Keyboard shortcuts
-- [x] **v1.5** — Weighted grade categories · Shareable GPA card · Notes with markdown
-- [x] **v1.6** — Flashcards with spaced repetition (SRS) · 3D card flip · AI card generation from notes
-- [x] **v1.7** — Habit tracker · Analytics dashboard · Progress share card · Dark/light theme toggle
-- [x] **v1.8** — Keyboard shortcut modal (?) · Pomodoro sounds · Client-side Gemini API key
-- [x] **v1.9** — Chrome extension: Pomodoro + quick-add + Google Classroom import
-- [x] **v2.0** — AI Quiz Generator · PWA service worker · Student testimonials · Email waitlist · Confetti on habit completion
-- [x] **v2.1** — Syllabus Import (paste syllabus → AI extracts all assignments) · AI Note Summarizer · SEO overhaul
-- [x] **v2.2** — Supabase migration (PostgreSQL + Auth + RLS) · GitHub/Google OAuth via Supabase
-- [ ] **v2.3** — Firefox extension · Chrome Web Store release · Shiori Cloud (fully hosted)
-- [ ] **v2.3** — Mobile app (React Native / Expo)
-
-**Have an idea?** [Open a feature request →](https://github.com/kaorii-ako/Shiori-v1/issues/new?template=feature_request.md)
-
----
-
-## 💜 Shiori Pro
-
-Want the hosted version — no setup, unlimited AI, and premium features?
-
-**[→ shiorii.tech/pro](https://shiorii.tech/pro)**
-
-| | Free (Self-hosted) | Pro (Cloud) |
-|---|---|---|
-| Google Classroom sync | ✓ | ✓ |
-| AI Study Plans | 5/month | Unlimited |
-| AI Chat | 10/day | Unlimited |
-| PDF Export | ✓ | ✓ |
-| GPA Share Card | ✓ | ✓ |
-| Notes (Markdown) | ✓ | ✓ |
-| Email Reminders | — | ✓ |
-| Priority support | — | ✓ |
-| Price | Free forever | ฿199/month |
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are very welcome!
+Contributions are welcome! Shiori is built by students for students.
 
-```bash
-# Fork, then:
-git checkout -b feature/your-feature-name
-git commit -m "feat: describe what you added"
-git push origin feature/your-feature-name
-# Open a PR!
-```
-
-Open an issue first for big changes. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-Good first issues: [`good first issue`](https://github.com/kaorii-ako/Shiori-v1/issues?q=label%3A%22good+first+issue%22)
+1. Check [good first issues](https://github.com/kaorii-ako/Shiori-v1/issues?q=label%3A%22good+first+issue%22)
+2. Read [CONTRIBUTING.md](CONTRIBUTING.md)
+3. Fork → branch → PR
 
 ---
 
-## 👤 Author
+## 📄 License
 
-Built by **[@kaorii-ako](https://github.com/kaorii-ako)**
+[MIT](LICENSE) — free for personal and commercial use.
 
 ---
 
 <div align="center">
 
-*栞 — bookmark the things that matter.*
+**Made with ❤️ by [Tawin Tangsukson](https://github.com/kaorii-ako)**
 
-**If Shiori saves you even one all-nighter, please give it a ⭐**
-
-[![Star History Chart](https://api.star-history.com/svg?repos=kaorii-ako/Shiori-v1&type=Date)](https://star-history.com/#kaorii-ako/Shiori-v1)
+If Shiori helps you study better, please consider giving it a ⭐ — it means a lot!
 
 </div>
