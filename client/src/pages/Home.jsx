@@ -84,9 +84,11 @@ Be warm, specific, and motivating. Mention 1-2 specific assignments by name. Kee
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-      <GlassCard style={{
+      <div style={{
         background: 'linear-gradient(135deg, rgba(196,77,255,0.07) 0%, rgba(82,141,255,0.05) 100%)',
         border: '1px solid rgba(196,77,255,0.25)',
+        borderRadius: 12,
+        padding: '18px 22px',
       }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
           <div style={{
@@ -102,7 +104,7 @@ Be warm, specific, and motivating. Mention 1-2 specific assignments by name. Kee
             <div style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 11, fontWeight: 700, color: '#e5b5ff',
-              letterSpacing: '0.06em', marginBottom: 6,
+              letterSpacing: '0.08em', marginBottom: 6,
             }}>SHIORI AI · DAILY BRIEFING</div>
             {loading ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#8c90a0', fontFamily: "'Manrope', sans-serif", fontSize: 13 }}>
@@ -132,7 +134,7 @@ Be warm, specific, and motivating. Mention 1-2 specific assignments by name. Kee
             </button>
           )}
         </div>
-      </GlassCard>
+      </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </motion.div>
   )
@@ -158,30 +160,55 @@ const MiniProgressBar = ({ value, color }) => (
 )
 
 const StatCard = ({ icon: Icon, label, value, color, sub, delay = 0 }) => (
-  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}>
-    <GlassCard style={{ height: '100%' }}>
-      <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, opacity: 0.12,
-        background: `radial-gradient(circle, ${color} 0%, transparent 70%)`, borderRadius: '50%' }} />
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div>
-          <p style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#606080', marginBottom: 10, letterSpacing: '0.05em' }}>
-            {label}
-          </p>
-          <p style={{ fontFamily: '"Press Start 2P"', fontSize: 22,
-            background: `linear-gradient(135deg, ${color} 0%, #fff 100%)`,
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            {value}
-          </p>
-          {sub && <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080', marginTop: 4 }}>{sub}</p>}
-        </div>
-        <div style={{ padding: 10, background: `${color}22`, border: `2px solid ${color}44`,
-          boxShadow: `2px 2px 0 ${color}44`, borderRadius: 4 }}>
-          <Icon size={22} style={{ color }} />
-        </div>
+  <motion.div
+    initial={{ opacity: 0, y: 16 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay }}
+    whileHover={{ y: -2 }}
+    style={{
+      background: 'rgba(13,17,24,0.95)',
+      border: '1px solid rgba(50,55,70,0.4)',
+      borderRadius: 12,
+      padding: '20px 24px',
+      position: 'relative',
+      overflow: 'hidden',
+    }}
+  >
+    <div style={{
+      position: 'absolute', top: -20, right: -20, width: 80, height: 80,
+      background: `radial-gradient(circle, ${color}30 0%, transparent 70%)`,
+      borderRadius: '50%',
+    }} />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+      <span style={{
+        fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 11,
+        letterSpacing: '0.08em', color: '#8c90a0', textTransform: 'uppercase',
+      }}>{label}</span>
+      <div style={{
+        width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+        background: `${color}18`, border: `1px solid ${color}35`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <Icon size={16} style={{ color }} />
       </div>
-    </GlassCard>
+    </div>
+    <p style={{
+      fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 28,
+      color: '#dfe2eb', margin: '0 0 4px',
+    }}>{value}</p>
+    {sub && (
+      <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#8c90a0', margin: 0 }}>{sub}</p>
+    )}
   </motion.div>
 )
+
+const COURSE_COLORS = {
+  'course-1': '#ff6b9d',
+  'course-2': '#c44dff',
+  'course-3': '#4daaff',
+  'course-4': '#4dff91',
+  'course-5': '#ffd6a0',
+}
 
 const Home = () => {
   const { assignments } = useAssignmentsStore()
@@ -255,235 +282,390 @@ const Home = () => {
       })[0] || null
   }, [assignments])
 
+  const btnSecondary = {
+    padding: '8px 16px',
+    borderRadius: 8,
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(50,55,70,0.4)',
+    color: '#dfe2eb',
+    fontFamily: "'Space Grotesk', sans-serif",
+    fontWeight: 600,
+    fontSize: 13,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-        style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+
+      {/* Header row */}
+      <motion.div
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}
+      >
         <div>
-          <h1 style={{ fontFamily: '"Press Start 2P"', fontSize: 16, marginBottom: 8,
-            background: 'linear-gradient(135deg, #afc6ff, #e5b5ff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            WELCOME BACK{user?.name ? `, ${user.name.split(' ')[0].toUpperCase()}` : ''}
+          <h1 style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700,
+            fontSize: 26,
+            color: '#dfe2eb',
+            marginBottom: 4,
+            background: 'linear-gradient(135deg, #dfe2eb, #afc6ff)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}>
+            {user?.name ? `Hey, ${user.name.split(' ')[0]} 👋` : 'Welcome back 👋'}
           </h1>
-          <p style={{ fontFamily: 'VT323', fontSize: 20, color: '#8c90a0' }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#8c90a0', margin: 0 }}>
             {today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <Button size="sm" variant="secondary" icon={Plus} onClick={() => navigate('/assignments')}
-            style={{ borderColor: '#ff6b9d', color: '#ff6b9d' }}>ADD</Button>
-          <Button size="sm" variant="secondary" icon={Play} onClick={() => navigate('/study')}
-            style={{ borderColor: '#4dff91', color: '#4dff91' }}>STUDY</Button>
-          <Button size="sm" variant="secondary" icon={Sparkles} onClick={toggleAIChat}
-            style={{ borderColor: '#c44dff', color: '#c44dff' }}>AI CHAT</Button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button style={btnSecondary} onClick={() => navigate('/assignments')}>
+            <Plus size={14} /> ADD
+          </button>
+          <button style={btnSecondary} onClick={() => navigate('/study')}>
+            <Play size={14} /> STUDY
+          </button>
+          <button style={{ ...btnSecondary, border: '1px solid rgba(196,77,255,0.35)', color: '#e5b5ff' }} onClick={toggleAIChat}>
+            <Sparkles size={14} /> AI CHAT
+          </button>
         </div>
       </motion.div>
 
       {/* Daily AI Briefing */}
       <DailyBriefing assignments={assignments} gpaData={gpaData} userName={user?.name} />
 
-      {/* Stats Grid */}
+      {/* Stats grid — 4 cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14 }}>
-        <StatCard icon={ClipboardList} label="DUE TODAY" value={todaysAssignments.length || '0'} color="#ffaa4d"
-          sub={todaysAssignments.length === 0 ? 'All clear!' : 'tasks remaining'} delay={0.05} />
-        <StatCard icon={Calendar} label="THIS WEEK" value={upcomingAssignments.length} color="#c44dff"
-          sub={`${overdueTasks.length} overdue`} delay={0.1} />
-        <StatCard icon={TrendingUp} label="AVG GRADE"
+        <StatCard
+          icon={ClipboardList}
+          label="Due Today"
+          value={todaysAssignments.length || '0'}
+          color="#ffd6a0"
+          sub={todaysAssignments.length === 0 ? 'All clear!' : 'tasks remaining'}
+          delay={0.05}
+        />
+        <StatCard
+          icon={Calendar}
+          label="This Week"
+          value={upcomingAssignments.length}
+          color="#c44dff"
+          sub={`${overdueTasks.length} overdue`}
+          delay={0.1}
+        />
+        <StatCard
+          icon={TrendingUp}
+          label="Avg Grade"
           value={gpaData?.overall ? `${gpaData.overall}%` : '—'}
           color="#4dff91"
-          sub={gpaData?.overall ? getLetterGrade(parseFloat(gpaData.overall)).letter : 'no grades yet'} delay={0.15} />
-        <StatCard icon={Flame} label="STREAK" value={`${streak}d`} color="#ff6b9d"
-          sub="days in a row" delay={0.2} />
-        {daysUntilExam !== null && (
-          <StatCard icon={AlertTriangle} label="NEXT EXAM" value={`${daysUntilExam}d`} color="#ff4d6a"
-            sub={nextExam?.title?.slice(0, 16) + '…'} delay={0.25} />
-        )}
+          sub={gpaData?.overall ? getLetterGrade(parseFloat(gpaData.overall)).letter : 'no grades yet'}
+          delay={0.15}
+        />
+        <StatCard
+          icon={Flame}
+          label="Streak"
+          value={`${streak}d`}
+          color="#ff6b9d"
+          sub="days in a row"
+          delay={0.2}
+        />
       </div>
 
-      {/* Main 2-col layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
+      {/* AI Insight card — full width */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.25 }}
+      >
+        <div style={{
+          background: 'rgba(13,17,24,0.95)',
+          border: '1px solid rgba(196,77,255,0.3)',
+          borderRadius: 12,
+          padding: '18px 22px',
+          backgroundImage: 'linear-gradient(135deg, rgba(196,77,255,0.06) 0%, rgba(82,141,255,0.04) 100%)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 8,
+              background: 'rgba(196,77,255,0.15)',
+              border: '1px solid rgba(196,77,255,0.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Sparkles size={16} style={{ color: '#c44dff' }} />
+            </div>
+            <span style={{
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 11,
+              letterSpacing: '0.08em', color: '#e5b5ff', textTransform: 'uppercase',
+            }}>AI Insight</span>
+          </div>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#c4c8d4', lineHeight: 1.65, margin: 0 }}>
+            {topPriority ? (
+              <>
+                Start with{' '}
+                <span style={{ color: '#afc6ff', fontWeight: 700 }}>"{topPriority.title}"</span>
+                {' '}— it's your highest priority right now.
+                {daysUntilExam !== null && daysUntilExam <= 14 && (
+                  <>
+                    {' '}Also: <span style={{ color: '#ff6b9d', fontWeight: 700 }}>{nextExam?.title}</span> is in {daysUntilExam} days — start reviewing soon.
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <span style={{ color: '#4dff91' }}>You're all caught up!</span> Great time to review material or get ahead on upcoming work.
+              </>
+            )}
+          </p>
+          {daysUntilExam !== null && daysUntilExam <= 7 && (
+            <div style={{
+              marginTop: 12, padding: '10px 14px', borderRadius: 8,
+              background: 'rgba(255,107,157,0.08)',
+              border: '1px solid rgba(255,107,157,0.25)',
+              display: 'flex', alignItems: 'center', gap: 8,
+            }}>
+              <AlertTriangle size={14} style={{ color: '#ff6b9d', flexShrink: 0 }} />
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#ff6b9d' }}>
+                Exam in {daysUntilExam} day{daysUntilExam !== 1 ? 's' : ''} — prioritize review sessions
+              </span>
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Two-column: upcoming tasks + GPA breakdown */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
+
         {/* Left: Upcoming tasks */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <GlassCard>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-              <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 12 }}>UPCOMING TASKS</h2>
-              <Link to="/assignments" style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color: '#ff6b9d',
-                textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
-                VIEW ALL <ChevronRight size={12} />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <div style={{
+            background: 'rgba(13,17,24,0.95)',
+            border: '1px solid rgba(50,55,70,0.4)',
+            borderRadius: 12,
+            padding: '20px 24px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+              <h2 style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: 15, color: '#dfe2eb', margin: 0,
+              }}>Upcoming Tasks</h2>
+              <Link to="/assignments" style={{
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 12,
+                color: '#8c90a0', textDecoration: 'none',
+                display: 'flex', alignItems: 'center', gap: 3,
+              }}>
+                View all <ChevronRight size={13} />
               </Link>
             </div>
 
             {upcomingAssignments.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div>
                 {upcomingAssignments.slice(0, 6).map((a, idx) => {
                   const dueDate = new Date(a.dueDate)
                   const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24))
                   const urgent = daysLeft <= 2
-                  const courseColor = { 'course-1': '#ff6b9d', 'course-2': '#c44dff', 'course-3': '#4daaff', 'course-4': '#4dff91', 'course-5': '#ffd6a0' }[a.courseId] || '#afc6ff'
+                  const courseColor = COURSE_COLORS[a.courseId] || '#afc6ff'
                   return (
-                    <motion.div key={a.id}
-                      initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
+                    <motion.div
+                      key={a.id}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.04 }}
                       onClick={() => navigate('/assignments')}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '12px 14px', cursor: 'pointer',
-                        background: urgent ? 'rgba(255,77,106,0.06)' : 'rgba(255,255,255,0.03)',
-                        border: `2px solid ${urgent ? 'rgba(255,77,106,0.4)' : 'rgba(196,77,255,0.2)'}`,
-                        borderRadius: 6,
-                        boxShadow: urgent ? '2px 2px 0 rgba(255,77,106,0.2)' : 'none',
-                        transition: 'all 0.15s' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 3, height: 40, background: courseColor,
-                          boxShadow: `0 0 8px ${courseColor}`, borderRadius: 2, flexShrink: 0 }} />
-                        <div>
-                          <p style={{ fontFamily: 'VT323', fontSize: 20, lineHeight: 1.2 }}>{a.title}</p>
-                          <p style={{ fontFamily: 'VT323', fontSize: 15, color: '#606080' }}>{a.courseName}</p>
-                        </div>
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 12,
+                        padding: '12px 16px', borderRadius: 8,
+                        background: urgent ? 'rgba(255,77,106,0.05)' : 'rgba(255,255,255,0.02)',
+                        border: `1px solid ${urgent ? 'rgba(255,77,106,0.3)' : 'rgba(50,55,70,0.4)'}`,
+                        cursor: 'pointer', marginBottom: 8,
+                      }}
+                    >
+                      <div style={{ width: 3, height: 36, borderRadius: 2, background: courseColor, flexShrink: 0 }} />
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 600, fontSize: 14, color: '#dfe2eb', marginBottom: 2 }}>{a.title}</p>
+                        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#8c90a0' }}>{a.courseName}</p>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                        {a.estimatedHours && (
-                          <span style={{ fontFamily: 'VT323', fontSize: 13, color: '#606080' }}>
-                            ~{a.estimatedHours}h
-                          </span>
-                        )}
-                        <Badge variant={urgent ? 'danger' : daysLeft <= 5 ? 'warning' : 'info'}>
-                          <Clock size={10} style={{ marginRight: 3 }} />
-                          {daysLeft === 0 ? 'TODAY' : daysLeft === 1 ? 'TOMORROW' : `${daysLeft}d`}
-                        </Badge>
-                      </div>
+                      <span style={{
+                        padding: '3px 10px', borderRadius: 6,
+                        background: urgent ? 'rgba(255,77,106,0.15)' : 'rgba(175,198,255,0.1)',
+                        color: urgent ? '#ff4d6a' : '#afc6ff',
+                        fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 11,
+                      }}>
+                        {daysLeft === 0 ? 'TODAY' : `${daysLeft}d`}
+                      </span>
                     </motion.div>
                   )
                 })}
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '48px 24px' }}>
-                <div style={{ width: 64, height: 64, margin: '0 auto 16px',
-                  background: 'rgba(77,255,145,0.1)', border: '3px solid #4dff91',
-                  boxShadow: '4px 4px 0 #4dff91', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Star size={28} style={{ color: '#4dff91' }} />
+              <div style={{ textAlign: 'center', padding: '40px 24px' }}>
+                <div style={{
+                  width: 52, height: 52, margin: '0 auto 14px',
+                  background: 'rgba(77,255,145,0.1)', border: '1px solid rgba(77,255,145,0.3)',
+                  borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Star size={24} style={{ color: '#4dff91' }} />
                 </div>
-                <p style={{ fontFamily: '"Press Start 2P"', fontSize: 12, color: '#4dff91', marginBottom: 8 }}>ALL CLEAR!</p>
-                <p style={{ fontFamily: 'VT323', fontSize: 18, color: '#8c90a0' }}>No upcoming deadlines this week!</p>
+                <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 15, color: '#4dff91', marginBottom: 6 }}>All clear!</p>
+                <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#8c90a0' }}>No upcoming deadlines this week.</p>
               </div>
             )}
-          </GlassCard>
+          </div>
         </motion.div>
 
-        {/* Right column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {/* AI Insight */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-            <GlassCard>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-                <Sparkles size={18} style={{ color: '#ff6b9d' }} />
-                <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10,
-                  background: 'linear-gradient(135deg, #ff6b9d, #c44dff)',
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AI INSIGHT</h2>
+        {/* Right: GPA breakdown */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.35 }}
+        >
+          <div style={{
+            background: 'rgba(13,17,24,0.95)',
+            border: '1px solid rgba(50,55,70,0.4)',
+            borderRadius: 12,
+            padding: '20px 24px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Trophy size={15} style={{ color: '#ffd6a0' }} />
+                <h2 style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: 15, color: '#dfe2eb', margin: 0,
+                }}>GPA Breakdown</h2>
               </div>
-              <div style={{ padding: '12px 14px', marginBottom: 12,
-                background: 'linear-gradient(135deg, rgba(255,107,157,0.08) 0%, rgba(196,77,255,0.08) 100%)',
-                border: '1px solid rgba(196,77,255,0.25)', borderRadius: 6 }}>
-                <p style={{ fontFamily: 'VT323', fontSize: 17, lineHeight: 1.5 }}>
-                  {topPriority ? (
-                    <>
-                      Start with{' '}
-                      <span style={{ color: '#afc6ff', fontWeight: 700 }}>"{topPriority.title}"</span>
-                      {' '}— it's your highest priority.
-                      {daysUntilExam !== null && daysUntilExam <= 14 && (
-                        <> Also: <span style={{ color: '#ff4d6a' }}>{nextExam?.title}</span> in {daysUntilExam} days — review now!</>
-                      )}
-                    </>
-                  ) : (
-                    <><span style={{ color: '#4dff91' }}>You're all caught up!</span> Great time to review or get ahead.</>
-                  )}
-                </p>
-              </div>
-              <button onClick={() => navigate('/study')} style={{
-                width: '100%', padding: '8px 12px', background: 'rgba(196,77,255,0.12)',
-                border: '1px solid rgba(196,77,255,0.3)', borderRadius: 6, cursor: 'pointer',
-                fontFamily: '"Press Start 2P"', fontSize: 9, color: '#c44dff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
+              <Link to="/grades" style={{
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 12,
+                color: '#8c90a0', textDecoration: 'none',
+                display: 'flex', alignItems: 'center', gap: 3,
               }}>
-                <Zap size={13} /> GENERATE STUDY PLAN
-              </button>
-            </GlassCard>
-          </motion.div>
+                Details <ChevronRight size={13} />
+              </Link>
+            </div>
 
-          {/* GPA Breakdown */}
-          {gpaData?.courseList?.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-              <GlassCard>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-                  <Trophy size={16} style={{ color: '#ffd6a0' }} />
-                  <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#dfe2eb' }}>GPA OVERVIEW</h2>
-                  <Link to="/grades" style={{ marginLeft: 'auto', fontFamily: '"Press Start 2P"', fontSize: 8,
-                    color: '#606080', textDecoration: 'none' }}>DETAILS →</Link>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {gpaData.courseList.slice(0, 5).map(c => (
-                    <div key={c.id}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <span style={{ fontFamily: 'VT323', fontSize: 16, color: '#dfe2eb' }}>{c.name}</span>
-                        <span style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color: c.grade.color }}>
-                          {c.pct}% {c.grade.letter}
-                        </span>
-                      </div>
-                      <MiniProgressBar value={parseFloat(c.pct)} color={c.color} />
-                    </div>
-                  ))}
-                  {gpaData.overall && (
-                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 10, marginTop: 4,
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontFamily: '"Press Start 2P"', fontSize: 9, color: '#8c90a0' }}>OVERALL</span>
-                      <span style={{ fontFamily: '"Press Start 2P"', fontSize: 12,
-                        color: getLetterGrade(parseFloat(gpaData.overall)).color }}>
-                        {gpaData.overall}%
+            {gpaData?.courseList?.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {gpaData.courseList.slice(0, 5).map(c => (
+                  <div key={c.id}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 600, fontSize: 13, color: '#dfe2eb' }}>
+                        {c.name}
+                      </span>
+                      <span style={{
+                        fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 12,
+                        color: c.grade.color,
+                      }}>
+                        {c.pct}%
                       </span>
                     </div>
-                  )}
-                </div>
-              </GlassCard>
-            </motion.div>
-          )}
-        </div>
+                    <MiniProgressBar value={parseFloat(c.pct)} color={c.grade.color} />
+                  </div>
+                ))}
+                {gpaData.overall && (
+                  <div style={{
+                    borderTop: '1px solid rgba(50,55,70,0.4)', paddingTop: 12, marginTop: 2,
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  }}>
+                    <span style={{
+                      fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 11,
+                      letterSpacing: '0.08em', color: '#8c90a0', textTransform: 'uppercase',
+                    }}>Overall GPA</span>
+                    <span style={{
+                      fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 18,
+                      color: getLetterGrade(parseFloat(gpaData.overall)).color,
+                    }}>
+                      {gpaData.overall}%
+                    </span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '32px 16px' }}>
+                <BookOpen size={28} style={{ color: '#424754', marginBottom: 10 }} />
+                <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#8c90a0' }}>
+                  No grades tracked yet.
+                </p>
+              </div>
+            )}
+          </div>
+        </motion.div>
       </div>
 
       {/* Recent Activity */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-        <GlassCard>
-          <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 12, marginBottom: 16 }}>RECENT ACTIVITY</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+      >
+        <div style={{
+          background: 'rgba(13,17,24,0.95)',
+          border: '1px solid rgba(50,55,70,0.4)',
+          borderRadius: 12,
+          padding: '20px 24px',
+        }}>
+          <h2 style={{
+            fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 15,
+            color: '#dfe2eb', marginBottom: 16,
+          }}>Recent Activity</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {[
               { text: 'Study plan generated for this week', subtext: 'AI scheduled 4 sessions around your exams', time: '1h ago', color: '#c44dff' },
               { text: 'Grade posted: Lab 2 — Projectile Motion', subtext: '91/100 — Nice work!', time: '3h ago', color: '#4dff91' },
               { text: 'New assignment: Research Proposal', subtext: 'English Composition — due in 5 days', time: '6h ago', color: '#ffd6a0' },
               { text: 'Pomodoro session completed', subtext: '25 min focused on BST Implementation', time: 'Yesterday', color: '#afc6ff' },
             ].map((a, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '10px 12px',
-                background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 6 }}>
-                <div style={{ width: 6, height: 6, marginTop: 6, borderRadius: '50%', flexShrink: 0,
-                  background: a.color, boxShadow: `0 0 8px ${a.color}` }} />
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 + i * 0.05 }}
+                style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 12,
+                  padding: '11px 14px',
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(50,55,70,0.3)',
+                  borderRadius: 8,
+                }}
+              >
+                <div style={{
+                  width: 6, height: 6, marginTop: 6, borderRadius: '50%', flexShrink: 0,
+                  background: a.color,
+                }} />
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontFamily: 'VT323', fontSize: 18 }}>{a.text}</p>
-                  <p style={{ fontFamily: 'VT323', fontSize: 14, color: '#606080' }}>{a.subtext}</p>
+                  <p style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 600, fontSize: 14, color: '#dfe2eb', marginBottom: 2 }}>{a.text}</p>
+                  <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#8c90a0' }}>{a.subtext}</p>
                 </div>
-                <span style={{ fontFamily: '"Press Start 2P"', fontSize: 7, color: '#424754', flexShrink: 0 }}>{a.time}</span>
-              </div>
+                <span style={{
+                  fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 11,
+                  color: '#424754', flexShrink: 0, marginTop: 2,
+                }}>{a.time}</span>
+              </motion.div>
             ))}
           </div>
-        </GlassCard>
+        </div>
       </motion.div>
 
       {/* GitHub star nudge */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.45 }}
+      >
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12,
-          padding: '14px 18px', borderRadius: 10,
-          background: 'linear-gradient(135deg, rgba(196,77,255,0.07), rgba(82,141,255,0.05))',
-          border: '1px solid rgba(196,77,255,0.18)',
+          padding: '14px 20px', borderRadius: 10,
+          background: 'linear-gradient(135deg, rgba(196,77,255,0.06), rgba(82,141,255,0.04))',
+          border: '1px solid rgba(80,90,110,0.3)',
         }}>
-          <p style={{ fontFamily: 'VT323', fontSize: 17, color: '#8c90a0', margin: 0 }}>
-            Shiori is 100% free &amp; open source. If it's helping you study, a ⭐ takes 2 seconds and helps other students find it.
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#8c90a0', margin: 0 }}>
+            Shiori is 100% free &amp; open source. A ⭐ helps other students discover it.
           </p>
           <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
             <a
@@ -491,26 +673,34 @@ const Home = () => {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                display: 'flex', alignItems: 'center', gap: 5,
-                padding: '7px 14px', borderRadius: 7, textDecoration: 'none',
-                background: 'linear-gradient(135deg, #c44dff, #7b3fa8)',
-                color: '#fff', fontFamily: '"Press Start 2P"', fontSize: 8, fontWeight: 700,
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '7px 16px', borderRadius: 8, textDecoration: 'none',
+                background: 'linear-gradient(135deg, #c44dff, #528dff)',
+                color: '#fff',
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 12,
               }}
-            >⭐ STAR</a>
+            >
+              <Star size={13} /> Star on GitHub
+            </a>
             <a
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('Just discovered Shiori — free AI study companion that syncs Google Classroom, tracks GPA, and generates study plans with Gemini 🤖📚\n\nhttps://github.com/kaorii-ako/Shiori-v1\n\n#OpenSource #StudyTips')}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                display: 'flex', alignItems: 'center', gap: 5,
-                padding: '7px 14px', borderRadius: 7, textDecoration: 'none',
-                background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.12)',
-                color: '#fff', fontFamily: '"Press Start 2P"', fontSize: 8,
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '7px 14px', borderRadius: 8, textDecoration: 'none',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(50,55,70,0.4)',
+                color: '#8c90a0',
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 12,
               }}
-            >SHARE</a>
+            >
+              Share
+            </a>
           </div>
         </div>
       </motion.div>
+
     </div>
   )
 }
