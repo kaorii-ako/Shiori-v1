@@ -128,7 +128,12 @@ const Settings = () => {
       title: 'Data & Privacy',
       description: 'Manage your data',
       items: [
-        { label: 'Export Data', action: 'Export' },
+        { label: 'Export Data (MCP)', action: 'Export', onAction: () => {
+          const keys = ['shiori-assignments', 'shiori-grades', 'shiori-notes', 'shiori-flashcards', 'shiori-auth']
+          const data = { exportedAt: new Date().toISOString() }
+          keys.forEach(k => { try { const r = localStorage.getItem(k); if (r) Object.assign(data, JSON.parse(r)?.state || JSON.parse(r)) } catch {} })
+          const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = 'shiori-data.json'; a.click()
+        }},
         { label: 'Clear Local Cache', action: 'Clear', danger: true },
         { label: 'Delete Account', action: 'Delete', danger: true }
       ]
@@ -270,6 +275,44 @@ const Settings = () => {
           </motion.div>
         ))}
 
+        {/* Supabase Setup */}
+        <GlassCard>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <Database size={16} style={{ color: '#4dff91' }} />
+            <h2 style={{ fontFamily: '"Press Start 2P"', fontSize: 10, color: '#8c90a0' }}>DATABASE SETUP (SUPABASE)</h2>
+            {window.location.hostname !== 'localhost' && !import.meta.env.VITE_SUPABASE_URL && (
+              <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#ff6b9d', padding: '2px 8px', background: 'rgba(255,107,157,0.1)', borderRadius: 4 }}>NOT CONFIGURED</span>
+            )}
+          </div>
+          <p style={{ fontFamily: 'VT323', fontSize: 15, color: '#8c90a0', marginBottom: 10, lineHeight: 1.5 }}>
+            Enable real accounts, Google OAuth, and cross-device sync. Free on Supabase's free tier.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+            {[
+              { num: '1', text: 'Create a free project at supabase.com', href: 'https://supabase.com' },
+              { num: '2', text: 'Open SQL Editor → paste supabase/schema.sql → Run' },
+              { num: '3', text: 'Enable GitHub & Google in Auth → Providers' },
+              { num: '4', text: 'Add VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY in Vercel env vars' },
+            ].map(step => (
+              <div key={step.num} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(77,255,145,0.15)', border: '1px solid rgba(77,255,145,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span style={{ fontFamily: '"Press Start 2P"', fontSize: 8, color: '#4dff91' }}>{step.num}</span>
+                </div>
+                <span style={{ fontFamily: 'VT323', fontSize: 16, color: '#dfe2eb', lineHeight: 1.3 }}>
+                  {step.href ? <a href={step.href} target="_blank" rel="noopener noreferrer" style={{ color: '#4dff91' }}>{step.text}</a> : step.text}
+                </span>
+              </div>
+            ))}
+          </div>
+          <a
+            href="https://github.com/kaorii-ako/Shiori-v1/blob/master/supabase/schema.sql"
+            target="_blank" rel="noopener noreferrer"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 6, background: 'rgba(77,255,145,0.1)', border: '1px solid rgba(77,255,145,0.25)', color: '#4dff91', textDecoration: 'none', fontFamily: '"Press Start 2P"', fontSize: 8 }}
+          >
+            VIEW SCHEMA.SQL →
+          </a>
+        </GlassCard>
+
         {/* MCP Data Export */}
         <GlassCard>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
@@ -308,9 +351,10 @@ const Settings = () => {
         <GlassCard>
           <div className="text-center py-4">
             <p className="text-text-muted text-sm">
-              Shiori v2.1.0 • Made with
+              Shiori v2.4.0 · MIT License · Made with
               <span className="text-accent-tertiary mx-1">♥</span>
-              for students everywhere
+              for students everywhere ·{' '}
+              <a href="https://github.com/kaorii-ako/Shiori-v1" target="_blank" rel="noopener noreferrer" style={{ color: '#afc6ff' }}>Star on GitHub ⭐</a>
             </p>
           </div>
         </GlassCard>
