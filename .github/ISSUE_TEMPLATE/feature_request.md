@@ -1,19 +1,18 @@
 ---
 name: Feature request
-about: Suggest an idea for Shiori
-title: '[FEAT] '
+about: Suggest an improvement to Shiori
 labels: enhancement
 assignees: ''
 ---
 
-**Is your request related to a problem?**
-e.g. "I always forget about assignments posted in Google Chat..."
+**Problem this solves**
+What studying pain point does this address?
 
-**Describe the solution you'd like**
-A clear description of what you want to happen.
+**Proposed solution**
+How should it work?
 
 **Alternatives considered**
-Any other approaches you've thought about.
+Any other approaches?
 
 **Additional context**
-Mockups, screenshots, or links to similar features in other apps.
+Screenshots, mockups, or examples welcome.

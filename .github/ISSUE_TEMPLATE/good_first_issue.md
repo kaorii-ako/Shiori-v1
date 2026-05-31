@@ -1,37 +1,30 @@
 ---
 name: Good first issue
-about: A small, well-scoped task for first-time contributors
-title: '[GOOD FIRST ISSUE] '
-labels: good first issue, help wanted
+about: A great task for first-time contributors to Shiori
+labels: good first issue
 assignees: ''
 ---
 
-## What to build / fix
+**What needs to be done**
+<!-- Clear description of the task -->
 
-<!-- Describe the task clearly in 2-3 sentences -->
+**Files to look at**
+- `client/src/pages/...`
+- `client/src/components/...`
 
-## Context
+**Design tokens** (from `client/src/utils/theme.js`)
+- Background: `#10141a`
+- Card: `#161b24`
+- Blue: `#afc6ff` / `#528dff`
+- Use inline styles (not Tailwind classes)
 
-<!-- Where in the codebase does this live? Link to relevant files. -->
+**How to test**
+1. Run `cd client && npm run dev`
+2. Click "Try Demo" on the landing page
+3. Navigate to the relevant page
+4. Verify the change works
 
-**File(s) to touch:**
-- `client/src/`
-
-## Acceptance criteria
-
-- [ ] ...
-- [ ] ...
-- [ ] Works in demo mode
-
-## Hints
-
-<!-- Optional: pointers to help a newcomer -->
-
-## Difficulty
-
-**Beginner** — estimated ~X lines of code
-
----
-
-> **New to the project?** See [CONTRIBUTING.md](../../CONTRIBUTING.md) for setup instructions.  
-> Questions? Drop a comment below — the maintainer responds fast.
+**Acceptance criteria**
+- [ ] Works in demo mode (no Supabase required)
+- [ ] Matches existing dark theme design
+- [ ] No console errors

@@ -1,30 +1,27 @@
 ---
 name: Bug report
-about: Something isn't working right
-title: '[BUG] '
+about: Something is broken
 labels: bug
 assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what's wrong.
+A clear description of what's wrong.
 
-**To Reproduce**
+**To reproduce**
 1. Go to '...'
-2. Click on '...'
+2. Click '...'
 3. See error
 
 **Expected behavior**
 What you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots.
-
 **Environment**
-- OS: [e.g. Windows 11, macOS 14]
-- Node version: [e.g. 20.0.0]
 - Browser: [e.g. Chrome 120]
-- Shiori version / commit: [e.g. ea44069]
+- Device: [e.g. MacBook, iPhone]
+- Mode: Demo mode / Real account
 
-**Additional context**
-Any other relevant information (console errors, network logs, etc.)
+**Console errors** (F12 → Console)
+```
+Paste any errors here
+```
