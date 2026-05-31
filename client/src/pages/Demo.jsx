@@ -12,13 +12,10 @@ export default function Demo() {
   const { setCourseGrades, setCourseWeights } = useGradesStore()
 
   useEffect(() => {
-    // Real authenticated user (not demo) → send home
     if (isAuthenticated && !isDemo) {
       navigate('/home', { replace: true })
       return
     }
-    // (Re-)initialize demo every time — handles page refresh where auth store
-    // persisted isDemo:true but non-persistent stores (assignments, events) reset
     enterDemoMode()
     setCourses(DEMO_COURSES)
     setAssignments(DEMO_ASSIGNMENTS)
@@ -30,21 +27,18 @@ export default function Demo() {
     localStorage.setItem('shiori-quiz-history', JSON.stringify(DEMO_QUIZ_HISTORY))
     localStorage.setItem('shiori-leaderboard', JSON.stringify(DEMO_LEADERBOARD))
     setXP(620)
-    // Log for debugging
-    console.log('[Demo] Demo data stored, navigating to home')
-    // Navigate after ensuring state is updated (microtask)
-    setTimeout(() => {
-      navigate('/home', { replace: true })
-    }, 0)
+    navigate('/home', { replace: true })
   }, [])
 
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: '#10141a', color: '#dfe2eb',
-      fontFamily: "'Space Grotesk', sans-serif", fontSize: 16,
+      background: '#10141a', color: '#dfe2eb', fontFamily: "'Space Grotesk', sans-serif", fontSize: 16,
     }}>
-      Loading demo...
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>栞</div>
+        <div>Loading demo...</div>
+      </div>
     </div>
   )
 }

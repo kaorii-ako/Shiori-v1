@@ -2,23 +2,21 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../stores'
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading, _hasHydrated } = useAuthStore()
+  const { isAuthenticated, isLoading, isDemo, _hasHydrated } = useAuthStore()
   const location = useLocation()
 
-  console.log('[ProtectedRoute] isLoading:', isLoading, 'isAuthenticated:', isAuthenticated, 'isDemo:', useAuthStore.getState().isDemo);
+  // Demo users bypass the hydration wait — enterDemoMode() sets state synchronously
+  if (isDemo) return children
+
   if (isLoading || !_hasHydrated) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse">
-          <div
-            className="w-16 h-16 flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(135deg, #ff6b9d 0%, #c44dff 100%)',
-              clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
-            }}
-          >
-            <span className="text-white font-bold text-2xl" style={{ fontFamily: 'serif' }}>栞</span>
-          </div>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#10141a' }}>
+        <div style={{
+          width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'linear-gradient(135deg, #ff6b9d 0%, #c44dff 100%)',
+          clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+        }}>
+          <span style={{ color: 'white', fontWeight: 'bold', fontSize: 24, fontFamily: 'serif' }}>栞</span>
         </div>
       </div>
     )
