@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuthStore, useUIStore } from '../stores'
+import { useAuthStore, useUIStore, useAssignmentsStore } from '../stores'
 import { C } from '../utils/theme'
+import { GoogleLogo } from '../components/GoogleButton'
 
 function Section({ title, children }) {
   return (
@@ -12,13 +13,39 @@ function Section({ title, children }) {
   )
 }
 
+function timeAgo(ts) {
+  if (!ts) return null
+  const s = Math.floor((Date.now() - ts) / 1000)
+  if (s < 60) return 'just now'
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`
+  return `${Math.floor(s / 86400)}d ago`
+}
+
 export default function Settings() {
   const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
-  const { geminiApiKey, setGeminiApiKey } = useUIStore()
+  const { user, logout, loginWithGoogle, clearGoogleAuth, isGoogleConnected } = useAuthStore()
+  const { geminiApiKey, setGeminiApiKey, addToast } = useUIStore()
+  const { syncClassroom, syncing, lastSynced } = useAssignmentsStore()
   const [keyInput, setKeyInput] = useState(geminiApiKey || '')
   const [keySaved, setKeySaved] = useState(false)
   const [showKey, setShowKey] = useState(false)
+
+  const connected = isGoogleConnected()
+
+  const handleSync = async () => {
+    try {
+      const r = await syncClassroom()
+      addToast({ type: 'success', message: `Synced ${r.courses} courses · ${r.assignments} assignments from Classroom` })
+    } catch (e) {
+      if (e?.name === 'ClassroomAuthError') {
+        addToast({ type: 'error', message: 'Google session expired — reconnecting…' })
+        loginWithGoogle().catch(() => {})
+      } else {
+        addToast({ type: 'error', message: e?.message || 'Classroom sync failed' })
+      }
+    }
+  }
 
   const saveKey = () => {
     setGeminiApiKey(keyInput.trim())
@@ -43,8 +70,57 @@ export default function Settings() {
           </div>
           <div>
             <div style={{ fontSize: 16, fontWeight: 700, color: C.text }}>{userName}</div>
-            <div style={{ fontSize: 13, color: C.textMuted }}>{user?.email || 'Demo User'}</div>
+            <div style={{ fontSize: 13, color: C.textMuted }}>{user?.email || ''}</div>
           </div>
+        </div>
+      </Section>
+
+      {/* Integrations */}
+      <Section title="Integrations">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <GoogleLogo size={22} />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.text }}>Google Classroom</div>
+            <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>
+              {connected
+                ? `Connected${lastSynced ? ` · synced ${timeAgo(lastSynced)}` : ''}`
+                : 'Import your courses, assignments and grades automatically.'}
+            </div>
+          </div>
+          <span style={{
+            padding: '4px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700,
+            fontFamily: "'Space Grotesk', sans-serif", flexShrink: 0,
+            color: connected ? C.greenDark : C.textMuted,
+            background: connected ? 'rgba(77,255,145,0.12)' : 'rgba(140,144,160,0.12)',
+            border: `1px solid ${connected ? 'rgba(77,255,145,0.4)' : C.border}`,
+          }}>{connected ? '● Connected' : '○ Not connected'}</span>
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, marginTop: 16, flexWrap: 'wrap' }}>
+          {connected ? (
+            <>
+              <button onClick={handleSync} disabled={syncing} style={{
+                padding: '9px 16px', borderRadius: 8, border: 'none',
+                background: 'linear-gradient(135deg,#afc6ff,#528dff)', color: '#10141a',
+                cursor: syncing ? 'not-allowed' : 'pointer',
+                fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700,
+              }}>{syncing ? 'Syncing…' : '↻ Sync now'}</button>
+              <button onClick={() => { clearGoogleAuth(); addToast({ type: 'info', message: 'Disconnected from Google Classroom' }) }} style={{
+                padding: '9px 16px', borderRadius: 8, border: `1px solid ${C.border}`,
+                background: 'transparent', color: C.textMuted, cursor: 'pointer',
+                fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+              }}>Disconnect</button>
+            </>
+          ) : (
+            <button onClick={() => loginWithGoogle().catch(() => {})} style={{
+              padding: '9px 16px', borderRadius: 8, border: 'none',
+              background: '#fff', color: '#1f1f1f', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8,
+              fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+            }}><GoogleLogo size={16} /> Connect Google Classroom</button>
+          )}
         </div>
       </Section>
 
@@ -115,7 +191,7 @@ export default function Settings() {
       {/* Account */}
       <Section title="Account">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <button onClick={() => { logout?.(); navigate('/login') }} style={{
+          <button onClick={() => { Promise.resolve(logout?.()).finally(() => navigate('/login')) }} style={{
             padding: '10px 16px', borderRadius: 8,
             border: `1px solid ${C.border}`, background: 'transparent',
             color: C.text, cursor: 'pointer', textAlign: 'left',

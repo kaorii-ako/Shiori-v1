@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react'
-import { useAssignmentsStore } from '../stores'
+import { useNavigate } from 'react-router-dom'
+import { useAssignmentsStore, useAuthStore, useUIStore } from '../stores'
 import { C } from '../utils/theme'
+import { GoogleLogo } from '../components/GoogleButton'
 
 const PRIORITIES = ['low', 'medium', 'high']
 const PRIORITY_COLOR = { low: C.green, medium: C.orange, high: C.pink }
@@ -24,10 +26,26 @@ function Modal({ open, onClose, children }) {
 }
 
 export default function Assignments() {
-  const { assignments, addAssignment, updateAssignment, deleteAssignment } = useAssignmentsStore()
+  const navigate = useNavigate()
+  const { assignments, addAssignment, updateAssignment, deleteAssignment, syncClassroom, syncing } = useAssignmentsStore()
+  const { isGoogleConnected, loginWithGoogle } = useAuthStore()
+  const { addToast } = useUIStore()
   const [filter, setFilter] = useState('all')
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState(EMPTY)
+
+  const connected = isGoogleConnected()
+
+  const handleSync = async () => {
+    if (!connected) { navigate('/settings'); return }
+    try {
+      const r = await syncClassroom()
+      addToast({ type: 'success', message: `Imported ${r.assignments} assignments from Classroom` })
+    } catch (e) {
+      if (e?.name === 'ClassroomAuthError') { addToast({ type: 'error', message: 'Google session expired — reconnecting…' }); loginWithGoogle().catch(() => {}) }
+      else addToast({ type: 'error', message: e?.message || 'Classroom sync failed' })
+    }
+  }
 
   const filtered = useMemo(() => {
     const now = new Date()
@@ -62,13 +80,24 @@ export default function Assignments() {
         <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 24, fontWeight: 700, color: C.text }}>
           📋 Assignments
         </h1>
-        <button onClick={() => setShowModal(true)} style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          padding: '9px 16px', borderRadius: 8, border: 'none',
-          background: 'linear-gradient(135deg, #afc6ff, #528dff)',
-          color: '#10141a', cursor: 'pointer',
-          fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700,
-        }}>+ Add Assignment</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={handleSync} disabled={syncing} title="Import from Google Classroom" style={{
+            display: 'flex', alignItems: 'center', gap: 7,
+            padding: '9px 14px', borderRadius: 8, border: `1px solid ${C.border}`,
+            background: '#fff', color: '#1f1f1f',
+            cursor: syncing ? 'not-allowed' : 'pointer',
+            fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+          }}>
+            <GoogleLogo size={15} /> {syncing ? 'Syncing…' : connected ? 'Sync Classroom' : 'Connect Classroom'}
+          </button>
+          <button onClick={() => setShowModal(true)} style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '9px 16px', borderRadius: 8, border: 'none',
+            background: 'linear-gradient(135deg, #afc6ff, #528dff)',
+            color: '#10141a', cursor: 'pointer',
+            fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700,
+          }}>+ Add</button>
+        </div>
       </div>
 
       {/* Filter tabs */}
@@ -90,7 +119,23 @@ export default function Assignments() {
           padding: '40px 20px', textAlign: 'center',
         }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
-          <p style={{ color: C.textMuted, fontSize: 14 }}>No assignments here. Add your first one!</p>
+          <p style={{ color: C.text, fontSize: 15, fontWeight: 600, marginBottom: 4 }}>No assignments yet</p>
+          <p style={{ color: C.textMuted, fontSize: 13, marginBottom: 20 }}>
+            Import everything from Google Classroom, or add one manually.
+          </p>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button onClick={handleSync} disabled={syncing} style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '10px 18px', borderRadius: 9, border: 'none',
+              background: '#fff', color: '#1f1f1f', cursor: syncing ? 'not-allowed' : 'pointer',
+              fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+            }}><GoogleLogo size={16} /> {connected ? 'Sync Google Classroom' : 'Connect Google Classroom'}</button>
+            <button onClick={() => setShowModal(true)} style={{
+              padding: '10px 18px', borderRadius: 9, border: `1px solid ${C.border}`,
+              background: 'transparent', color: C.text, cursor: 'pointer',
+              fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+            }}>Add manually</button>
+          </div>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -115,8 +160,13 @@ export default function Assignments() {
                     textDecoration: a.completed ? 'line-through' : 'none',
                   }}>{a.title}</div>
                   <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>
-                    {a.course} · Due {due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    {a.course || a.courseName} · Due {due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     {overdue && <span style={{ color: C.pink, marginLeft: 6 }}>Overdue</span>}
+                    {a.link && (
+                      <a href={a.link} target="_blank" rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{ color: C.blue, marginLeft: 6, textDecoration: 'none' }}>· Classroom ↗</a>
+                    )}
                   </div>
                 </div>
                 <span style={{

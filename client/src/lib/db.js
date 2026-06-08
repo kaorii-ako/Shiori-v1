@@ -17,7 +17,7 @@ export const saveCourse = guard(async (userId, course) => {
     id: course.id, user_id: userId,
     name: course.name, code: course.code,
     color: course.color, instructor: course.instructor,
-    credits: course.credits,
+    credits: course.credits, source: course.source || null,
   })
   if (error) throw error
 })
@@ -31,6 +31,7 @@ export const loadCourses = guard(async (userId) => {
   return data?.map(r => ({
     id: r.id, name: r.name, code: r.code,
     color: r.color, instructor: r.instructor, credits: r.credits,
+    source: r.source || undefined,
   })) || []
 })
 
@@ -39,11 +40,11 @@ export const loadCourses = guard(async (userId) => {
 export const saveAssignment = guard(async (userId, a) => {
   const { error } = await supabase.from('assignments').upsert({
     id: a.id, user_id: userId,
-    course_id: a.courseId, course_name: a.courseName,
-    title: a.title, description: a.description,
-    due_date: a.dueDate, status: a.status,
+    course_id: a.courseId, course_name: a.courseName || a.course,
+    title: a.title, description: a.description || a.notes,
+    due_date: a.dueDate, status: a.status || (a.completed ? 'completed' : 'pending'),
     priority: a.priority, estimated_hours: a.estimatedHours,
-    grade: a.grade,
+    grade: a.grade, source: a.source || null,
   })
   if (error) throw error
 })
@@ -55,11 +56,12 @@ export const deleteAssignment = guard(async (id) => {
 export const loadAssignments = guard(async (userId) => {
   const { data } = await supabase.from('assignments').select('*').eq('user_id', userId).order('due_date')
   return data?.map(r => ({
-    id: r.id, courseId: r.course_id, courseName: r.course_name,
+    id: r.id, courseId: r.course_id, courseName: r.course_name, course: r.course_name,
     title: r.title, description: r.description,
     dueDate: r.due_date, status: r.status,
+    completed: r.status === 'completed' || r.status === 'submitted' || r.status === 'graded',
     priority: r.priority, estimatedHours: r.estimated_hours,
-    grade: r.grade,
+    grade: r.grade, source: r.source || undefined,
   })) || []
 })
 
@@ -162,10 +164,9 @@ export const loadEvents = guard(async (userId) => {
 export const saveHabit = guard(async (userId, h) => {
   const { error } = await supabase.from('habits').upsert({
     id: h.id, user_id: userId,
-    name: h.name, description: h.description,
-    frequency: h.frequency, target_days: h.targetDays,
-    color: h.color, icon: h.icon,
+    name: h.name, color: h.color,
     streak: h.streak || 0,
+    completions: h.completions || {},
     updated_at: new Date().toISOString(),
   })
   if (error) throw error
@@ -178,10 +179,9 @@ export const deleteHabit = guard(async (id) => {
 export const loadHabits = guard(async (userId) => {
   const { data } = await supabase.from('habits').select('*').eq('user_id', userId).order('created_at')
   return data?.map(r => ({
-    id: r.id, name: r.name, description: r.description,
-    frequency: r.frequency, targetDays: r.target_days,
-    color: r.color, icon: r.icon, streak: r.streak,
-    completions: r.completions || [],
+    id: r.id, name: r.name, color: r.color,
+    streak: r.streak || 0,
+    completions: r.completions || {},
     createdAt: new Date(r.created_at).getTime(),
   })) || []
 })
@@ -196,6 +196,10 @@ export const saveStudyPlan = guard(async (userId, plan) => {
     status: plan.status || 'active',
   })
   if (error) throw error
+})
+
+export const deleteStudyPlan = guard(async (id) => {
+  await supabase.from('study_plans').delete().eq('id', id)
 })
 
 export const loadStudyPlans = guard(async (userId) => {

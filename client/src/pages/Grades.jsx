@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useGradesStore } from '../stores'
+import { useGradesStore, useAssignmentsStore, pctToGPA } from '../stores'
 import { C } from '../utils/theme'
 
 function letterGrade(pct) {
@@ -22,18 +22,35 @@ function gradeColor(pct) {
 }
 
 export default function Grades() {
-  const { semesters } = useGradesStore()
+  const { calculateCourseGrade, courseGrades } = useGradesStore()
+  const { courses } = useAssignmentsStore()
   const [finalWeight, setFinalWeight] = useState(30)
   const [desiredGrade, setDesiredGrade] = useState(90)
   const [currentPct, setCurrentPct] = useState(85)
 
-  const allCourses = useMemo(() => (semesters || []).flatMap(s => s.courses || []), [semesters])
+  const courseGradeData = useMemo(() => {
+    return (courses || [])
+      .map(c => {
+        const result = calculateCourseGrade(c.id)
+        if (!result) return null
+        return { course: c, result }
+      })
+      .filter(Boolean)
+  }, [courses, courseGrades, calculateCourseGrade])
 
   const overallGPA = useMemo(() => {
-    const gpas = allCourses.filter(c => c.gpa != null).map(c => c.gpa)
-    if (!gpas.length) return null
-    return (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2)
-  }, [allCourses])
+    if (!courseGradeData.length) return null
+    let weightedSum = 0
+    let totalCredits = 0
+    courseGradeData.forEach(({ course, result }) => {
+      const credits = course.credits || 3
+      const pct = parseFloat(result.percentage)
+      weightedSum += pctToGPA(pct) * credits
+      totalCredits += credits
+    })
+    if (totalCredits === 0) return null
+    return (weightedSum / totalCredits).toFixed(2)
+  }, [courseGradeData])
 
   const neededOnFinal = useMemo(() => {
     const w = finalWeight / 100
@@ -59,7 +76,9 @@ export default function Grades() {
           </div>
           <div style={{
             fontFamily: "'Space Grotesk', sans-serif", fontSize: 52, fontWeight: 800,
-            color: overallGPA ? (overallGPA >= 3.5 ? C.green : overallGPA >= 3.0 ? C.orange : C.pink) : C.textMuted,
+            color: overallGPA
+              ? (parseFloat(overallGPA) >= 3.5 ? C.green : parseFloat(overallGPA) >= 3.0 ? C.orange : C.pink)
+              : C.textMuted,
             lineHeight: 1,
           }}>
             {overallGPA || '—'}
@@ -67,33 +86,35 @@ export default function Grades() {
         </div>
         <div style={{ height: 60, width: 1, background: C.border }} />
         <div>
-          <div style={{ fontSize: 13, color: C.textMuted }}>Tracking <strong style={{ color: C.text }}>{allCourses.length}</strong> courses</div>
+          <div style={{ fontSize: 13, color: C.textMuted }}>
+            Tracking <strong style={{ color: C.text }}>{courseGradeData.length}</strong> courses with grades
+          </div>
           <div style={{ fontSize: 13, color: C.textMuted, marginTop: 4 }}>
-            Across <strong style={{ color: C.text }}>{(semesters || []).length}</strong> semesters
+            Out of <strong style={{ color: C.text }}>{(courses || []).length}</strong> total courses
           </div>
         </div>
       </div>
 
       {/* Course cards */}
-      {allCourses.length === 0 ? (
+      {courseGradeData.length === 0 ? (
         <div style={{
           background: C.card, border: `1px solid ${C.border}`, borderRadius: 12,
           padding: '40px 20px', textAlign: 'center', marginBottom: 24,
         }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>📊</div>
-          <p style={{ color: C.textMuted, fontSize: 14 }}>No courses yet. Add grades to get started!</p>
+          <p style={{ color: C.textMuted, fontSize: 14 }}>No grades yet. Add grades to your courses to see them here!</p>
         </div>
       ) : (
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
           gap: 14, marginBottom: 24,
         }}>
-          {allCourses.map((course, i) => {
-            const pct = course.percentage ?? course.grade ?? 0
+          {courseGradeData.map(({ course, result }) => {
+            const pct = parseFloat(result.percentage)
             const letter = letterGrade(pct)
             const color = gradeColor(pct)
             return (
-              <div key={i} style={{
+              <div key={course.id} style={{
                 background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 18,
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
@@ -106,9 +127,12 @@ export default function Grades() {
                   }}>{letter}</span>
                 </div>
                 <div style={{ height: 4, background: C.border, borderRadius: 2, overflow: 'hidden', marginBottom: 8 }}>
-                  <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: 2 }} />
+                  <div style={{ height: '100%', width: `${Math.min(pct, 100)}%`, background: color, borderRadius: 2 }} />
                 </div>
-                <div style={{ fontSize: 12, color: C.textMuted }}>{pct}%{course.credits ? ` · ${course.credits} credits` : ''}</div>
+                <div style={{ fontSize: 12, color: C.textMuted }}>
+                  {result.percentage}%{course.credits ? ` · ${course.credits} credits` : ''}
+                  {result.isWeighted ? ' · weighted' : ''}
+                </div>
               </div>
             )
           })}

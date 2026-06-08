@@ -4,7 +4,7 @@ export const C = {
   cardHover: '#1c2235',
   border: '#2a3142',
   text: '#dfe2eb',
-  textMuted: '#8c90a0',
+  textMuted: '#a8acbd',
   blue: '#afc6ff',
   blueDark: '#528dff',
   purple: '#e5b5ff',

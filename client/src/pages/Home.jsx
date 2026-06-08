@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuthStore, useAssignmentsStore, useGradesStore, useNotesStore, useXPStore } from '../stores'
+import { useAuthStore, useAssignmentsStore, useGradesStore, useNotesStore, useXPStore, useUIStore, pctToGPA } from '../stores'
 import { C } from '../utils/theme'
+import { GoogleLogo } from '../components/GoogleButton'
 
 function StatCard({ icon, label, value, color }) {
   return (
@@ -18,11 +19,26 @@ function StatCard({ icon, label, value, color }) {
 
 export default function Home() {
   const navigate = useNavigate()
-  const { user } = useAuthStore()
-  const { assignments } = useAssignmentsStore()
-  const { semesters } = useGradesStore()
+  const { user, isGoogleConnected, loginWithGoogle } = useAuthStore()
+  const { assignments, courses, syncClassroom, syncing } = useAssignmentsStore()
+  const { addToast } = useUIStore()
+  const connected = isGoogleConnected()
+
+  const handleSync = async () => {
+    if (!connected) { navigate('/settings'); return }
+    try {
+      const r = await syncClassroom()
+      addToast({ type: 'success', message: `Synced ${r.courses} courses · ${r.assignments} assignments` })
+    } catch (e) {
+      if (e?.name === 'ClassroomAuthError') { addToast({ type: 'error', message: 'Google session expired — reconnecting…' }); loginWithGoogle().catch(() => {}) }
+      else addToast({ type: 'error', message: e?.message || 'Classroom sync failed' })
+    }
+  }
+  const { calculateCourseGrade, courseGrades } = useGradesStore()
   const { notes } = useNotesStore()
-  const { xp, level, xpToNextLevel } = useXPStore?.() || { xp: 0, level: 1, xpToNextLevel: 100 }
+  const xpStore = useXPStore()
+  const { pct: xpPct, cur: xpLevel, next: xpNext, xpToNext } = xpStore.getProgress()
+  const xp = xpStore.xp
 
   const name = user?.firstName || user?.name?.split(' ')[0] || 'Student'
   const hour = new Date().getHours()
@@ -41,23 +57,23 @@ export default function Home() {
       .slice(0, 5)
   }, [assignments])
 
-  const recentNotes = useMemo(() => {
-    return (notes || []).slice(0, 3)
-  }, [notes])
+  const recentNotes = useMemo(() => (notes || []).slice(0, 3), [notes])
 
   const currentGPA = useMemo(() => {
-    const all = (semesters || []).flatMap(s => s.courses || [])
-    if (!all.length) return '—'
-    const gpas = all.filter(c => c.gpa != null).map(c => c.gpa)
-    if (!gpas.length) return '—'
-    return (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2)
-  }, [semesters])
-
-  const xpPct = xpToNextLevel > 0 ? Math.min(100, Math.round((xp / xpToNextLevel) * 100)) : 0
+    if (!courses?.length) return '—'
+    let totalPoints = 0, totalCredits = 0
+    courses.forEach(c => {
+      const result = calculateCourseGrade(c.id)
+      if (!result) return
+      const cred = c.credits || 3
+      totalPoints += pctToGPA(parseFloat(result.percentage)) * cred
+      totalCredits += cred
+    })
+    return totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '—'
+  }, [courses, courseGrades, calculateCourseGrade])
 
   return (
     <div style={{ fontFamily: "'Manrope', sans-serif", color: C.text, maxWidth: 960, margin: '0 auto' }}>
-      {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 26, fontWeight: 700, color: C.text, marginBottom: 4 }}>
           {greeting}, {name}! 👋
@@ -68,15 +84,17 @@ export default function Home() {
       {/* XP Bar */}
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: '14px 20px', marginBottom: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600, color: C.blue }}>
-            Level {level}
+          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600, color: xpLevel?.color || C.blue }}>
+            {xpLevel?.title || 'Freshman'} · Level {xpLevel?.level || 1}
           </span>
-          <span style={{ fontSize: 12, color: C.textMuted }}>{xp} / {xpToNextLevel} XP</span>
+          <span style={{ fontSize: 12, color: C.textMuted }}>
+            {xp} XP{xpNext ? ` · ${xpToNext - (xp - xpLevel.min)} to next level` : ' · Max level!'}
+          </span>
         </div>
         <div style={{ height: 6, background: C.border, borderRadius: 4, overflow: 'hidden' }}>
           <div style={{
             height: '100%', width: `${xpPct}%`,
-            background: 'linear-gradient(90deg, #afc6ff, #528dff)',
+            background: `linear-gradient(90deg, ${xpLevel?.color || C.blue}, ${xpNext?.color || C.blue})`,
             borderRadius: 4, transition: 'width 0.4s ease',
           }} />
         </div>
@@ -103,9 +121,19 @@ export default function Home() {
             }}>View all →</button>
           </div>
           {upcoming.length === 0 ? (
-            <p style={{ fontSize: 13, color: C.textMuted, textAlign: 'center', padding: '20px 0' }}>
-              No upcoming assignments 🎉
-            </p>
+            <div style={{ textAlign: 'center', padding: '16px 0 8px' }}>
+              <p style={{ fontSize: 13, color: C.textMuted, marginBottom: 14 }}>
+                {connected ? 'No upcoming assignments 🎉' : 'Connect Google Classroom to auto-import your assignments.'}
+              </p>
+              <button onClick={handleSync} disabled={syncing} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '9px 16px', borderRadius: 9, border: 'none',
+                background: '#fff', color: '#1f1f1f', cursor: syncing ? 'not-allowed' : 'pointer',
+                fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+              }}>
+                <GoogleLogo size={15} /> {syncing ? 'Syncing…' : connected ? 'Sync Classroom now' : 'Connect Classroom'}
+              </button>
+            </div>
           ) : (
             upcoming.map(a => {
               const due = new Date(a.dueDate)
@@ -113,8 +141,7 @@ export default function Home() {
               return (
                 <div key={a.id} style={{
                   display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '10px 0',
-                  borderBottom: `1px solid ${C.border}`,
+                  padding: '10px 0', borderBottom: `1px solid ${C.border}`,
                 }}>
                   <div style={{
                     width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
@@ -124,7 +151,7 @@ export default function Home() {
                     <div style={{ fontSize: 13, fontWeight: 600, color: C.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {a.title}
                     </div>
-                    <div style={{ fontSize: 11, color: C.textMuted }}>{a.course}</div>
+                    <div style={{ fontSize: 11, color: C.textMuted }}>{a.course || a.courseName}</div>
                   </div>
                   <div style={{ fontSize: 11, color: daysLeft <= 1 ? C.pink : C.textMuted, flexShrink: 0 }}>
                     {daysLeft === 0 ? 'Today' : daysLeft === 1 ? 'Tomorrow' : `${daysLeft}d`}
@@ -153,8 +180,7 @@ export default function Home() {
           ) : (
             recentNotes.map(n => (
               <div key={n.id} style={{
-                padding: '10px 0', borderBottom: `1px solid ${C.border}`,
-                cursor: 'pointer',
+                padding: '10px 0', borderBottom: `1px solid ${C.border}`, cursor: 'pointer',
               }} onClick={() => navigate('/notes')}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{n.title || 'Untitled'}</div>
                 <div style={{ fontSize: 11, color: C.textMuted, marginTop: 2 }}>
@@ -176,6 +202,7 @@ export default function Home() {
             { label: '🎯 Start Focus Mode', path: '/focus', color: C.blue },
             { label: '🧩 Take a Quiz', path: '/quiz', color: C.purple },
             { label: '🃏 Review Flashcards', path: '/flashcards', color: C.green },
+            { label: '📊 Check Grades', path: '/grades', color: C.orange },
           ].map(a => (
             <button key={a.path} onClick={() => navigate(a.path)} style={{
               padding: '12px 20px', borderRadius: 10,

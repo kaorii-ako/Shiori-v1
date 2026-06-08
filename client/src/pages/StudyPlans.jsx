@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useUIStore } from '../stores'
+import { useUIStore, useStudyPlansStore } from '../stores'
 import { C } from '../utils/theme'
 
 const DEMO_PLAN = {
@@ -14,7 +14,7 @@ const DEMO_PLAN = {
 
 export default function StudyPlans() {
   const { geminiApiKey } = useUIStore()
-  const [plans, setPlans] = useState([])
+  const { plans, addStudyPlan, deleteStudyPlan } = useStudyPlansStore()
   const [form, setForm] = useState({ subject: '', examDate: '' })
   const [loading, setLoading] = useState(false)
   const [activePlan, setActivePlan] = useState(null)
@@ -25,15 +25,15 @@ export default function StudyPlans() {
     if (!geminiApiKey) {
       setTimeout(() => {
         const plan = { ...DEMO_PLAN, subject: form.subject, examDate: form.examDate, id: Date.now().toString() }
-        setPlans(p => [plan, ...p])
-        setActivePlan(plan.id)
+        const id = addStudyPlan(plan)
+        setActivePlan(id)
         setLoading(false)
         setForm({ subject: '', examDate: '' })
       }, 800)
       return
     }
     try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: `Create a 4-week study plan for "${form.subject}" with exam on ${form.examDate||'TBD'}. Return JSON: {subject,weeks:[{week,topic,tasks:[3 tasks]}]}` }] }] })
@@ -43,18 +43,18 @@ export default function StudyPlans() {
       const match = text.match(/\{[\s\S]*\}/)
       const parsed = match ? JSON.parse(match[0]) : DEMO_PLAN
       const plan = { ...parsed, id: Date.now().toString(), examDate: form.examDate }
-      setPlans(p => [plan, ...p])
-      setActivePlan(plan.id)
+      const id = addStudyPlan(plan)
+      setActivePlan(id)
       setForm({ subject: '', examDate: '' })
     } catch {
       const plan = { ...DEMO_PLAN, subject: form.subject, id: Date.now().toString() }
-      setPlans(p => [plan, ...p])
-      setActivePlan(plan.id)
+      const id = addStudyPlan(plan)
+      setActivePlan(id)
     }
     setLoading(false)
   }
 
-  const shown = activePlan ? plans.find(p => p.id === activePlan) : null
+  const shown = activePlan ? plans.find(p => p.id === activePlan) : (plans.length > 0 ? plans[0] : null)
 
   return (
     <div style={{ fontFamily: "'Manrope', sans-serif", color: C.text, maxWidth: 800, margin: '0 auto' }}>
@@ -96,11 +96,11 @@ export default function StudyPlans() {
           {plans.map(p => (
             <button key={p.id} onClick={() => setActivePlan(p.id)} style={{
               padding: '6px 14px', borderRadius: 20,
-              border: `1px solid ${activePlan === p.id ? C.blue : C.border}`,
-              background: activePlan === p.id ? 'rgba(175,198,255,0.15)' : 'transparent',
-              color: activePlan === p.id ? C.blue : C.textMuted,
+              border: `1px solid ${(activePlan === p.id || (!activePlan && plans[0]?.id === p.id)) ? C.blue : C.border}`,
+              background: (activePlan === p.id || (!activePlan && plans[0]?.id === p.id)) ? 'rgba(175,198,255,0.15)' : 'transparent',
+              color: (activePlan === p.id || (!activePlan && plans[0]?.id === p.id)) ? C.blue : C.textMuted,
               cursor: 'pointer', fontFamily: "'Space Grotesk', sans-serif", fontSize: 12,
-            }}>{p.subject}</button>
+            }}>{p.subject || p.title}</button>
           ))}
         </div>
       )}
@@ -109,8 +109,8 @@ export default function StudyPlans() {
       {shown ? (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 700, color: C.text }}>{shown.subject}</h2>
-            <button onClick={() => { setPlans(p => p.filter(x => x.id !== shown.id)); setActivePlan(null) }}
+            <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 700, color: C.text }}>{shown.subject || shown.title}</h2>
+            <button onClick={() => { deleteStudyPlan(shown.id); setActivePlan(null) }}
               style={{ background: 'none', border: `1px solid ${C.border}`, borderRadius: 6, padding: '5px 10px', color: C.textMuted, cursor: 'pointer', fontSize: 12 }}>Delete</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

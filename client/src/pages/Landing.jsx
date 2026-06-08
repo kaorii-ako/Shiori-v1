@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import { C } from '../utils/theme'
+import { GoogleLogo } from '../components/GoogleButton'
 
 const features = [
-  { icon: '🃏', title: 'AI Flashcards', desc: 'Generate decks from your notes instantly' },
-  { icon: '🧩', title: 'Smart Quiz', desc: 'MCQ quizzes powered by Gemini AI' },
-  { icon: '📊', title: 'Grade Tracker', desc: 'Track GPA and predict final grades' },
-  { icon: '🎯', title: 'Pomodoro Focus', desc: 'Distraction-free deep work sessions' },
-  { icon: '🏆', title: 'Leaderboard', desc: 'Compete with friends on study streaks' },
-  { icon: '📚', title: 'Study Plans', desc: 'AI-generated week-by-week study guides' },
+  { icon: '🎓', title: 'Google Classroom Sync', desc: 'Import your courses, assignments and grades in one click — always up to date' },
+  { icon: '📋', title: 'Assignment Tracker', desc: 'See everything due across every class, sorted by what matters now' },
+  { icon: '📊', title: 'Grade & GPA Tracker', desc: 'Know your grade in every class and predict your final mark' },
+  { icon: '🃏', title: 'AI Flashcards & Quiz', desc: 'Turn your notes into flashcards and practice quizzes with AI' },
+  { icon: '🎯', title: 'Focus Timer', desc: 'Pomodoro sessions that keep you off your phone and on task' },
+  { icon: '🔥', title: 'Habits & Streaks', desc: 'Build a daily study habit and keep your streak alive' },
 ]
 
 export default function Landing() {
@@ -49,19 +50,19 @@ export default function Landing() {
               color: '#10141a', cursor: 'pointer',
               fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700,
             }}
-          >Sign Up Free</button>
+          >Get Started</button>
         </div>
       </nav>
 
       {/* Hero */}
       <section style={{ textAlign: 'center', padding: '80px 40px 60px', maxWidth: 760, margin: '0 auto' }}>
         <div style={{
-          display: 'inline-block', padding: '4px 14px', borderRadius: 20,
+          display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 20,
           border: '1px solid rgba(175,198,255,0.3)',
           background: 'rgba(175,198,255,0.08)',
           fontFamily: "'Space Grotesk', sans-serif", fontSize: 12, color: C.blue,
           marginBottom: 24,
-        }}>Open Source · Free Forever · No Account Needed for Demo</div>
+        }}><GoogleLogo size={13} /> Syncs with Google Classroom · Free for students</div>
 
         <div style={{
           fontSize: 64, lineHeight: 1, marginBottom: 8,
@@ -74,55 +75,58 @@ export default function Landing() {
           fontWeight: 800, lineHeight: 1.15, marginBottom: 20,
           background: 'linear-gradient(135deg, #afc6ff 0%, #e5b5ff 60%, #ff6b9d 100%)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-        }}>Your AI-Powered<br />Study Companion</h1>
+        }}>Everything for school,<br />in one place</h1>
 
         <p style={{
           fontSize: 17, color: C.textMuted, lineHeight: 1.7,
-          maxWidth: 500, margin: '0 auto 36px',
+          maxWidth: 520, margin: '0 auto 36px',
         }}>
-          Shiori helps students manage assignments, generate AI flashcards, track grades,
-          and build better study habits — all in one beautiful app.
+          Shiori pulls your assignments and grades straight from Google Classroom,
+          then helps you study smarter with AI flashcards, focus timers, and grade tracking.
         </p>
 
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
           <button
-            onClick={() => navigate('/demo')}
+            onClick={() => navigate('/login')}
             style={{
-              padding: '14px 28px', borderRadius: 10, border: 'none',
-              background: 'linear-gradient(135deg, #afc6ff 0%, #528dff 100%)',
-              color: '#10141a', cursor: 'pointer',
-              fontFamily: "'Space Grotesk', sans-serif", fontSize: 15, fontWeight: 700,
-              boxShadow: '0 8px 32px rgba(82,141,255,0.3)',
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '14px 26px', borderRadius: 10, border: 'none',
+              background: '#fff', color: '#1f1f1f', cursor: 'pointer',
+              fontFamily: "'Space Grotesk', sans-serif", fontSize: 15, fontWeight: 600,
+              boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
             }}
-          >Try Demo →</button>
+          ><GoogleLogo size={18} /> Continue with Google</button>
           <button
             onClick={() => navigate('/signup')}
             style={{
-              padding: '14px 28px', borderRadius: 10,
+              padding: '14px 26px', borderRadius: 10,
               border: `1px solid ${C.border}`,
               background: 'transparent',
               color: C.text, cursor: 'pointer',
               fontFamily: "'Space Grotesk', sans-serif", fontSize: 15, fontWeight: 600,
             }}
-          >Sign Up Free</button>
+          >Sign up with email</button>
         </div>
 
-        <p style={{ marginTop: 20, fontSize: 13, color: C.textMuted }}>
-          No credit card required · Works in your browser
+        <p style={{ marginTop: 18, fontSize: 13, color: C.textMuted }}>
+          No credit card · Free for students ·{' '}
+          <button onClick={() => navigate('/demo')} style={{ background: 'none', border: 'none', color: C.blue, cursor: 'pointer', fontSize: 13, fontFamily: "'Manrope', sans-serif" }}>
+            explore the demo first
+          </button>
         </p>
       </section>
 
-      {/* Social proof */}
+      {/* Classroom callout */}
       <div style={{
-        textAlign: 'center', padding: '24px 40px',
+        textAlign: 'center', padding: '26px 40px',
         borderTop: `1px solid ${C.border}`,
         borderBottom: `1px solid ${C.border}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, flexWrap: 'wrap',
       }}>
-        <span style={{
-          fontFamily: "'Space Grotesk', sans-serif", fontSize: 28, fontWeight: 800,
-          color: C.green,
-        }}>10,000+</span>
-        <span style={{ fontSize: 15, color: C.textMuted, marginLeft: 10 }}>students already studying smarter</span>
+        <GoogleLogo size={22} />
+        <span style={{ fontSize: 15, color: C.text }}>
+          Connect once — your <span style={{ color: C.blue, fontWeight: 700 }}>Google Classroom</span> assignments and grades stay in sync automatically.
+        </span>
       </div>
 
       {/* Features */}
@@ -130,7 +134,7 @@ export default function Landing() {
         <h2 style={{
           fontFamily: "'Space Grotesk', sans-serif", fontSize: 28, fontWeight: 700,
           textAlign: 'center', marginBottom: 40, color: C.text,
-        }}>Everything you need to excel</h2>
+        }}>Everything you need to stay on top of school</h2>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -167,19 +171,19 @@ export default function Landing() {
         <h2 style={{
           fontFamily: "'Space Grotesk', sans-serif", fontSize: 28, fontWeight: 700,
           color: C.text, marginBottom: 12,
-        }}>Ready to study smarter?</h2>
+        }}>Ready to get organized?</h2>
         <p style={{ color: C.textMuted, fontSize: 15, marginBottom: 28 }}>
-          Free forever. Open source. No account needed to try.
+          Sign in with your school Google account — it takes about 30 seconds.
         </p>
         <button
-          onClick={() => navigate('/demo')}
+          onClick={() => navigate('/login')}
           style={{
-            padding: '14px 32px', borderRadius: 10, border: 'none',
-            background: 'linear-gradient(135deg, #afc6ff 0%, #528dff 100%)',
-            color: '#10141a', cursor: 'pointer',
-            fontFamily: "'Space Grotesk', sans-serif", fontSize: 15, fontWeight: 700,
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+            padding: '14px 28px', borderRadius: 10, border: 'none',
+            background: '#fff', color: '#1f1f1f', cursor: 'pointer',
+            fontFamily: "'Space Grotesk', sans-serif", fontSize: 15, fontWeight: 600,
           }}
-        >Try Demo Now →</button>
+        ><GoogleLogo size={18} /> Continue with Google</button>
       </section>
 
       {/* Footer */}

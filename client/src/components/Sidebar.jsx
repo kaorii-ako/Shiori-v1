@@ -206,7 +206,7 @@ const Sidebar = () => {
                   fontFamily: "'Manrope', sans-serif",
                   fontSize: 11, color: C.textMuted,
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                }}>{user?.email || 'Demo User'}</div>
+                }}>{user?.email || ''}</div>
               </div>
             )}
           </div>

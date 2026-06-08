@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { initAuthSync } from './stores'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -26,6 +28,10 @@ import Demo from './pages/Demo'
 import Profile from './pages/Profile'
 
 function App() {
+  // Validate the persisted session against Supabase and keep auth state in sync
+  // with token refreshes / cross-tab sign-out.
+  useEffect(() => { initAuthSync() }, [])
+
   return (
     <ErrorBoundary>
       <BrowserRouter>

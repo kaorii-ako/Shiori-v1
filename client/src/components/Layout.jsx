@@ -96,8 +96,8 @@ const Layout = () => {
             flexShrink: 0,
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontFamily: 'VT323', fontSize: 16, color: '#c44dff' }}>
-                DEMO MODE — Explore freely!
+              <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600, color: '#e5b5ff' }}>
+                Demo mode — sign in to save your own data
               </span>
               <a
                 href={GITHUB_URL}
@@ -118,10 +118,10 @@ const Layout = () => {
             <button
               onClick={handleExitDemo}
               style={{
-                fontFamily: '"Press Start 2P"', fontSize: 8, color: '#ff6b9d',
+                fontFamily: "'Space Grotesk', sans-serif", fontSize: 12, fontWeight: 700, color: '#ff6b9d',
                 cursor: 'pointer', background: 'none', border: 'none',
               }}
-            >EXIT DEMO</button>
+            >Sign in →</button>
           </div>
         )}
 
