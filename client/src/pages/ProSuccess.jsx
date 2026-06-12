@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { useNavigate, useSearchParams, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Sparkles, ArrowRight, Settings } from 'lucide-react'
 
@@ -12,17 +11,6 @@ const PRO_UNLOCKED = [
 ]
 
 export default function ProSuccess() {
-  const [searchParams] = useSearchParams()
-  const sessionId = searchParams.get('session_id')
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    // Optionally log sessionId for debugging; no API call needed
-    if (sessionId) {
-      console.log('[ProSuccess] session_id:', sessionId)
-    }
-  }, [sessionId])
-
   return (
     <div style={{
       minHeight: '100vh',
