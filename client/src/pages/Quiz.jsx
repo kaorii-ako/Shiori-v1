@@ -3,6 +3,7 @@ import { Puzzle, X, Trophy, ThumbsUp, BookOpen, Sparkles, AlertTriangle } from '
 import { useNotesStore, useUIStore } from '../stores'
 import { C, fonts, tint, inputStyle, btnPrimary, btnGhost } from '../utils/theme'
 import { PageHeader, Card } from '../components/ui'
+import { callGeminiClient } from '../utils/gemini'
 
 const DEMO_QUIZ = [
   { q: 'What is photosynthesis?', opts: ['Making food from sunlight', 'Breaking down glucose', 'Cell division', 'DNA replication'], ans: 0 },
@@ -32,13 +33,9 @@ export default function Quiz() {
     try {
       const note = (notes || []).find(n => n.id === selectedNote)
       const content = note?.content || 'General knowledge about studying and learning.'
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: `Generate 5 multiple choice questions from this content. Return JSON array: [{q,opts:[4 options],ans:index}]\n\n${content}` }] }] })
-      })
-      const data = await res.json()
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+      const text = await callGeminiClient(
+        `Generate 5 multiple choice questions from this content. Return ONLY a JSON array, no markdown: [{"q":"...","opts":["a","b","c","d"],"ans":0}]\n\n${content}`
+      ) || ''
       const match = text.match(/\[[\s\S]*\]/)
       const parsed = match ? JSON.parse(match[0]) : DEMO_QUIZ
       setQuestions(parsed)

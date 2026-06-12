@@ -3,6 +3,7 @@ import { Upload, FileText, Sparkles, Check, AlertTriangle } from 'lucide-react'
 import { useAssignmentsStore, useUIStore } from '../stores'
 import { C, fonts, tint, btnPrimary, chip } from '../utils/theme'
 import { PageHeader, Card } from '../components/ui'
+import { callGeminiClient } from '../utils/gemini'
 
 export default function SyllabusImport() {
   const { addAssignment } = useAssignmentsStore()
@@ -29,13 +30,9 @@ export default function SyllabusImport() {
       return
     }
     try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: `Extract all assignments and due dates from this syllabus. Return JSON array: [{title,dueDate:YYYY-MM-DD,course,priority:low|medium|high}]\n\n${text}` }] }] })
-      })
-      const data = await res.json()
-      const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+      const raw = await callGeminiClient(
+        `Extract all assignments and due dates from this syllabus. Return ONLY a JSON array, no markdown: [{"title":"...","dueDate":"YYYY-MM-DD","course":"...","priority":"low|medium|high"}]\n\n${text}`
+      ) || ''
       const match = raw.match(/\[[\s\S]*\]/)
       setExtracted(match ? JSON.parse(match[0]) : DEMO_EXTRACTED)
     } catch { setExtracted(DEMO_EXTRACTED) }

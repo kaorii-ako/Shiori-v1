@@ -11,7 +11,7 @@ async function getGemini() {
   try {
     const { GoogleGenerativeAI } = await import('@google/generative-ai')
     const genAI = new GoogleGenerativeAI(key)
-    geminiModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    geminiModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
     return geminiModel
   } catch {
     return null

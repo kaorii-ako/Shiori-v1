@@ -3,6 +3,7 @@ import { BookOpen, Sparkles, Trash2, AlertTriangle } from 'lucide-react'
 import { useUIStore, useStudyPlansStore } from '../stores'
 import { C, fonts, tint, inputStyle, btnPrimary, btnGhost } from '../utils/theme'
 import { PageHeader, Card, SectionTitle, Empty } from '../components/ui'
+import { callGeminiClient } from '../utils/gemini'
 
 const DEMO_PLAN = {
   subject: 'Biology Final',
@@ -35,13 +36,9 @@ export default function StudyPlans() {
       return
     }
     try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: `Create a 4-week study plan for "${form.subject}" with exam on ${form.examDate || 'TBD'}. Return JSON: {subject,weeks:[{week,topic,tasks:[3 tasks]}]}` }] }] })
-      })
-      const data = await res.json()
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+      const text = await callGeminiClient(
+        `Create a 4-week study plan for "${form.subject}" with exam on ${form.examDate || 'TBD'}. Return ONLY JSON, no markdown: {"subject":"...","weeks":[{"week":1,"topic":"...","tasks":["a","b","c"]}]}`
+      ) || ''
       const match = text.match(/\{[\s\S]*\}/)
       const parsed = match ? JSON.parse(match[0]) : DEMO_PLAN
       const plan = { ...parsed, id: Date.now().toString(), examDate: form.examDate }
