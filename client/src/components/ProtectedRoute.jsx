@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (isLoading || !_hasHydrated) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#10141a' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0b0e14' }}>
         <div style={{
           width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center',
           background: 'linear-gradient(135deg, #ff6b9d 0%, #c44dff 100%)',

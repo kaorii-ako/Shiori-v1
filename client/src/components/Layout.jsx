@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
-import { Star, Github, Menu } from 'lucide-react'
+import { Star, Github, Menu, Keyboard } from 'lucide-react'
 import Sidebar from './Sidebar'
 import AIChat from './AIChat'
 import PomodoroTimer from './PomodoroTimer'
@@ -12,14 +12,15 @@ import InstallBanner from './InstallBanner'
 import DemoTour from './DemoTour'
 import { useUIStore, useAuthStore } from '../stores'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
-import { C } from '../utils/theme'
+import { C, fonts, tint } from '../utils/theme'
 
 const GITHUB_URL = 'https://github.com/kaorii-ako/Shiori-v1'
 
 const Layout = () => {
-  const { sidebarCollapsed, aiChatOpen, toggleSidebarMobile, theme } = useUIStore()
+  const { aiChatOpen, toggleSidebarMobile, theme } = useUIStore()
   const { isDemo, exitDemoMode } = useAuthStore()
   const navigate = useNavigate()
+  const location = useLocation()
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showStarPrompt, setShowStarPrompt] = useState(false)
   const promptFired = useRef(false)
@@ -59,7 +60,7 @@ const Layout = () => {
     setShowStarPrompt(false)
   }
 
-  const sidebarWidth = sidebarCollapsed ? 72 : 240
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
 
   return (
     <div style={{
@@ -67,12 +68,18 @@ const Layout = () => {
       minHeight: '100vh',
       background: C.bg,
       position: 'relative',
-      overflow: 'hidden',
     }}>
+      {/* Ambient background glow */}
+      <div aria-hidden="true" style={{
+        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,
+        background: `
+          radial-gradient(600px 400px at 85% -10%, rgba(90,139,255,0.07), transparent 70%),
+          radial-gradient(500px 350px at -5% 100%, rgba(181,92,255,0.05), transparent 70%)
+        `,
+      }} />
+
       {/* Sidebar spacer (desktop) */}
-      <div style={{ width: sidebarWidth, flexShrink: 0, transition: 'width 0.25s ease' }}
-        className="lg-sidebar-spacer"
-      />
+      <div className="sidebar-spacer" style={{ flexShrink: 0, transition: 'width 0.22s ease' }} />
 
       <Sidebar />
 
@@ -80,23 +87,23 @@ const Layout = () => {
       <main style={{
         flex: 1,
         minHeight: '100vh',
-        background: C.bg,
         overflowY: 'auto',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
+        zIndex: 1,
       }}>
         {/* Demo banner */}
         {isDemo && (
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '8px 24px',
-            background: 'linear-gradient(90deg, rgba(196,77,255,0.2) 0%, rgba(255,107,157,0.2) 100%)',
-            borderBottom: '1px solid rgba(196,77,255,0.4)',
+            padding: '8px 24px', gap: 12,
+            background: `linear-gradient(90deg, ${tint(C.purpleDark, 0.16)} 0%, ${tint(C.pink, 0.14)} 100%)`,
+            borderBottom: `1px solid ${tint(C.purpleDark, 0.35)}`,
             flexShrink: 0,
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600, color: '#e5b5ff' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+              <span style={{ fontFamily: fonts.heading, fontSize: 13, fontWeight: 600, color: C.purple, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 Demo mode — sign in to save your own data
               </span>
               <a
@@ -105,11 +112,11 @@ const Layout = () => {
                 rel="noopener noreferrer"
                 style={{
                   display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '2px 8px', borderRadius: 4,
-                  background: 'rgba(196,77,255,0.15)',
-                  border: '1px solid rgba(196,77,255,0.30)',
-                  textDecoration: 'none',
-                  fontFamily: "'Space Grotesk', sans-serif", fontSize: 10, fontWeight: 600, color: '#e5b5ff',
+                  padding: '2px 8px', borderRadius: 6,
+                  background: tint(C.purpleDark, 0.15),
+                  border: `1px solid ${tint(C.purpleDark, 0.3)}`,
+                  textDecoration: 'none', flexShrink: 0,
+                  fontFamily: fonts.heading, fontSize: 10, fontWeight: 600, color: C.purple,
                 }}
               >
                 <Star size={10} /> Star on GitHub
@@ -118,30 +125,72 @@ const Layout = () => {
             <button
               onClick={handleExitDemo}
               style={{
-                fontFamily: "'Space Grotesk', sans-serif", fontSize: 12, fontWeight: 700, color: '#ff6b9d',
-                cursor: 'pointer', background: 'none', border: 'none',
+                fontFamily: fonts.heading, fontSize: 12, fontWeight: 700, color: C.pink,
+                cursor: 'pointer', background: 'none', border: 'none', flexShrink: 0,
               }}
             >Sign in →</button>
           </div>
         )}
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={toggleSidebarMobile}
-          style={{
-            display: 'none',
-            position: 'fixed', top: 16, left: 16, zIndex: 40,
-            padding: 8, borderRadius: 8,
-            background: 'rgba(16,20,26,0.9)',
-            border: `1px solid ${C.border}`,
-            cursor: 'pointer',
-          }}
-          className="mobile-hamburger"
-        >
-          <Menu size={20} color={C.blue} />
-        </button>
+        {/* Topbar */}
+        <header style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '12px 24px',
+          borderBottom: `1px solid ${C.borderSoft}`,
+          background: 'rgba(11,14,20,0.7)',
+          backdropFilter: 'blur(12px)',
+          position: 'sticky', top: 0, zIndex: 30,
+          flexShrink: 0, gap: 12,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button
+              onClick={toggleSidebarMobile}
+              className="mobile-hamburger"
+              aria-label="Open menu"
+              style={{
+                display: 'none', padding: 7, borderRadius: 9,
+                background: 'rgba(255,255,255,0.04)',
+                border: `1px solid ${C.border}`,
+                cursor: 'pointer', color: C.text,
+              }}
+            >
+              <Menu size={18} />
+            </button>
+            <span style={{ fontFamily: fonts.body, fontSize: 13, color: C.textMuted }}>{today}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button
+              onClick={() => setShowShortcuts(true)}
+              title="Keyboard shortcuts (?)"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '5px 10px', borderRadius: 8,
+                background: 'transparent', border: `1px solid ${C.border}`,
+                color: C.textFaint, cursor: 'pointer',
+                fontFamily: fonts.body, fontSize: 11.5,
+              }}
+            >
+              <Keyboard size={13} /> <span className="hide-mobile">Shortcuts</span> <kbd style={{
+                fontFamily: fonts.heading, fontSize: 10, padding: '1px 5px',
+                borderRadius: 4, background: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`,
+              }}>?</kbd>
+            </button>
+            <a
+              href={GITHUB_URL} target="_blank" rel="noopener noreferrer"
+              title="Shiori on GitHub" aria-label="GitHub"
+              style={{
+                display: 'flex', padding: 6, borderRadius: 8, color: C.textFaint,
+                border: `1px solid ${C.border}`, transition: 'color 0.15s ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = C.text }}
+              onMouseLeave={e => { e.currentTarget.style.color = C.textFaint }}
+            >
+              <Github size={15} />
+            </a>
+          </div>
+        </header>
 
-        <div style={{ padding: 24, flex: 1 }}>
+        <div key={location.pathname} className="page-enter" style={{ padding: '24px 24px 48px', flex: 1 }}>
           <Outlet />
         </div>
       </main>
@@ -162,24 +211,24 @@ const Layout = () => {
         <div style={{
           position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
           zIndex: 200, width: 'min(420px, 90vw)',
-          background: 'rgba(16,20,26,0.97)',
-          border: '1px solid rgba(196,77,255,0.40)',
+          background: 'rgba(13,17,26,0.97)',
+          border: `1px solid ${tint(C.purpleDark, 0.4)}`,
           borderRadius: 14, padding: '16px 20px',
-          boxShadow: '0 0 48px rgba(196,77,255,0.18), 0 16px 32px rgba(0,0,0,0.5)',
+          boxShadow: '0 0 48px rgba(181,92,255,0.18), 0 16px 32px rgba(0,0,0,0.5)',
           display: 'flex', alignItems: 'center', gap: 14,
         }}>
           <div style={{
             width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-            background: 'linear-gradient(135deg, rgba(196,77,255,0.2), rgba(82,141,255,0.15))',
+            background: `linear-gradient(135deg, ${tint(C.purpleDark, 0.2)}, ${tint(C.blueDark, 0.15)})`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Star size={18} style={{ color: '#e5b5ff' }} />
+            <Star size={18} style={{ color: C.purple }} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 13, color: C.text, marginBottom: 2 }}>
+            <p style={{ fontFamily: fonts.heading, fontWeight: 700, fontSize: 13, color: C.text, marginBottom: 2 }}>
               Finding this useful?
             </p>
-            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#606080' }}>
+            <p style={{ fontFamily: fonts.body, fontSize: 12, color: C.textFaint }}>
               Shiori is 100% free &amp; open source. ⭐ helps other students discover it.
             </p>
           </div>
@@ -192,9 +241,9 @@ const Layout = () => {
               style={{
                 display: 'flex', alignItems: 'center', gap: 5,
                 padding: '7px 12px', borderRadius: 7,
-                background: 'linear-gradient(135deg, #c44dff 0%, #7b3fa8 100%)',
+                background: `linear-gradient(135deg, ${C.purpleDark} 0%, #7b3fa8 100%)`,
                 color: '#fff', textDecoration: 'none',
-                fontFamily: "'Space Grotesk', sans-serif", fontSize: 11, fontWeight: 700,
+                fontFamily: fonts.heading, fontSize: 11, fontWeight: 700,
               }}
             >
               <Github size={13} /> Star
@@ -203,8 +252,8 @@ const Layout = () => {
               onClick={dismissStarPrompt}
               style={{
                 padding: '7px 10px', borderRadius: 7, border: 'none', cursor: 'pointer',
-                background: 'rgba(66,71,84,0.30)', color: '#606080',
-                fontFamily: "'Space Grotesk', sans-serif", fontSize: 11,
+                background: 'rgba(255,255,255,0.06)', color: C.textFaint,
+                fontFamily: fonts.heading, fontSize: 11,
               }}
             >Later</button>
           </div>
@@ -212,9 +261,12 @@ const Layout = () => {
       )}
 
       <style>{`
+        .sidebar-spacer { width: 240px; }
+        @media (max-width: 1279px) { .sidebar-spacer { width: 72px; } }
         @media (max-width: 1023px) {
-          .lg-sidebar-spacer { display: none !important; }
+          .sidebar-spacer { display: none; }
           .mobile-hamburger { display: flex !important; }
+          .hide-mobile { display: none; }
         }
       `}</style>
     </div>

@@ -1,15 +1,20 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Settings as SettingsIcon, RefreshCw, Eye, EyeOff, Check, LogOut, Trash2, ExternalLink } from 'lucide-react'
 import { useAuthStore, useUIStore, useAssignmentsStore } from '../stores'
-import { C } from '../utils/theme'
+import { C, fonts, tint, inputStyle, btnPrimary, btnGhost } from '../utils/theme'
+import { PageHeader, Card } from '../components/ui'
 import { GoogleLogo } from '../components/GoogleButton'
 
 function Section({ title, children }) {
   return (
-    <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: '20px 24px', marginBottom: 16 }}>
-      <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 14, fontWeight: 700, color: C.textMuted, letterSpacing: '0.08em', marginBottom: 16, textTransform: 'uppercase' }}>{title}</h2>
+    <Card style={{ padding: '20px 24px', marginBottom: 16 }}>
+      <h2 style={{
+        fontFamily: fonts.heading, fontSize: 12, fontWeight: 700, color: C.textFaint,
+        letterSpacing: '0.1em', marginBottom: 16, textTransform: 'uppercase',
+      }}>{title}</h2>
       {children}
-    </div>
+    </Card>
   )
 }
 
@@ -59,13 +64,24 @@ export default function Settings() {
   const userInitial = userName[0]?.toUpperCase() || 'S'
 
   return (
-    <div style={{ fontFamily: "'Manrope', sans-serif", color: C.text, maxWidth: 640, margin: '0 auto' }}>
-      <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 24, fontWeight: 700, marginBottom: 24 }}>⚙️ Settings</h1>
+    <div style={{ fontFamily: fonts.body, color: C.text, maxWidth: 640, margin: '0 auto' }}>
+      <PageHeader
+        icon={SettingsIcon}
+        accent={C.blue}
+        title="Settings"
+        subtitle="Account, integrations and preferences"
+      />
 
       {/* Profile */}
       <Section title="Profile">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 12, background: 'linear-gradient(135deg,#afc6ff,#528dff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 22, color: '#10141a' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: 14,
+            background: `linear-gradient(135deg, ${C.blue}, ${C.blueDark})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: fonts.heading, fontWeight: 700, fontSize: 22, color: '#0b0e14',
+            boxShadow: `0 6px 20px ${tint(C.blueDark, 0.3)}`,
+          }}>
             {userInitial}
           </div>
           <div>
@@ -77,11 +93,11 @@ export default function Settings() {
 
       {/* Integrations */}
       <Section title="Integrations">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <GoogleLogo size={22} />
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ flex: 1, minWidth: 180 }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: C.text }}>Google Classroom</div>
             <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>
               {connected
@@ -90,11 +106,11 @@ export default function Settings() {
             </div>
           </div>
           <span style={{
-            padding: '4px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700,
-            fontFamily: "'Space Grotesk', sans-serif", flexShrink: 0,
-            color: connected ? C.greenDark : C.textMuted,
-            background: connected ? 'rgba(77,255,145,0.12)' : 'rgba(140,144,160,0.12)',
-            border: `1px solid ${connected ? 'rgba(77,255,145,0.4)' : C.border}`,
+            padding: '4px 12px', borderRadius: 999, fontSize: 11, fontWeight: 700,
+            fontFamily: fonts.heading, flexShrink: 0,
+            color: connected ? C.green : C.textMuted,
+            background: connected ? tint(C.greenDark, 0.1) : 'rgba(255,255,255,0.04)',
+            border: `1px solid ${connected ? tint(C.greenDark, 0.4) : C.border}`,
           }}>{connected ? '● Connected' : '○ Not connected'}</span>
         </div>
 
@@ -102,23 +118,22 @@ export default function Settings() {
           {connected ? (
             <>
               <button onClick={handleSync} disabled={syncing} style={{
-                padding: '9px 16px', borderRadius: 8, border: 'none',
-                background: 'linear-gradient(135deg,#afc6ff,#528dff)', color: '#10141a',
+                ...btnPrimary,
                 cursor: syncing ? 'not-allowed' : 'pointer',
-                fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700,
-              }}>{syncing ? 'Syncing…' : '↻ Sync now'}</button>
-              <button onClick={() => { clearGoogleAuth(); addToast({ type: 'info', message: 'Disconnected from Google Classroom' }) }} style={{
-                padding: '9px 16px', borderRadius: 8, border: `1px solid ${C.border}`,
-                background: 'transparent', color: C.textMuted, cursor: 'pointer',
-                fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
-              }}>Disconnect</button>
+                opacity: syncing ? 0.7 : 1,
+              }}>
+                <RefreshCw size={14} className={syncing ? 'spin' : ''} /> {syncing ? 'Syncing…' : 'Sync now'}
+              </button>
+              <button onClick={() => { clearGoogleAuth(); addToast({ type: 'info', message: 'Disconnected from Google Classroom' }) }} style={{ ...btnGhost, color: C.textMuted }}>
+                Disconnect
+              </button>
             </>
           ) : (
             <button onClick={() => loginWithGoogle().catch(() => {})} style={{
-              padding: '9px 16px', borderRadius: 8, border: 'none',
+              padding: '9px 16px', borderRadius: 10, border: 'none',
               background: '#fff', color: '#1f1f1f', cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: 8,
-              fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
+              fontFamily: fonts.heading, fontSize: 13, fontWeight: 600,
             }}><GoogleLogo size={16} /> Connect Google Classroom</button>
           )}
         </div>
@@ -127,12 +142,14 @@ export default function Settings() {
       {/* API Keys */}
       <Section title="API Keys">
         <div style={{ marginBottom: 8 }}>
-          <label style={{ display: 'block', fontSize: 13, color: C.text, marginBottom: 8, fontWeight: 600 }}>
+          <label style={{ display: 'block', fontSize: 13, color: C.text, marginBottom: 8, fontWeight: 700 }}>
             Gemini API Key
           </label>
-          <p style={{ fontSize: 12, color: C.textMuted, marginBottom: 10 }}>
-            Required for AI features (flashcard generation, quiz, study plans).{' '}
-            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" style={{ color: C.blue }}>Get a free key →</a>
+          <p style={{ fontSize: 12, color: C.textMuted, marginBottom: 10, lineHeight: 1.6 }}>
+            Powers AI features (flashcard generation, quiz, study plans). Stored only on this device.{' '}
+            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" style={{ color: C.blue, textDecoration: 'none' }}>
+              Get a free key <ExternalLink size={10} style={{ display: 'inline', verticalAlign: '-1px' }} />
+            </a>
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
             <input
@@ -140,21 +157,20 @@ export default function Settings() {
               value={keyInput}
               onChange={e => setKeyInput(e.target.value)}
               placeholder="AIza..."
-              style={{
-                flex: 1, padding: '9px 12px', borderRadius: 8,
-                background: C.bg, border: `1px solid ${C.border}`,
-                color: C.text, fontSize: 13, fontFamily: "'Manrope', sans-serif",
-              }}
+              style={{ ...inputStyle, flex: 1, width: 'auto' }}
+              onFocus={e => { e.target.style.borderColor = C.blueDark }}
+              onBlur={e => { e.target.style.borderColor = C.border }}
             />
-            <button onClick={() => setShowKey(s => !s)} style={{ padding: '9px 12px', borderRadius: 8, border: `1px solid ${C.border}`, background: 'transparent', color: C.textMuted, cursor: 'pointer', fontSize: 13 }}>
-              {showKey ? '🙈' : '👁'}
+            <button onClick={() => setShowKey(s => !s)} aria-label={showKey ? 'Hide key' : 'Show key'} style={{
+              padding: '9px 12px', borderRadius: 10, border: `1px solid ${C.border}`,
+              background: 'transparent', color: C.textMuted, cursor: 'pointer', display: 'flex', alignItems: 'center',
+            }}>
+              {showKey ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
             <button onClick={saveKey} style={{
-              padding: '9px 16px', borderRadius: 8, border: 'none',
-              background: keySaved ? C.greenDark : 'linear-gradient(135deg,#afc6ff,#528dff)',
-              color: '#10141a', cursor: 'pointer',
-              fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700,
-            }}>{keySaved ? '✓ Saved' : 'Save'}</button>
+              ...btnPrimary,
+              background: keySaved ? C.greenDark : btnPrimary.background,
+            }}>{keySaved ? <><Check size={14} /> Saved</> : 'Save'}</button>
           </div>
         </div>
       </Section>
@@ -166,7 +182,11 @@ export default function Settings() {
             <div style={{ fontSize: 14, fontWeight: 600, color: C.text }}>Theme</div>
             <div style={{ fontSize: 12, color: C.textMuted }}>Dark mode only (more themes coming soon)</div>
           </div>
-          <div style={{ padding: '6px 14px', borderRadius: 20, background: 'rgba(175,198,255,0.12)', border: `1px solid ${C.blue}`, fontSize: 12, color: C.blue, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600 }}>Dark</div>
+          <div style={{
+            padding: '6px 16px', borderRadius: 999, background: tint(C.blue, 0.1),
+            border: `1px solid ${tint(C.blue, 0.4)}`, fontSize: 12, color: C.blue,
+            fontFamily: fonts.heading, fontWeight: 600,
+          }}>Dark</div>
         </div>
       </Section>
 
@@ -175,15 +195,15 @@ export default function Settings() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
             <span style={{ color: C.textMuted }}>Version</span>
-            <span style={{ color: C.text }}>1.0.0</span>
+            <span style={{ color: C.text }}>2.0</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
             <span style={{ color: C.textMuted }}>License</span>
-            <span style={{ color: C.text }}>MIT</span>
+            <span style={{ color: C.text }}>MIT — free & open source</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
             <span style={{ color: C.textMuted }}>Source</span>
-            <a href="https://github.com/kaorii-ako/Shiori-v1" target="_blank" rel="noopener noreferrer" style={{ color: C.blue }}>GitHub ↗</a>
+            <a href="https://github.com/kaorii-ako/Shiori-v1" target="_blank" rel="noopener noreferrer" style={{ color: C.blue, textDecoration: 'none' }}>GitHub ↗</a>
           </div>
         </div>
       </Section>
@@ -192,17 +212,20 @@ export default function Settings() {
       <Section title="Account">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <button onClick={() => { Promise.resolve(logout?.()).finally(() => navigate('/login')) }} style={{
-            padding: '10px 16px', borderRadius: 8,
+            display: 'flex', alignItems: 'center', gap: 9,
+            padding: '11px 16px', borderRadius: 10,
             border: `1px solid ${C.border}`, background: 'transparent',
             color: C.text, cursor: 'pointer', textAlign: 'left',
-            fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
-          }}>Sign Out</button>
-          <button style={{
-            padding: '10px 16px', borderRadius: 8,
-            border: '1px solid rgba(255,107,157,0.4)', background: 'rgba(255,107,157,0.08)',
+            fontFamily: fonts.heading, fontSize: 13, fontWeight: 600,
+            transition: 'border-color 0.15s ease',
+          }}><LogOut size={14} /> Sign Out</button>
+          <button onClick={() => addToast({ type: 'info', message: 'To delete your account and data, email the address on our GitHub page.' })} style={{
+            display: 'flex', alignItems: 'center', gap: 9,
+            padding: '11px 16px', borderRadius: 10,
+            border: `1px solid ${tint(C.pink, 0.4)}`, background: tint(C.pink, 0.07),
             color: C.pink, cursor: 'pointer', textAlign: 'left',
-            fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
-          }}>Delete Account</button>
+            fontFamily: fonts.heading, fontSize: 13, fontWeight: 600,
+          }}><Trash2 size={14} /> Delete Account</button>
         </div>
       </Section>
     </div>

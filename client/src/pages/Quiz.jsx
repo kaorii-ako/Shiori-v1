@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { Puzzle, X, Trophy, ThumbsUp, BookOpen, Sparkles, AlertTriangle } from 'lucide-react'
 import { useNotesStore, useUIStore } from '../stores'
-import { C } from '../utils/theme'
+import { C, fonts, tint, inputStyle, btnPrimary, btnGhost } from '../utils/theme'
+import { PageHeader, Card } from '../components/ui'
 
 const DEMO_QUIZ = [
   { q: 'What is photosynthesis?', opts: ['Making food from sunlight', 'Breaking down glucose', 'Cell division', 'DNA replication'], ans: 0 },
@@ -28,7 +30,7 @@ export default function Quiz() {
     }
     setLoading(true)
     try {
-      const note = (notes||[]).find(n=>n.id===selectedNote)
+      const note = (notes || []).find(n => n.id === selectedNote)
       const content = note?.content || 'General knowledge about studying and learning.'
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`, {
         method: 'POST',
@@ -65,22 +67,33 @@ export default function Quiz() {
   const score = answers.filter(a => a.correct).length
 
   if (phase === 'results') {
+    const perfect = score === questions.length
+    const good = score >= questions.length / 2
+    const ResultIcon = perfect ? Trophy : good ? ThumbsUp : BookOpen
+    const resultColor = perfect ? C.yellow : good ? C.green : C.blue
     return (
-      <div style={{ fontFamily:"'Manrope',sans-serif",color:C.text,maxWidth:560,margin:'0 auto',textAlign:'center' }}>
-        <div style={{ background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:40 }}>
-          <div style={{ fontSize:56,marginBottom:12 }}>{score === questions.length ? '🏆' : score >= questions.length/2 ? '👍' : '📚'}</div>
-          <h2 style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:28,fontWeight:800,color:C.text,marginBottom:8 }}>
+      <div className="page-enter" style={{ fontFamily: fonts.body, color: C.text, maxWidth: 560, margin: '0 auto', textAlign: 'center' }}>
+        <Card style={{ padding: 44 }}>
+          <div style={{
+            width: 76, height: 76, borderRadius: 22, margin: '0 auto 18px',
+            background: tint(resultColor, 0.12), border: `1px solid ${tint(resultColor, 0.3)}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: resultColor,
+            boxShadow: `0 0 40px ${tint(resultColor, 0.2)}`,
+          }}>
+            <ResultIcon size={34} strokeWidth={1.8} />
+          </div>
+          <h2 style={{ fontFamily: fonts.heading, fontSize: 32, fontWeight: 700, color: C.text, marginBottom: 8 }}>
             {score} / {questions.length}
           </h2>
-          <p style={{ color:C.textMuted,fontSize:14,marginBottom:8 }}>
-            {score === questions.length ? 'Perfect score!' : score >= questions.length/2 ? 'Good job!' : 'Keep studying!'}
+          <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 8 }}>
+            {perfect ? 'Perfect score!' : good ? 'Good job!' : 'Keep studying!'}
           </p>
-          <p style={{ color:C.green,fontSize:13,marginBottom:28 }}>+{score * 10} XP earned</p>
-          <div style={{ display:'flex',gap:10,justifyContent:'center' }}>
-            <button onClick={()=>setPhase('setup')} style={{ padding:'10px 20px',borderRadius:8,border:`1px solid ${C.border}`,background:'transparent',color:C.text,cursor:'pointer',fontFamily:"'Space Grotesk',sans-serif",fontSize:13 }}>New Quiz</button>
-            <button onClick={()=>{ setCurrent(0);setAnswers([]);setSelected(null);setPhase('quiz') }} style={{ padding:'10px 20px',borderRadius:8,border:'none',background:'linear-gradient(135deg,#afc6ff,#528dff)',color:'#10141a',cursor:'pointer',fontFamily:"'Space Grotesk',sans-serif",fontSize:13,fontWeight:700 }}>Retry</button>
+          <p style={{ color: C.green, fontSize: 13, marginBottom: 28, fontWeight: 700 }}>+{score * 10} XP earned</p>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+            <button onClick={() => setPhase('setup')} style={btnGhost}>New Quiz</button>
+            <button onClick={() => { setCurrent(0); setAnswers([]); setSelected(null); setPhase('quiz') }} style={btnPrimary}>Retry</button>
           </div>
-        </div>
+        </Card>
       </div>
     )
   }
@@ -88,30 +101,38 @@ export default function Quiz() {
   if (phase === 'quiz') {
     const q = questions[current]
     return (
-      <div style={{ fontFamily:"'Manrope',sans-serif",color:C.text,maxWidth:560,margin:'0 auto' }}>
-        <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20 }}>
-          <span style={{ fontSize:13,color:C.textMuted }}>Question {current+1} of {questions.length}</span>
-          <button onClick={()=>setPhase('setup')} style={{ background:'none',border:`1px solid ${C.border}`,borderRadius:6,padding:'5px 10px',color:C.textMuted,cursor:'pointer',fontSize:12 }}>✕ Quit</button>
+      <div style={{ fontFamily: fonts.body, color: C.text, maxWidth: 560, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <span style={{ fontSize: 13, color: C.textMuted, fontFamily: fonts.heading, fontWeight: 600 }}>
+            Question {current + 1} of {questions.length}
+          </span>
+          <button onClick={() => setPhase('setup')} style={{ ...btnGhost, padding: '5px 12px', fontSize: 12, color: C.textMuted }}>
+            <X size={12} /> Quit
+          </button>
         </div>
-        <div style={{ height:4,background:C.border,borderRadius:2,overflow:'hidden',marginBottom:24 }}>
-          <div style={{ height:'100%',width:`${((current+1)/questions.length)*100}%`,background:'linear-gradient(90deg,#afc6ff,#528dff)',borderRadius:2,transition:'width 0.3s' }} />
+        <div style={{ height: 5, background: tint(C.blue, 0.1), borderRadius: 3, overflow: 'hidden', marginBottom: 24 }}>
+          <div style={{
+            height: '100%', width: `${((current + 1) / questions.length) * 100}%`,
+            background: `linear-gradient(90deg, ${C.blue}, ${C.blueDark})`,
+            borderRadius: 3, transition: 'width 0.3s',
+          }} />
         </div>
-        <div style={{ background:C.card,border:`1px solid ${C.border}`,borderRadius:14,padding:'24px 28px',marginBottom:16 }}>
-          <p style={{ fontSize:16,fontWeight:600,color:C.text,lineHeight:1.6 }}>{q?.q}</p>
-        </div>
-        <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
-          {(q?.opts||[]).map((opt,i) => {
+        <Card style={{ padding: '24px 28px', marginBottom: 16 }}>
+          <p style={{ fontSize: 16, fontWeight: 600, color: C.text, lineHeight: 1.6 }}>{q?.q}</p>
+        </Card>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {(q?.opts || []).map((opt, i) => {
             let bg = C.card, border = C.border, color = C.text
             if (selected !== null) {
-              if (i === q.ans) { bg='rgba(77,255,145,0.15)'; border=C.greenDark; color=C.green }
-              else if (i === selected && selected !== q.ans) { bg='rgba(255,107,157,0.15)'; border=C.pink; color=C.pink }
+              if (i === q.ans) { bg = tint(C.greenDark, 0.12); border = tint(C.greenDark, 0.5); color = C.green }
+              else if (i === selected && selected !== q.ans) { bg = tint(C.pink, 0.12); border = tint(C.pink, 0.5); color = C.pink }
             }
             return (
-              <button key={i} onClick={()=>handleAnswer(i)} style={{
-                padding:'13px 18px',borderRadius:10,border:`1px solid ${border}`,
-                background:bg,color,cursor:selected!==null?'default':'pointer',
-                textAlign:'left',fontSize:14,fontFamily:"'Manrope',sans-serif",
-                transition:'all 0.2s',
+              <button key={i} onClick={() => handleAnswer(i)} className={selected === null ? 'hover-lift' : ''} style={{
+                padding: '14px 18px', borderRadius: 12, border: `1px solid ${border}`,
+                background: bg, color, cursor: selected !== null ? 'default' : 'pointer',
+                textAlign: 'left', fontSize: 14, fontFamily: fonts.body, fontWeight: 500,
+                transition: 'all 0.2s',
               }}>{opt}</button>
             )
           })}
@@ -121,34 +142,42 @@ export default function Quiz() {
   }
 
   return (
-    <div style={{ fontFamily:"'Manrope',sans-serif",color:C.text,maxWidth:560,margin:'0 auto' }}>
-      <h1 style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:24,fontWeight:700,marginBottom:24 }}>🧩 Quiz Generator</h1>
-      <div style={{ background:C.card,border:`1px solid ${C.border}`,borderRadius:14,padding:28 }}>
+    <div style={{ fontFamily: fonts.body, color: C.text, maxWidth: 560, margin: '0 auto' }}>
+      <PageHeader
+        icon={Puzzle}
+        accent={C.purple}
+        title="Quiz Generator"
+        subtitle="Test yourself with AI-generated questions"
+      />
+      <Card style={{ padding: 28 }}>
         {!geminiApiKey && (
-          <div style={{ background:'rgba(255,107,157,0.1)',border:`1px solid rgba(255,107,157,0.3)`,borderRadius:10,padding:'12px 16px',marginBottom:20 }}>
-            <p style={{ fontSize:13,color:C.pink }}>
-              ⚠️ No Gemini API key — demo quiz will be shown. Add your key in <strong>Settings</strong> for AI-generated quizzes.
+          <div style={{
+            display: 'flex', gap: 10, alignItems: 'flex-start',
+            background: tint(C.orange, 0.08), border: `1px solid ${tint(C.orange, 0.3)}`,
+            borderRadius: 12, padding: '12px 16px', marginBottom: 20,
+          }}>
+            <AlertTriangle size={15} color={C.orange} style={{ flexShrink: 0, marginTop: 2 }} />
+            <p style={{ fontSize: 13, color: C.orange, lineHeight: 1.5 }}>
+              No Gemini API key — a sample quiz will be shown. Add your free key in <strong>Settings</strong> for AI quizzes from your own notes.
             </p>
           </div>
         )}
-        {geminiApiKey && (notes||[]).length > 0 && (
-          <div style={{ marginBottom:20 }}>
-            <label style={{ display:'block',fontSize:12,color:C.textMuted,marginBottom:8,fontWeight:600 }}>Generate from note (optional)</label>
-            <select value={selectedNote} onChange={e=>setSelectedNote(e.target.value)}
-              style={{ width:'100%',padding:'9px 12px',borderRadius:8,background:C.bg,border:`1px solid ${C.border}`,color:C.text,fontSize:13,fontFamily:"'Manrope',sans-serif" }}>
+        {geminiApiKey && (notes || []).length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: 'block', fontSize: 12, color: C.textMuted, marginBottom: 8, fontWeight: 700 }}>Generate from note (optional)</label>
+            <select value={selectedNote} onChange={e => setSelectedNote(e.target.value)} style={inputStyle}>
               <option value=''>— General knowledge —</option>
-              {(notes||[]).map(n=>(<option key={n.id} value={n.id}>{n.title||'Untitled'}</option>))}
+              {(notes || []).map(n => (<option key={n.id} value={n.id}>{n.title || 'Untitled'}</option>))}
             </select>
           </div>
         )}
         <button onClick={startQuiz} disabled={loading} style={{
-          width:'100%',padding:'13px',borderRadius:10,border:'none',
-          background: loading ? C.border : 'linear-gradient(135deg,#afc6ff,#528dff)',
-          color: loading ? C.textMuted : '#10141a',
-          cursor: loading ? 'not-allowed' : 'pointer',
-          fontFamily:"'Space Grotesk',sans-serif",fontSize:15,fontWeight:700,
-        }}>{loading ? 'Generating...' : 'Start Quiz →'}</button>
-      </div>
+          ...btnPrimary, width: '100%', padding: '13px', fontSize: 15,
+          opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer',
+        }}>
+          <Sparkles size={16} /> {loading ? 'Generating…' : 'Start Quiz'}
+        </button>
+      </Card>
     </div>
   )
 }

@@ -97,7 +97,7 @@ const Pro = () => {
 
   return (
     <div
-      style={{ minHeight: '100vh', background: '#10141a', color: '#dfe2eb', overflowX: 'hidden' }}
+      style={{ minHeight: '100vh', background: '#0b0e14', color: '#dfe2eb', overflowX: 'hidden' }}
     >
       {/* Ambient bg */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
@@ -138,7 +138,7 @@ const Pro = () => {
           <Link to="/login" style={{
             padding: '6px 16px', borderRadius: 6,
             background: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)',
-            color: '#10141a', textDecoration: 'none',
+            color: '#0b0e14', textDecoration: 'none',
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: 12, fontWeight: 700,
           }}>

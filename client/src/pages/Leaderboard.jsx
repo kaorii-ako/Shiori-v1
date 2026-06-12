@@ -1,17 +1,18 @@
 import { useState } from 'react'
+import { Trophy, Flame, Copy, Check, Users } from 'lucide-react'
 import { useAuthStore, useXPStore } from '../stores'
-import { C } from '../utils/theme'
+import { C, fonts, tint, btnGhost } from '../utils/theme'
+import { PageHeader, Card, SectionTitle } from '../components/ui'
 
 const MOCK_BOARD = [
-  { rank:1, name:'Alex Kim', xp:4200, level:12, streak:21, avatar:'A' },
-  { rank:2, name:'Maria Chen', xp:3850, level:11, streak:14, avatar:'M' },
-  { rank:3, name:'Jordan Lee', xp:3400, level:10, streak:9, avatar:'J' },
-  { rank:4, name:'Sam Rivera', xp:2900, level:9, streak:6, avatar:'S' },
-  { rank:5, name:'Taylor Wu', xp:2400, level:8, streak:3, avatar:'T' },
+  { rank: 1, name: 'Alex Kim', xp: 4200, level: 12, streak: 21, avatar: 'A' },
+  { rank: 2, name: 'Maria Chen', xp: 3850, level: 11, streak: 14, avatar: 'M' },
+  { rank: 3, name: 'Jordan Lee', xp: 3400, level: 10, streak: 9, avatar: 'J' },
+  { rank: 4, name: 'Sam Rivera', xp: 2900, level: 9, streak: 6, avatar: 'S' },
+  { rank: 5, name: 'Taylor Wu', xp: 2400, level: 8, streak: 3, avatar: 'T' },
 ]
 
-const RANK_COLORS = { 1: C.orange, 2: C.textMuted, 3: C.orange }
-const RANK_EMOJI = { 1:'🥇', 2:'🥈', 3:'🥉' }
+const RANK_EMOJI = { 1: '🥇', 2: '🥈', 3: '🥉' }
 
 export default function Leaderboard() {
   const { user } = useAuthStore()
@@ -19,76 +20,113 @@ export default function Leaderboard() {
   const myXP = xpStore?.xp || 0
   const myLevel = xpStore?.level || 1
   const myStreak = xpStore?.streak || 0
-  const [shareCode] = useState(() => Math.random().toString(36).slice(2,6).toUpperCase())
+  const [shareCode] = useState(() => Math.random().toString(36).slice(2, 6).toUpperCase())
+  const [copied, setCopied] = useState(false)
 
   const myName = user?.name || user?.firstName || 'You'
   const myInitial = myName[0]?.toUpperCase() || 'Y'
 
-  const board = [...MOCK_BOARD, { rank: 6, name: myName+' (You)', xp: myXP, level: myLevel, streak: myStreak, avatar: myInitial, isMe: true }]
-    .sort((a,b)=>b.xp-a.xp)
-    .map((e,i)=>({ ...e, rank: i+1 }))
+  const board = [...MOCK_BOARD, { rank: 6, name: myName + ' (You)', xp: myXP, level: myLevel, streak: myStreak, avatar: myInitial, isMe: true }]
+    .sort((a, b) => b.xp - a.xp)
+    .map((e, i) => ({ ...e, rank: i + 1 }))
 
-  const myEntry = board.find(e=>e.isMe)
+  const myEntry = board.find(e => e.isMe)
+
+  const copyCode = () => {
+    navigator.clipboard?.writeText(shareCode)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
-    <div style={{ fontFamily:"'Manrope',sans-serif",color:C.text,maxWidth:700,margin:'0 auto' }}>
-      <h1 style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:24,fontWeight:700,marginBottom:24 }}>🏆 Leaderboard</h1>
+    <div style={{ fontFamily: fonts.body, color: C.text, maxWidth: 720, margin: '0 auto' }}>
+      <PageHeader
+        icon={Trophy}
+        accent={C.yellow}
+        title="Leaderboard"
+        subtitle="Compete with friends on XP and streaks"
+      />
 
       {/* My rank card */}
-      <div style={{ background:'linear-gradient(135deg,rgba(175,198,255,0.1),rgba(196,77,255,0.08))',border:`1px solid ${C.border}`,borderRadius:14,padding:'20px 24px',marginBottom:24,display:'flex',alignItems:'center',gap:20,flexWrap:'wrap' }}>
-        <div style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:40,fontWeight:800,color:C.blue }}>#{myEntry?.rank}</div>
-        <div style={{ flex:1,minWidth:120 }}>
-          <div style={{ fontSize:14,fontWeight:700,color:C.text }}>{myName}</div>
-          <div style={{ fontSize:12,color:C.textMuted }}>Level {myLevel}</div>
+      <Card style={{
+        background: `linear-gradient(135deg, ${tint(C.blue, 0.08)}, ${tint(C.purpleDark, 0.06)})`,
+        padding: '20px 24px', marginBottom: 24,
+        display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap',
+      }}>
+        <div style={{
+          fontFamily: fonts.heading, fontSize: 40, fontWeight: 700, color: C.blue,
+          textShadow: `0 0 28px ${tint(C.blue, 0.4)}`,
+        }}>#{myEntry?.rank}</div>
+        <div style={{ flex: 1, minWidth: 120 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.text }}>{myName}</div>
+          <div style={{ fontSize: 12, color: C.textMuted }}>Level {myLevel}</div>
         </div>
         {[
-          { label:'XP', value:myXP, color:C.blue },
-          { label:'Streak', value:`${myStreak}d`, color:C.orange },
-        ].map(s=>(
-          <div key={s.label} style={{ textAlign:'center' }}>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:20,fontWeight:700,color:s.color }}>{s.value}</div>
-            <div style={{ fontSize:11,color:C.textMuted }}>{s.label}</div>
+          { label: 'XP', value: myXP, color: C.blue },
+          { label: 'Streak', value: `${myStreak}d`, color: C.orange },
+        ].map(s => (
+          <div key={s.label} style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: fonts.heading, fontSize: 20, fontWeight: 700, color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: 11, color: C.textMuted }}>{s.label}</div>
           </div>
         ))}
-      </div>
+      </Card>
 
       {/* Board */}
-      <div style={{ background:C.card,border:`1px solid ${C.border}`,borderRadius:14,overflow:'hidden',marginBottom:20 }}>
-        {board.map((entry,i) => (
+      <Card style={{ overflow: 'hidden', marginBottom: 20, padding: 0 }}>
+        {board.map((entry, i) => (
           <div key={entry.rank} style={{
-            display:'flex',alignItems:'center',gap:14,
-            padding:'14px 20px',
-            borderBottom: i<board.length-1 ? `1px solid ${C.border}` : 'none',
-            background: entry.isMe ? 'rgba(175,198,255,0.06)' : 'transparent',
+            display: 'flex', alignItems: 'center', gap: 14,
+            padding: '14px 20px',
+            borderBottom: i < board.length - 1 ? `1px solid ${C.borderSoft}` : 'none',
+            background: entry.isMe ? tint(C.blue, 0.06) : 'transparent',
+            boxShadow: entry.isMe ? `inset 3px 0 0 ${C.blueDark}` : 'none',
           }}>
-            <div style={{ width:28,fontFamily:"'Space Grotesk',sans-serif",fontSize:14,fontWeight:700,color:RANK_COLORS[entry.rank]||C.textMuted,textAlign:'center',flexShrink:0 }}>
+            <div style={{
+              width: 30, fontFamily: fonts.heading, fontSize: 14, fontWeight: 700,
+              color: entry.rank <= 3 ? C.yellow : C.textFaint, textAlign: 'center', flexShrink: 0,
+            }}>
               {RANK_EMOJI[entry.rank] || `#${entry.rank}`}
             </div>
-            <div style={{ width:34,height:34,borderRadius:8,background:`linear-gradient(135deg,${entry.isMe?C.blue:C.textMuted}66,${entry.isMe?C.blueDark:C.border})`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,fontSize:13,color:C.text,flexShrink:0 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: entry.isMe
+                ? `linear-gradient(135deg, ${C.blue}, ${C.blueDark})`
+                : `linear-gradient(135deg, ${tint(C.textMuted, 0.3)}, ${tint(C.textMuted, 0.1)})`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: fonts.heading, fontWeight: 700, fontSize: 13,
+              color: entry.isMe ? '#0b0e14' : C.text, flexShrink: 0,
+            }}>
               {entry.avatar}
             </div>
-            <div style={{ flex:1,minWidth:0 }}>
-              <div style={{ fontSize:14,fontWeight: entry.isMe?700:500,color: entry.isMe?C.blue:C.text }}>{entry.name}</div>
-              <div style={{ fontSize:11,color:C.textMuted }}>Lv {entry.level} · 🔥 {entry.streak}d</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 14, fontWeight: entry.isMe ? 700 : 500, color: entry.isMe ? C.blue : C.text }}>{entry.name}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: C.textFaint }}>
+                Lv {entry.level} · <Flame size={10} color={C.orange} /> {entry.streak}d
+              </div>
             </div>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:14,fontWeight:700,color:C.text }}>{entry.xp.toLocaleString()} XP</div>
+            <div style={{ fontFamily: fonts.heading, fontSize: 14, fontWeight: 700, color: C.text }}>{entry.xp.toLocaleString()} XP</div>
           </div>
         ))}
-      </div>
+      </Card>
 
       {/* Share code */}
-      <div style={{ background:C.card,border:`1px solid ${C.border}`,borderRadius:14,padding:'20px 24px' }}>
-        <h3 style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:14,fontWeight:700,color:C.text,marginBottom:8 }}>Invite Friends</h3>
-        <p style={{ fontSize:13,color:C.textMuted,marginBottom:12 }}>Share your code to compete together:</p>
-        <div style={{ display:'flex',alignItems:'center',gap:10 }}>
-          <div style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:24,fontWeight:800,color:C.blue,letterSpacing:'0.15em',background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,padding:'8px 16px' }}>
+      <Card style={{ padding: '20px 24px' }}>
+        <SectionTitle icon={Users} color={C.purple}>Invite Friends</SectionTitle>
+        <p style={{ fontSize: 13, color: C.textMuted, marginBottom: 12 }}>Share your code to compete together:</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{
+            fontFamily: fonts.heading, fontSize: 24, fontWeight: 700, color: C.blue,
+            letterSpacing: '0.18em', background: C.bg, border: `1px solid ${C.border}`,
+            borderRadius: 10, padding: '8px 18px',
+          }}>
             {shareCode}
           </div>
-          <button onClick={()=>navigator.clipboard?.writeText(shareCode)} style={{ padding:'9px 14px',borderRadius:8,border:`1px solid ${C.border}`,background:'transparent',color:C.textMuted,cursor:'pointer',fontSize:13,fontFamily:"'Space Grotesk',sans-serif" }}>
-            Copy
+          <button onClick={copyCode} style={{ ...btnGhost, color: copied ? C.green : C.textMuted }}>
+            {copied ? <><Check size={13} /> Copied</> : <><Copy size={13} /> Copy</>}
           </button>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }

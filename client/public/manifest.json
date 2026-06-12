@@ -4,8 +4,8 @@
   "description": "AI-powered study companion: Google Classroom sync, flashcards, grade tracking, and spaced repetition.",
   "start_url": "/home",
   "display": "standalone",
-  "background_color": "#10141a",
-  "theme_color": "#10141a",
+  "background_color": "#0b0e14",
+  "theme_color": "#0b0e14",
   "orientation": "portrait-primary",
   "categories": ["education", "productivity"],
   "icons": [

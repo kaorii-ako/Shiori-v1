@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { AlertCircle, MailCheck } from 'lucide-react'
 import { useAuthStore } from '../stores'
-import { C } from '../utils/theme'
+import { C, fonts, tint, inputStyle, btnPrimary } from '../utils/theme'
 import GoogleButton from '../components/GoogleButton'
 
 export default function Signup() {
@@ -37,92 +38,122 @@ export default function Signup() {
     <div style={{
       minHeight: '100vh', background: C.bg,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Manrope', sans-serif", padding: 20,
+      fontFamily: fonts.body, padding: 20, position: 'relative', overflow: 'hidden',
     }}>
-      <div style={{
-        width: '100%', maxWidth: 400,
-        background: C.card, border: `1px solid ${C.border}`,
-        borderRadius: 16, padding: '36px 32px',
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: `
+          radial-gradient(600px 450px at 50% -10%, rgba(181,92,255,0.09), transparent 70%),
+          radial-gradient(400px 350px at 10% 100%, rgba(90,139,255,0.07), transparent 70%)
+        `,
+      }} />
+
+      <div className="page-enter" style={{
+        width: '100%', maxWidth: 410, position: 'relative',
+        background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+        border: `1px solid ${C.border}`,
+        borderRadius: 20, padding: '38px 32px',
+        boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
       }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ fontSize: 40, marginBottom: 6 }}>栞</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 18, color: C.blue }}>SHIORI</div>
-          <div style={{ fontSize: 13, color: C.textMuted, marginTop: 4 }}>Create your study space</div>
+          <div style={{
+            width: 52, height: 52, borderRadius: 14, margin: '0 auto 14px',
+            background: `linear-gradient(135deg, ${C.purple} 0%, ${C.purpleDark} 100%)`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: fonts.heading, fontWeight: 700, fontSize: 24, color: '#0b0e14',
+            boxShadow: '0 8px 28px rgba(181,92,255,0.35)',
+          }}>栞</div>
+          <div style={{ fontFamily: fonts.heading, fontWeight: 700, fontSize: 19, color: C.text }}>Create your study space</div>
+          <div style={{ fontSize: 13, color: C.textMuted, marginTop: 5 }}>Free for students — takes 30 seconds</div>
         </div>
 
         {displayErr && (
-          <div style={{ background: 'rgba(255,107,157,0.1)', border: '1px solid rgba(255,107,157,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: C.pink }}>
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: 8,
+            background: tint(C.pink, 0.08), border: `1px solid ${tint(C.pink, 0.3)}`,
+            borderRadius: 10, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: C.pink,
+          }}>
+            <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
             {displayErr}
           </div>
         )}
 
-        {/* Primary: Google */}
-        <GoogleButton onClick={handleGoogle} loading={isLoading} label="Sign up with Google" />
-        <p style={{ textAlign: 'center', fontSize: 12, color: C.textMuted, margin: '12px 0 4px' }}>
-          Use your school Google account to auto-import Classroom assignments.
-        </p>
-
-        {/* Secondary: email */}
-        {!showEmail ? (
-          <button onClick={() => setShowEmail(true)} style={{
-            width: '100%', marginTop: 16, padding: '11px', borderRadius: 10,
-            border: `1px solid ${C.border}`, background: 'transparent',
-            color: C.textMuted, cursor: 'pointer',
-            fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 600,
-          }}>Sign up with email instead</button>
+        {emailSent ? (
+          <div style={{
+            background: tint(C.greenDark, 0.08), border: `1px solid ${tint(C.greenDark, 0.3)}`,
+            borderRadius: 12, padding: 20, textAlign: 'center',
+          }}>
+            <MailCheck size={28} color={C.green} style={{ marginBottom: 10 }} />
+            <div style={{ fontSize: 15, fontWeight: 700, color: C.green, marginBottom: 6, fontFamily: fonts.heading }}>Check your email!</div>
+            <div style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>
+              We sent a confirmation link to <strong style={{ color: C.text }}>{form.email}</strong>.
+              Click it to activate your account, then sign in.
+            </div>
+          </div>
         ) : (
           <>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '20px 0' }}>
-              <div style={{ flex: 1, height: 1, background: C.border }} />
-              <span style={{ fontSize: 12, color: C.textMuted }}>or</span>
-              <div style={{ flex: 1, height: 1, background: C.border }} />
-            </div>
-            <form onSubmit={handleSubmit}>
-              {[
-                { label: 'Name', key: 'name', type: 'text', placeholder: 'Your name' },
-                { label: 'Email', key: 'email', type: 'email', placeholder: 'you@school.edu' },
-                { label: 'Password', key: 'password', type: 'password', placeholder: '6+ characters' },
-              ].map(f => (
-                <div key={f.key} style={{ marginBottom: 14 }}>
-                  <label style={{ display: 'block', fontSize: 12, color: C.textMuted, marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
-                  <input
-                    type={f.type} value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                    placeholder={f.placeholder}
-                    style={{
-                      width: '100%', padding: '10px 12px', borderRadius: 8,
-                      background: C.bg, border: `1px solid ${C.border}`,
-                      color: C.text, fontSize: 13, fontFamily: "'Manrope', sans-serif",
-                      boxSizing: 'border-box',
-                    }}
-                  />
+            {/* Primary: Google */}
+            <GoogleButton onClick={handleGoogle} loading={isLoading} label="Sign up with Google" />
+            <p style={{ textAlign: 'center', fontSize: 12, color: C.textFaint, margin: '12px 0 4px' }}>
+              Use your school Google account to auto-import Classroom assignments.
+            </p>
+
+            {/* Secondary: email */}
+            {!showEmail ? (
+              <button onClick={() => setShowEmail(true)} style={{
+                width: '100%', marginTop: 16, padding: '11px', borderRadius: 10,
+                border: `1px solid ${C.border}`, background: 'transparent',
+                color: C.textMuted, cursor: 'pointer',
+                fontFamily: fonts.heading, fontSize: 13, fontWeight: 600,
+                transition: 'border-color 0.15s ease, color 0.15s ease',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.color = C.text; e.currentTarget.style.borderColor = '#2e3850' }}
+                onMouseLeave={e => { e.currentTarget.style.color = C.textMuted; e.currentTarget.style.borderColor = C.border }}
+              >Sign up with email instead</button>
+            ) : (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '20px 0' }}>
+                  <div style={{ flex: 1, height: 1, background: C.border }} />
+                  <span style={{ fontSize: 12, color: C.textFaint }}>or</span>
+                  <div style={{ flex: 1, height: 1, background: C.border }} />
                 </div>
-              ))}
-              <button type="submit" disabled={isLoading} style={{
-                width: '100%', padding: '11px', borderRadius: 10, border: 'none',
-                background: 'linear-gradient(135deg,#afc6ff,#528dff)',
-                color: '#10141a', cursor: isLoading ? 'not-allowed' : 'pointer',
-                fontFamily: "'Space Grotesk', sans-serif", fontSize: 14, fontWeight: 700,
-                marginTop: 4, marginBottom: 8,
-              }}>
-                {isLoading ? 'Creating account…' : 'Create Account'}
-              </button>
-            </form>
+                <form onSubmit={handleSubmit}>
+                  {[
+                    { label: 'Name', key: 'name', type: 'text', placeholder: 'Your name', autoComplete: 'name' },
+                    { label: 'Email', key: 'email', type: 'email', placeholder: 'you@school.edu', autoComplete: 'email' },
+                    { label: 'Password', key: 'password', type: 'password', placeholder: '6+ characters', autoComplete: 'new-password' },
+                  ].map(f => (
+                    <div key={f.key} style={{ marginBottom: 14 }}>
+                      <label style={{ display: 'block', fontSize: 12, color: C.textMuted, marginBottom: 6, fontWeight: 700 }}>{f.label}</label>
+                      <input
+                        type={f.type} value={form[f.key]}
+                        onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                        placeholder={f.placeholder} autoComplete={f.autoComplete}
+                        style={inputStyle}
+                        onFocus={e => { e.target.style.borderColor = C.blueDark }}
+                        onBlur={e => { e.target.style.borderColor = C.border }}
+                      />
+                    </div>
+                  ))}
+                  <button type="submit" disabled={isLoading} style={{
+                    ...btnPrimary, width: '100%', marginTop: 4, marginBottom: 8,
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    opacity: isLoading ? 0.7 : 1,
+                  }}>
+                    {isLoading ? 'Creating account…' : 'Create account'}
+                  </button>
+                </form>
+              </>
+            )}
           </>
         )}
 
-        {emailSent && (
-          <div style={{ background: 'rgba(77,255,145,0.1)', border: '1px solid rgba(77,255,145,0.3)', borderRadius: 8, padding: '14px', marginBottom: 16, textAlign: 'center' }}>
-            <div style={{ fontSize: 20, marginBottom: 6 }}>✉️</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: C.green, marginBottom: 4, fontFamily: "'Space Grotesk', sans-serif" }}>Check your email!</div>
-            <div style={{ fontSize: 12, color: C.textMuted }}>We sent a confirmation link to <strong style={{ color: C.text }}>{form.email}</strong>. Click it to activate your account, then sign in.</div>
-          </div>
-        )}
         <div style={{ textAlign: 'center', fontSize: 13, color: C.textMuted, marginTop: 20 }}>
           Already have an account?{' '}
-          <Link to="/login" style={{ color: C.blue, textDecoration: 'none', fontWeight: 600 }}>Sign in</Link>
+          <Link to="/login" style={{ color: C.blue, textDecoration: 'none', fontWeight: 700 }}>Sign in</Link>
         </div>
-        <div style={{ textAlign: 'center', marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
-          <span style={{ fontSize: 11, color: C.textMuted }}>Free for students · Your data stays private to your account.</span>
+        <div style={{ textAlign: 'center', marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.borderSoft}` }}>
+          <span style={{ fontSize: 11.5, color: C.textFaint }}>Free for students · Your data stays private to your account.</span>
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ export default function ProSuccess() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#10141a',
+      background: '#0b0e14',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -50,8 +50,8 @@ export default function ProSuccess() {
         style={{
           position: 'relative', zIndex: 1,
           maxWidth: 520, width: '100%',
-          background: '#161b24',
-          border: '1px solid #2a3142',
+          background: '#12161f',
+          border: '1px solid #222a3a',
           borderRadius: 20,
           padding: '48px 40px',
           textAlign: 'center',
@@ -140,7 +140,7 @@ export default function ProSuccess() {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               padding: '13px 24px', borderRadius: 8,
-              border: '1px solid #2a3142',
+              border: '1px solid #222a3a',
               background: 'transparent',
               color: '#8c90a0', textDecoration: 'none',
               fontFamily: "'Space Grotesk', sans-serif",

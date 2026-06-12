@@ -150,7 +150,7 @@ const AIChat = ({ onClose }) => {
         <div className="flex items-center gap-2">
           <div
             className="w-8 h-8 flex items-center justify-center rounded-lg"
-            style={{ background: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)', color: '#10141a' }}
+            style={{ background: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)', color: '#0b0e14' }}
           >
             <Sparkles className="w-4 h-4" />
           </div>
@@ -231,7 +231,7 @@ const AIChat = ({ onClose }) => {
                 background: msg.role === 'user'
                   ? 'linear-gradient(45deg, #a9c2ff 0%, #7ea5ff 100%)'
                   : '#181c22',
-                color: msg.role === 'user' ? '#10141a' : '#dfe2eb',
+                color: msg.role === 'user' ? '#0b0e14' : '#dfe2eb',
                 borderRadius: msg.role === 'user' ? '10px 10px 2px 10px' : '10px 10px 10px 2px',
                 border: msg.role === 'user' ? 'none' : '1px solid rgba(66,71,84,0.25)',
               }}
@@ -289,7 +289,7 @@ const AIChat = ({ onClose }) => {
               background: input.trim() && !generating
                 ? 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)'
                 : 'rgba(66,71,84,0.25)',
-              color: input.trim() && !generating ? '#10141a' : '#606080',
+              color: input.trim() && !generating ? '#0b0e14' : '#606080',
               border: 'none', cursor: input.trim() ? 'pointer' : 'default',
             }}
           >

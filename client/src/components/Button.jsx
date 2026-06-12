@@ -22,17 +22,17 @@ const Button = ({
   const variantStyles = {
     primary: {
       bg: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)',
-      color: '#10141a',
+      color: '#0b0e14',
       hover: 'rgba(82,141,255,0.30)',
     },
     secondary: {
       bg: 'linear-gradient(45deg, #d7ffc5 0%, #4a6c3a 100%)',
-      color: '#10141a',
+      color: '#0b0e14',
       hover: 'rgba(74,215,120,0.25)',
     },
     tertiary: {
       bg: 'linear-gradient(45deg, #e5b5ff 0%, #8b63a5 100%)',
-      color: '#10141a',
+      color: '#0b0e14',
       hover: 'rgba(229,181,255,0.25)',
     },
     ghost: {
@@ -43,7 +43,7 @@ const Button = ({
     },
     danger: {
       bg: 'linear-gradient(45deg, #ffb4ab 0%, #ff6b7a 100%)',
-      color: '#10141a',
+      color: '#0b0e14',
       hover: 'rgba(255,107,122,0.25)',
     },
   }

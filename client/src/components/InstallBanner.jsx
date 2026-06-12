@@ -71,7 +71,7 @@ const InstallBanner = () => {
             style={{
               padding: '7px 14px', borderRadius: 7, border: 'none', cursor: 'pointer',
               background: 'linear-gradient(135deg, #528dff, #afc6ff)',
-              color: '#10141a', fontFamily: "'Space Grotesk', sans-serif",
+              color: '#0b0e14', fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 11, fontWeight: 700, flexShrink: 0,
             }}
           >

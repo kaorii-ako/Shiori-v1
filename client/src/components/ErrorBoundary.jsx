@@ -45,7 +45,7 @@ export default class ErrorBoundary extends Component {
 
     return (
       <div style={{
-        minHeight: '100vh', background: '#10141a',
+        minHeight: '100vh', background: '#0b0e14',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16,
         padding: 32,
       }}>

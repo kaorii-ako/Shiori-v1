@@ -185,7 +185,7 @@ const DemoTour = () => {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '10px 16px', borderRadius: 9,
                   background: `linear-gradient(135deg, ${current.color}, ${current.color}bb)`,
-                  color: '#10141a', textDecoration: 'none',
+                  color: '#0b0e14', textDecoration: 'none',
                   fontFamily: '"Press Start 2P"', fontSize: 9,
                   marginBottom: 12,
                 }}
@@ -216,7 +216,7 @@ const DemoTour = () => {
                   display: 'flex', alignItems: 'center', gap: 6,
                   padding: '9px 20px', borderRadius: 8, border: 'none', cursor: 'pointer',
                   background: current.color,
-                  color: '#10141a',
+                  color: '#0b0e14',
                   fontFamily: '"Press Start 2P"', fontSize: 9,
                 }}
               >

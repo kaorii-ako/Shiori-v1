@@ -26,6 +26,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Demo from './pages/Demo'
 import Profile from './pages/Profile'
+import NotFound from './pages/NotFound'
 
 function App() {
   // Validate the persisted session against Supabase and keep auth state in sync
@@ -70,6 +71,9 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
+
+          {/* Catch-all */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>
