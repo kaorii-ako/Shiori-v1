@@ -926,7 +926,16 @@ export const useUIStore = create(
         toasts: state.toasts.filter((t) => t.id !== id)
       }))
     }),
-    { name: 'shiori-ui' }
+    {
+      name: 'shiori-ui',
+      // Persist only durable prefs — transient UI (open panels, toasts) must reset on reload.
+      partialize: (state) => ({
+        theme: state.theme,
+        geminiApiKey: state.geminiApiKey,
+        pomodoroSound: state.pomodoroSound,
+        sidebarCollapsed: state.sidebarCollapsed,
+      }),
+    }
   )
 )
 

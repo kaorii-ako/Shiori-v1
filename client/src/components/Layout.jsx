@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Star, Github, Menu, Keyboard } from 'lucide-react'
 import Sidebar from './Sidebar'
 import AIChat from './AIChat'
@@ -17,7 +17,7 @@ import { C, fonts, tint } from '../utils/theme'
 const GITHUB_URL = 'https://github.com/kaorii-ako/Shiori-v1'
 
 const Layout = () => {
-  const { aiChatOpen, toggleSidebarMobile, theme } = useUIStore()
+  const { aiChatOpen, toggleAIChat, toggleSidebarMobile, theme } = useUIStore()
   const { isDemo, exitDemoMode } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
@@ -110,6 +110,7 @@ const Layout = () => {
                 href={GITHUB_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="hide-mobile"
                 style={{
                   display: 'flex', alignItems: 'center', gap: 4,
                   padding: '2px 8px', borderRadius: 6,
@@ -190,14 +191,37 @@ const Layout = () => {
           </div>
         </header>
 
-        <div key={location.pathname} className="page-enter" style={{ padding: '24px 24px 48px', flex: 1 }}>
+        <div key={location.pathname} className="page-enter page-content" style={{ flex: 1 }}>
           <Outlet />
         </div>
       </main>
 
-      {/* Floating elements */}
+      {/* AI Chat slide-in panel */}
       <AnimatePresence>
-        {aiChatOpen && <AIChat />}
+        {aiChatOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={toggleAIChat}
+              style={{ position: 'fixed', inset: 0, zIndex: 120, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(3px)' }}
+            />
+            <motion.div
+              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 34 }}
+              className="ai-chat-panel"
+              style={{
+                position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 121,
+                width: 'min(420px, 100vw)',
+                background: C.bgSoft,
+                borderLeft: `1px solid ${C.border}`,
+                boxShadow: '-16px 0 48px rgba(0,0,0,0.5)',
+                display: 'flex', flexDirection: 'column',
+              }}
+            >
+              <AIChat onClose={toggleAIChat} />
+            </motion.div>
+          </>
+        )}
       </AnimatePresence>
       <PomodoroTimer />
       <QuickCapture />
@@ -262,11 +286,15 @@ const Layout = () => {
 
       <style>{`
         .sidebar-spacer { width: 240px; }
+        .page-content { padding: 24px 24px 48px; }
         @media (max-width: 1279px) { .sidebar-spacer { width: 72px; } }
         @media (max-width: 1023px) {
           .sidebar-spacer { display: none; }
           .mobile-hamburger { display: flex !important; }
           .hide-mobile { display: none; }
+        }
+        @media (max-width: 640px) {
+          .page-content { padding: 16px 14px 40px; }
         }
       `}</style>
     </div>

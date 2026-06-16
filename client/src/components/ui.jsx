@@ -1,13 +1,25 @@
 // Shared UI primitives for the inline-style design system.
 // Every page composes these for a consistent look.
+import { motion } from 'motion/react'
 import { C, fonts, tint, iconBox, card, btnPrimary, btnGhost } from '../utils/theme'
+
+const revealProps = {
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-40px' },
+  transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+}
 
 export function PageHeader({ icon: Icon, title, subtitle, accent = C.blue, actions }) {
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      gap: 16, flexWrap: 'wrap', marginBottom: 24,
-    }}>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 16, flexWrap: 'wrap', marginBottom: 24,
+      }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
         {Icon && (
           <div style={iconBox(accent, 44)}>
@@ -25,25 +37,31 @@ export function PageHeader({ icon: Icon, title, subtitle, accent = C.blue, actio
         </div>
       </div>
       {actions && <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>{actions}</div>}
-    </div>
+    </motion.div>
   )
 }
 
 export function Card({ children, style, className = '', onClick, lift }) {
   return (
-    <div
+    <motion.div
+      {...revealProps}
       onClick={onClick}
-      className={`${lift ? 'hover-lift' : ''} ${className}`.trim()}
+      whileHover={onClick || lift ? { y: -4 } : undefined}
+      className={className}
       style={{ ...card, cursor: onClick ? 'pointer' : undefined, ...style }}
     >
       {children}
-    </div>
+    </motion.div>
   )
 }
 
 export function StatCard({ icon: Icon, label, value, color = C.blue, sub }) {
   return (
-    <div className="hover-lift" style={{ ...card, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
+    <motion.div
+      {...revealProps}
+      whileHover={{ y: -4, borderColor: tint(color, 0.5) }}
+      style={{ ...card, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14 }}
+    >
       {Icon && (
         <div style={iconBox(color, 42)}>
           <Icon size={20} strokeWidth={2.2} />
@@ -57,7 +75,7 @@ export function StatCard({ icon: Icon, label, value, color = C.blue, sub }) {
           {label}{sub ? <span style={{ color: C.textFaint }}> · {sub}</span> : null}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

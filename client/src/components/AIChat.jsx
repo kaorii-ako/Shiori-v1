@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Send, X, Sparkles, Zap } from 'lucide-react'
-import { ai } from '../lib/api'
+import { callGeminiClient, hasClientKey } from '../utils/gemini'
 import { useAuthStore, useAssignmentsStore } from '../stores'
 
 const QUICK_PROMPTS = [
@@ -11,8 +11,8 @@ const QUICK_PROMPTS = [
   "How are my grades looking?",
 ]
 
-// Offline demo responses — contextually aware of demo data
-const getDemoResponse = (message, assignments) => {
+// Local heuristic responder — works on real or demo data with no API key.
+const getLocalResponse = (message, assignments) => {
   const msg = message.toLowerCase()
   const pending = assignments.filter(a => a.status !== 'graded')
   const today = new Date()
@@ -115,19 +115,26 @@ const AIChat = ({ onClose }) => {
     setInput('')
 
     try {
-      if (user?.isDemo) {
-        // Offline demo mode — contextual response without backend
-        await new Promise(r => setTimeout(r, 600 + Math.random() * 800))
-        const reply = getDemoResponse(msgText, assignments)
-        setMessages(prev => [...prev, addMessage('assistant', reply)])
+      if (!user?.isDemo && hasClientKey()) {
+        // Real Gemini answer, grounded in the user's actual assignments.
+        const pending = assignments.filter(a => a.status !== 'graded')
+        const list = pending.slice(0, 20).map(a =>
+          `- ${a.title}${a.courseName ? ` (${a.courseName})` : ''}${a.dueDate ? ` due ${new Date(a.dueDate).toLocaleDateString()}` : ''}${a.priority ? ` [${a.priority}]` : ''}`
+        ).join('\n') || '(no pending assignments)'
+        const prompt = `You are Shiori, a friendly, concise AI study companion for a student. Use their data to answer.\n\nPending assignments:\n${list}\n\nStudent question: ${msgText}\n\nAnswer in 1-4 short sentences. Be specific and practical.`
+        const reply = await callGeminiClient(prompt, { maxOutputTokens: 512 })
+        setMessages(prev => [...prev, addMessage('assistant', reply || getLocalResponse(msgText, assignments))])
       } else {
-        const context = { assignments, courses: [] }
-        const response = await ai.chat(msgText, context)
-        const replyText = response.data?.message || "I'm not sure how to answer that. Try asking about your assignments or grades."
-        setMessages(prev => [...prev, addMessage('assistant', replyText)])
+        // No API key (or demo) — local heuristic responder over real data. No key needed.
+        await new Promise(r => setTimeout(r, 500 + Math.random() * 600))
+        const reply = getLocalResponse(msgText, assignments)
+        const suffix = !user?.isDemo && !hasClientKey()
+          ? '\n\n_Tip: add a free Gemini API key in Settings for smarter, free-form answers._'
+          : ''
+        setMessages(prev => [...prev, addMessage('assistant', reply + suffix)])
       }
     } catch {
-      setMessages(prev => [...prev, addMessage('assistant', "Sorry, I couldn't connect to the AI backend. In self-hosted mode, make sure the Express server is running.")])
+      setMessages(prev => [...prev, addMessage('assistant', getLocalResponse(msgText, assignments))])
     }
 
     setGenerating(false)
@@ -159,7 +166,7 @@ const AIChat = ({ onClose }) => {
               Shiori AI
             </p>
             <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: '0.7rem', color: '#606080' }}>
-              {user?.isDemo ? 'Demo Mode — offline AI' : 'Powered by Gemini'}
+              {user?.isDemo ? 'Demo Mode — offline AI' : (hasClientKey() ? 'Powered by Gemini' : 'Smart offline mode')}
             </p>
           </div>
         </div>

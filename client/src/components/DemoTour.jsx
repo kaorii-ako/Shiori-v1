@@ -97,6 +97,13 @@ const DemoTour = () => {
             }}
           />
 
+          {/* Centering wrapper — flex centering avoids the framer-motion
+              transform overriding a manual translate(-50%,-50%). */}
+          <div style={{
+            position: 'fixed', inset: 0, zIndex: 301,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 16, pointerEvents: 'none',
+          }}>
           {/* Modal */}
           <motion.div
             key={step}
@@ -105,10 +112,10 @@ const DemoTour = () => {
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 28 }}
             style={{
-              position: 'fixed', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 301,
-              width: 'min(440px, 90vw)',
+              width: 'min(440px, 100%)',
+              maxHeight: 'calc(100dvh - 32px)',
+              overflowY: 'auto',
+              pointerEvents: 'auto',
               background: 'rgba(16,20,26,0.97)',
               border: `1px solid ${current.color}40`,
               borderRadius: 18,
@@ -225,6 +232,7 @@ const DemoTour = () => {
               </button>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

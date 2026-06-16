@@ -26,14 +26,18 @@ export default function ShortcutModal({ open, onClose }) {
             onClick={onClose}
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 300, backdropFilter: 'blur(4px)' }}
           />
+          <div style={{
+            position: 'fixed', inset: 0, zIndex: 301,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 16, pointerEvents: 'none',
+          }}>
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
             style={{
-              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-              zIndex: 301, width: 'min(520px, 92vw)',
+              width: 'min(520px, 100%)', pointerEvents: 'auto',
               background: 'rgba(16,20,26,0.97)',
               border: '1px solid rgba(175,198,255,0.20)',
               borderRadius: 16, overflow: 'hidden',
@@ -72,6 +76,7 @@ export default function ShortcutModal({ open, onClose }) {
               <span style={{ fontFamily: 'VT323', fontSize: 14, color: '#424754' }}>Press Esc or click outside to close</span>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

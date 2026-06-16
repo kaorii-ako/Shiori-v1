@@ -9,15 +9,20 @@
     "lint": "vite build 2>&1"
   },
   "dependencies": {
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@supabase/supabase-js": "^2.106.2",
+    "animejs": "^4.4.1",
     "axios": "^1.7.9",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.6.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.469.0",
+    "motion": "^12.40.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.0",
+    "three": "^0.184.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
