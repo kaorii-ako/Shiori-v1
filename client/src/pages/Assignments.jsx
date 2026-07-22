@@ -14,12 +14,11 @@ function Modal({ open, onClose, children }) {
   if (!open) return null
   return (
     <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, background: 'rgba(4,6,10,0.75)',
-      backdropFilter: 'blur(3px)',
+      position: 'fixed', inset: 0, background: 'rgba(4,6,10,0.85)',
       zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
     }}>
       <div onClick={e => e.stopPropagation()} className="page-enter" style={{
-        background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+        background: C.card,
         border: `1px solid ${C.border}`, borderRadius: 18,
         padding: 28, width: 'min(480px, 92vw)', maxHeight: '90vh', overflowY: 'auto',
         boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
@@ -120,7 +119,7 @@ export default function Assignments() {
       {/* List */}
       {filtered.length === 0 ? (
         <div style={{
-          background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+          background: C.card,
           border: `1px solid ${C.border}`, borderRadius: 16,
         }}>
           <Empty
@@ -151,7 +150,7 @@ export default function Assignments() {
             const pColor = PRIORITY_COLOR[a.priority] || C.textMuted
             return (
               <div key={a.id} className="hover-lift" style={{
-                background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+                background: C.card,
                 border: `1px solid ${overdue ? tint(C.pink, 0.35) : C.border}`, borderRadius: 12,
                 padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12,
                 opacity: a.completed ? 0.5 : 1,

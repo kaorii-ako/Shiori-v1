@@ -21,15 +21,6 @@ export default function ProSuccess() {
       padding: 24,
       fontFamily: "'Manrope', sans-serif",
     }}>
-      {/* Ambient glow */}
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
-        <div style={{
-          position: 'absolute', top: '10%', left: '50%', transform: 'translateX(-50%)',
-          width: 600, height: 600, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(77,255,145,0.07) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-        }} />
-      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -69,7 +60,7 @@ export default function ProSuccess() {
           fontSize: 26, fontWeight: 700,
           color: '#dfe2eb', marginBottom: 12, lineHeight: 1.3,
         }}>
-          You're now a Shiori Pro member! 🎉
+          You're now a Shiori Pro member.
         </div>
 
         {/* Subtext */}
@@ -113,12 +104,11 @@ export default function ProSuccess() {
             to="/home"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '13px 28px', borderRadius: 8,
-              background: 'linear-gradient(135deg, #c44dff 0%, #7b3fa8 100%)',
+              padding: '13px 28px', borderRadius: 6,
+              background: '#c44dff',
               color: '#fff', textDecoration: 'none',
               fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 13, fontWeight: 700, letterSpacing: '0.04em',
-              boxShadow: '0 4px 20px rgba(196,77,255,0.3)',
             }}
           >
             Go to Dashboard <ArrowRight size={14} />

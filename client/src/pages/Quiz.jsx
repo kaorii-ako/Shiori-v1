@@ -110,7 +110,7 @@ export default function Quiz() {
         <div style={{ height: 5, background: tint(C.blue, 0.1), borderRadius: 3, overflow: 'hidden', marginBottom: 24 }}>
           <div style={{
             height: '100%', width: `${((current + 1) / questions.length) * 100}%`,
-            background: `linear-gradient(90deg, ${C.blue}, ${C.blueDark})`,
+            background: C.blueDark,
             borderRadius: 3, transition: 'width 0.3s',
           }} />
         </div>

@@ -25,7 +25,7 @@ export default function Notes() {
   }
 
   const panel = {
-    background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+    background: C.card,
     borderRadius: 16, border: `1px solid ${C.border}`,
     display: 'flex', flexDirection: 'column', overflow: 'hidden',
   }

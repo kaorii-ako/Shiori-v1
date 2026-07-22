@@ -41,7 +41,7 @@ const Avatar = ({
           on-surface-primary
         `}
         style={{
-          background: 'linear-gradient(135deg, #afc6ff 0%, #528dff 100%)',
+          background: '#528dff',
           color: '#0b0e14',
           fontFamily: "'Space Grotesk', sans-serif"
         }}>

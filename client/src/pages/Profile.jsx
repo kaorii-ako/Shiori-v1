@@ -55,7 +55,7 @@ export default function Profile() {
         ) : (
           <div style={{
             width: 80, height: 80, borderRadius: 20, flexShrink: 0,
-            background: `linear-gradient(135deg, ${C.blue}, ${C.blueDark})`,
+            background: C.blueDark,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: fonts.heading, fontWeight: 700, fontSize: 32, color: '#0b0e14',
             boxShadow: `0 8px 28px ${tint(C.blueDark, 0.3)}`,

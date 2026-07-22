@@ -41,19 +41,20 @@ export const fonts = {
   body: "'Manrope', sans-serif",
 }
 
-export const radius = { sm: 8, md: 12, lg: 16, xl: 20, pill: 999 }
+export const radius = { sm: 4, md: 6, lg: 8, xl: 10, pill: 999 }
 
 export const shadow = {
-  card: '0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25)',
-  lift: '0 12px 32px rgba(0,0,0,0.45)',
-  glowBlue: '0 8px 32px rgba(90,139,255,0.25)',
+  card: '0 1px 0 rgba(0,0,0,0.35)',
+  lift: '0 4px 0 rgba(0,0,0,0.3)',
   modal: '0 24px 64px rgba(0,0,0,0.6)',
 }
 
 // ---- Reusable style objects ----
+// Flat surfaces, hairline borders, no gradients/glow — the accent lives in a
+// left rule, not a soft-glow icon chip.
 
 export const card = {
-  background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+  background: C.card,
   border: `1px solid ${C.border}`,
   borderRadius: radius.lg,
   padding: 20,
@@ -66,6 +67,13 @@ export const cardFlat = {
   borderRadius: radius.md,
   padding: 16,
 }
+
+// Card with a colored left rule instead of a gradient icon chip — the
+// signature accent motif used on stat/emphasis cards.
+export const cardAccent = (color) => ({
+  ...card,
+  borderLeft: `3px solid ${color}`,
+})
 
 export const inputStyle = {
   width: '100%',
@@ -84,21 +92,21 @@ export const inputStyle = {
 export const btnPrimary = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
   padding: '11px 20px',
-  borderRadius: radius.sm + 2,
+  borderRadius: radius.md,
   border: 'none',
-  background: `linear-gradient(135deg, ${C.blue} 0%, ${C.blueDark} 100%)`,
+  background: C.blueDark,
   color: '#0b0e14',
   cursor: 'pointer',
   fontFamily: fonts.heading,
   fontSize: 14, fontWeight: 700,
-  boxShadow: shadow.glowBlue,
-  transition: 'transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease',
+  letterSpacing: '0.01em',
+  transition: 'transform 0.12s ease, background 0.12s ease',
 }
 
 export const btnGhost = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
   padding: '10px 18px',
-  borderRadius: radius.sm + 2,
+  borderRadius: radius.md,
   border: `1px solid ${C.border}`,
   background: 'transparent',
   color: C.text,
@@ -111,29 +119,31 @@ export const btnGhost = {
 export const btnAccent = (color) => ({
   ...btnGhost,
   color,
-  border: `1px solid ${tint(color, 0.35)}`,
-  background: tint(color, 0.08),
+  border: `1px solid ${tint(color, 0.4)}`,
+  background: tint(color, 0.1),
 })
 
+// Squared-off tag, flat fill — deliberately not a pill, not a soft glass chip.
 export const chip = (color) => ({
   display: 'inline-flex', alignItems: 'center', gap: 6,
-  padding: '3px 10px',
-  borderRadius: radius.pill,
-  background: tint(color, 0.12),
-  border: `1px solid ${tint(color, 0.25)}`,
+  padding: '3px 9px',
+  borderRadius: radius.sm,
+  background: tint(color, 0.16),
+  border: `1px solid ${tint(color, 0.3)}`,
   color,
   fontFamily: fonts.heading,
-  fontSize: 11, fontWeight: 600,
+  fontSize: 11, fontWeight: 700,
   letterSpacing: '0.02em',
   whiteSpace: 'nowrap',
 })
 
+// Flat tint square, hairline border — no gradient fill, no soft rounding.
 export const iconBox = (color, size = 40) => ({
   width: size, height: size,
-  borderRadius: Math.round(size * 0.3),
+  borderRadius: radius.sm,
   flexShrink: 0,
-  background: `linear-gradient(135deg, ${tint(color, 0.22)} 0%, ${tint(color, 0.08)} 100%)`,
-  border: `1px solid ${tint(color, 0.25)}`,
+  background: tint(color, 0.14),
+  border: `1px solid ${tint(color, 0.3)}`,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   color,
 })

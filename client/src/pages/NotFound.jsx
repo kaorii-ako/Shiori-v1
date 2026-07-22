@@ -12,7 +12,7 @@ export default function NotFound() {
     }}>
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: `radial-gradient(600px 450px at 50% 30%, ${tint(C.blueDark, 0.08)}, transparent 70%)`,
+        background: 'transparent',
       }} />
       <div className="page-enter" style={{ position: 'relative' }}>
         <div style={{

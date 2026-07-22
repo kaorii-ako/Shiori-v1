@@ -16,9 +16,9 @@ const ProgressBar = ({
   }
 
   const barColors = {
-    success: 'linear-gradient(90deg, #4ad778 0%, #6ae898 100%)',
-    warning: 'linear-gradient(90deg, #ffb44d 0%, #ffc673 100%)',
-    danger: 'linear-gradient(90deg, #ffb4ab 0%, #ffc4be 100%)',
+    success: '#4ad778',
+    warning: '#ffb44d',
+    danger: '#ffb4ab',
   }
 
   return (
@@ -38,7 +38,6 @@ const ProgressBar = ({
             height: '100%',
             background: percentage >= 70 ? barColors.success : percentage >= 40 ? barColors.warning : barColors.danger,
             borderRadius: '4px',
-            boxShadow: `0 0 8px ${getColor()}40`
           }}
         />
       </div>

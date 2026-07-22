@@ -28,10 +28,9 @@ const LevelUpOverlay = ({ level, onClose }) => {
         animate={{ y: 0 }}
         style={{
           textAlign: 'center', padding: '48px 64px',
-          background: 'linear-gradient(135deg, #14181e, #1a1f2e)',
+          background: '#14181e',
           border: `2px solid ${level.color}`,
-          borderRadius: 20,
-          boxShadow: `0 0 60px ${level.color}44`,
+          borderRadius: 8,
         }}
       >
         <div style={{ fontFamily: '"Press Start 2P"', fontSize: 11, color: '#8c90a0', marginBottom: 12 }}>

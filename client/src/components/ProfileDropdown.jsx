@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Settings, LogOut, User, ChevronDown } from 'lucide-react'
+import { Settings, LogOut, User, ChevronDown, MapPin } from 'lucide-react'
 import Avatar from './Avatar'
 import Icon from './Icon'
 import { useAuthStore } from '../stores'
@@ -103,12 +103,11 @@ const ProfileDropdown = () => {
             className="absolute right-0 mt-2 w-64 z-50"
           >
             <div
-              className="rounded-xl overflow-hidden"
+              className="rounded-lg overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, rgba(49,53,60,0.95) 0%, rgba(33,38,45,0.98) 100%)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(66, 71, 84, 0.30)',
-                boxShadow: '0 16px 48px rgba(0,0,0,0.45), 0 0 30px rgba(175,198,255,0.04)'
+                background: '#21262d',
+                border: '1px solid rgba(66, 71, 84, 0.40)',
+                boxShadow: '0 16px 48px rgba(0,0,0,0.45)'
               }}
             >
               {/* User Info Header */}
@@ -131,9 +130,9 @@ const ProfileDropdown = () => {
                     {user?.country && (
                       <p
                         className="text-xs on-surface-tertiary mt-0.5"
-                        style={{ fontFamily: "'Manrope', sans-serif" }}
+                        style={{ fontFamily: "'Manrope', sans-serif", display: 'flex', alignItems: 'center', gap: 4 }}
                       >
-                        📍 {user.country}
+                        <MapPin size={10} /> {user.country}
                       </p>
                     )}
                   </div>

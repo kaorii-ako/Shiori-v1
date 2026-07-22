@@ -88,7 +88,7 @@ export default function Analytics() {
                   <div style={{
                     width: '100%',
                     height: maxH > 0 ? `${Math.max((h / maxH) * 90, h > 0 ? 4 : 0)}px` : '4px',
-                    background: `linear-gradient(180deg, ${C.blue}, ${C.blueDark})`,
+                    background: C.blueDark,
                     borderRadius: '5px 5px 0 0',
                     transition: 'height 0.3s ease',
                     opacity: h > 0 ? 1 : 0.12,

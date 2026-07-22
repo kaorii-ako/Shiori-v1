@@ -67,8 +67,7 @@ const PomodoroTimer = () => {
           background: 'rgba(196,77,255,0.15)',
           border: '1px solid rgba(196,77,255,0.30)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', backdropFilter: 'blur(8px)',
-          boxShadow: isRunning ? '0 0 16px rgba(196,77,255,0.4)' : 'none',
+          cursor: 'pointer',
         }}
         title="Open Pomodoro Timer"
       >
@@ -88,11 +87,10 @@ const PomodoroTimer = () => {
       style={{
         position: 'fixed', bottom: 88, right: 20, zIndex: 90,
         width: expanded ? 280 : 200,
-        borderRadius: 16,
-        background: 'rgba(16,20,26,0.92)',
+        borderRadius: 8,
+        background: '#12161f',
         border: `1px solid ${isRunning ? 'rgba(196,77,255,0.40)' : 'rgba(66,71,84,0.35)'}`,
-        backdropFilter: 'blur(20px)',
-        boxShadow: isRunning ? '0 0 32px rgba(196,77,255,0.18), 0 8px 24px rgba(0,0,0,0.5)' : '0 8px 24px rgba(0,0,0,0.4)',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
         overflow: 'hidden',
         transition: 'width 0.25s ease, border-color 0.3s',
       }}

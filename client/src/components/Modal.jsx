@@ -43,12 +43,11 @@ const Modal = ({
             `}
           >
             <div
-              className="rounded-2xl overflow-hidden"
+              className="rounded-lg overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, rgba(49,53,60,0.95) 0%, rgba(33,38,45,0.98) 100%)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(66, 71, 84, 0.30)',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(175,198,255,0.05)'
+                background: '#21262d',
+                border: '1px solid rgba(66, 71, 84, 0.40)',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.5)'
               }}
               {...props}
             >

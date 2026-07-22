@@ -91,8 +91,8 @@ const Sidebar = () => {
         <div
           onClick={closeSidebarMobile}
           style={{
-            position: 'fixed', inset: 0, background: 'rgba(4,6,10,0.7)',
-            backdropFilter: 'blur(2px)', zIndex: 40,
+            position: 'fixed', inset: 0, background: 'rgba(4,6,10,0.75)',
+            zIndex: 40,
           }}
         />
       )}
@@ -120,10 +120,9 @@ const Sidebar = () => {
           flexShrink: 0,
         }}>
           <div style={{
-            width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-            background: `linear-gradient(135deg, ${C.blue} 0%, ${C.blueDark} 100%)`,
+            width: 36, height: 36, borderRadius: 4, flexShrink: 0,
+            background: C.blueDark,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 4px 16px rgba(90,139,255,0.35)',
           }}>
             <span style={{
               color: '#0b0e14', fontWeight: 700, fontSize: 17,
@@ -236,8 +235,8 @@ const Sidebar = () => {
             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
           >
             <div style={{
-              width: 32, height: 32, borderRadius: 9, flexShrink: 0,
-              background: `linear-gradient(135deg, ${C.purple} 0%, ${C.purpleDark} 100%)`,
+              width: 32, height: 32, borderRadius: 4, flexShrink: 0,
+              background: C.purpleDark,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#0b0e14', fontWeight: 700, fontSize: 13,
               fontFamily: fonts.heading,

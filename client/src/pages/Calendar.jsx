@@ -11,11 +11,11 @@ function Modal({ open, onClose, children }) {
   if (!open) return null
   return (
     <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, background: 'rgba(4,6,10,0.75)', backdropFilter: 'blur(3px)',
+      position: 'fixed', inset: 0, background: 'rgba(4,6,10,0.85)',
       zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
     }}>
       <div onClick={e => e.stopPropagation()} className="page-enter" style={{
-        background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+        background: C.card,
         border: `1px solid ${C.border}`, borderRadius: 18, padding: 28, width: 'min(440px,92vw)',
         boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
       }}>

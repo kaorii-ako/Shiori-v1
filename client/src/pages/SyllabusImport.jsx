@@ -128,7 +128,7 @@ export default function SyllabusImport() {
             <button onClick={importAll} style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '8px 16px', borderRadius: 10, border: 'none',
-              background: imported ? C.greenDark : `linear-gradient(135deg, ${C.green}, ${C.greenDark})`,
+              background: imported ? C.greenDark : C.green,
               color: '#0b0e14', cursor: 'pointer',
               fontFamily: fonts.heading, fontSize: 12, fontWeight: 700,
               boxShadow: `0 6px 20px ${tint(C.greenDark, 0.25)}`,

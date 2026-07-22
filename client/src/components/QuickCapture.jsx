@@ -76,11 +76,9 @@ const QuickCapture = () => {
         style={{
           position: 'fixed', bottom: 24, right: 24, zIndex: 120,
           width: 52, height: 52, borderRadius: '50%',
-          background: open
-            ? 'linear-gradient(135deg, #ff4d6a, #c44dff)'
-            : 'linear-gradient(135deg, #c44dff, #528dff)',
+          background: open ? '#ff4d6a' : '#c44dff',
           border: 'none', cursor: 'pointer',
-          boxShadow: '0 4px 24px rgba(196,77,255,0.45)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
         title="Quick capture (Ctrl+Shift+A)"
@@ -101,11 +99,10 @@ const QuickCapture = () => {
             style={{
               position: 'fixed', bottom: 86, right: 24, zIndex: 120,
               width: 'min(360px, calc(100vw - 32px))',
-              background: 'rgba(16,20,26,0.97)',
+              background: '#12161f',
               border: '1px solid rgba(196,77,255,0.35)',
-              borderRadius: 16, padding: '20px 20px 16px',
-              boxShadow: '0 8px 48px rgba(0,0,0,0.6), 0 0 32px rgba(196,77,255,0.12)',
-              backdropFilter: 'blur(24px)',
+              borderRadius: 8, padding: '20px 20px 16px',
+              boxShadow: '0 8px 48px rgba(0,0,0,0.6)',
             }}
           >
             {/* Title */}
@@ -182,9 +179,9 @@ const QuickCapture = () => {
               style={{
                 width: '100%', padding: '10px', borderRadius: 8, cursor: 'pointer',
                 background: saved
-                  ? 'linear-gradient(135deg, #4dff91, #4daaff)'
+                  ? '#4dff91'
                   : title.trim()
-                  ? 'linear-gradient(135deg, #c44dff, #528dff)'
+                  ? '#c44dff'
                   : 'rgba(255,255,255,0.06)',
                 border: 'none',
                 color: title.trim() ? '#fff' : '#424754',

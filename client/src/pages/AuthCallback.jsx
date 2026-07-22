@@ -83,7 +83,7 @@ export default function AuthCallback() {
       <div style={{ textAlign: 'center' }}>
         <div className="pulse" style={{
           width: 56, height: 56, borderRadius: 16, margin: '0 auto 18px',
-          background: 'linear-gradient(135deg, #9db8ff 0%, #5a8bff 100%)',
+          background: '#5a8bff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 26, fontWeight: 700, color: '#0b0e14',
           boxShadow: '0 8px 32px rgba(90,139,255,0.4)',

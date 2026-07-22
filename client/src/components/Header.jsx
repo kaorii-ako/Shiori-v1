@@ -38,10 +38,7 @@ const Header = () => {
         transition-all duration-200
       `}
       style={{
-        background: isScrolled
-          ? 'rgba(24, 28, 34, 0.90)'
-          : 'rgba(24, 28, 34, 0.40)',
-        backdropFilter: 'blur(20px)',
+        background: isScrolled ? '#181c22' : 'transparent',
         borderBottom: '1px solid rgba(66, 71, 84, 0.25)'
       }}
     >

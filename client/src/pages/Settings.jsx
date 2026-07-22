@@ -77,7 +77,7 @@ export default function Settings() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{
             width: 56, height: 56, borderRadius: 14,
-            background: `linear-gradient(135deg, ${C.blue}, ${C.blueDark})`,
+            background: C.blueDark,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: fonts.heading, fontWeight: 700, fontSize: 22, color: '#0b0e14',
             boxShadow: `0 6px 20px ${tint(C.blueDark, 0.3)}`,

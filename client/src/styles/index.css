@@ -177,12 +177,10 @@
     background-color: #31353c;
   }
 
-  /* ---- Glassmorphism panel ---- */
+  /* ---- Flat panel (no blur/glass) ---- */
   .glass {
-    background: rgba(49, 53, 60, 0.40);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(66, 71, 84, 0.25);
+    background: #181c22;
+    border: 1px solid rgba(66, 71, 84, 0.40);
     border-radius: 4px;
   }
 
@@ -202,58 +200,6 @@
     color: #606080;
   }
 
-  /* ---- Gradient CTA ---- */
-  .bg-cta-primary {
-    background: linear-gradient(45deg, #afc6ff 0%, #528dff 100%);
-    color: #10141a;
-    font-weight: 600;
-  }
-  .bg-cta-secondary {
-    background: linear-gradient(45deg, #d7ffc5 0%, #4a6c3a 100%);
-    color: #10141a;
-    font-weight: 600;
-  }
-  .bg-cta-tertiary {
-    background: linear-gradient(45deg, #e5b5ff 0%, #8b63a5 100%);
-    color: #10141a;
-    font-weight: 600;
-  }
-
-  /* ---- Accent glow ---- */
-  .text-glow-primary {
-    color: #afc6ff;
-    text-shadow: 0 0 8px rgba(175, 198, 255, 0.4);
-  }
-  .text-glow-secondary {
-    color: #d7ffc5;
-    text-shadow: 0 0 8px rgba(215, 255, 197, 0.3);
-  }
-  .text-glow-tertiary {
-    color: #e5b5ff;
-    text-shadow: 0 0 8px rgba(229, 181, 255, 0.3);
-  }
-  .text-glow-error {
-    color: #ffb4ab;
-    text-shadow: 0 0 8px rgba(255, 180, 171, 0.3);
-  }
-
-  /* ---- Tonal accent fills ---- */
-  .bg-variant-primary {
-    background-color: rgba(82, 141, 255, 0.12);
-  }
-  .bg-variant-success {
-    background-color: rgba(74, 215, 120, 0.12);
-  }
-  .bg-variant-warning {
-    background-color: rgba(255, 180, 77, 0.12);
-  }
-  .bg-variant-danger {
-    background-color: rgba(255, 180, 171, 0.12);
-  }
-  .bg-variant-tertiary {
-    background-color: rgba(229, 181, 255, 0.12);
-  }
-
   /* ---- Stroke accents ---- */
   .stroke-primary {
     border-color: rgba(82, 141, 255, 0.40);
@@ -269,23 +215,6 @@
   }
   .stroke-tertiary {
     border-color: rgba(229, 181, 255, 0.40);
-  }
-
-  /* ---- Fill accents ---- */
-  .fill-primary {
-    background-color: #afc6ff;
-  }
-  .fill-success {
-    background-color: #4ad778;
-  }
-  .fill-warning {
-    background-color: #ffb44d;
-  }
-  .fill-danger {
-    background-color: #ffb4ab;
-  }
-  .fill-tertiary {
-    background-color: #e5b5ff;
   }
 
   /* ---- Typography helpers ---- */
@@ -330,183 +259,11 @@
     cursor: not-allowed;
   }
 
-  /* ---- Button base ---- */
-  .btn-primary-sa {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    letter-spacing: 0.04em;
-    padding: 0.625rem 1.25rem;
-    border-radius: 4px;
-    color: #10141a;
-    background: linear-gradient(45deg, #afc6ff 0%, #528dff 100%);
-    transition: box-shadow 0.2s, transform 0.1s;
-  }
-  .btn-primary-sa:hover {
-    box-shadow: 0 8px 32px rgba(82, 141, 255, 0.20);
-    transform: translateY(-1px);
-  }
-  .btn-primary-sa:active {
-    transform: translateY(0);
-    box-shadow: none;
-  }
-
-  .btn-ghost-sa {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    letter-spacing: 0.04em;
-    padding: 0.625rem 1.25rem;
-    border-radius: 4px;
-    color: #afc6ff;
-    background: transparent;
-    border: 1px solid rgba(175, 198, 255, 0.25);
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .btn-ghost-sa:hover {
-    border-color: rgba(175, 198, 255, 0.45);
-    background: rgba(175, 198, 255, 0.06);
-  }
-
-  .btn-tertiary-sa {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    letter-spacing: 0.04em;
-    padding: 0.625rem 1.25rem;
-    border-radius: 4px;
-    color: #d7ffc5;
-    background: transparent;
-    border: 1px solid rgba(215, 255, 197, 0.25);
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .btn-tertiary-sa:hover {
-    border-color: rgba(215, 255, 197, 0.45);
-    background: rgba(215, 255, 197, 0.06);
-  }
-
-  /* ---- Status indicators ---- */
-  .dot-online {
-    background-color: #4ad778;
-    box-shadow: 0 0 6px rgba(74, 215, 120, 0.5);
-  }
-  .dot-away {
-    background-color: #ffb44d;
-    box-shadow: 0 0 6px rgba(255, 180, 77, 0.5);
-  }
-  .dot-offline {
-    background-color: #606080;
-    box-shadow: none;
-  }
-
-  /* ---- Ambient elevation layers ---- */
-  .elev-1 { box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2); }
-  .elev-2 { box-shadow: 0 3px 6px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.25); }
-  .elev-3 { box-shadow: 0 10px 20px rgba(0,0,0,0.35), 0 6px 6px rgba(0,0,0,0.25); }
-  .elev-4 { box-shadow: 0 14px 28px rgba(0,0,0,0.4), 0 10px 10px rgba(0,0,0,0.22); }
-  .elev-5 { box-shadow: 0 19px 38px rgba(0,0,0,0.45), 0 15px 12px rgba(0,0,0,0.22); }
-
-  /* ---- Skeleton loader ---- */
-  .skeleton {
-    background: linear-gradient(90deg, #181c22 25% #21262d 50% #181c22 75%);
-    background-size: 400% 100%;
-    border-radius: 4px;
-    animation: shimmer 1.5s infinite;
-  }
-  @keyframes shimmer {
-    0% { background-position: 100% 0; }
-    100% { background-position: -100% 0; }
-  }
-
   /* ---- Transition utility ---- */
   .transition-sa {
     transition-property: background-color, border-color, color, box-shadow, transform;
     transition-duration: 200ms;
     transition-timing-function: ease-out;
-  }
-
-  /* ---- Scrollbar for custom areas ---- */
-  .scrollbar-dense::-webkit-scrollbar {
-    width: 4px;
-  }
-  .scrollbar-dense::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-dense::-webkit-scrollbar-thumb {
-    background: #31353c;
-    border-radius: 2px;
-  }
-
-  /* ---- Chat message styles ---- */
-  .chat-bubble-sent {
-    background: linear-gradient(45deg, #a9c2ff 0%, #7ea5ff 100%);
-    border-bottom-right-radius: 2px;
-  }
-  .chat-bubble-received {
-    background: #181c22;
-    border: 1px solid rgba(66, 71, 84, 0.30);
-    border-bottom-left-radius: 2px;
-  }
-
-  /* ---- Ambient glow effects ---- */
-  .glow-primary {
-    box-shadow: 0 0 20px rgba(82, 141, 255, 0.15), 0 0 60px rgba(82, 141, 255, 0.05);
-  }
-  .glow-secondary {
-    box-shadow: 0 0 20px rgba(74, 215, 120, 0.15), 0 0 60px rgba(74, 215, 120, 0.05);
-  }
-  .glow-tertiary {
-    box-shadow: 0 0 20px rgba(229, 181, 255, 0.15), 0 0 60px rgba(229, 181, 255, 0.05);
-  }
-  .glow-error {
-    box-shadow: 0 0 20px rgba(255, 180, 171, 0.15), 0 0 60px rgba(255, 180, 171, 0.05);
-  }
-
-  /* ---- Gradient text effects ---- */
-  .gradient-text-primary {
-    background: linear-gradient(45deg, #afc6ff, #7ea5ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .gradient-text-secondary {
-    background: linear-gradient(45deg, #d7ffc5, #9ceca6);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .gradient-text-tertiary {
-    background: linear-gradient(45deg, #e5b5ff, #c896ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* ---- Calendar event colors ---- */
-  .event-personal { background: rgba(229, 181, 255, 0.20); border-left: 2px solid #e5b5ff; }
-  .event-study {  background: rgba(82, 141, 255, 0.20);  border-left: 2px solid #528dff; }
-  .event-class {  background: rgba(74, 215, 120, 0.20);  border-left: 2px solid #4ad778; }
-
-  /* ---- Toast variant colors ---- */
-  .toast-info {
-    background: rgba(82, 141, 255, 0.15);
-    border: 1px solid rgba(82, 141, 255, 0.30);
-    color: #afc6ff;
-  }
-  .toast-success {
-    background: rgba(74, 215, 120, 0.15);
-    border: 1px solid rgba(74, 215, 120, 0.30);
-    color: #d7ffc5;
-  }
-  .toast-warning {
-    background: rgba(255, 180, 77, 0.15);
-    border: 1px solid rgba(255, 180, 77, 0.30);
-    color: #ffb44d;
-  }
-  .toast-error {
-    background: rgba(255, 180, 171, 0.15);
-    border: 1px solid rgba(255, 180, 171, 0.30);
-    color: #ffb4ab;
   }
 }
 

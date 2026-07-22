@@ -77,7 +77,8 @@ export default function Grades() {
       <Card style={{
         padding: '24px 28px', marginBottom: 24,
         display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap',
-        background: `linear-gradient(135deg, ${tint(gpaColor === C.textMuted ? C.blue : gpaColor, 0.06)} 0%, ${C.card} 60%)`,
+        background: C.card,
+        borderLeft: `3px solid ${gpaColor === C.textMuted ? C.blue : gpaColor}`,
       }}>
         <div>
           <div style={{
@@ -126,7 +127,7 @@ export default function Grades() {
             const color = gradeColor(pct)
             return (
               <div key={course.id} className="hover-lift" style={{
-                background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+                background: C.card,
                 border: `1px solid ${C.border}`, borderRadius: 14, padding: 18,
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14, gap: 10 }}>

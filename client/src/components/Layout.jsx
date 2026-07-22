@@ -69,15 +69,6 @@ const Layout = () => {
       background: C.bg,
       position: 'relative',
     }}>
-      {/* Ambient background glow */}
-      <div aria-hidden="true" style={{
-        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,
-        background: `
-          radial-gradient(600px 400px at 85% -10%, rgba(90,139,255,0.07), transparent 70%),
-          radial-gradient(500px 350px at -5% 100%, rgba(181,92,255,0.05), transparent 70%)
-        `,
-      }} />
-
       {/* Sidebar spacer (desktop) */}
       <div className="sidebar-spacer" style={{ flexShrink: 0, transition: 'width 0.22s ease' }} />
 
@@ -98,7 +89,7 @@ const Layout = () => {
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '8px 24px', gap: 12,
-            background: `linear-gradient(90deg, ${tint(C.purpleDark, 0.16)} 0%, ${tint(C.pink, 0.14)} 100%)`,
+            background: tint(C.purpleDark, 0.14),
             borderBottom: `1px solid ${tint(C.purpleDark, 0.35)}`,
             flexShrink: 0,
           }}>
@@ -138,8 +129,7 @@ const Layout = () => {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '12px 24px',
           borderBottom: `1px solid ${C.borderSoft}`,
-          background: 'rgba(11,14,20,0.7)',
-          backdropFilter: 'blur(12px)',
+          background: C.bg,
           position: 'sticky', top: 0, zIndex: 30,
           flexShrink: 0, gap: 12,
         }}>
@@ -203,7 +193,7 @@ const Layout = () => {
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={toggleAIChat}
-              style={{ position: 'fixed', inset: 0, zIndex: 120, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(3px)' }}
+              style={{ position: 'fixed', inset: 0, zIndex: 120, background: 'rgba(0,0,0,0.6)' }}
             />
             <motion.div
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
@@ -242,8 +232,8 @@ const Layout = () => {
           display: 'flex', alignItems: 'center', gap: 14,
         }}>
           <div style={{
-            width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-            background: `linear-gradient(135deg, ${tint(C.purpleDark, 0.2)}, ${tint(C.blueDark, 0.15)})`,
+            width: 40, height: 40, borderRadius: 4, flexShrink: 0,
+            background: tint(C.purpleDark, 0.18),
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <Star size={18} style={{ color: C.purple }} />
@@ -264,8 +254,8 @@ const Layout = () => {
               onClick={dismissStarPrompt}
               style={{
                 display: 'flex', alignItems: 'center', gap: 5,
-                padding: '7px 12px', borderRadius: 7,
-                background: `linear-gradient(135deg, ${C.purpleDark} 0%, #7b3fa8 100%)`,
+                padding: '7px 12px', borderRadius: 4,
+                background: C.purpleDark,
                 color: '#fff', textDecoration: 'none',
                 fontFamily: fonts.heading, fontSize: 11, fontWeight: 700,
               }}

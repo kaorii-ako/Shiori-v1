@@ -92,8 +92,7 @@ const DemoTour = () => {
             onClick={close}
             style={{
               position: 'fixed', inset: 0, zIndex: 300,
-              background: 'rgba(0,0,0,0.6)',
-              backdropFilter: 'blur(4px)',
+              background: 'rgba(0,0,0,0.7)',
             }}
           />
 
@@ -190,8 +189,8 @@ const DemoTour = () => {
                 rel="noopener noreferrer"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  padding: '10px 16px', borderRadius: 9,
-                  background: `linear-gradient(135deg, ${current.color}, ${current.color}bb)`,
+                  padding: '10px 16px', borderRadius: 4,
+                  background: current.color,
                   color: '#0b0e14', textDecoration: 'none',
                   fontFamily: '"Press Start 2P"', fontSize: 9,
                   marginBottom: 12,

@@ -66,28 +66,11 @@ const TimeTrackerBars = () => {
                 animate={{ width: `${tracker.progress}%` }}
                 transition={{ duration: 1, ease: 'easeOut' }}
                 style={{
-                  background: `linear-gradient(90deg, ${tracker.color} 0%, ${tracker.color}cc 100%)`,
+                  background: tracker.color,
                   height: '100%',
-                  boxShadow: `0 0 12px ${tracker.color}40`,
-                  position: 'relative',
                   borderRadius: '4px'
                 }}
-              >
-                <motion.div
-                  animate={{ backgroundPosition: ['0% 0%', '100% 0%'] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  style={{
-                    background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%)`,
-                    backgroundSize: '200% 100%',
-                    height: '100%',
-                    position: 'absolute',
-                    width: '100%',
-                    top: 0,
-                    left: 0,
-                    borderRadius: '4px'
-                  }}
-                />
-              </motion.div>
+              />
             </div>
 
             {/* Percentage label */}

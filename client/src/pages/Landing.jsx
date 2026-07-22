@@ -111,16 +111,6 @@ export default function Landing() {
 
   return (
     <div style={{ background: C.bg, minHeight: '100vh', color: C.text, fontFamily: fonts.body, position: 'relative', overflow: 'hidden' }}>
-      {/* Ambient glow */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: `
-          radial-gradient(700px 500px at 50% -10%, rgba(90,139,255,0.14), transparent 70%),
-          radial-gradient(500px 400px at 90% 30%, rgba(181,92,255,0.08), transparent 70%),
-          radial-gradient(500px 400px at 5% 60%, rgba(61,220,132,0.05), transparent 70%)
-        `,
-      }} />
-
       {/* Nav */}
       <motion.nav
         initial={{ y: -24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5 }}
@@ -129,18 +119,17 @@ export default function Landing() {
           padding: '14px clamp(20px, 5vw, 40px)',
           borderBottom: `1px solid ${C.borderSoft}`,
           position: 'sticky', top: 0, zIndex: 20,
-          background: 'rgba(11,14,20,0.7)', backdropFilter: 'blur(14px)',
+          background: C.bg,
         }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <motion.div
             whileHover={{ rotate: 12, scale: 1.08 }}
             transition={{ type: 'spring', stiffness: 300 }}
             style={{
-              width: 34, height: 34, borderRadius: 9,
-              background: `linear-gradient(135deg, ${C.blue} 0%, ${C.blueDark} 100%)`,
+              width: 34, height: 34, borderRadius: 4,
+              background: C.blueDark,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: fonts.heading, fontWeight: 700, fontSize: 16, color: '#0b0e14',
-              boxShadow: '0 4px 16px rgba(90,139,255,0.35)',
             }}>栞</motion.div>
           <span style={{ fontFamily: fonts.heading, fontWeight: 700, fontSize: 16, letterSpacing: '0.05em' }}>SHIORI</span>
         </div>
@@ -178,7 +167,7 @@ export default function Landing() {
           style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '40px 24px', maxWidth: 820, margin: '0 auto', y: contentY, opacity: contentOpacity, pointerEvents: 'none' }}
         >
           <div data-hero style={{ pointerEvents: 'auto', display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 16px', borderRadius: 999,
-            border: `1px solid ${tint(C.blue, 0.3)}`, background: 'rgba(11,14,20,0.5)', backdropFilter: 'blur(6px)',
+            border: `1px solid ${tint(C.blue, 0.3)}`, background: C.card,
             fontFamily: fonts.heading, fontSize: 12.5, color: C.blue, marginBottom: 28,
           }}><GoogleLogo size={13} /> Syncs with Google Classroom · Free for students</div>
 
@@ -187,10 +176,7 @@ export default function Landing() {
             fontWeight: 700, lineHeight: 1.05, marginBottom: 22, letterSpacing: '-0.02em',
           }}>
             Everything for school,<br />
-            <span style={{
-              background: `linear-gradient(135deg, ${C.blue} 0%, ${C.purple} 55%, ${C.pink} 100%)`,
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>in one place</span>
+            <span style={{ color: C.blue }}>in one place</span>
           </h1>
 
           <p data-hero style={{ fontSize: 17, color: C.textMuted, lineHeight: 1.7, maxWidth: 540, margin: '0 auto 38px' }}>
@@ -202,7 +188,7 @@ export default function Landing() {
             <MagneticButton primary onClick={() => navigate('/login')} style={primaryCta}>
               <GoogleLogo size={18} /> Continue with Google
             </MagneticButton>
-            <MagneticButton onClick={() => navigate('/demo')} style={{ ...btnGhost, padding: '15px 26px', fontSize: 15, background: 'rgba(11,14,20,0.5)', backdropFilter: 'blur(6px)' }}>
+            <MagneticButton onClick={() => navigate('/demo')} style={{ ...btnGhost, padding: '15px 26px', fontSize: 15 }}>
               <Sparkles size={16} /> Try the demo
             </MagneticButton>
           </div>
@@ -228,7 +214,7 @@ export default function Landing() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, textAlign: 'center' }}>
             {stats.map((s) => (
               <div key={s.label}>
-                <div style={{ fontFamily: fonts.heading, fontSize: 'clamp(28px, 6vw, 44px)', fontWeight: 700, background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                <div style={{ fontFamily: fonts.heading, fontSize: 'clamp(28px, 6vw, 44px)', fontWeight: 700, color: C.text }}>
                   <Counter value={s.value} suffix={s.suffix} />
                 </div>
                 <div style={{ fontSize: 13, color: C.textMuted, marginTop: 4 }}>{s.label}</div>
@@ -244,8 +230,8 @@ export default function Landing() {
           {steps.map((s, i) => (
             <Reveal key={s.n} delay={i * 0.1}>
               <motion.div whileHover={{ y: -4 }} style={{
-                background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
-                border: `1px solid ${C.border}`, borderRadius: 16, padding: 24,
+                background: C.card,
+                border: `1px solid ${C.border}`, borderRadius: 8, padding: 24,
                 display: 'flex', gap: 16, alignItems: 'flex-start', height: '100%',
               }}>
                 <div style={{
@@ -282,8 +268,8 @@ export default function Landing() {
                 <motion.div
                   whileHover={{ y: -6, borderColor: tint(f.color, 0.5) }}
                   style={{
-                    background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
-                    border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, height: '100%',
+                    background: C.card,
+                    border: `1px solid ${C.border}`, borderRadius: 8, padding: 24, height: '100%',
                   }}>
                   <div style={{ ...iconBox(f.color, 44), marginBottom: 16 }}>
                     <Icon size={21} strokeWidth={2.2} />
@@ -301,9 +287,9 @@ export default function Landing() {
       <section style={{ padding: '50px 24px', maxWidth: 860, margin: '0 auto 20px', position: 'relative' }}>
         <Reveal>
           <div style={{
-            background: `linear-gradient(135deg, ${tint(C.greenDark, 0.08)} 0%, ${tint(C.blueDark, 0.06)} 100%)`,
+            background: tint(C.greenDark, 0.07),
             border: `1px solid ${tint(C.greenDark, 0.25)}`,
-            borderRadius: 20, padding: 'clamp(24px, 5vw, 40px)',
+            borderRadius: 8, padding: 'clamp(24px, 5vw, 40px)',
             display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap',
           }}>
             <div style={iconBox(C.greenDark, 52)}>

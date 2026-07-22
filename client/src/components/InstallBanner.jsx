@@ -43,17 +43,16 @@ const InstallBanner = () => {
           style={{
             position: 'fixed', bottom: 16, left: 16, right: 16, zIndex: 180,
             maxWidth: 420, margin: '0 auto',
-            background: 'rgba(16,20,26,0.97)',
+            background: '#12161f',
             border: '1px solid rgba(175,198,255,0.25)',
-            borderRadius: 14, padding: '14px 16px',
+            borderRadius: 6, padding: '14px 16px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-            backdropFilter: 'blur(20px)',
             display: 'flex', alignItems: 'center', gap: 12,
           }}
         >
           <div style={{
-            width: 38, height: 38, borderRadius: 9, flexShrink: 0,
-            background: 'linear-gradient(135deg, rgba(175,198,255,0.2), rgba(82,141,255,0.15))',
+            width: 38, height: 38, borderRadius: 4, flexShrink: 0,
+            background: 'rgba(175,198,255,0.16)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <Download size={17} style={{ color: '#afc6ff' }} />
@@ -69,8 +68,8 @@ const InstallBanner = () => {
           <button
             onClick={install}
             style={{
-              padding: '7px 14px', borderRadius: 7, border: 'none', cursor: 'pointer',
-              background: 'linear-gradient(135deg, #528dff, #afc6ff)',
+              padding: '7px 14px', borderRadius: 4, border: 'none', cursor: 'pointer',
+              background: '#528dff',
               color: '#0b0e14', fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 11, fontWeight: 700, flexShrink: 0,
             }}

@@ -8,11 +8,11 @@ function Modal({ open, onClose, children }) {
   if (!open) return null
   return (
     <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, background: 'rgba(4,6,10,0.75)', backdropFilter: 'blur(3px)',
+      position: 'fixed', inset: 0, background: 'rgba(4,6,10,0.85)',
       zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
     }}>
       <div onClick={e => e.stopPropagation()} className="page-enter" style={{
-        background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+        background: C.card,
         border: `1px solid ${C.border}`, borderRadius: 18, padding: 28, width: 'min(480px,92vw)',
         boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
       }}>
@@ -56,7 +56,7 @@ export default function Flashcards() {
 
         {cards.length === 0 ? (
           <div style={{
-            background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+            background: C.card,
             border: `1px solid ${C.border}`, borderRadius: 16,
           }}>
             <Empty
@@ -72,14 +72,14 @@ export default function Flashcards() {
             <div style={{ height: 5, background: tint(C.blue, 0.1), borderRadius: 3, overflow: 'hidden', marginBottom: 24 }}>
               <div style={{
                 height: '100%', width: `${((cardIndex + 1) / cards.length) * 100}%`,
-                background: `linear-gradient(90deg, ${C.blue}, ${C.blueDark})`,
+                background: C.blueDark,
                 borderRadius: 3, transition: 'width 0.3s ease',
               }} />
             </div>
 
             {/* Card */}
             <div onClick={() => setFlipped(f => !f)} style={{
-              background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+              background: C.card,
               border: `1px solid ${flipped ? tint(C.purple, 0.5) : C.border}`,
               borderRadius: 20, padding: '48px 32px', textAlign: 'center', cursor: 'pointer',
               minHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -137,7 +137,7 @@ export default function Flashcards() {
 
       {(!decks || decks.length === 0) ? (
         <div style={{
-          background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+          background: C.card,
           border: `1px solid ${C.border}`, borderRadius: 16,
         }}>
           <Empty
@@ -153,7 +153,7 @@ export default function Flashcards() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(230px,1fr))', gap: 14 }}>
           {decks.map(d => (
             <div key={d.id} className="hover-lift" style={{
-              background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+              background: C.card,
               border: `1px solid ${C.border}`, borderRadius: 14, padding: 20,
             }}>
               <div style={{ ...iconBox(C.purple, 42), marginBottom: 14 }}>

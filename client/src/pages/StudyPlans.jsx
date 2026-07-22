@@ -137,7 +137,7 @@ export default function StudyPlans() {
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
                   <div style={{
                     width: 34, height: 34, borderRadius: 10,
-                    background: `linear-gradient(135deg, ${C.blue}, ${C.blueDark})`,
+                    background: C.blueDark,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontFamily: fonts.heading, fontWeight: 700, fontSize: 13, color: '#0b0e14', flexShrink: 0,
                     boxShadow: `0 4px 12px ${tint(C.blueDark, 0.3)}`,

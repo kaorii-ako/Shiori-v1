@@ -66,12 +66,6 @@ export default function FocusMode() {
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       position: 'relative',
     }}>
-      {/* Ambient phase glow */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: `radial-gradient(500px 400px at 50% 40%, ${tint(phaseColorDark, running ? 0.08 : 0.04)}, transparent 70%)`,
-        transition: 'background 0.6s ease',
-      }} />
 
       <h1 style={{
         display: 'flex', alignItems: 'center', gap: 9,
@@ -103,7 +97,7 @@ export default function FocusMode() {
             strokeWidth="7" strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={dash}
-            style={{ transition: 'stroke-dashoffset 0.9s linear, stroke 0.4s ease', filter: `drop-shadow(0 0 8px ${tint(phaseColorDark, 0.6)})` }}
+            style={{ transition: 'stroke-dashoffset 0.9s linear, stroke 0.4s ease' }}
           />
         </svg>
         <div style={{
@@ -122,11 +116,10 @@ export default function FocusMode() {
         <button onClick={() => setRunning(r => !r)} style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           padding: '13px 34px', borderRadius: 12, border: 'none',
-          background: running ? tint(C.pink, 0.15) : `linear-gradient(135deg, ${C.blue}, ${C.blueDark})`,
+          background: running ? tint(C.pink, 0.15) : C.blueDark,
           color: running ? C.pink : '#0b0e14',
           cursor: 'pointer', fontFamily: fonts.heading, fontSize: 15, fontWeight: 700,
           minWidth: 130,
-          boxShadow: running ? 'none' : `0 8px 28px ${tint(C.blueDark, 0.35)}`,
           transition: 'all 0.2s ease',
         }}>
           {running ? <><Pause size={16} /> Pause</> : <><Play size={16} /> Start</>}

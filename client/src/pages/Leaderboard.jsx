@@ -49,7 +49,8 @@ export default function Leaderboard() {
 
       {/* My rank card */}
       <Card style={{
-        background: `linear-gradient(135deg, ${tint(C.blue, 0.08)}, ${tint(C.purpleDark, 0.06)})`,
+        background: C.card,
+        borderLeft: `3px solid ${C.blue}`,
         padding: '20px 24px', marginBottom: 24,
         display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap',
       }}>
@@ -89,10 +90,8 @@ export default function Leaderboard() {
               {RANK_EMOJI[entry.rank] || `#${entry.rank}`}
             </div>
             <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: entry.isMe
-                ? `linear-gradient(135deg, ${C.blue}, ${C.blueDark})`
-                : `linear-gradient(135deg, ${tint(C.textMuted, 0.3)}, ${tint(C.textMuted, 0.1)})`,
+              width: 36, height: 36, borderRadius: 4,
+              background: entry.isMe ? C.blueDark : tint(C.textMuted, 0.2),
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: fonts.heading, fontWeight: 700, fontSize: 13,
               color: entry.isMe ? '#0b0e14' : C.text, flexShrink: 0,

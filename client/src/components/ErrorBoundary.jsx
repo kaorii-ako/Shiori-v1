@@ -50,8 +50,8 @@ export default class ErrorBoundary extends Component {
         padding: 32,
       }}>
         <div style={{
-          width: 56, height: 56, borderRadius: 14,
-          background: 'linear-gradient(135deg, #ff4d6a, #c44dff)',
+          width: 56, height: 56, borderRadius: 6,
+          background: '#ff4d6a',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <span style={{ color: '#fff', fontSize: 24 }}>栞</span>

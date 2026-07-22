@@ -40,28 +40,19 @@ export default function Signup() {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: fonts.body, padding: 20, position: 'relative', overflow: 'hidden',
     }}>
-      <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: `
-          radial-gradient(600px 450px at 50% -10%, rgba(181,92,255,0.09), transparent 70%),
-          radial-gradient(400px 350px at 10% 100%, rgba(90,139,255,0.07), transparent 70%)
-        `,
-      }} />
-
       <div className="page-enter" style={{
         width: '100%', maxWidth: 410, position: 'relative',
-        background: `linear-gradient(180deg, ${C.cardSoft} 0%, ${C.card} 100%)`,
+        background: C.card,
         border: `1px solid ${C.border}`,
         borderRadius: 20, padding: '38px 32px',
         boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
       }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{
-            width: 52, height: 52, borderRadius: 14, margin: '0 auto 14px',
-            background: `linear-gradient(135deg, ${C.purple} 0%, ${C.purpleDark} 100%)`,
+            width: 52, height: 52, borderRadius: 6, margin: '0 auto 14px',
+            background: C.purpleDark,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: fonts.heading, fontWeight: 700, fontSize: 24, color: '#0b0e14',
-            boxShadow: '0 8px 28px rgba(181,92,255,0.35)',
           }}>栞</div>
           <div style={{ fontFamily: fonts.heading, fontWeight: 700, fontSize: 19, color: C.text }}>Create your study space</div>
           <div style={{ fontSize: 13, color: C.textMuted, marginTop: 5 }}>Free for students — takes 30 seconds</div>

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Trophy, X, Download, Share2 } from 'lucide-react'
+import { Trophy, X, Download, Share2, Star } from 'lucide-react'
 import { useAssignmentsStore, useGradesStore, useXPStore, useAuthStore, usePomodoroStore } from '../stores'
 import { getLevel } from '../stores'
 
@@ -249,7 +249,7 @@ export default function SemesterCard({ onClose }) {
       exit={{ opacity: 0 }}
       style={{
         position: 'fixed', inset: 0, zIndex: 300,
-        background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)',
+        background: 'rgba(0,0,0,0.8)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 24,
       }}
@@ -303,8 +303,8 @@ export default function SemesterCard({ onClose }) {
             <button
               onClick={generate}
               style={{
-                width: '100%', padding: '14px', borderRadius: 10, cursor: 'pointer',
-                background: 'linear-gradient(135deg, #c44dff, #528dff)',
+                width: '100%', padding: '14px', borderRadius: 6, cursor: 'pointer',
+                background: '#c44dff',
                 border: 'none', color: '#fff',
                 fontFamily: '"Press Start 2P"', fontSize: 10, fontWeight: 700,
               }}
@@ -348,12 +348,12 @@ export default function SemesterCard({ onClose }) {
                 style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   padding: '12px', borderRadius: 8, textDecoration: 'none',
-                  background: 'linear-gradient(135deg, rgba(196,77,255,0.2), rgba(82,141,255,0.15))',
+                  background: 'rgba(196,77,255,0.16)',
                   border: '1px solid rgba(196,77,255,0.3)',
                   color: '#e5b5ff', fontFamily: '"Press Start 2P"', fontSize: 8,
                 }}
               >
-                ⭐ STAR
+                <Star size={12} /> STAR
               </a>
             </div>
           </>

@@ -74,8 +74,8 @@ export default function Home() {
   return (
     <div style={{ fontFamily: fonts.body, color: C.text, maxWidth: 1020, margin: '0 auto' }}>
       <div style={{ marginBottom: 26 }}>
-        <h1 style={{ fontFamily: fonts.heading, fontSize: 26, fontWeight: 700, color: C.text, marginBottom: 4 }}>
-          {greeting}, {name} <span aria-hidden="true">👋</span>
+        <h1 style={{ fontFamily: fonts.heading, fontSize: 26, fontWeight: 700, color: C.text, marginBottom: 4, letterSpacing: '-0.01em' }}>
+          {greeting}, {name}
         </h1>
         <p style={{ fontSize: 13, color: C.textMuted }}>{today}</p>
       </div>
@@ -93,9 +93,8 @@ export default function Home() {
         <div style={{ height: 7, background: tint(C.blue, 0.1), borderRadius: 4, overflow: 'hidden' }}>
           <div style={{
             height: '100%', width: `${xpPct}%`,
-            background: `linear-gradient(90deg, ${xpLevel?.color || C.blue}, ${xpNext?.color || C.blueDark})`,
+            background: xpLevel?.color || C.blue,
             borderRadius: 4, transition: 'width 0.4s ease',
-            boxShadow: `0 0 12px ${tint(xpLevel?.color || C.blue, 0.5)}`,
           }} />
         </div>
       </Card>
@@ -125,7 +124,7 @@ export default function Home() {
           {upcoming.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '16px 0 8px' }}>
               <p style={{ fontSize: 13, color: C.textMuted, marginBottom: 14 }}>
-                {connected ? 'No upcoming assignments 🎉' : 'Connect Google Classroom to auto-import your assignments.'}
+                {connected ? 'No upcoming assignments — you\'re clear.' : 'Connect Google Classroom to auto-import your assignments.'}
               </p>
               <button onClick={handleSync} disabled={syncing} style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -149,7 +148,6 @@ export default function Home() {
                   <div style={{
                     width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
                     background: daysLeft <= 1 ? C.pink : daysLeft <= 3 ? C.orange : C.green,
-                    boxShadow: `0 0 8px ${tint(daysLeft <= 1 ? C.pink : daysLeft <= 3 ? C.orange : C.green, 0.6)}`,
                   }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: C.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -181,7 +179,7 @@ export default function Home() {
           >Recent Notes</SectionTitle>
           {recentNotes.length === 0 ? (
             <p style={{ fontSize: 13, color: C.textMuted, textAlign: 'center', padding: '20px 0' }}>
-              No notes yet. Start writing! ✍️
+              No notes yet — start writing.
             </p>
           ) : (
             recentNotes.map(n => (

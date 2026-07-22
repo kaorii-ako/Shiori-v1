@@ -99,27 +99,11 @@ const Pro = () => {
     <div
       style={{ minHeight: '100vh', background: '#0b0e14', color: '#dfe2eb', overflowX: 'hidden' }}
     >
-      {/* Ambient bg */}
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
-        <div style={{
-          position: 'absolute', top: '-15%', right: '-10%',
-          width: 700, height: 700, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(196,77,255,0.07) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '20%', left: '-5%',
-          width: 500, height: 500, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(82,141,255,0.06) 0%, transparent 70%)',
-          filter: 'blur(50px)',
-        }} />
-      </div>
 
       {/* Nav */}
       <nav style={{
         borderBottom: '1px solid rgba(66,71,84,0.30)',
-        background: 'rgba(16,20,26,0.85)',
-        backdropFilter: 'blur(16px)',
+        background: '#10141a',
         padding: '0 24px', position: 'sticky', top: 0, zIndex: 100,
       }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -137,7 +121,7 @@ const Pro = () => {
           </div>
           <Link to="/login" style={{
             padding: '6px 16px', borderRadius: 6,
-            background: 'linear-gradient(45deg, #afc6ff 0%, #528dff 100%)',
+            background: '#528dff',
             color: '#0b0e14', textDecoration: 'none',
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: 12, fontWeight: 700,
@@ -177,9 +161,7 @@ const Pro = () => {
             <div style={{
               fontFamily: "'Press Start 2P', monospace",
               fontSize: 'clamp(18px, 3.5vw, 36px)',
-              background: 'linear-gradient(135deg, #e5b5ff 0%, #c44dff 100%)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text', marginBottom: 20, lineHeight: 1.3,
+              color: '#c44dff', marginBottom: 20, lineHeight: 1.3,
             }}>
               Not harder.
             </div>
@@ -213,9 +195,7 @@ const Pro = () => {
                       onClick={() => setBillingAnnual(opt.val)}
                       style={{
                         padding: '8px 20px', borderRadius: 6, border: 'none', cursor: 'pointer',
-                        background: billingAnnual === opt.val
-                          ? 'linear-gradient(45deg, rgba(196,77,255,0.25), rgba(82,141,255,0.15))'
-                          : 'transparent',
+                        background: billingAnnual === opt.val ? 'rgba(196,77,255,0.2)' : 'transparent',
                         color: billingAnnual === opt.val ? '#e5b5ff' : '#606080',
                         fontFamily: "'Space Grotesk', sans-serif",
                         fontSize: 12, fontWeight: 600,
@@ -231,17 +211,13 @@ const Pro = () => {
 
               {/* Price card */}
               <div style={{
-                borderRadius: 16, padding: '40px 36px',
+                borderRadius: 8, padding: '40px 36px',
                 border: '1px solid rgba(196,77,255,0.35)',
+                borderTop: '3px solid rgba(196,77,255,0.7)',
                 background: 'rgba(196,77,255,0.06)',
-                boxShadow: '0 0 60px rgba(196,77,255,0.12)',
                 position: 'relative', overflow: 'hidden',
                 textAlign: 'center',
               }}>
-                <div style={{
-                  position: 'absolute', top: 0, left: 0, right: 0, height: 1,
-                  background: 'linear-gradient(90deg, transparent, rgba(196,77,255,0.6), transparent)',
-                }} />
 
                 <div style={{
                   fontFamily: "'Press Start 2P', monospace",
@@ -275,12 +251,11 @@ const Pro = () => {
                   onClick={handleCheckout}
                   disabled={checkoutLoading}
                   style={{
-                    width: '100%', padding: '14px 24px', borderRadius: 8,
-                    background: 'linear-gradient(135deg, #c44dff 0%, #7b3fa8 100%)',
+                    width: '100%', padding: '14px 24px', borderRadius: 6,
+                    background: '#c44dff',
                     color: '#fff', border: 'none', cursor: 'pointer',
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontSize: 14, fontWeight: 700, letterSpacing: '0.05em',
-                    boxShadow: '0 4px 24px rgba(196,77,255,0.3)',
                     marginBottom: 16,
                   }}
                 >
