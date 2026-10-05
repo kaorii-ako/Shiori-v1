@@ -1,5 +1,7 @@
 # Shiori (栞)
 
+[![Deploy to Railyard](https://app.railyard.run/deploy/badge)](https://app.railyard.run/deploy?repo=https://github.com/kaorii-ako/Shiori-v1)
+
 An AI study companion for students who actually care about their grades. Quizzes, flashcards, grade tracking, and study planning in one app — bring your own free Gemini API key, no subscription needed.
 
 **[Try the demo](https://shiori-v1.vercel.app/demo)** — no account or API key required.
